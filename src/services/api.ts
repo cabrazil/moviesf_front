@@ -28,7 +28,8 @@ export interface JourneyOptionFlow {
   id: number;
   text: string;
   description?: string;
-  nextStepId?: number;
+  nextStepId: string | null;
+  isEndState: boolean;
   movieSuggestions?: MovieSuggestionFlow[];
 }
 
@@ -42,6 +43,12 @@ export interface Movie {
   id: number;
   title: string;
   description: string;
+  year?: number;
+  director?: string;
+  genres?: string[];
+  streamingPlatforms?: string[];
+  thumbnail?: string;
+  original_title?: string;
 }
 
 export const getMainSentiments = async (): Promise<MainSentiment[]> => {

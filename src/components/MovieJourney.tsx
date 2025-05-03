@@ -40,10 +40,15 @@ const MovieJourney: React.FC = () => {
   };
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
+    console.log('Opção selecionada:', option);
     if (!journeyFlow || !currentStep) return;
 
+    console.log('isEndState:', option.isEndState);
+    console.log('movieSuggestions:', option.movieSuggestions);
+
     if (option.isEndState && option.movieSuggestions) {
-      setMovieSuggestions(option.movieSuggestions);
+      console.log('Navegando para sugestões com:', option.movieSuggestions);
+      navigate('/sugestoes', { state: { movieSuggestions: option.movieSuggestions } });
       return;
     }
 
@@ -164,12 +169,54 @@ const MovieJourney: React.FC = () => {
           <Grid container spacing={2} sx={{ mt: 2 }}>
             {movieSuggestions.map((suggestion) => (
               <Grid item xs={12} sm={6} md={4} key={suggestion.movie.id}>
-                <Paper sx={{ p: 2 }}>
-                  <Typography variant="h6">{suggestion.movie.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
+                <Paper 
+                  sx={{ 
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 1
+                  }}
+                >
+                  {suggestion.movie.thumbnail && (
+                    <img 
+                      src={suggestion.movie.thumbnail} 
+                      alt={suggestion.movie.title}
+                      style={{
+                        width: '100%',
+                        maxWidth: '200px',
+                        height: 'auto',
+                        borderRadius: '8px',
+                        marginBottom: '8px'
+                      }}
+                    />
+                  )}
+                  <Typography variant="h6" align="center">
+                    {suggestion.movie.title}
+                  </Typography>
+                  {suggestion.movie.original_title && (
+                    <Typography 
+                      variant="subtitle2" 
+                      color="text.secondary"
+                      align="center"
+                      sx={{ fontStyle: 'italic' }}
+                    >
+                      {suggestion.movie.original_title}
+                    </Typography>
+                  )}
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                    align="center"
+                    sx={{ mt: 1 }}
+                  >
                     {suggestion.movie.description}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  <Typography 
+                    variant="body2" 
+                    color="text.secondary"
+                    sx={{ mt: 1 }}
+                  >
                     {suggestion.reason}
                   </Typography>
                 </Paper>

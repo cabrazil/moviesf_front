@@ -48,4 +48,6 @@ export interface Movie {
   description?: string;
   genres: string[];
   streamingPlatforms: string[];
+  thumbnail?: string;
+  original_title?: string;
 } 

@@ -4,6 +4,7 @@ import { theme } from './theme';
 import Home from './pages/Home';
 import JourneyIntro from './components/JourneyIntro';
 import MovieJourney from './components/MovieJourney';
+import MovieSuggestionsPage from './components/MovieSuggestionsPage';
 import MovieList from './pages/admin/MovieList';
 import MainSentimentList from './pages/admin/MainSentimentList';
 import JourneyFlowList from './pages/admin/JourneyFlowList';
@@ -18,6 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/intro" element={<JourneyIntro />} />
           <Route path="/journey" element={<MovieJourney />} />
+          <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="movies" element={<MovieList />} />
             <Route path="main-sentiments" element={<MainSentimentList />} />
