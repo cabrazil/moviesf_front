@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import JourneyStep from '../components/JourneyStep';
 import MovieResults from '../components/MovieResults';
-import { MainSentiment, getMainSentiments } from '../services/api';
+import { 
+  MainSentiment, 
+  getMainSentiments, 
+  getEmotionalStates,
+  getMovieSuggestionsByEmotionalState,
+  getMovie,
+  EmotionalState,
+  JourneyStep as JourneyStepType,
+  JourneyOption,
+  MovieSuggestion,
+  Movie
+} from '../services/api';
 
 type Question = {
   id: string;
@@ -11,17 +22,8 @@ type Question = {
     id: string;
     text: string;
     description?: string;
+    isEndState?: boolean;
   }[];
-};
-
-type Movie = {
-  id: string;
-  title: string;
-  year?: number;
-  director?: string;
-  description?: string;
-  genres: string[];
-  streamingPlatforms: string[];
 };
 
 const MovieJourney = () => {
@@ -31,323 +33,151 @@ const MovieJourney = () => {
   const [suggestedMovies, setSuggestedMovies] = useState<Movie[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [mainSentiments, setMainSentiments] = useState<MainSentiment[]>([]);
+  const [emotionalStates, setEmotionalStates] = useState<EmotionalState[]>([]);
   const [selectedMainSentiment, setSelectedMainSentiment] = useState<MainSentiment | null>(null);
+  const [selectedEmotionalState, setSelectedEmotionalState] = useState<EmotionalState | null>(null);
   const [loading, setLoading] = useState(true);
   const [steps, setSteps] = useState<Question[]>([]);
+  const [currentPath, setCurrentPath] = useState<string[]>([]);
 
   useEffect(() => {
-    const loadSentiments = async () => {
+    const loadInitialData = async () => {
       try {
-        const data = await getMainSentiments();
-        setMainSentiments(data);
+        const [sentimentsData, statesData] = await Promise.all([
+          getMainSentiments(),
+          getEmotionalStates()
+        ]);
+        setMainSentiments(sentimentsData);
+        setEmotionalStates(statesData);
         // Inicializa as etapas base
         setSteps([{
           id: 'main-sentiment',
           text: 'Como você está se sentindo principalmente agora?',
-          options: []
+          options: sentimentsData.map(sentiment => ({
+            id: sentiment.id.toString(),
+            text: sentiment.name,
+            description: sentiment.description || undefined
+          }))
         }]);
       } catch (error) {
-        console.error('Erro ao carregar sentimentos:', error);
+        console.error('Erro ao carregar dados iniciais:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadSentiments();
+    loadInitialData();
   }, []);
 
-  // Atualiza as etapas quando o sentimento principal muda
-  useEffect(() => {
-    if (selectedMainSentiment) {
-      const newSteps = getJourneySteps();
-      setSteps(newSteps);
-      // Garante que estamos na primeira etapa após a seleção do sentimento
-      setCurrentStep(1);
-    }
-  }, [selectedMainSentiment]);
+  const handleOptionSelect = async (option: Question['options'][0]) => {
+    const newSelectedOptions = { ...selectedOptions, [currentStep]: option };
+    setSelectedOptions(newSelectedOptions);
 
-  const getJourneySteps = () => {
-    console.log('Calculando etapas para:', selectedMainSentiment?.name);
-    
-    const baseSteps: Question[] = [
+    if (currentStep === 0) {
+      // Primeiro passo: seleção do sentimento principal
+      const selectedSentiment = mainSentiments.find(s => s.id.toString() === option.id);
+      if (selectedSentiment) {
+        setSelectedMainSentiment(selectedSentiment);
+        const relatedStates = emotionalStates.filter(state => state.mainSentimentId === selectedSentiment.id);
+        setSteps([
       {
         id: 'main-sentiment',
         text: 'Como você está se sentindo principalmente agora?',
-        options: []
+            options: mainSentiments.map(sentiment => ({
+              id: sentiment.id.toString(),
+              text: sentiment.name,
+              description: sentiment.description || undefined
+            }))
+          },
+          {
+            id: 'emotional-state',
+            text: 'Entendo. Nesses momentos, você geralmente prefere um filme que...',
+            options: relatedStates.map(state => ({
+              id: state.id.toString(),
+              text: state.name,
+              description: state.description || undefined
+            }))
+          }
+        ]);
+        setCurrentPath([option.id]);
+        setCurrentStep(1);
       }
-    ];
-
-    if (selectedMainSentiment?.name.includes('Feliz')) {
-      console.log('Retornando etapas para Feliz/Alegre');
-      return [
-        ...baseSteps,
-        {
-          id: 'happy-mood',
-          text: 'Ótimo! Para manter essa vibe positiva, você gostaria de assistir a um filme que te faça se sentir ainda mais...',
-          options: [
+    } else if (currentStep === 1) {
+      // Segundo passo: seleção do estado emocional
+      const selectedState = emotionalStates.find(s => s.id.toString() === option.id);
+      if (selectedState) {
+        setSelectedEmotionalState(selectedState);
+        // Ordena os passos da jornada pelo campo 'order'
+        const orderedSteps = [...selectedState.journeySteps].sort((a, b) => a.order - b.order);
+        const firstJourneyStep = orderedSteps[0];
+        
+        if (firstJourneyStep) {
+          setSteps(prevSteps => [
+            ...prevSteps,
             {
-              id: '1',
-              text: 'Com muitas gargalhadas e um humor contagiante?',
-              description: 'Filmes que te façam rir muito'
-            },
-            {
-              id: '2',
-              text: 'Com um calor no coração e uma sensação adorável?',
-              description: 'Histórias que aquecem o coração'
-            },
-            {
-              id: '3',
-              text: 'Empolgado(a) e cheio(a) de energia?',
-              description: 'Filmes que te deixam animado'
-            },
-            {
-              id: '4',
-              text: 'Com aquela nostalgia gostosa de boas lembranças?',
-              description: 'Filmes que trazem boas memórias'
+              id: firstJourneyStep.id.toString(),
+              text: firstJourneyStep.question,
+              options: firstJourneyStep.options.map(opt => ({
+                id: opt.id.toString(),
+                text: opt.text,
+                description: opt.isEndState ? 'Leva a sugestões de filmes' : undefined,
+                isEndState: opt.isEndState
+              }))
             }
-          ]
-        },
-        {
-          id: 'comedy-style',
-          text: 'Que tal...',
-          options: [
-            {
-              id: '1',
-              text: 'Escancarado e físico (pastelão, situações absurdas)?',
-              description: 'Comédias com situações hilárias'
-            },
-            {
-              id: '2',
-              text: 'Inteligente e com diálogos afiados?',
-              description: 'Comédias com humor refinado'
-            },
-            {
-              id: '3',
-              text: 'Satírico e que faz pensar enquanto diverte?',
-              description: 'Comédias com crítica social'
-            },
-            {
-              id: '4',
-              text: 'Comédia romântica leve e divertida?',
-              description: 'Histórias de amor com muito humor'
-            }
-          ]
+          ]);
+          setCurrentPath(prev => [...prev, option.id]);
+          setCurrentStep(2);
         }
-      ];
-    } else if (selectedMainSentiment?.name.includes('Triste')) {
-      console.log('Retornando etapas para Triste/Melancólico');
-      return [
-        ...baseSteps,
-        {
-          id: 'movie-preference',
-          text: 'Entendo. Nesses momentos, você geralmente prefere um filme que...',
-          options: [
-            {
-              id: '1',
-              text: 'Me permita sentir essas emoções (uma catarse)?',
-              description: 'Um filme que te permita viver e processar suas emoções'
-            },
-            {
-              id: '2',
-              text: 'Me ofereça um escape leve e divertido?',
-              description: 'Algo que te distraia e traga leveza'
-            },
-            {
-              id: '3',
-              text: 'Me traga conforto e um senso de segurança?',
-              description: 'Histórias reconfortantes e acolhedoras'
-            },
-            {
-              id: '4',
-              text: 'Me faça refletir sobre a vida e talvez encontrar algum significado?',
-              description: 'Filmes que te façam pensar e encontrar insights'
-            }
-          ]
-        },
-        {
-          id: 'movie-style',
-          text: 'Que tal...',
-          options: [
-            {
-              id: '1',
-              text: 'Um drama profundo e tocante?',
-              description: 'Histórias que mexem com as emoções'
-            },
-            {
-              id: '2',
-              text: 'Um romance melancólico e contemplativo?',
-              description: 'Histórias de amor com profundidade emocional'
-            },
-            {
-              id: '3',
-              text: 'Uma história de superação em meio à adversidade?',
-              description: 'Jornadas inspiradoras de superação'
-            }
-          ]
-        }
-      ];
-    }
-
-    console.log('Retornando etapas base');
-    return baseSteps;
-  };
-
-  const getNextStepOptions = (currentStep: number, selectedOption: any) => {
-    if (selectedMainSentiment?.name === 'Feliz / Alegre') {
-      if (currentStep === 1) {
-        if (selectedOption.text.includes('gargalhadas')) {
-          return {
-            id: 'comedy-style',
-            text: 'Que tal...',
-            options: [
-              {
-                id: '1',
-                text: 'Escancarado e físico (pastelão, situações absurdas)?',
-                description: 'Comédias com situações hilárias'
-              },
-              {
-                id: '2',
-                text: 'Inteligente e com diálogos afiados?',
-                description: 'Comédias com humor refinado'
-              },
-              {
-                id: '3',
-                text: 'Satírico e que faz pensar enquanto diverte?',
-                description: 'Comédias com crítica social'
-              },
-              {
-                id: '4',
-                text: 'Comédia romântica leve e divertida?',
-                description: 'Histórias de amor com muito humor'
-              }
-            ]
-          };
-        } else if (selectedOption.text.includes('empolgado')) {
-          return {
-            id: 'energetic-style',
-            text: 'Que tal...',
-            options: [
-              {
-                id: '1',
-                text: 'Uma aventura emocionante com muita ação?',
-                description: 'Filmes cheios de adrenalina'
-              },
-              {
-                id: '2',
-                text: 'Um filme de esportes com uma história de superação e vitória?',
-                description: 'Histórias inspiradoras de esporte'
-              },
-              {
-                id: '3',
-                text: 'Uma comédia musical vibrante e contagiante?',
-                description: 'Filmes com música e dança'
-              },
-              {
-                id: '4',
-                text: 'Um filme de fantasia com um ritmo acelerado e mundos fantásticos?',
-                description: 'Aventuras em mundos mágicos'
-              }
-            ]
-          };
-        }
-      }
-    }
-    return null;
-  };
-
-  const mockMovies: Record<string, Movie[]> = {
-    'comedy-romantic': [
-      {
-        id: '1',
-        title: 'Todos Menos Você',
-        year: 2023,
-        director: 'Will Gluck',
-        description: 'Uma comédia romântica sobre dois ex-namorados que fingem estar juntos em um casamento.',
-        genres: ['Comédia', 'Romance'],
-        streamingPlatforms: ['Netflix']
-      },
-      {
-        id: '2',
-        title: 'Uma Ideia de Você',
-        year: 2024,
-        director: 'Jennifer Westfeldt',
-        description: 'Uma mãe solteira se envolve com um cantor famoso em uma história de amor inesperada.',
-        genres: ['Comédia', 'Romance'],
-        streamingPlatforms: ['Amazon Prime']
-      },
-      {
-        id: '3',
-        title: 'De Repente 30',
-        year: 2004,
-        director: 'Gary Winick',
-        description: 'Uma adolescente de 13 anos acorda no corpo de uma mulher de 30 anos e precisa lidar com sua vida adulta.',
-        genres: ['Comédia', 'Romance', 'Fantasia'],
-        streamingPlatforms: ['Netflix', 'HBO Max']
-      }
-    ],
-    'drama-superation': [
-      {
-        id: '1',
-        title: 'À Procura da Felicidade',
-        year: 2006,
-        director: 'Gabriele Muccino',
-        description: 'Um pai desempregado luta para criar seu filho enquanto enfrenta inúmeros desafios na busca por uma vida melhor.',
-        genres: ['Drama', 'Biografia'],
-        streamingPlatforms: ['Netflix', 'Amazon Prime']
-      },
-      {
-        id: '2',
-        title: 'Um Sonho Possível',
-        year: 2009,
-        director: 'John Lee Hancock',
-        description: 'Baseado na história real de Michael Oher, um jovem sem-teto que encontra uma nova família e a chance de se tornar um jogador de futebol americano.',
-        genres: ['Drama', 'Esporte'],
-        streamingPlatforms: ['Disney+', 'HBO Max']
-      },
-      {
-        id: '3',
-        title: 'As Vantagens de Ser Invisível',
-        year: 2012,
-        director: 'Stephen Chbosky',
-        description: 'A história de Charlie, um adolescente introspectivo que lida com traumas do passado enquanto tenta encontrar seu lugar no mundo.',
-        genres: ['Drama', 'Romance'],
-        streamingPlatforms: ['Netflix', 'Amazon Prime']
-      }
-    ]
-  };
-
-  const handleOptionSelect = (option: Question['options'][0]) => {
-    console.log('Opção selecionada:', option);
-    console.log('Etapa atual:', currentStep);
-    console.log('Sentimento principal selecionado:', selectedMainSentiment);
-
-    if (currentStep === 0) {
-      // Primeira etapa: selecionou um sentimento principal
-      const selectedSentiment = mainSentiments.find(s => s.id.toString() === option.id);
-      console.log('Sentimento encontrado:', selectedSentiment);
-      
-      if (selectedSentiment) {
-        setSelectedMainSentiment(selectedSentiment);
       }
     } else {
-      setSelectedOptions(prev => ({
-        ...prev,
-        [currentStep]: option
-      }));
+      // Passos subsequentes da jornada
+      const currentJourneyStep = selectedEmotionalState?.journeySteps.find(
+        step => step.id.toString() === steps[currentStep].id
+      );
+      
+      if (currentJourneyStep) {
+        const selectedOption = currentJourneyStep.options.find(
+          opt => opt.id.toString() === option.id
+        );
 
-      if (currentStep < steps.length - 1) {
-        // Avança para a próxima etapa
-        setCurrentStep(prev => prev + 1);
-      } else {
-        // Última etapa: mostra os resultados
-        console.log('Mostrando resultados para:', selectedMainSentiment?.name);
-        
-        if (selectedMainSentiment?.name.includes('Feliz')) {
-          setSuggestedMovies(mockMovies['comedy-romantic']);
-        } else if (selectedMainSentiment?.name.includes('Triste')) {
-          setSuggestedMovies(mockMovies['drama-superation']);
+        if (selectedOption?.isEndState) {
+          // Se chegamos a um estado final, buscar sugestões de filmes
+          try {
+            const suggestions = await getMovieSuggestionsByEmotionalState(
+              selectedEmotionalState!.id,
+              [...currentPath, option.id]
+            );
+            // Converter MovieSuggestion[] para Movie[]
+            const movies = suggestions.map(suggestion => suggestion.movie);
+            setSuggestedMovies(movies);
+            setShowResults(true);
+          } catch (error) {
+            console.error('Erro ao buscar sugestões de filmes:', error);
+          }
+        } else if (selectedOption?.nextStepId) {
+          // Se há próximo passo, carregá-lo
+          const nextStep = selectedEmotionalState!.journeySteps.find(
+            step => step.id === selectedOption.nextStepId
+          );
+          
+          if (nextStep) {
+            setSteps(prevSteps => [
+              ...prevSteps,
+              {
+                id: nextStep.id.toString(),
+                text: nextStep.question,
+                options: nextStep.options.map(opt => ({
+                  id: opt.id.toString(),
+                  text: opt.text,
+                  description: opt.isEndState ? 'Leva a sugestões de filmes' : undefined,
+                  isEndState: opt.isEndState
+                }))
+              }
+            ]);
+            setCurrentPath(prev => [...prev, option.id]);
+            setCurrentStep(prev => prev + 1);
+          }
         }
-        setShowResults(true);
       }
     }
   };

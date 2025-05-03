@@ -38,11 +38,14 @@ export interface JourneyOption {
   isEndState: boolean;
   createdAt: string;
   updatedAt: string;
+  movieSuggestions?: MovieSuggestion[];
 }
 
 export interface JourneyStep {
   id: number;
   emotionalStateId: number;
+  order: number;
+  stepId: string;
   question: string;
   options: JourneyOption[];
   createdAt: string;
@@ -52,7 +55,7 @@ export interface JourneyStep {
 export interface EmotionalState {
   id: number;
   name: string;
-  description: string;
+  description: string | null;
   mainSentimentId: number;
   mainSentiment: MainSentiment;
   journeySteps: JourneyStep[];
@@ -99,10 +102,15 @@ export interface Movie {
 }
 
 export interface MovieSuggestion {
-  id: string;
+  id: number;
   movieId: string;
-  emotionalStateId: string;
+  emotionalStateId: number;
+  journeyOptionId: number;
   reason: string;
+  relevance: number;
+  createdAt: string;
+  updatedAt: string;
+  movie: Movie;
 }
 
 export interface MovieSentiment {
@@ -114,55 +122,51 @@ export interface MovieSentiment {
 
 // Funções para manipulação de filmes
 export const getMovies = async (): Promise<Movie[]> => {
-  const response = await fetch('/api/movies');
-  if (!response.ok) {
-    throw new Error('Erro ao carregar filmes');
+  try {
+    const response = await api.get<Movie[]>('/movies');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao carregar filmes:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export const getMovie = async (id: string): Promise<Movie> => {
-  const response = await fetch(`/api/movies/${id}`);
-  if (!response.ok) {
-    throw new Error('Erro ao carregar filme');
+  try {
+    const response = await api.get<Movie>(`/movies/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao carregar filme:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export const createMovie = async (movie: Movie): Promise<Movie> => {
-  const response = await fetch('/api/movies', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(movie),
-  });
-  if (!response.ok) {
-    throw new Error('Erro ao criar filme');
+  try {
+    const response = await api.post<Movie>('/movies', movie);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao criar filme:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export const updateMovie = async (id: string, movie: Movie): Promise<Movie> => {
-  const response = await fetch(`/api/movies/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(movie),
-  });
-  if (!response.ok) {
-    throw new Error('Erro ao atualizar filme');
+  try {
+    const response = await api.put<Movie>(`/movies/${id}`, movie);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao atualizar filme:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export const deleteMovie = async (id: string): Promise<void> => {
-  const response = await fetch(`/api/movies/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) {
-    throw new Error('Erro ao deletar filme');
+  try {
+    await api.delete(`/movies/${id}`);
+  } catch (error) {
+    console.error('Erro ao deletar filme:', error);
+    throw error;
   }
 };
 
@@ -242,11 +246,13 @@ export const deleteEmotionalState = async (id: number): Promise<void> => {
 
 // Funções para manipulação de sugestões de filmes
 export const getMovieSuggestions = async (): Promise<MovieSuggestion[]> => {
-  const response = await fetch('/api/movie-suggestions');
-  if (!response.ok) {
-    throw new Error('Erro ao carregar sugestões de filmes');
+  try {
+    const response = await api.get<MovieSuggestion[]>('/movie-suggestions');
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao carregar sugestões de filmes:', error);
+    throw error;
   }
-  return response.json();
 };
 
 export const getMovieSuggestion = async (id: string): Promise<MovieSuggestion> => {
@@ -396,4 +402,4 @@ export const deleteMainSentiment = async (id: number): Promise<void> => {
   }
 };
 
-export default api; 
+export { api }; 

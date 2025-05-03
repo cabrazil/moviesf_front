@@ -139,4 +139,4 @@ MainSentiment: "Alegria"
    - Defina a relevância baseada no contexto
    - Forneça uma razão clara para a sugestão
 
-Isso ajuda a manter uma estrutura organizada e coerente para a jornada do usuário. 
+Isso ajuda a manter uma estrutura organizada e coerente para a jornada dos usuários. 
