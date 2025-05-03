@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   };
 
   const handleStart = () => {
-    navigate('/journey');
+    navigate('/intro');
   };
 
   return (

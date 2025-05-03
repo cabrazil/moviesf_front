@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from './theme';
 import Home from './pages/Home';
+import JourneyIntro from './components/JourneyIntro';
 import MovieJourney from './components/MovieJourney';
 import MovieList from './pages/admin/MovieList';
 import MainSentimentList from './pages/admin/MainSentimentList';
@@ -15,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/intro" element={<JourneyIntro />} />
           <Route path="/journey" element={<MovieJourney />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="movies" element={<MovieList />} />

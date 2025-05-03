@@ -1,38 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Grid, Paper, Container } from '@mui/material';
-import { MainSentiment, JourneyFlow, JourneyStepFlow, JourneyOptionFlow, MovieSuggestionFlow, Movie, getMainSentiments, getJourneyFlow } from '../services/api';
+import { MainSentiment, JourneyFlow, JourneyStepFlow, JourneyOptionFlow, MovieSuggestionFlow, Movie, getJourneyFlow } from '../services/api';
 
 const MovieJourney: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mainSentiments, setMainSentiments] = useState<MainSentiment[]>([]);
   const [selectedMainSentiment, setSelectedMainSentiment] = useState<MainSentiment | null>(null);
   const [journeyFlow, setJourneyFlow] = useState<JourneyFlow | null>(null);
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [movieSuggestions, setMovieSuggestions] = useState<MovieSuggestionFlow[]>([]);
 
   useEffect(() => {
-    const loadMainSentiments = async () => {
-      try {
-        const data = await getMainSentiments();
-        setMainSentiments(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Erro ao carregar sentimentos:', error);
-        setError('Erro ao carregar os sentimentos. Por favor, tente novamente mais tarde.');
-        setLoading(false);
-      }
-    };
-
-    loadMainSentiments();
-  }, []);
-
-  useEffect(() => {
     if (location.state?.selectedSentiment) {
       handleMainSentimentSelect(location.state.selectedSentiment);
+    } else {
+      navigate('/');
     }
   }, [location.state]);
 
@@ -42,8 +27,10 @@ const MovieJourney: React.FC = () => {
       const flow = await getJourneyFlow(mainSentiment.id);
       setSelectedMainSentiment(mainSentiment);
       setJourneyFlow(flow);
-      const step2A = flow.steps.find((step) => step.stepId === '2A');
-      setCurrentStep(step2A || null);
+      
+      // Encontrar o primeiro step do fluxo
+      const firstStep = flow.steps.find(step => step.order === 1);
+      setCurrentStep(firstStep || null);
       setLoading(false);
     } catch (error) {
       console.error('Erro ao carregar fluxo:', error);
@@ -53,16 +40,23 @@ const MovieJourney: React.FC = () => {
   };
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
-    if (!journeyFlow || !currentStep || typeof currentStep.order !== 'number') return;
+    if (!journeyFlow || !currentStep) return;
 
-    // Buscar o próximo step pelo order sequencial
+    if (option.isEndState && option.movieSuggestions) {
+      setMovieSuggestions(option.movieSuggestions);
+      return;
+    }
+
+    // Buscar o próximo step pelo nextStepId
     const nextStep = journeyFlow.steps.find(
-      (step: JourneyStepFlow) => typeof step.order === 'number' && step.order === currentStep.order + 1
+      (step: JourneyStepFlow) => step.stepId === option.nextStepId
     );
+
     if (nextStep) {
       setCurrentStep(nextStep);
-    } else if (option.movieSuggestions) {
-      setMovieSuggestions(option.movieSuggestions);
+    } else {
+      console.error('Próximo step não encontrado:', option.nextStepId);
+      setError('Erro ao avançar no fluxo. Por favor, tente novamente mais tarde.');
     }
   };
 
@@ -98,46 +92,6 @@ const MovieJourney: React.FC = () => {
           </button>
         </div>
       </div>
-    );
-  }
-
-  if (!selectedMainSentiment) {
-    return (
-      <Container maxWidth="md">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minHeight: '80vh',
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="h4" gutterBottom>
-            Como você está se sentindo principalmente neste momento?
-          </Typography>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            {mainSentiments.map((sentiment) => (
-              <Grid item xs={12} sm={6} key={sentiment.id}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    cursor: 'pointer',
-                    '&:hover': { bgcolor: 'action.hover' }
-                  }}
-                  onClick={() => handleMainSentimentSelect(sentiment)}
-                >
-                  <Typography variant="h6">{sentiment.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {sentiment.description}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
-      </Container>
     );
   }
 
@@ -234,52 +188,7 @@ const MovieJourney: React.FC = () => {
     );
   }
 
-  return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '80vh',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          {currentStep?.question}
-        </Typography>
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          {currentStep?.options.map((option) => (
-            <Grid item xs={12} sm={6} key={option.id}>
-              <Paper
-                sx={{
-                  p: 2,
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: 'action.hover' }
-                }}
-                onClick={() => handleOptionSelect(option)}
-              >
-                <Typography variant="h6">{option.text}</Typography>
-                {option.description && (
-                  <Typography variant="body2" color="text.secondary">
-                    {option.description}
-                  </Typography>
-                )}
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-        <Button
-          variant="contained"
-          onClick={handleRestart}
-          sx={{ mt: 4 }}
-        >
-          Voltar ao Início
-        </Button>
-      </Box>
-    </Container>
-  );
+  return null;
 };
 
 export default MovieJourney; 
