@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { Movie } from '../types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
 });
 
 export interface MainSentiment {
@@ -39,18 +40,6 @@ export interface MovieSuggestionFlow {
   reason: string;
 }
 
-export interface Movie {
-  id: number;
-  title: string;
-  description: string;
-  year?: number;
-  director?: string;
-  genres?: string[];
-  streamingPlatforms?: string[];
-  thumbnail?: string;
-  original_title?: string;
-}
-
 export const getMainSentiments = async (): Promise<MainSentiment[]> => {
   try {
     const response = await api.get('/main-sentiments');
@@ -72,23 +61,13 @@ export const getJourneyFlow = async (mainSentimentId: number): Promise<JourneyFl
 };
 
 export const getMovies = async (): Promise<Movie[]> => {
-  try {
-    const response = await api.get<Movie[]>('/movies');
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao carregar filmes:', error);
-    throw error;
-  }
+  const response = await api.get('/movies');
+  return response.data;
 };
 
 export const getMovie = async (id: string): Promise<Movie> => {
-  try {
-    const response = await api.get<Movie>(`/movies/${id}`);
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao carregar filme:', error);
-    throw error;
-  }
+  const response = await api.get(`/movies/${id}`);
+  return response.data;
 };
 
 export const createMovie = async (movie: Movie): Promise<Movie> => {
@@ -101,23 +80,13 @@ export const createMovie = async (movie: Movie): Promise<Movie> => {
   }
 };
 
-export const updateMovie = async (id: string, movie: Movie): Promise<Movie> => {
-  try {
-    const response = await api.put<Movie>(`/movies/${id}`, movie);
-    return response.data;
-  } catch (error) {
-    console.error('Erro ao atualizar filme:', error);
-    throw error;
-  }
+export const updateMovie = async (id: string, movie: Partial<Movie>): Promise<Movie> => {
+  const response = await api.put(`/movies/${id}`, movie);
+  return response.data;
 };
 
 export const deleteMovie = async (id: string): Promise<void> => {
-  try {
-    await api.delete(`/movies/${id}`);
-  } catch (error) {
-    console.error('Erro ao deletar filme:', error);
-    throw error;
-  }
+  await api.delete(`/movies/${id}`);
 };
 
 export default api; 

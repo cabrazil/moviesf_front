@@ -11,6 +11,25 @@ export interface EmotionalOption {
   isEndState: boolean;
 }
 
+export interface MovieSentiment {
+  mainSentimentId: number;
+  subSentimentId: number;
+}
+
+export interface MovieSuggestion {
+  movie: Movie;
+  reason: string;
+  relevance: number;
+  emotionalStateId: number;
+  journeyOptionId: number;
+}
+
+export interface MovieSuggestionFlow {
+  journeyOptionFlowId: number;
+  reason: string;
+  relevance: number;
+}
+
 export interface Movie {
   id: string;
   title: string;
@@ -18,10 +37,9 @@ export interface Movie {
   year: number;
   director: string;
   genres: string[];
-}
-
-export interface MovieSuggestion {
-  movie: Movie;
-  reason: string;
-  relevance: number;
+  thumbnail?: string;
+  streamingPlatforms: string[];
+  movieSentiments?: MovieSentiment[];
+  movieSuggestions?: MovieSuggestion[];
+  movieSuggestionFlows?: MovieSuggestionFlow[];
 } 
