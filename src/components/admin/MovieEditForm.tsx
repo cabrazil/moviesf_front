@@ -25,12 +25,12 @@ const MovieEditForm: React.FC<MovieEditFormProps> = ({ movie, onSave, onCancel }
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [mainSentimentsRes, emotionalStatesRes] = await Promise.all([
-          api.get('/main-sentiments'),
-          api.get('/emotions/states')
+        const [mainSentimentsRes, journeyOptionsRes] = await Promise.all([
+          api.get('/admin/sentiments'),
+          api.get('/admin/journey-options')
         ]);
         setMainSentiments(mainSentimentsRes.data);
-        setEmotionalStates(emotionalStatesRes.data);
+        setJourneyOptionFlows(journeyOptionsRes.data);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         message.error('Erro ao carregar dados necessários');
@@ -313,7 +313,10 @@ const MovieEditForm: React.FC<MovieEditFormProps> = ({ movie, onSave, onCancel }
                       <Select
                         placeholder="Fluxo de Opção"
                         style={{ width: 200 }}
-                        options={journeyOptionFlows.map(f => ({ label: f.text, value: f.id }))}
+                        options={journeyOptionFlows.map(f => ({ 
+                          label: `${f.id} - ${f.text}`, 
+                          value: f.id 
+                        }))}
                       />
                     </Form.Item>
                     <Form.Item
