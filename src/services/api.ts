@@ -9,6 +9,7 @@ export interface MainSentiment {
   id: number;
   name: string;
   description: string;
+  journeyFlow?: JourneyFlow;
 }
 
 export interface JourneyFlow {

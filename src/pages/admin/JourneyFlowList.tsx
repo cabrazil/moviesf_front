@@ -11,14 +11,17 @@ import {
   Paper,
   IconButton,
 } from '@mui/material';
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Edit as EditIcon, Delete as DeleteIcon, Visibility as VisibilityIcon } from '@mui/icons-material';
 import { getMainSentiments } from '../../services/api';
-import { MainSentiment, JourneyFlow } from '../../types/journey';
+import { MainSentiment } from '../../services/api';
+import { Link as RouterLink } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const JourneyFlowList: React.FC = () => {
   const [mainSentiments, setMainSentiments] = useState<MainSentiment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadMainSentiments();
@@ -28,7 +31,7 @@ const JourneyFlowList: React.FC = () => {
     try {
       setLoading(true);
       const data = await getMainSentiments();
-      setMainSentiments(data.filter(sentiment => sentiment.journeyFlow));
+      setMainSentiments(data);
       setError(null);
     } catch (err) {
       setError('Erro ao carregar fluxos de jornada');
@@ -64,10 +67,19 @@ const JourneyFlowList: React.FC = () => {
           <TableBody>
             {mainSentiments.map((sentiment) => (
               <TableRow key={sentiment.id}>
-                <TableCell>{sentiment.journeyFlow?.id}</TableCell>
+                <TableCell>{sentiment.id}</TableCell>
                 <TableCell>{sentiment.name}</TableCell>
-                <TableCell>{sentiment.journeyFlow?.steps.length || 0}</TableCell>
+                <TableCell>{sentiment.journeyFlow?.steps?.length || 0}</TableCell>
                 <TableCell>
+                  <IconButton
+                    component={RouterLink}
+                    to="/admin/journey-option-flows"
+                    color="primary"
+                    size="small"
+                    onClick={() => navigate('/admin/journey-option-flows')}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
                   <IconButton color="primary" size="small">
                     <EditIcon />
                   </IconButton>

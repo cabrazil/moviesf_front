@@ -8,6 +8,7 @@ import MovieSuggestionsPage from './components/MovieSuggestionsPage';
 import MovieListPage from './pages/admin/MovieList';
 import MainSentimentList from './pages/admin/MainSentimentList';
 import JourneyFlowList from './pages/admin/JourneyFlowList';
+import JourneyOptionFlowDetails from './pages/admin/JourneyOptionFlowDetails';
 import AdminLayout from './components/AdminLayout';
 
 function App() {
@@ -24,6 +25,8 @@ function App() {
             <Route path="movies" element={<MovieListPage />} />
             <Route path="main-sentiments" element={<MainSentimentList />} />
             <Route path="journey-flows" element={<JourneyFlowList />} />
+            <Route path="journey-option-flows" element={<JourneyOptionFlowDetails />} />
+            <Route path="journey-option-flows/:id" element={<JourneyOptionFlowDetails />} />
           </Route>
         </Routes>
       </Router>
