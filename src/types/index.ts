@@ -33,6 +33,7 @@ export interface MovieSuggestionFlow {
 export interface Movie {
   id: string;
   title: string;
+  original_title?: string;
   description: string;
   year: number;
   director: string;

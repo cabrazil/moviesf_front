@@ -99,7 +99,7 @@ const MovieEditForm: React.FC<MovieEditFormProps> = ({ movie, onSave, onCancel }
     { label: 'Suspense', value: 'Suspense' },
     { label: 'Terror', value: 'Terror' },
     { label: 'Thriller', value: 'Thriller' },
-    { label: 'Western', value: 'Western' }
+    { label: 'Faroeste', value: 'Faroeste' }
   ];
 
   const streamingPlatformOptions = [
