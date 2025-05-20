@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import JourneyIntro from './components/JourneyIntro';
 import MovieJourney from './components/MovieJourney';
 import MovieSuggestionsPage from './components/MovieSuggestionsPage';
+import MovieSuggestionsPageMinimal from './components/MovieSuggestionsPageMinimal';
 import MovieListPage from './pages/admin/MovieList';
 import MainSentimentList from './pages/admin/MainSentimentList';
 import JourneyFlowList from './pages/admin/JourneyFlowList';
@@ -21,6 +22,7 @@ function App() {
           <Route path="/intro" element={<JourneyIntro />} />
           <Route path="/journey" element={<MovieJourney />} />
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
+          <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="movies" element={<MovieListPage />} />
             <Route path="main-sentiments" element={<MainSentimentList />} />

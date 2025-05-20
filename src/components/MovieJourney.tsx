@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Grid, Paper, Container } from '@mui/material';
-import { MainSentiment, JourneyFlow, JourneyStepFlow, JourneyOptionFlow, MovieSuggestionFlow, Movie, getJourneyFlow } from '../services/api';
+import { Box, Typography, Button, Grid, Paper, Container, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { MainSentiment, JourneyFlow, JourneyStepFlow, JourneyOptionFlow, MovieSuggestionFlow, getJourneyFlow } from '../services/api';
 
 const MovieJourney: React.FC = () => {
   const location = useLocation();
@@ -12,6 +12,7 @@ const MovieJourney: React.FC = () => {
   const [journeyFlow, setJourneyFlow] = useState<JourneyFlow | null>(null);
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [movieSuggestions, setMovieSuggestions] = useState<MovieSuggestionFlow[]>([]);
+  const [selectedOption, setSelectedOption] = useState<string>('');
 
   useEffect(() => {
     if (location.state?.selectedSentiment) {
@@ -48,7 +49,7 @@ const MovieJourney: React.FC = () => {
 
     if (option.isEndState && option.movieSuggestions) {
       console.log('Navegando para sugestões com:', option.movieSuggestions);
-      navigate('/sugestoes', { state: { movieSuggestions: option.movieSuggestions } });
+      navigate('/sugestoes/minimal', { state: { movieSuggestions: option.movieSuggestions } });
       return;
     }
 
@@ -59,9 +60,19 @@ const MovieJourney: React.FC = () => {
 
     if (nextStep) {
       setCurrentStep(nextStep);
+      setSelectedOption(''); // Reset selected option for next step
     } else {
       console.error('Próximo step não encontrado:', option.nextStepId);
       setError('Erro ao avançar no fluxo. Por favor, tente novamente mais tarde.');
+    }
+  };
+
+  const handleDropdownChange = (event: any) => {
+    const optionId = event.target.value;
+    setSelectedOption(optionId);
+    const option = currentStep?.options.find(opt => opt.id === optionId);
+    if (option) {
+      handleOptionSelect(option);
     }
   };
 
@@ -102,6 +113,8 @@ const MovieJourney: React.FC = () => {
 
   if (currentStep && (currentStep as JourneyStepFlow).question && (currentStep as JourneyStepFlow).options) {
     const step = currentStep as JourneyStepFlow;
+    const hasManyOptions = step.options.length > 6;
+
     return (
       <Container maxWidth="md">
         <Box
@@ -117,27 +130,53 @@ const MovieJourney: React.FC = () => {
           <Typography variant="h4" gutterBottom>
             {step.question}
           </Typography>
-          <Grid container spacing={2} sx={{ mt: 2 }}>
-            {step.options.map((option: JourneyOptionFlow) => (
-              <Grid item xs={12} sm={6} key={option.id}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    cursor: 'pointer',
-                    '&:hover': { bgcolor: 'action.hover' }
-                  }}
-                  onClick={() => handleOptionSelect(option)}
-                >
-                  <Typography variant="h6">{option.text}</Typography>
-                  {option.description && (
-                    <Typography variant="body2" color="text.secondary">
-                      {option.description}
-                    </Typography>
-                  )}
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+          
+          {hasManyOptions ? (
+            <FormControl fullWidth sx={{ mt: 2, maxWidth: 400 }}>
+              <InputLabel id="option-select-label">Selecione uma opção</InputLabel>
+              <Select
+                labelId="option-select-label"
+                value={selectedOption}
+                label="Selecione uma opção"
+                onChange={handleDropdownChange}
+                sx={{ 
+                  bgcolor: 'background.paper',
+                  '& .MuiSelect-select': {
+                    py: 2
+                  }
+                }}
+              >
+                {step.options.map((option: JourneyOptionFlow) => (
+                  <MenuItem key={option.id} value={option.id}>
+                    {option.text}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ) : (
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              {step.options.map((option: JourneyOptionFlow) => (
+                <Grid item xs={12} sm={6} key={option.id}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      cursor: 'pointer',
+                      '&:hover': { bgcolor: 'action.hover' }
+                    }}
+                    onClick={() => handleOptionSelect(option)}
+                  >
+                    <Typography variant="h6">{option.text}</Typography>
+                    {option.description && (
+                      <Typography variant="body2" color="text.secondary">
+                        {option.description}
+                      </Typography>
+                    )}
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          )}
+
           <Button
             variant="contained"
             onClick={handleRestart}
