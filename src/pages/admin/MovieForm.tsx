@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AdminForm from '../../components/admin/AdminForm';
-import { Movie, getMovie, createMovie, updateMovie } from '../../services/api';
+import { getMovie, createMovie, updateMovie } from '../../services/api';
+import { Movie } from '../../types';
 
 const MovieForm = () => {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ const MovieForm = () => {
     director: '',
     description: '',
     genres: [],
-    streamingPlatforms: []
+    streamingPlatforms: [],
+    runtime: undefined
   });
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);

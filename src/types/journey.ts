@@ -50,4 +50,5 @@ export interface Movie {
   streamingPlatforms: string[];
   thumbnail?: string;
   original_title?: string;
+  runtime?: number;
 } 

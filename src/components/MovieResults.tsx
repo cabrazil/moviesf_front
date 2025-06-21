@@ -8,6 +8,7 @@ type Movie = {
   description?: string;
   genres: string[];
   streamingPlatforms: string[];
+  runtime?: number;
 };
 
 type MovieResultsProps = {

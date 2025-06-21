@@ -154,27 +154,27 @@ const MovieJourney: React.FC = () => {
               </Select>
             </FormControl>
           ) : (
-            <Grid container spacing={2} sx={{ mt: 2 }}>
-              {step.options.map((option: JourneyOptionFlow) => (
-                <Grid item xs={12} sm={6} key={option.id}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      cursor: 'pointer',
-                      '&:hover': { bgcolor: 'action.hover' }
-                    }}
-                    onClick={() => handleOptionSelect(option)}
-                  >
-                    <Typography variant="h6">{option.text}</Typography>
-                    {option.description && (
-                      <Typography variant="body2" color="text.secondary">
-                        {option.description}
-                      </Typography>
-                    )}
-                  </Paper>
-                </Grid>
-              ))}
-            </Grid>
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            {step.options.map((option: JourneyOptionFlow) => (
+              <Grid item xs={12} sm={6} key={option.id}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: 'action.hover' }
+                  }}
+                  onClick={() => handleOptionSelect(option)}
+                >
+                  <Typography variant="h6">{option.text}</Typography>
+                  {option.description && (
+                    <Typography variant="body2" color="text.secondary">
+                      {option.description}
+                    </Typography>
+                  )}
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
           )}
 
           <Button

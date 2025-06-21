@@ -40,6 +40,7 @@ export interface Movie {
   genres: string[];
   thumbnail?: string;
   streamingPlatforms: string[];
+  runtime?: number;
   movieSentiments?: MovieSentiment[];
   movieSuggestions?: MovieSuggestion[];
   movieSuggestionFlows?: MovieSuggestionFlow[];

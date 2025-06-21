@@ -94,7 +94,7 @@ const MovieEditForm: React.FC<MovieEditFormProps> = ({ movie, onSave, onCancel }
     { label: 'Guerra', value: 'Guerra' },
     { label: 'História', value: 'História' },
     { label: 'Mistério', value: 'Mistério' },
-    { label: 'Musical', value: 'Musical' },
+    { label: 'Música', value: 'Música' },
     { label: 'Romance', value: 'Romance' },
     { label: 'Suspense', value: 'Suspense' },
     { label: 'Terror', value: 'Terror' },
@@ -150,13 +150,20 @@ const MovieEditForm: React.FC<MovieEditFormProps> = ({ movie, onSave, onCancel }
         label="Ano"
         rules={[{ required: true, message: 'Por favor, insira o ano do filme' }]}
       >
-        <InputNumber min={1900} max={new Date().getFullYear()} style={{ width: '100%' }} />
+        <InputNumber min={1900} max={new Date().getFullYear()} />
+      </Form.Item>
+
+      <Form.Item
+        label="Duração (minutos)"
+        name="runtime"
+      >
+        <InputNumber min={1} />
       </Form.Item>
 
       <Form.Item
         name="director"
         label="Diretor"
-        rules={[{ required: true, message: 'Por favor, insira o nome do diretor' }]}
+        rules={[{ required: true, message: 'Por favor, insira o diretor do filme' }]}
       >
         <Input />
       </Form.Item>

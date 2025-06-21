@@ -94,70 +94,70 @@ const MovieSuggestionsPage: React.FC = () => {
             const displayDescription = isExpanded ? description : truncateDescription(description);
 
             return (
-              <Paper 
-                key={suggestion.movie.id}
-                elevation={3}
-                sx={{ 
-                  p: 3,
-                  transition: 'transform 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                  }
-                }}
-              >
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  {suggestion.movie.thumbnail && (
-                    <Box sx={{ flexShrink: 0 }}>
-                      <img 
-                        src={suggestion.movie.thumbnail} 
-                        alt={suggestion.movie.title}
-                        style={{
-                          width: '150px',
-                          height: 'auto',
-                          borderRadius: '8px',
-                          objectFit: 'cover'
-                        }}
+            <Paper 
+              key={suggestion.movie.id}
+              elevation={3}
+              sx={{ 
+                p: 3,
+                transition: 'transform 0.2s',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                }
+              }}
+            >
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                {suggestion.movie.thumbnail && (
+                  <Box sx={{ flexShrink: 0 }}>
+                    <img 
+                      src={suggestion.movie.thumbnail} 
+                      alt={suggestion.movie.title}
+                      style={{
+                        width: '150px',
+                        height: 'auto',
+                        borderRadius: '8px',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </Box>
+                )}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="h5">
+                      {suggestion.movie.title}
+                    </Typography>
+                    {suggestion.movie.year && (
+                      <Chip 
+                        icon={<CalendarMonth />} 
+                        label={suggestion.movie.year} 
+                        size="small"
+                        color="primary"
+                        variant="outlined"
                       />
-                    </Box>
-                  )}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, flex: 1 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="h5">
-                        {suggestion.movie.title}
-                      </Typography>
-                      {suggestion.movie.year && (
-                        <Chip 
-                          icon={<CalendarMonth />} 
-                          label={suggestion.movie.year} 
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
-                      )}
-                    </Box>
-                    {suggestion.movie.original_title && (
-                      <Typography 
-                        variant="subtitle1" 
-                        color="text.secondary"
-                        sx={{ fontStyle: 'italic', mb: 0.5 }}
-                      >
-                        {suggestion.movie.original_title}
-                      </Typography>
                     )}
+                  </Box>
+                  {suggestion.movie.original_title && (
+                    <Typography 
+                      variant="subtitle1" 
+                      color="text.secondary"
+                      sx={{ fontStyle: 'italic', mb: 0.5 }}
+                    >
+                      {suggestion.movie.original_title}
+                    </Typography>
+                  )}
 
-                    <Stack direction="row" spacing={1}>
-                      {suggestion.movie.director && (
-                        <Chip 
-                          icon={<Person />} 
-                          label={suggestion.movie.director} 
-                          size="small"
-                          color="secondary"
-                          variant="outlined"
-                        />
-                      )}
-                    </Stack>
+                  <Stack direction="row" spacing={1}>
+                    {suggestion.movie.director && (
+                      <Chip 
+                        icon={<Person />} 
+                        label={suggestion.movie.director} 
+                        size="small"
+                        color="secondary"
+                        variant="outlined"
+                      />
+                    )}
+                  </Stack>
 
-                    <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
+                  <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5 }}>
                       {displayDescription}
                       {description.length > 150 && (
                         <Button
@@ -177,65 +177,65 @@ const MovieSuggestionsPage: React.FC = () => {
                           {isExpanded ? 'Mostrar menos' : 'Leia mais...'}
                         </Button>
                       )}
-                    </Typography>
+                  </Typography>
 
+                  <Box>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Gêneros:
+                    </Typography>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                      {suggestion.movie.genres?.map((genre) => (
+                        <Chip 
+                          key={genre} 
+                          label={genre} 
+                          size="small"
+                          color="default"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Stack>
+                  </Box>
+
+                  {suggestion.movie.streamingPlatforms && suggestion.movie.streamingPlatforms.length > 0 && (
                     <Box>
                       <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                        Gêneros:
+                        Disponível em:
                       </Typography>
                       <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                        {suggestion.movie.genres?.map((genre) => (
+                        {suggestion.movie.streamingPlatforms.map((platform) => (
                           <Chip 
-                            key={genre} 
-                            label={genre} 
+                            key={platform} 
+                            icon={<PlayCircle />}
+                            label={
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <span>{getPlatformIcon(platform)}</span>
+                                <span>{platform}</span>
+                              </Box>
+                            }
                             size="small"
-                            color="default"
+                            color="success"
                             variant="outlined"
+                            sx={{ 
+                              '& .MuiChip-label': { 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                gap: 0.5
+                              }
+                            }}
                           />
                         ))}
                       </Stack>
                     </Box>
+                  )}
 
-                    {suggestion.movie.streamingPlatforms && suggestion.movie.streamingPlatforms.length > 0 && (
-                      <Box>
-                        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                          Disponível em:
-                        </Typography>
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                          {suggestion.movie.streamingPlatforms.map((platform) => (
-                            <Chip 
-                              key={platform} 
-                              icon={<PlayCircle />}
-                              label={
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                  <span>{getPlatformIcon(platform)}</span>
-                                  <span>{platform}</span>
-                                </Box>
-                              }
-                              size="small"
-                              color="success"
-                              variant="outlined"
-                              sx={{ 
-                                '& .MuiChip-label': { 
-                                  display: 'flex', 
-                                  alignItems: 'center',
-                                  gap: 0.5
-                                }
-                              }}
-                            />
-                          ))}
-                        </Stack>
-                      </Box>
-                    )}
+                  <Divider sx={{ my: 1 }} />
 
-                    <Divider sx={{ my: 1 }} />
-
-                    <Typography variant="body2" color="primary">
-                      {suggestion.reason}
-                    </Typography>
-                  </Box>
+                  <Typography variant="body2" color="primary">
+                    {suggestion.reason}
+                  </Typography>
                 </Box>
-              </Paper>
+              </Box>
+            </Paper>
             );
           })}
         </Stack>
