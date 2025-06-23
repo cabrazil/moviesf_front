@@ -1,177 +1,108 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button, Grid, Paper, Container, Radio, RadioGroup, FormControlLabel, FormControl } from '@mui/material';
-
-export enum EmotionalIntention {
-  PROCESS = 'process',
-  TRANSFORM = 'transform', 
-  MAINTAIN = 'maintain',
-  EXPLORE = 'explore'
-}
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Grid, Paper, Container, Button, Chip } from '@mui/material';
+import { MainSentiment, EmotionalIntention, EmotionalIntentionsResponse, getEmotionalIntentions } from '../services/api';
 
 interface EmotionalIntentionStepProps {
-  sentimentName: string;
+  selectedSentiment: MainSentiment;
   onIntentionSelect: (intention: EmotionalIntention) => void;
+  onSkip: () => void;
   onBack: () => void;
 }
 
-interface IntentionOption {
-  value: EmotionalIntention;
-  title: string;
-  description: string;
-  icon: string;
-  examples: string[];
-}
-
 const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
-  sentimentName,
+  selectedSentiment,
   onIntentionSelect,
+  onSkip,
   onBack
 }) => {
-  const [selectedIntention, setSelectedIntention] = useState<EmotionalIntention | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [intentions, setIntentions] = useState<EmotionalIntention[]>([]);
 
-  // Configurações específicas para cada sentimento
-  const getIntentionOptions = (sentiment: string): IntentionOption[] => {
-    switch (sentiment) {
-      case 'Triste / Melancólico(a)':
-        return [
-          {
-            value: EmotionalIntention.PROCESS,
-            title: '🧘‍♀️ Processar e Elaborar',
-            description: 'Quero um filme que me ajude a processar e elaborar essa tristeza',
-            icon: '💭',
-            examples: ['Dramas profundos', 'Biografias tocantes', 'Romances dramáticos']
-          },
-          {
-            value: EmotionalIntention.TRANSFORM,
-            title: '🌈 Mudar de Estado',
-            description: 'Quero um filme que me ajude a sair dessa tristeza',
-            icon: '✨',
-            examples: ['Comédias reconfortantes', 'Animações inspiradoras', 'Musicais alegres']
-          },
-          {
-            value: EmotionalIntention.MAINTAIN,
-            title: '🎭 Ficar em Sintonia',
-            description: 'Estou bem com essa melancolia, quero algo que ressoe com ela',
-            icon: '🌙',
-            examples: ['Dramas indie', 'Filmes de arte', 'Documentários contemplativos']
-          },
-          {
-            value: EmotionalIntention.EXPLORE,
-            title: '🔍 Explorar Nuances',
-            description: 'Quero explorar diferentes aspectos da tristeza e melancolia',
-            icon: '🎨',
-            examples: ['Dramas complexos', 'Filmes de época', 'Narrativas profundas']
-          }
-        ];
+  useEffect(() => {
+    const loadIntentions = async () => {
+      try {
+        const data = await getEmotionalIntentions(selectedSentiment.id);
+        setIntentions(data.intentions);
+        setLoading(false);
+      } catch (error) {
+        console.error('Erro ao carregar intenções:', error);
+        setError('Erro ao carregar as intenções emocionais. Por favor, tente novamente mais tarde.');
+        setLoading(false);
+      }
+    };
 
-      case 'Ansioso(a) / Nervoso(a)':
-        return [
-          {
-            value: EmotionalIntention.PROCESS,
-            title: '🧘‍♀️ Entender a Ansiedade',
-            description: 'Quero entender e processar essa ansiedade',
-            icon: '🔍',
-            examples: ['Dramas psicológicos', 'Thrillers reflexivos']
-          },
-          {
-            value: EmotionalIntention.TRANSFORM,
-            title: '😌 Acalmar e Relaxar',
-            description: 'Quero algo que me acalme e relaxe',
-            icon: '🌊',
-            examples: ['Comédias leves', 'Romances suaves', 'Documentários de natureza']
-          },
-          {
-            value: EmotionalIntention.MAINTAIN,
-            title: '⚡ Canalizar a Energia',
-            description: 'Aceito essa energia ansiosa, quero algo que a canalize',
-            icon: '🎯',
-            examples: ['Suspenses leves', 'Mistérios', 'Aventuras']
-          },
-          {
-            value: EmotionalIntention.EXPLORE,
-            title: '🌱 Crescer com a Ansiedade',
-            description: 'Quero explorar essa ansiedade de forma construtiva',
-            icon: '📈',
-            examples: ['Dramas de superação', 'Biografias inspiradoras']
-          }
-        ];
+    loadIntentions();
+  }, [selectedSentiment.id]);
 
-      case 'Cansado(a) / Desmotivado(a)':
-        return [
-          {
-            value: EmotionalIntention.PROCESS,
-            title: '🤗 Aceitar o Cansaço',
-            description: 'Quero reconhecer e aceitar esse cansaço',
-            icon: '💤',
-            examples: ['Dramas suaves', 'Slice of life']
-          },
-          {
-            value: EmotionalIntention.TRANSFORM,
-            title: '🚀 Recarregar Energias',
-            description: 'Quero algo que me motive e recarregue minhas energias',
-            icon: '⚡',
-            examples: ['Comédias inspiradoras', 'Aventuras', 'Biografias motivacionais']
-          },
-          {
-            value: EmotionalIntention.MAINTAIN,
-            title: '🛋️ Algo Leve e Fácil',
-            description: 'Quero algo leve que não exija muito esforço mental',
-            icon: '☁️',
-            examples: ['Comédias leves', 'Romances suaves', 'Animações simples']
-          },
-          {
-            value: EmotionalIntention.EXPLORE,
-            title: '🗺️ Encontrar Caminhos',
-            description: 'Quero entender melhor esse estado e encontrar caminhos',
-            icon: '🧭',
-            examples: ['Dramas de autodescoberta', 'Documentários inspiradores']
-          }
-        ];
-
-      default:
-        return [
-          {
-            value: EmotionalIntention.PROCESS,
-            title: '🧘‍♀️ Processar',
-            description: 'Quero processar esse sentimento',
-            icon: '💭',
-            examples: ['Filmes reflexivos']
-          },
-          {
-            value: EmotionalIntention.TRANSFORM,
-            title: '🌈 Transformar',
-            description: 'Quero mudar meu estado emocional',
-            icon: '✨',
-            examples: ['Filmes inspiradores']
-          },
-          {
-            value: EmotionalIntention.MAINTAIN,
-            title: '🎭 Manter',
-            description: 'Quero manter esse estado',
-            icon: '🌙',
-            examples: ['Filmes em sintonia']
-          },
-          {
-            value: EmotionalIntention.EXPLORE,
-            title: '🔍 Explorar',
-            description: 'Quero explorar esse sentimento',
-            icon: '🎨',
-            examples: ['Filmes complexos']
-          }
-        ];
-    }
+  const getIntentionLabel = (type: string): string => {
+    const labels = {
+      'PROCESS': 'Processar',
+      'TRANSFORM': 'Transformar',
+      'MAINTAIN': 'Manter',
+      'EXPLORE': 'Explorar'
+    };
+    return labels[type as keyof typeof labels] || type;
   };
 
-  const intentionOptions = getIntentionOptions(sentimentName);
-
-  const handleContinue = () => {
-    if (selectedIntention) {
-      onIntentionSelect(selectedIntention);
-    }
+  const getIntentionColor = (type: string): 'primary' | 'secondary' | 'success' | 'warning' => {
+    const colors = {
+      'PROCESS': 'primary' as const,
+      'TRANSFORM': 'secondary' as const,
+      'MAINTAIN': 'success' as const,
+      'EXPLORE': 'warning' as const
+    };
+    return colors[type as keyof typeof colors] || 'primary';
   };
+
+  const getIntentionIcon = (type: string): string => {
+    const icons = {
+      'PROCESS': '🧠',
+      'TRANSFORM': '🔄',
+      'MAINTAIN': '⚖️',
+      'EXPLORE': '🔍'
+    };
+    return icons[type as keyof typeof icons] || '💭';
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
+          <p className="text-gray-600">Carregando intenções emocionais...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <div className="space-x-4">
+            <button
+              onClick={() => window.location.reload()}
+              className="px-6 py-3 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+            >
+              Tentar Novamente
+            </button>
+            <button
+              onClick={onBack}
+              className="px-6 py-3 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition-colors"
+            >
+              Voltar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Box
         sx={{
           display: 'flex',
@@ -183,83 +114,121 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           py: 4
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{ mb: 2 }}>
-          Você está se sentindo: <strong>{sentimentName}</strong>
-        </Typography>
-        
-        <Typography variant="h5" gutterBottom sx={{ mb: 4, color: 'text.secondary' }}>
+        <Typography variant="h4" gutterBottom>
           O que você gostaria de fazer com esse sentimento?
         </Typography>
+        
+        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+          <Typography variant="h6" color="primary" gutterBottom>
+            Sentimento selecionado:
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+            {selectedSentiment.name}
+          </Typography>
+          {selectedSentiment.description && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {selectedSentiment.description}
+            </Typography>
+          )}
+        </Box>
 
-        <FormControl component="fieldset" sx={{ width: '100%' }}>
-          <RadioGroup
-            value={selectedIntention || ''}
-            onChange={(e) => setSelectedIntention(e.target.value as EmotionalIntention)}
-          >
-            <Grid container spacing={3}>
-              {intentionOptions.map((option) => (
-                <Grid item xs={12} sm={6} key={option.value}>
-                  <Paper
-                    sx={{
-                      p: 3,
-                      cursor: 'pointer',
-                      border: selectedIntention === option.value ? 2 : 1,
-                      borderColor: selectedIntention === option.value ? 'primary.main' : 'divider',
-                      '&:hover': { 
-                        bgcolor: 'action.hover',
-                        borderColor: 'primary.light'
-                      },
-                      transition: 'all 0.3s ease'
-                    }}
-                    onClick={() => setSelectedIntention(option.value)}
-                  >
-                    <FormControlLabel
-                      value={option.value}
-                      control={<Radio />}
-                      label=""
-                      sx={{ m: 0, width: '100%' }}
+        <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
+          Escolha sua intenção emocional:
+        </Typography>
+
+        <Grid container spacing={3} sx={{ maxWidth: '1000px' }}>
+          {intentions.map((intention) => (
+            <Grid item xs={12} sm={6} key={intention.id}>
+              <Paper
+                sx={{
+                  p: 3,
+                  cursor: 'pointer',
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  transition: 'all 0.3s ease',
+                  '&:hover': { 
+                    bgcolor: 'action.hover',
+                    transform: 'translateY(-2px)',
+                    boxShadow: 3
+                  }
+                }}
+                onClick={() => onIntentionSelect(intention)}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="h4" sx={{ mr: 2 }}>
+                    {getIntentionIcon(intention.type)}
+                  </Typography>
+                  <Box>
+                    <Chip 
+                      label={getIntentionLabel(intention.type)}
+                      color={getIntentionColor(intention.type)}
+                      size="small"
+                      sx={{ mb: 1 }}
                     />
-                    <Box sx={{ textAlign: 'left', mt: -4, ml: 4 }}>
-                      <Typography variant="h6" gutterBottom>
-                        {option.icon} {option.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {option.description}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        <strong>Exemplos:</strong> {option.examples.join(', ')}
-                      </Typography>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                      {getIntentionLabel(intention.type)}
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Typography variant="body1" sx={{ mb: 2, flexGrow: 1 }}>
+                  {intention.description}
+                </Typography>
+                
+                {intention.preferredGenres.length > 0 && (
+                  <Box sx={{ mt: 'auto' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                      Gêneros preferidos:
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {intention.preferredGenres.slice(0, 3).map((genre, index) => (
+                        <Chip
+                          key={index}
+                          label={genre}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      ))}
+                      {intention.preferredGenres.length > 3 && (
+                        <Chip
+                          label={`+${intention.preferredGenres.length - 3}`}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      )}
                     </Box>
-                  </Paper>
-                </Grid>
-              ))}
+                  </Box>
+                )}
+              </Paper>
             </Grid>
-          </RadioGroup>
-        </FormControl>
+          ))}
+        </Grid>
 
         <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
           <Button
             variant="outlined"
             onClick={onBack}
-            size="large"
+            sx={{ px: 4, py: 1.5 }}
           >
             Voltar
           </Button>
           <Button
-            variant="contained"
-            onClick={handleContinue}
-            disabled={!selectedIntention}
-            size="large"
+            variant="text"
+            onClick={() => onIntentionSelect({ 
+              id: 0, 
+              type: 'EXPLORE', 
+              description: 'Usar jornada tradicional', 
+              preferredGenres: [], 
+              avoidGenres: [], 
+              emotionalTone: 'similar' 
+            })}
+            sx={{ px: 4, py: 1.5 }}
           >
-            Continuar Jornada
+            Pular (Jornada Tradicional)
           </Button>
-        </Box>
-
-        <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 2, maxWidth: 600 }}>
-          <Typography variant="body2" color="info.dark">
-            💡 <strong>Dica:</strong> Não existe escolha certa ou errada. O importante é você ser honesto(a) 
-            sobre o que sente neste momento e o que gostaria de experienciar.
-          </Typography>
         </Box>
       </Box>
     </Container>

@@ -1,32 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Grid, Paper, Container } from '@mui/material';
-import { MainSentiment, getMainSentiments } from '../services/api';
+import { Box, Typography, Button, Grid, Paper, Container, Fade } from '@mui/material';
+import { MainSentiment, getMainSentiments, EmotionalIntention } from '../services/api';
+import EmotionalIntentionStep from './EmotionalIntentionStep';
+import EmotionalRecommendations from './EmotionalRecommendations';
+import PersonalizedJourney from './PersonalizedJourney';
+import MovieJourney from './MovieJourney';
+
+type JourneyStep = 'sentiment' | 'intention' | 'journey' | 'recommendations';
 
 const JourneyIntro: React.FC = () => {
-  const navigate = useNavigate();
+  const [sentiments, setSentiments] = useState<MainSentiment[]>([]);
+  const [selectedSentiment, setSelectedSentiment] = useState<MainSentiment | null>(null);
+  const [selectedIntention, setSelectedIntention] = useState<EmotionalIntention | null>(null);
+  const [currentStep, setCurrentStep] = useState<JourneyStep>('sentiment');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [mainSentiments, setMainSentiments] = useState<MainSentiment[]>([]);
+  const [useTraditionalJourney, setUseTraditionalJourney] = useState(false);
 
   useEffect(() => {
-    const loadMainSentiments = async () => {
+    const loadSentiments = async () => {
       try {
         const data = await getMainSentiments();
-        setMainSentiments(data);
-        setLoading(false);
+        setSentiments(data);
       } catch (error) {
         console.error('Erro ao carregar sentimentos:', error);
-        setError('Erro ao carregar os sentimentos. Por favor, tente novamente mais tarde.');
+      } finally {
         setLoading(false);
       }
     };
 
-    loadMainSentiments();
+    loadSentiments();
   }, []);
 
   const handleSentimentSelect = (sentiment: MainSentiment) => {
-    navigate('/journey', { state: { selectedSentiment: sentiment } });
+    console.log('Sentimento selecionado:', sentiment);
+    setSelectedSentiment(sentiment);
+    setCurrentStep('intention');
+  };
+
+  const handleIntentionSelect = (intention: EmotionalIntention) => {
+    console.log('Intenção selecionada:', intention);
+    setSelectedIntention(intention);
+    setCurrentStep('journey');
+  };
+
+  const handleSkipIntention = () => {
+    console.log('Pulando para jornada tradicional');
+    setUseTraditionalJourney(true);
+    setCurrentStep('journey');
+  };
+
+  const handleStartRecommendations = () => {
+    setCurrentStep('recommendations');
+  };
+
+  const handleBackToSentiment = () => {
+    setSelectedSentiment(null);
+    setSelectedIntention(null);
+    setUseTraditionalJourney(false);
+    setCurrentStep('sentiment');
+  };
+
+  const handleBackToIntention = () => {
+    setSelectedIntention(null);
+    setUseTraditionalJourney(false);
+    setCurrentStep('intention');
+  };
+
+  const handleRestart = () => {
+    setSelectedSentiment(null);
+    setSelectedIntention(null);
+    setUseTraditionalJourney(false);
+    setCurrentStep('sentiment');
   };
 
   if (loading) {
@@ -34,65 +78,122 @@ const JourneyIntro: React.FC = () => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando...</p>
+          <p className="text-gray-600">Carregando sentimentos...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
+  // Etapa 1: Seleção de Sentimento
+  if (currentStep === 'sentiment') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-3 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
-          >
-            Tentar Novamente
-          </button>
-        </div>
-      </div>
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '80vh',
+            textAlign: 'center',
+            py: 4
+          }}
+        >
+          <Fade in={true} timeout={500}>
+            <Box sx={{ mb: 6 }}>
+              <Typography variant="h3" gutterBottom>
+                Como você está se sentindo hoje?
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 600 }}>
+                Escolha o sentimento que melhor descreve seu estado emocional atual
+              </Typography>
+            </Box>
+          </Fade>
+
+          <Fade in={true} timeout={800}>
+            <Grid container spacing={3} sx={{ maxWidth: 800 }}>
+              {sentiments.map((sentiment) => (
+                <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
+                  <Paper
+                    sx={{
+                      p: 3,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': { 
+                        bgcolor: 'action.hover',
+                        transform: 'translateY(-4px)',
+                        boxShadow: 4
+                      }
+                    }}
+                    onClick={() => handleSentimentSelect(sentiment)}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      {sentiment.name}
+                    </Typography>
+                    {sentiment.description && (
+                      <Typography variant="body2" color="text.secondary">
+                        {sentiment.description}
+                      </Typography>
+                    )}
+                  </Paper>
+                </Grid>
+              ))}
+            </Grid>
+          </Fade>
+        </Box>
+      </Container>
     );
   }
 
-  return (
-    <Container maxWidth="md">
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '80vh',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="h4" gutterBottom>
-          Como você está se sentindo principalmente neste momento?
-        </Typography>
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          {mainSentiments.map((sentiment) => (
-            <Grid item xs={12} sm={6} key={sentiment.id}>
-              <Paper
-                sx={{
-                  p: 2,
-                  cursor: 'pointer',
-                  '&:hover': { bgcolor: 'action.hover' }
-                }}
-                onClick={() => handleSentimentSelect(sentiment)}
-              >
-                <Typography variant="h6">{sentiment.name}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {sentiment.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Container>
-  );
+  // Etapa 2: Seleção de Intenção Emocional
+  if (currentStep === 'intention' && selectedSentiment) {
+    return (
+      <EmotionalIntentionStep
+        selectedSentiment={selectedSentiment}
+        onIntentionSelect={handleIntentionSelect}
+        onSkip={handleSkipIntention}
+        onBack={handleBackToSentiment}
+      />
+    );
+  }
+
+  // Etapa 3: Jornada (Personalizada ou Tradicional)
+  if (currentStep === 'journey' && selectedSentiment) {
+    if (useTraditionalJourney || !selectedIntention) {
+      // Jornada tradicional
+      return (
+        <MovieJourney
+          selectedSentiment={selectedSentiment}
+          onBack={handleBackToIntention}
+          onRestart={handleRestart}
+        />
+      );
+    } else {
+      // Jornada personalizada baseada na intenção
+      return (
+        <PersonalizedJourney
+          selectedSentiment={selectedSentiment}
+          selectedIntention={selectedIntention}
+          onBack={handleBackToIntention}
+          onRestart={handleRestart}
+        />
+      );
+    }
+  }
+
+  // Etapa 4: Recomendações Emocionais
+  if (currentStep === 'recommendations' && selectedSentiment && selectedIntention) {
+    return (
+      <EmotionalRecommendations
+        selectedSentiment={selectedSentiment}
+        selectedIntention={selectedIntention}
+        onBack={handleBackToIntention}
+        onRestart={handleRestart}
+      />
+    );
+  }
+
+  return null;
 };
 
 export default JourneyIntro; 

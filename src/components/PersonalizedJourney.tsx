@@ -12,55 +12,59 @@ import {
   FormControl, 
   InputLabel,
   Chip,
+  Alert,
   Fade
 } from '@mui/material';
 import { 
   MainSentiment, 
-  JourneyFlow, 
+  EmotionalIntention, 
+  PersonalizedJourneyFlow, 
   JourneyStepFlow, 
   JourneyOptionFlow, 
-  getJourneyFlow 
+  getPersonalizedJourneyFlow 
 } from '../services/api';
 
-interface MovieJourneyProps {
+interface PersonalizedJourneyProps {
   selectedSentiment: MainSentiment;
+  selectedIntention: EmotionalIntention;
   onBack: () => void;
   onRestart: () => void;
 }
 
-const MovieJourney: React.FC<MovieJourneyProps> = ({
+const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   selectedSentiment,
+  selectedIntention,
   onBack,
   onRestart
 }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [journeyFlow, setJourneyFlow] = useState<JourneyFlow | null>(null);
+  const [journeyFlow, setJourneyFlow] = useState<PersonalizedJourneyFlow | null>(null);
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [stepHistory, setStepHistory] = useState<JourneyStepFlow[]>([]);
 
   useEffect(() => {
-    const loadJourneyFlow = async () => {
+    const loadPersonalizedJourney = async () => {
       try {
         setLoading(true);
-        const flow = await getJourneyFlow(selectedSentiment.id);
+        const flow = await getPersonalizedJourneyFlow(selectedSentiment.id, selectedIntention.id);
         setJourneyFlow(flow);
         
-        // Encontrar o primeiro step
+        // Encontrar o primeiro step do fluxo personalizado
         const firstStep = flow.steps.find(step => step.order === 1) || flow.steps[0];
         setCurrentStep(firstStep || null);
         setLoading(false);
       } catch (error) {
-        console.error('Erro ao carregar jornada:', error);
-        setError('Erro ao carregar a jornada. Por favor, tente novamente mais tarde.');
+        console.error('Erro ao carregar jornada personalizada:', error);
+        setError('Erro ao carregar a jornada personalizada. Por favor, tente novamente mais tarde.');
         setLoading(false);
       }
     };
 
-    loadJourneyFlow();
-  }, [selectedSentiment.id]);
+    loadPersonalizedJourney();
+  }, [selectedSentiment.id, selectedIntention.id]);
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
     console.log('Opção selecionada:', option);
@@ -68,6 +72,9 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
 
     // Adicionar step atual ao histórico
     setStepHistory(prev => [...prev, currentStep]);
+
+    console.log('isEndState:', option.isEndState);
+    console.log('movieSuggestions:', option.movieSuggestions);
 
     if (option.isEndState && option.movieSuggestions) {
       console.log('Navegando para sugestões com:', option.movieSuggestions);
@@ -109,12 +116,32 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
     }
   };
 
+  const getIntentionLabel = (type: string): string => {
+    const labels = {
+      'PROCESS': 'Processar',
+      'TRANSFORM': 'Transformar',
+      'MAINTAIN': 'Manter',
+      'EXPLORE': 'Explorar'
+    };
+    return labels[type as keyof typeof labels] || type;
+  };
+
+  const getIntentionColor = (type: string): 'primary' | 'secondary' | 'success' | 'warning' => {
+    const colors = {
+      'PROCESS': 'primary' as const,
+      'TRANSFORM': 'secondary' as const,
+      'MAINTAIN': 'success' as const,
+      'EXPLORE': 'warning' as const
+    };
+    return colors[type as keyof typeof colors] || 'primary';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando jornada...</p>
+          <p className="text-gray-600">Carregando jornada personalizada...</p>
         </div>
       </div>
     );
@@ -161,20 +188,32 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
             py: 4
           }}
         >
-          {/* Cabeçalho */}
+          {/* Cabeçalho com contexto */}
           <Fade in={true} timeout={500}>
             <Box sx={{ mb: 4, width: '100%' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 3 }}>
                 <Chip 
                   label={selectedSentiment.name}
                   color="primary"
                   variant="outlined"
                 />
+                <Chip 
+                  label={getIntentionLabel(selectedIntention.type)}
+                  color={getIntentionColor(selectedIntention.type)}
+                />
               </Box>
               
               <Typography variant="h4" gutterBottom>
-                {step.question}
+                {step.customQuestion || step.question}
               </Typography>
+              
+              {step.contextualHint && (
+                <Alert severity="info" sx={{ mt: 2, mb: 3, maxWidth: 600, mx: 'auto' }}>
+                  <Typography variant="body2">
+                    💡 {step.contextualHint}
+                  </Typography>
+                </Alert>
+              )}
             </Box>
           </Fade>
           
@@ -221,6 +260,11 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
                         onClick={() => handleOptionSelect(option)}
                       >
                         <Typography variant="h6">{option.text}</Typography>
+                        {option.description && (
+                          <Typography variant="body2" color="text.secondary">
+                            {option.description}
+                          </Typography>
+                        )}
                       </Paper>
                     </Grid>
                   ))}
@@ -236,7 +280,7 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
               onClick={handleGoBack}
               sx={{ px: 4, py: 1.5 }}
             >
-              {stepHistory.length > 0 ? 'Voltar' : 'Alterar Sentimento'}
+              {stepHistory.length > 0 ? 'Voltar' : 'Alterar Intenção'}
             </Button>
             <Button
               variant="text"
@@ -276,4 +320,4 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
   return null;
 };
 
-export default MovieJourney; 
+export default PersonalizedJourney; 

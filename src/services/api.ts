@@ -24,6 +24,10 @@ export interface JourneyStepFlow {
   order: number;
   question: string;
   options: JourneyOptionFlow[];
+  priority?: number;
+  customQuestion?: string;
+  contextualHint?: string;
+  isRequired?: boolean;
 }
 
 export interface JourneyOptionFlow {
@@ -39,6 +43,51 @@ export interface MovieSuggestionFlow {
   id: number;
   movie: Movie;
   reason: string;
+}
+
+// Novos tipos para intenções emocionais
+export interface EmotionalIntention {
+  id: number;
+  type: 'PROCESS' | 'TRANSFORM' | 'MAINTAIN' | 'EXPLORE';
+  description: string;
+  preferredGenres: string[];
+  avoidGenres: string[];
+  emotionalTone: string;
+}
+
+export interface EmotionalIntentionsResponse {
+  sentimentId: number;
+  sentimentName: string;
+  intentions: EmotionalIntention[];
+}
+
+export interface EmotionalRecommendationRequest {
+  mainSentimentId: number;
+  intentionType: 'PROCESS' | 'TRANSFORM' | 'MAINTAIN' | 'EXPLORE';
+  userId?: string;
+  contextData?: any;
+}
+
+export interface EmotionalRecommendationResponse {
+  success: boolean;
+  data: {
+    sessionId: string;
+    recommendations: {
+      movieId: string;
+      movie: Movie;
+      personalizedReason: string;
+      relevanceScore: number;
+      intentionAlignment: number;
+    }[];
+  };
+}
+
+// Nova interface para jornada personalizada
+export interface PersonalizedJourneyFlow {
+  id: number;
+  mainSentimentId: number;
+  emotionalIntentionId: number;
+  steps: JourneyStepFlow[];
 }
 
 export const getMainSentiments = async (): Promise<MainSentiment[]> => {
@@ -57,6 +106,64 @@ export const getJourneyFlow = async (mainSentimentId: number): Promise<JourneyFl
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar fluxo da jornada:', error);
+    throw error;
+  }
+};
+
+// Nova função para buscar jornada personalizada baseada na intenção emocional
+export const getPersonalizedJourneyFlow = async (
+  mainSentimentId: number, 
+  emotionalIntentionId: number
+): Promise<PersonalizedJourneyFlow> => {
+  try {
+    const response = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar jornada personalizada:', error);
+    throw error;
+  }
+};
+
+// Novas funções para intenções emocionais
+export const getEmotionalIntentions = async (sentimentId: number): Promise<EmotionalIntentionsResponse> => {
+  try {
+    const response = await api.get(`/api/emotional-intentions/${sentimentId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar intenções emocionais:', error);
+    throw error;
+  }
+};
+
+export const startEmotionalRecommendation = async (request: EmotionalRecommendationRequest): Promise<EmotionalRecommendationResponse> => {
+  try {
+    const response = await api.post('/api/emotional-recommendations', request);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao iniciar recomendação emocional:', error);
+    throw error;
+  }
+};
+
+export const recordFeedback = async (sessionId: string, movieId: string, wasViewed: boolean, wasAccepted: boolean, feedback?: string): Promise<void> => {
+  try {
+    await api.post(`/api/emotional-recommendations/${sessionId}/feedback`, {
+      movieId,
+      wasViewed,
+      wasAccepted,
+      feedback
+    });
+  } catch (error) {
+    console.error('Erro ao registrar feedback:', error);
+    throw error;
+  }
+};
+
+export const completeSession = async (sessionId: string): Promise<void> => {
+  try {
+    await api.post(`/api/emotional-recommendations/${sessionId}/complete`);
+  } catch (error) {
+    console.error('Erro ao finalizar sessão:', error);
     throw error;
   }
 };
