@@ -197,4 +197,85 @@ export const deleteMovie = async (id: string): Promise<void> => {
   await api.delete(`/movies/${id}`);
 };
 
+// Interfaces para rastreamento de jornadas
+export interface MovieJourneyPath {
+  step: {
+    id: number;
+    stepId: string;
+    order: number;
+    question: string;
+  };
+  option: {
+    id: number;
+    optionId: string;
+    text: string;
+    nextStepId: string | null;
+    isEndState: boolean;
+  };
+  suggestion: {
+    id: number;
+    reason: string;
+    relevance: number;
+  };
+}
+
+export interface MovieJourneyStep {
+  id: number;
+  stepId: string;
+  order: number;
+  question: string;
+  options: {
+    id: number;
+    optionId: string;
+    text: string;
+    nextStepId: string | null;
+    isEndState: boolean;
+    hasMovieSuggestion: boolean;
+  }[];
+  emotionalIntentions: EmotionalIntention[];
+  contextualHint?: string;
+  isRequired?: boolean;
+  isVirtual?: boolean;
+}
+
+export interface MovieJourney {
+  mainSentiment: {
+    id: number;
+    name: string;
+    description: string;
+  };
+  journeyFlow?: {
+    id: number;
+    mainSentimentId: number;
+  };
+  emotionalIntention?: {
+    id: number;
+    type: string;
+    description: string;
+    preferredGenres: string[];
+    avoidGenres: string[];
+    emotionalTone: string;
+  };
+  journeyType?: string;
+  paths: MovieJourneyPath[];
+  fullPath: MovieJourneyStep[];
+}
+
+export interface MovieJourneysResponse {
+  movie: Movie;
+  totalJourneys: number;
+  journeys: MovieJourney[];
+}
+
+// Buscar todas as jornadas que levam a um filme específico
+export const getMovieJourneys = async (movieId: string): Promise<MovieJourneysResponse> => {
+  try {
+    const response = await api.get(`/admin/movie-journeys/${movieId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao buscar jornadas do filme:', error);
+    throw error;
+  }
+};
+
 export default api; 

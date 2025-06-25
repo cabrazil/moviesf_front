@@ -118,7 +118,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           O que você gostaria de fazer com esse sentimento?
         </Typography>
         
-        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+        {/* <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
           <Typography variant="h6" color="primary" gutterBottom>
             Sentimento selecionado:
           </Typography>
@@ -130,7 +130,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
               {selectedSentiment.description}
             </Typography>
           )}
-        </Box>
+        </Box> */}
 
         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
           Escolha sua intenção emocional:
@@ -160,12 +160,12 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
                     {getIntentionIcon(intention.type)}
                   </Typography>
                   <Box>
-                    <Chip 
+                    {/* <Chip 
                       label={getIntentionLabel(intention.type)}
                       color={getIntentionColor(intention.type)}
                       size="small"
                       sx={{ mb: 1 }}
-                    />
+                    /> */}
                     <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
                       {getIntentionLabel(intention.type)}
                     </Typography>
@@ -176,7 +176,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
                   {intention.description}
                 </Typography>
                 
-                {intention.preferredGenres.length > 0 && (
+                {/* {intention.preferredGenres.length > 0 && (
                   <Box sx={{ mt: 'auto' }}>
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
                       Gêneros preferidos:
@@ -201,7 +201,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
                       )}
                     </Box>
                   </Box>
-                )}
+                )} */}
               </Paper>
             </Grid>
           ))}

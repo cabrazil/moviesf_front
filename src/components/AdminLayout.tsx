@@ -19,6 +19,7 @@ import {
   Movie as MovieIcon,
   SentimentSatisfied as SentimentIcon,
   Timeline as TimelineIcon,
+  Route as RouteIcon,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -34,6 +35,7 @@ const AdminLayout: React.FC = () => {
     { text: 'Filmes', icon: <MovieIcon />, path: 'movies' },
     { text: 'Sentimentos', icon: <SentimentIcon />, path: 'main-sentiments' },
     { text: 'Fluxos', icon: <TimelineIcon />, path: 'journey-flows' },
+    { text: 'Jornadas de Filmes', icon: <RouteIcon />, path: 'movie-journeys' },
   ];
 
   const drawer = (

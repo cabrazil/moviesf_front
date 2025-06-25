@@ -3,7 +3,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from './theme';
 import Home from './pages/Home';
 import JourneyIntro from './components/JourneyIntro';
-import MovieJourney from './components/MovieJourney';
+import MovieJourneyWrapper from './components/MovieJourneyWrapper';
 import MovieSuggestionsPage from './components/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './components/MovieSuggestionsPageMinimal';
 import MovieListPage from './pages/admin/MovieList';
@@ -11,6 +11,7 @@ import MainSentimentList from './pages/admin/MainSentimentList';
 import JourneyFlowList from './pages/admin/JourneyFlowList';
 import JourneyOptionFlowDetails from './pages/admin/JourneyOptionFlowDetails';
 import AdminLayout from './components/AdminLayout';
+import MovieJourneyTrackerPage from './pages/admin/MovieJourneyTrackerPage';
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/intro" element={<JourneyIntro />} />
-          <Route path="/journey" element={<MovieJourney />} />
+          <Route path="/journey" element={<MovieJourneyWrapper />} />
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/admin" element={<AdminLayout />}>
@@ -29,6 +30,7 @@ function App() {
             <Route path="journey-flows" element={<JourneyFlowList />} />
             <Route path="journey-option-flows" element={<JourneyOptionFlowDetails />} />
             <Route path="journey-option-flows/:id" element={<JourneyOptionFlowDetails />} />
+            <Route path="movie-journeys" element={<MovieJourneyTrackerPage />} />
           </Route>
         </Routes>
       </Router>

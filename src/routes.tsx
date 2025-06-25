@@ -2,7 +2,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import Home from './pages/Home';
 import DataViewer from './pages/admin/DataViewer';
-import MovieJourney from './components/MovieJourney';
+import AdminLayout from './pages/admin/AdminLayout';
+import MovieJourneyTrackerPage from './pages/admin/MovieJourneyTrackerPage';
 
 export const router = createBrowserRouter([
   {
@@ -14,12 +15,18 @@ export const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/journey',
-        element: <MovieJourney />,
-      },
-      {
-        path: '/admin/data',
-        element: <DataViewer />,
+        path: '/admin',
+        element: <AdminLayout />,
+        children: [
+          {
+            path: 'data',
+            element: <DataViewer />,
+          },
+          {
+            path: 'movie-journeys',
+            element: <MovieJourneyTrackerPage />,
+          },
+        ],
       },
     ],
   },
