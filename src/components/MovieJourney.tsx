@@ -22,11 +22,86 @@ import {
   getJourneyFlow 
 } from '../services/api';
 
+/**
+ * ARQUITETURA DE JORNADAS EMOCIONAIS - NOVA VERSÃO
+ * 
+ * O sistema foi atualizado para usar Intenções Emocionais como ponto de partida:
+ * 
+ * FLUXO ANTIGO:
+ * MainSentiment → JourneyFlow → JourneyStepFlow (order=1,2,3...) → JourneyOptionFlow
+ * 
+ * FLUXO ATUAL:
+ * MainSentiment → EmotionalIntention (PROCESS/TRANSFORM/MAINTAIN/EXPLORE) 
+ *              → EmotionalIntentionJourneyStep (associa emotionalIntentionId + journeyStepFlowId)
+ *              → JourneyStepFlow (order=2,3,4... - sem order=1) 
+ *              → JourneyOptionFlow
+ * 
+ * IMPLICAÇÕES:
+ * - Não há mais steps com order=1 (substituído pelo sistema de intenções)
+ * - Jornadas tradicionais começam com order=2
+ * - Jornadas personalizadas usam priority baseado em EmotionalIntentionJourneyStep
+ * - navegação por nextStepId continua funcionando normalmente
+ */
+
 interface MovieJourneyProps {
   selectedSentiment: MainSentiment;
   onBack: () => void;
   onRestart: () => void;
 }
+
+// Função para validar a integridade da jornada (atualizada para nova arquitetura)
+const validateJourneyIntegrity = (journeyFlow: JourneyFlow): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!journeyFlow || !journeyFlow.steps) {
+    errors.push('JourneyFlow ou steps não disponíveis');
+    return { isValid: false, errors };
+  }
+
+  // Nova validação: não exigir order=1 (sistema de Intenções Emocionais)
+  const hasOrderOne = journeyFlow.steps.some(s => s.order === 1);
+  if (!hasOrderOne) {
+    console.log('ℹ️ Jornada usa sistema de Intenções Emocionais (sem order=1)');
+  }
+
+  journeyFlow.steps.forEach((step, stepIndex) => {
+    if (!step.stepId) {
+      errors.push(`Step ${stepIndex + 1} não possui stepId`);
+    }
+    
+    if (!step.question) {
+      errors.push(`Step ${step.stepId} não possui pergunta`);
+    }
+    
+    if (!step.options || step.options.length === 0) {
+      errors.push(`Step ${step.stepId} não possui opções`);
+    } else {
+      step.options.forEach((option, optionIndex) => {
+        if (!option.text) {
+          errors.push(`Opção ${optionIndex + 1} do step ${step.stepId} não possui texto`);
+        }
+        
+        if (option.isEndState === false && !option.nextStepId) {
+          errors.push(`Opção "${option.text}" do step ${step.stepId} não é final mas não possui nextStepId`);
+        }
+        
+        if (option.isEndState === true && (!option.movieSuggestions || option.movieSuggestions.length === 0)) {
+          errors.push(`Opção "${option.text}" do step ${step.stepId} é final mas não possui sugestões de filmes`);
+        }
+        
+        // Verificar se nextStepId aponta para um step válido
+        if (option.nextStepId) {
+          const nextStepExists = journeyFlow.steps.some(s => s.stepId === option.nextStepId);
+          if (!nextStepExists) {
+            errors.push(`Opção "${option.text}" do step ${step.stepId} aponta para nextStepId "${option.nextStepId}" que não existe`);
+          }
+        }
+      });
+    }
+  });
+
+  return { isValid: errors.length === 0, errors };
+};
 
 const MovieJourney: React.FC<MovieJourneyProps> = ({
   selectedSentiment,
@@ -46,11 +121,63 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
       try {
         setLoading(true);
         const flow = await getJourneyFlow(selectedSentiment.id);
+        
+        console.log('🔍 Estrutura da jornada carregada:');
+        console.log('JourneyFlow ID:', flow.id);
+        console.log('MainSentimentId:', flow.mainSentimentId);
+        console.log('Total de steps:', flow.steps.length);
+        
+        // Log detalhado de todos os steps
+        flow.steps.forEach((step, index) => {
+          console.log(`Step ${index + 1}:`, {
+            id: step.id,
+            stepId: step.stepId,
+            order: step.order,
+            question: step.question.substring(0, 50) + '...',
+            optionsCount: step.options?.length || 0
+          });
+        });
+        
+        // Validar integridade da jornada carregada
+        const validation = validateJourneyIntegrity(flow);
+        if (!validation.isValid) {
+          console.error('❌ Problemas na integridade da jornada:', validation.errors);
+          console.warn('⚠️ A jornada pode não funcionar corretamente devido aos seguintes problemas:');
+          validation.errors.forEach(error => console.warn(`  - ${error}`));
+        } else {
+          console.log('✅ Jornada validada com sucesso');
+        }
+        
         setJourneyFlow(flow);
         
-        // Encontrar o primeiro step
-        const firstStep = flow.steps.find(step => step.order === 1) || flow.steps[0];
-        setCurrentStep(firstStep || null);
+        // NOVA LÓGICA: Encontrar o primeiro step (não há mais order=1 devido às Intenções Emocionais)
+        // O sistema agora usa EmotionalIntentionJourneyStep para definir o ponto de partida
+        // Para jornadas tradicionais, começamos com o step de menor ordem disponível
+        console.log('🔄 Sistema de Intenções Emocionais ativo - sem steps order=1');
+        
+        let firstStep = flow.steps.find(step => step.order === 1);
+        if (!firstStep) {
+          // Nova arquitetura: buscar step com menor ordem (normalmente order=2)
+          const sortedSteps = [...flow.steps].sort((a, b) => a.order - b.order);
+          firstStep = sortedSteps[0];
+          console.log(`🎯 Iniciando jornada tradicional com order=${firstStep?.order} (nova arquitetura sem order=1)`);
+        }
+        
+        if (!firstStep) {
+          console.error('❌ Nenhum step encontrado na jornada');
+          setError('Erro: jornada não possui steps válidos.');
+          setLoading(false);
+          return;
+        }
+        
+        console.log('🚀 Iniciando jornada no step:', {
+          id: firstStep.id,
+          stepId: firstStep.stepId,
+          question: firstStep.question,
+          optionsCount: firstStep.options?.length || 0
+        });
+        
+        setCurrentStep(firstStep);
         setLoading(false);
       } catch (error) {
         console.error('Erro ao carregar jornada:', error);
@@ -63,30 +190,98 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
   }, [selectedSentiment.id]);
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
+    console.log('=== NAVEGAÇÃO DA JORNADA ===');
     console.log('Opção selecionada:', option);
-    if (!journeyFlow || !currentStep) return;
-
-    // Adicionar step atual ao histórico
-    setStepHistory(prev => [...prev, currentStep]);
-
-    if (option.isEndState && option.movieSuggestions) {
-      console.log('Navegando para sugestões com:', option.movieSuggestions);
-      navigate('/sugestoes/minimal', { state: { movieSuggestions: option.movieSuggestions } });
+    console.log('isEndState:', option.isEndState);
+    console.log('nextStepId:', option.nextStepId);
+    console.log('movieSuggestions:', option.movieSuggestions);
+    
+    if (!journeyFlow || !currentStep) {
+      console.error('Erro: journeyFlow ou currentStep não disponível');
       return;
     }
 
-    // Buscar o próximo step pelo nextStepId
-    const nextStep = journeyFlow.steps.find(
-      (step: JourneyStepFlow) => step.stepId === option.nextStepId
-    );
+    // Adicionar step atual ao histórico antes de navegar
+    setStepHistory(prev => [...prev, currentStep]);
 
-    if (nextStep) {
-      setCurrentStep(nextStep);
-      setSelectedOption(''); // Reset selected option for next step
-    } else {
-      console.error('Próximo step não encontrado:', option.nextStepId);
-      setError('Erro ao avançar no fluxo. Por favor, tente novamente mais tarde.');
+    // TESTE EXPLÍCITO DO CAMPO isEndState
+    if (option.isEndState === true) {
+      console.log('✅ Estado final detectado (isEndState = true)');
+      
+      // Verificar se há sugestões de filmes disponíveis
+      if (option.movieSuggestions && option.movieSuggestions.length > 0) {
+        console.log('✅ Sugestões de filmes encontradas, navegando para página de resultados');
+        console.log('Sugestões:', option.movieSuggestions);
+        navigate('/sugestoes/minimal', { 
+          state: { movieSuggestions: option.movieSuggestions } 
+        });
+        return;
+      } else {
+        console.warn('⚠️ Estado final sem sugestões de filmes');
+        setError('Esta opção não possui filmes disponíveis. Por favor, tente outra opção.');
+        return;
+      }
     }
+
+    // CASO isEndState = false, deve apresentar novo step
+    if (option.isEndState === false) {
+      console.log('➡️ Continuando jornada (isEndState = false)');
+      
+      // Verificar se há nextStepId
+      if (!option.nextStepId) {
+        console.error('❌ Erro: nextStepId não encontrado para continuar a jornada');
+        setError('Erro na navegação: próximo passo não definido. Por favor, contate o suporte.');
+        return;
+      }
+
+             console.log('🔍 Buscando próximo step com ID:', option.nextStepId);
+       console.log('🔍 Steps disponíveis na jornada:');
+       journeyFlow.steps.forEach(step => {
+         console.log(`  - Step ID: ${step.id}, StepId: "${step.stepId}", Order: ${step.order}`);
+       });
+
+       // Buscar o próximo step pelo nextStepId na estrutura da jornada
+       // Tentar busca exata primeiro
+       let nextStep = journeyFlow.steps.find(
+         (step: JourneyStepFlow) => step.stepId === option.nextStepId
+       );
+
+               // Se não encontrar, tentar busca com trim (remover espaços)
+        if (!nextStep && option.nextStepId) {
+          console.log('🔍 Tentando busca com trim...');
+          nextStep = journeyFlow.steps.find(
+            (step: JourneyStepFlow) => step.stepId.trim() === option.nextStepId!.trim()
+          );
+        }
+
+      if (nextStep) {
+        console.log('✅ Próximo step encontrado:', {
+          id: nextStep.id,
+          stepId: nextStep.stepId,
+          question: nextStep.question,
+          optionsCount: nextStep.options?.length || 0
+        });
+
+        // Verificar se o próximo step tem opções disponíveis
+        if (!nextStep.options || nextStep.options.length === 0) {
+          console.warn('⚠️ Próximo step não possui opções disponíveis');
+          setError('Próximo passo não possui opções disponíveis. Por favor, tente novamente.');
+          return;
+        }
+
+        // Navegar para o próximo step
+        setCurrentStep(nextStep);
+        setSelectedOption(''); // Reset da seleção para o próximo step
+        console.log('✅ Navegação para próximo step concluída com sucesso');
+      } else {
+        console.error('❌ Próximo step não encontrado na estrutura da jornada');
+        console.log('Steps disponíveis:', journeyFlow.steps.map(s => ({ id: s.id, stepId: s.stepId })));
+        setError(`Erro ao avançar: próximo passo "${option.nextStepId}" não encontrado. Por favor, contate o suporte.`);
+        return;
+      }
+    }
+
+    console.log('=== FIM DA NAVEGAÇÃO ===');
   };
 
   const handleDropdownChange = (event: any) => {
@@ -146,7 +341,7 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
 
   if (currentStep && currentStep.question && currentStep.options) {
     const step = currentStep;
-    const hasManyOptions = step.options.length > 6;
+    const hasManyOptions = step.options.length > 8; // Aumentado para 8 opções
 
     return (
       <Container maxWidth="md">

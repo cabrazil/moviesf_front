@@ -118,7 +118,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           O que você gostaria de fazer com esse sentimento?
         </Typography>
         
-        {/* <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
           <Typography variant="h6" color="primary" gutterBottom>
             Sentimento selecionado:
           </Typography>
@@ -130,14 +130,22 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
               {selectedSentiment.description}
             </Typography>
           )}
-        </Box> */}
+        </Box>
 
         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
           Escolha sua intenção emocional:
         </Typography>
 
         <Grid container spacing={3} sx={{ maxWidth: '1000px' }}>
-          {intentions.map((intention) => (
+          {intentions
+            .sort((a, b) => {
+              // Definir ordem específica para as intenções
+              const order = ['PROCESS', 'TRANSFORM', 'MAINTAIN', 'EXPLORE'];
+              const indexA = order.indexOf(a.type);
+              const indexB = order.indexOf(b.type);
+              return indexA - indexB;
+            })
+            .map((intention) => (
             <Grid item xs={12} sm={6} key={intention.id}>
               <Paper
                 sx={{

@@ -31,6 +31,57 @@ interface PersonalizedJourneyProps {
   onRestart: () => void;
 }
 
+// Função para validar a integridade da jornada personalizada (atualizada para Intenções Emocionais)
+const validatePersonalizedJourneyIntegrity = (journeyFlow: PersonalizedJourneyFlow): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+  
+  if (!journeyFlow || !journeyFlow.steps) {
+    errors.push('PersonalizedJourneyFlow ou steps não disponíveis');
+    return { isValid: false, errors };
+  }
+
+  // Validação específica para jornadas baseadas em Intenções Emocionais
+  console.log('ℹ️ Validando jornada personalizada baseada em EmotionalIntentionJourneyStep');
+
+  journeyFlow.steps.forEach((step, stepIndex) => {
+    if (!step.stepId) {
+      errors.push(`Step ${stepIndex + 1} não possui stepId`);
+    }
+    
+    if (!step.question && !step.customQuestion) {
+      errors.push(`Step ${step.stepId} não possui pergunta nem pergunta customizada`);
+    }
+    
+    if (!step.options || step.options.length === 0) {
+      errors.push(`Step ${step.stepId} não possui opções`);
+    } else {
+      step.options.forEach((option, optionIndex) => {
+        if (!option.text) {
+          errors.push(`Opção ${optionIndex + 1} do step ${step.stepId} não possui texto`);
+        }
+        
+        if (option.isEndState === false && !option.nextStepId) {
+          errors.push(`Opção "${option.text}" do step ${step.stepId} não é final mas não possui nextStepId`);
+        }
+        
+        if (option.isEndState === true && (!option.movieSuggestions || option.movieSuggestions.length === 0)) {
+          errors.push(`Opção "${option.text}" do step ${step.stepId} é final mas não possui sugestões de filmes`);
+        }
+        
+        // Verificar se nextStepId aponta para um step válido
+        if (option.nextStepId) {
+          const nextStepExists = journeyFlow.steps.some(s => s.stepId === option.nextStepId);
+          if (!nextStepExists) {
+            errors.push(`Opção "${option.text}" do step ${step.stepId} aponta para nextStepId "${option.nextStepId}" que não existe`);
+          }
+        }
+      });
+    }
+  });
+
+  return { isValid: errors.length === 0, errors };
+};
+
 const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   selectedSentiment,
   selectedIntention,
@@ -50,11 +101,52 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       try {
         setLoading(true);
         const flow = await getPersonalizedJourneyFlow(selectedSentiment.id, selectedIntention.id);
+        
+        // Validar integridade da jornada personalizada
+        const validation = validatePersonalizedJourneyIntegrity(flow);
+        if (!validation.isValid) {
+          console.error('❌ Problemas na integridade da jornada personalizada:', validation.errors);
+          console.warn('⚠️ A jornada personalizada pode não funcionar corretamente devido aos seguintes problemas:');
+          validation.errors.forEach(error => console.warn(`  - ${error}`));
+        } else {
+          console.log('✅ Jornada personalizada validada com sucesso');
+        }
+        
         setJourneyFlow(flow);
         
-        // Encontrar o primeiro step do fluxo personalizado
-        const firstStep = flow.steps.find(step => step.order === 1) || flow.steps[0];
-        setCurrentStep(firstStep || null);
+        // NOVA LÓGICA PARA JORNADAS BASEADAS EM INTENÇÕES
+        // O sistema usa EmotionalIntentionJourneyStep para definir quais steps são usados
+        // Os steps começam com order=2+ pois order=1 foi substituído pelo sistema de intenções
+        console.log(`🧠 Jornada personalizada para intenção: ${selectedIntention.type}`);
+        console.log('🔄 Sistema baseado em EmotionalIntentionJourneyStep - sem order=1');
+        
+        // Encontrar o primeiro step personalizado (baseado em priority, não order)
+        let firstStep = flow.steps.find(step => step.priority === 1);
+        if (!firstStep) {
+          // Se não há priority=1, usar o step com menor priority ou menor order
+          const sortedByPriority = [...flow.steps].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+          const sortedByOrder = [...flow.steps].sort((a, b) => a.order - b.order);
+          firstStep = sortedByPriority[0] || sortedByOrder[0];
+          console.log(`🎯 Usando step com priority=${firstStep?.priority} ou order=${firstStep?.order}`);
+        }
+        
+        if (!firstStep) {
+          console.error('❌ Nenhum step encontrado na jornada personalizada');
+          setError('Erro: jornada personalizada não possui steps válidos.');
+          setLoading(false);
+          return;
+        }
+        
+        console.log('🚀 Iniciando jornada personalizada no step:', {
+          id: firstStep.id,
+          stepId: firstStep.stepId,
+          question: firstStep.question || firstStep.customQuestion,
+          optionsCount: firstStep.options?.length || 0,
+          isRequired: firstStep.isRequired,
+          contextualHint: firstStep.contextualHint
+        });
+        
+        setCurrentStep(firstStep);
         setLoading(false);
       } catch (error) {
         console.error('Erro ao carregar jornada personalizada:', error);
@@ -67,33 +159,100 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   }, [selectedSentiment.id, selectedIntention.id]);
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
+    console.log('=== NAVEGAÇÃO DA JORNADA PERSONALIZADA ===');
     console.log('Opção selecionada:', option);
-    if (!journeyFlow || !currentStep) return;
-
-    // Adicionar step atual ao histórico
-    setStepHistory(prev => [...prev, currentStep]);
-
     console.log('isEndState:', option.isEndState);
+    console.log('nextStepId:', option.nextStepId);
     console.log('movieSuggestions:', option.movieSuggestions);
-
-    if (option.isEndState && option.movieSuggestions) {
-      console.log('Navegando para sugestões com:', option.movieSuggestions);
-      navigate('/sugestoes/minimal', { state: { movieSuggestions: option.movieSuggestions } });
+    
+    if (!journeyFlow || !currentStep) {
+      console.error('Erro: journeyFlow ou currentStep não disponível');
       return;
     }
 
-    // Buscar o próximo step pelo nextStepId
-    const nextStep = journeyFlow.steps.find(
-      (step: JourneyStepFlow) => step.stepId === option.nextStepId
-    );
+    // Adicionar step atual ao histórico antes de navegar
+    setStepHistory(prev => [...prev, currentStep]);
 
-    if (nextStep) {
-      setCurrentStep(nextStep);
-      setSelectedOption(''); // Reset selected option for next step
-    } else {
-      console.error('Próximo step não encontrado:', option.nextStepId);
-      setError('Erro ao avançar no fluxo. Por favor, tente novamente mais tarde.');
+    // TESTE EXPLÍCITO DO CAMPO isEndState
+    if (option.isEndState === true) {
+      console.log('✅ Estado final detectado (isEndState = true)');
+      
+      // Verificar se há sugestões de filmes disponíveis
+      if (option.movieSuggestions && option.movieSuggestions.length > 0) {
+        console.log('✅ Sugestões de filmes encontradas, navegando para página de resultados');
+        console.log('Sugestões:', option.movieSuggestions);
+        navigate('/sugestoes/minimal', { 
+          state: { movieSuggestions: option.movieSuggestions } 
+        });
+        return;
+      } else {
+        console.warn('⚠️ Estado final sem sugestões de filmes');
+        setError('Esta opção não possui filmes disponíveis. Por favor, tente outra opção.');
+        return;
+      }
     }
+
+    // CASO isEndState = false, deve apresentar novo step
+    if (option.isEndState === false) {
+      console.log('➡️ Continuando jornada personalizada (isEndState = false)');
+      
+      // Verificar se há nextStepId
+      if (!option.nextStepId) {
+        console.error('❌ Erro: nextStepId não encontrado para continuar a jornada');
+        setError('Erro na navegação: próximo passo não definido. Por favor, contate o suporte.');
+        return;
+      }
+
+             console.log('🔍 Buscando próximo step com ID:', option.nextStepId);
+       console.log('🔍 Steps disponíveis na jornada personalizada:');
+       journeyFlow.steps.forEach(step => {
+         console.log(`  - Step ID: ${step.id}, StepId: "${step.stepId}", Order: ${step.order}`);
+       });
+
+       // Buscar o próximo step pelo nextStepId na estrutura da jornada
+       // Tentar busca exata primeiro
+       let nextStep = journeyFlow.steps.find(
+         (step: JourneyStepFlow) => step.stepId === option.nextStepId
+       );
+
+       // Se não encontrar, tentar busca com trim (remover espaços)
+       if (!nextStep && option.nextStepId) {
+         console.log('🔍 Tentando busca com trim...');
+         nextStep = journeyFlow.steps.find(
+           (step: JourneyStepFlow) => step.stepId.trim() === option.nextStepId!.trim()
+         );
+       }
+
+      if (nextStep) {
+        console.log('✅ Próximo step encontrado:', {
+          id: nextStep.id,
+          stepId: nextStep.stepId,
+          question: nextStep.question,
+          optionsCount: nextStep.options?.length || 0,
+          customQuestion: nextStep.customQuestion,
+          contextualHint: nextStep.contextualHint
+        });
+
+        // Verificar se o próximo step tem opções disponíveis
+        if (!nextStep.options || nextStep.options.length === 0) {
+          console.warn('⚠️ Próximo step não possui opções disponíveis');
+          setError('Próximo passo não possui opções disponíveis. Por favor, tente novamente.');
+          return;
+        }
+
+        // Navegar para o próximo step
+        setCurrentStep(nextStep);
+        setSelectedOption(''); // Reset da seleção para o próximo step
+        console.log('✅ Navegação para próximo step da jornada personalizada concluída com sucesso');
+      } else {
+        console.error('❌ Próximo step não encontrado na estrutura da jornada personalizada');
+        console.log('Steps disponíveis:', journeyFlow.steps.map(s => ({ id: s.id, stepId: s.stepId })));
+        setError(`Erro ao avançar: próximo passo "${option.nextStepId}" não encontrado. Por favor, contate o suporte.`);
+        return;
+      }
+    }
+
+    console.log('=== FIM DA NAVEGAÇÃO PERSONALIZADA ===');
   };
 
   const handleDropdownChange = (event: any) => {
@@ -171,9 +330,26 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
     );
   }
 
+  // Debug: verificar estado do currentStep
+  console.log('🔍 Estado do currentStep para renderização:', {
+    hasCurrentStep: !!currentStep,
+    hasQuestion: !!currentStep?.question,
+    hasOptions: !!currentStep?.options,
+    optionsLength: currentStep?.options?.length || 0,
+    stepId: currentStep?.stepId,
+    stepData: currentStep
+  });
+
   if (currentStep && currentStep.question && currentStep.options) {
     const step = currentStep;
-    const hasManyOptions = step.options.length > 6;
+    const hasManyOptions = step.options.length > 8; // Aumentado para 8 opções
+    
+    console.log('✅ Renderizando step:', {
+      stepId: step.stepId,
+      question: step.question,
+      optionsCount: step.options.length,
+      hasManyOptions
+    });
 
     return (
       <Container maxWidth="md">
@@ -316,6 +492,14 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       </Container>
     );
   }
+
+  // Debug: caso não renderize
+  console.log('❌ Não renderizando - condições não atendidas:', {
+    hasCurrentStep: !!currentStep,
+    hasQuestion: !!currentStep?.question,
+    hasOptions: !!currentStep?.options,
+    currentStep
+  });
 
   return null;
 };

@@ -18,9 +18,9 @@ export const router = createBrowserRouter([
         path: '/admin',
         element: <AdminLayout />,
         children: [
-          {
+      {
             path: 'data',
-            element: <DataViewer />,
+        element: <DataViewer />,
           },
           {
             path: 'movie-journeys',

@@ -20,7 +20,9 @@ const JourneyIntro: React.FC = () => {
     const loadSentiments = async () => {
       try {
         const data = await getMainSentiments();
-        setSentiments(data);
+        // Ordenar sentimentos por ID
+        const sortedSentiments = data.sort((a, b) => a.id - b.id);
+        setSentiments(sortedSentiments);
       } catch (error) {
         console.error('Erro ao carregar sentimentos:', error);
       } finally {
