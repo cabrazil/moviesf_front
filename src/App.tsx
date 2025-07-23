@@ -11,6 +11,7 @@ import JourneyFlowList from './pages/admin/JourneyFlowList';
 import JourneyOptionFlowDetails from './pages/admin/JourneyOptionFlowDetails';
 import AdminLayout from './components/AdminLayout';
 import MovieJourneyTrackerPage from './pages/admin/MovieJourneyTrackerPage';
+import MovieDetailsPage from './components/MovieDetailsPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/journey" element={<MovieJourneyWrapper />} />
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
+          <Route path="/filme/:id" element={<MovieDetailsPage />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="movies" element={<MovieListPage />} />
             <Route path="main-sentiments" element={<MainSentimentList />} />
