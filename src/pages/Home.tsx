@@ -48,7 +48,7 @@ const Home: React.FC = () => {
           }}
         />
 
-        <Typography variant="h2" component="h1" gutterBottom sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' }, mt: 2, mb: 2 }}> {/* Adjusted mt and mb */}
+        <Typography variant="h2" component="h1" gutterBottom sx={{ fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' }, mt: 1, mb: 1 }}> {/* Adjusted mt and mb */}
           Encontre o filme perfeito para seu momento
         </Typography>
 

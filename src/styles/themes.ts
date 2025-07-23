@@ -8,7 +8,10 @@ const sharedComponents = {
   components: {
     MuiButton: {
       styleOverrides: {
-        root: { textTransform: 'none', borderRadius: 8 },
+        root: { 
+          textTransform: 'none' as const, 
+          borderRadius: 8 
+        },
       },
     },
     MuiPaper: { // Changed from MuiCard to MuiPaper
@@ -26,8 +29,10 @@ const lightBaseOptions = {
   ...sharedComponents,
   palette: {
     mode: 'light' as const,
-    background: { default: '#A8C0D0', paper: '#FFFFFF' },
-    text: { primary: '#212121', secondary: '#757575' },
+    // Fundo muito mais claro para melhor contraste
+    background: { default: '#F0F6FA', paper: '#FFFFFF' },
+    // Textos com melhor contraste
+    text: { primary: '#1A1A1A', secondary: '#546E7A' },
   },
 };
 
@@ -41,8 +46,14 @@ const darkBaseOptions = {
 };
 
 // --- SENTIMENT COLORS (adjusted for contrast in each mode) ---
+// Cores ajustadas para melhor contraste com o novo fundo claro
 export const lightSentimentColors = {
-  13: '#FF8F00', 14: '#1976D2', 15: '#388E3C', 16: '#D32F2F', 17: '#7B1FA2', 18: '#616161',
+  13: '#F57C00', // Laranja amarelado (era #E65100 - muito próximo do vermelho)
+  14: '#1565C0', // Azul mais escuro (era #1976D2) 
+  15: '#2E7D32', // Verde mais escuro (era #388E3C)
+  16: '#C62828', // Vermelho mais escuro (era #D32F2F)
+  17: '#6A1B9A', // Roxo mais escuro (era #7B1FA2)
+  18: '#424242', // Cinza mais escuro (era #616161)
 };
 
 export const darkSentimentColors = {
@@ -80,6 +91,6 @@ const createSentimentThemes = (baseOptions: any, sentimentColors: { [key: number
 export const lightSentimentThemes = createSentimentThemes(lightBaseOptions, lightSentimentColors);
 export const darkSentimentThemes = createSentimentThemes(darkBaseOptions, darkSentimentColors);
 
-export const defaultLightTheme = createTheme({ ...lightBaseOptions, palette: { ...lightBaseOptions.palette, primary: { main: '#1976d2' } } });
+export const defaultLightTheme = createTheme({ ...lightBaseOptions, palette: { ...lightBaseOptions.palette, primary: { main: '#1565C0' } } });
 export const defaultDarkTheme = createTheme({ ...darkBaseOptions, palette: { ...darkBaseOptions.palette, primary: { main: '#90caf9' } } });
 

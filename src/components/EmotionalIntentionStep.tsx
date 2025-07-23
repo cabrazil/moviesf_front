@@ -4,6 +4,7 @@ import { Box, Typography, Grid, Paper, Container, Button, Chip } from '@mui/mate
 import { MainSentiment, EmotionalIntention, EmotionalIntentionsResponse, getEmotionalIntentions } from '../services/api';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
+import IntentionIcon from './IntentionIcon';
 
 interface EmotionalIntentionStepProps {
   selectedSentiment: MainSentiment;
@@ -60,15 +61,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
     return colors[type as keyof typeof colors] || 'primary';
   };
 
-  const getIntentionIcon = (type: string): string => {
-    const icons = {
-      'PROCESS': '🧠',
-      'TRANSFORM': '🔄',
-      'MAINTAIN': '⚖️',
-      'EXPLORE': '🔍'
-    };
-    return icons[type as keyof typeof icons] || '💭';
-  };
+
 
   if (loading) {
     return (
@@ -183,9 +176,9 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
                 onClick={() => onIntentionSelect(intention)}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="h4" sx={{ mr: 2 }}>
-                    {getIntentionIcon(intention.type)}
-                  </Typography>
+                  <Box sx={{ mr: 2 }}>
+                    <IntentionIcon intentionType={intention.type} size={32} />
+                  </Box>
                   <Box>
                     {/* <Chip 
                       label={getIntentionLabel(intention.type)}
