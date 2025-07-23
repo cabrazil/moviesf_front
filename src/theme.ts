@@ -2,19 +2,25 @@ import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
+    mode: 'dark',
     primary: {
-      main: '#1976d2',
-      light: '#42a5f5',
-      dark: '#1565c0',
+      main: '#2EC4B6',
+      dark: '#0A6E65',
     },
     secondary: {
-      main: '#9c27b0',
-      light: '#ba68c8',
-      dark: '#7b1fa2',
+      main: '#FF9F1C',
+      dark: '#B36F13',
     },
     background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
+      default: '#011627',
+      paper: '#022c49',
+    },
+    text: {
+      primary: '#FDFFFC',
+      secondary: '#E0E0E0',
+    },
+    error: {
+      main: '#E71D36',
     },
   },
   typography: {

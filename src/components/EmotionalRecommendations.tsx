@@ -21,6 +21,8 @@ import { PlayArrow as PlayIcon, Star as StarIcon } from '@mui/icons-material';
 import { Movie } from '../types';
 import { recordFeedback, completeSession, startEmotionalRecommendation } from '../services/api';
 import { MainSentiment, EmotionalIntention } from '../services/api';
+import { useThemeManager } from '../contexts/ThemeContext';
+import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 
 interface EmotionalRecommendation {
   movieId: string;
@@ -51,6 +53,8 @@ const EmotionalRecommendations: React.FC<EmotionalRecommendationsProps> = ({
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [feedbackGiven, setFeedbackGiven] = useState<Set<string>>(new Set());
+  const { mode } = useThemeManager();
+  const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
   useEffect(() => {
     const loadRecommendations = async () => {
@@ -173,16 +177,49 @@ const EmotionalRecommendations: React.FC<EmotionalRecommendationsProps> = ({
       <Box sx={{ py: 4 }}>
         <Fade in={true} timeout={500}>
           <Box sx={{ textAlign: 'center', mb: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 2 }}>
-              <Chip 
-                label={selectedSentiment.name}
-                color="primary"
-                variant="outlined"
-              />
-              <Chip 
-                label={getIntentionLabel(selectedIntention.type)}
-                color={getIntentionColor(selectedIntention.type)}
-              />
+            <Box sx={{ mb: 3, textAlign: 'center' }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  mb: 1,
+                  color: mode === 'dark' ? 'white' : 'black'
+                }}
+              >
+                Jornada emocional:
+              </Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                <Chip
+                  label={selectedSentiment.name}
+                  variant="outlined"
+                  sx={{
+                    borderColor: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                    color: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    height: '40px',
+                    borderRadius: '20px',
+                    borderWidth: '2px',
+                    '& .MuiChip-label': {
+                      px: 2
+                    }
+                  }}
+                  size="medium"
+                />
+                <Chip 
+                  label={getIntentionLabel(selectedIntention.type)}
+                  color={getIntentionColor(selectedIntention.type)}
+                  sx={{
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    height: '40px',
+                    borderRadius: '20px',
+                    '& .MuiChip-label': {
+                      px: 2
+                    }
+                  }}
+                  size="medium"
+                />
+              </Box>
             </Box>
             
             <Typography variant="h4" gutterBottom>

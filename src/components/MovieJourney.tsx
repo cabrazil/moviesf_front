@@ -21,6 +21,8 @@ import {
   JourneyOptionFlow, 
   getJourneyFlow 
 } from '../services/api';
+import { useThemeManager } from '../contexts/ThemeContext';
+import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 
 /**
  * ARQUITETURA DE JORNADAS EMOCIONAIS - NOVA VERSÃO
@@ -115,6 +117,8 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [stepHistory, setStepHistory] = useState<JourneyStepFlow[]>([]);
+  const { mode } = useThemeManager();
+  const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
   useEffect(() => {
     const loadJourneyFlow = async () => {
@@ -213,7 +217,14 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
         console.log('✅ Sugestões de filmes encontradas, navegando para página de resultados');
         console.log('Sugestões:', option.movieSuggestions);
         navigate('/sugestoes/minimal', { 
-          state: { movieSuggestions: option.movieSuggestions } 
+          state: { 
+            movieSuggestions: option.movieSuggestions,
+            journeyContext: {
+              selectedSentiment,
+              journeyType: 'traditional',
+              returnPath: '/intro'
+            }
+          } 
         });
         return;
       } else {
@@ -359,11 +370,32 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
           {/* Cabeçalho */}
           <Fade in={true} timeout={500}>
             <Box sx={{ mb: 4, width: '100%' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                <Chip 
+              <Box sx={{ mb: 3, textAlign: 'center' }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    mb: 1,
+                    color: mode === 'dark' ? 'white' : 'black'
+                  }}
+                >
+                  Sentimento selecionado:
+                </Typography>
+                <Chip
                   label={selectedSentiment.name}
-                  color="primary"
                   variant="outlined"
+                  sx={{
+                    borderColor: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                    color: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                    height: '40px',
+                    borderRadius: '20px',
+                    borderWidth: '2px',
+                    '& .MuiChip-label': {
+                      px: 2
+                    }
+                  }}
+                  size="medium"
                 />
               </Box>
               
@@ -407,6 +439,7 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
                           p: 3,
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
+                          backgroundColor: mode === 'light' ? '#f5f5f5' : undefined,
                           '&:hover': { 
                             bgcolor: 'action.hover',
                             transform: 'translateY(-2px)',
@@ -442,27 +475,7 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
             </Button>
           </Box>
 
-          {/* Indicador de Progresso */}
-          {journeyFlow && (
-            <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="caption" color="text.secondary">
-                Passo {(stepHistory.length + 1)} de {journeyFlow.steps.length}
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 0.5 }}>
-                {Array.from({ length: journeyFlow.steps.length }).map((_, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      bgcolor: index <= stepHistory.length ? 'primary.main' : 'grey.300'
-                    }}
-                  />
-                ))}
-              </Box>
-            </Box>
-          )}
+
         </Box>
       </Container>
     );

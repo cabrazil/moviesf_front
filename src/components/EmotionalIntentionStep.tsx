@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Grid, Paper, Container, Button, Chip } from '@mui/material';
 import { MainSentiment, EmotionalIntention, EmotionalIntentionsResponse, getEmotionalIntentions } from '../services/api';
+import { useThemeManager } from '../contexts/ThemeContext';
+import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 
 interface EmotionalIntentionStepProps {
   selectedSentiment: MainSentiment;
@@ -19,6 +21,8 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [intentions, setIntentions] = useState<EmotionalIntention[]>([]);
+  const { mode } = useThemeManager();
+  const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
   useEffect(() => {
     const loadIntentions = async () => {
@@ -118,18 +122,33 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           O que você gostaria de fazer com esse sentimento?
         </Typography>
         
-        <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
-          <Typography variant="h6" color="primary" gutterBottom>
+        <Box sx={{ mb: 3, textAlign: 'center' }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              mb: 1,
+              color: mode === 'dark' ? 'white' : 'black'
+            }}
+          >
             Sentimento selecionado:
-          </Typography>
-          <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-            {selectedSentiment.name}
-          </Typography>
-          {selectedSentiment.description && (
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              {selectedSentiment.description}
-            </Typography>
-          )}
+          </Typography> 
+          <Chip
+            label={selectedSentiment.name}
+            variant="outlined"
+            sx={{
+              borderColor: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+              color: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              height: '40px',
+              borderRadius: '20px',
+              borderWidth: '2px',
+              '& .MuiChip-label': {
+                px: 2
+              }
+            }}
+            size="medium"
+          />
         </Box>
 
         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
@@ -215,27 +234,13 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           ))}
         </Grid>
 
-        <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
+        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
           <Button
             variant="outlined"
             onClick={onBack}
             sx={{ px: 4, py: 1.5 }}
           >
-            Voltar
-          </Button>
-          <Button
-            variant="text"
-            onClick={() => onIntentionSelect({ 
-              id: 0, 
-              type: 'EXPLORE', 
-              description: 'Usar jornada tradicional', 
-              preferredGenres: [], 
-              avoidGenres: [], 
-              emotionalTone: 'similar' 
-            })}
-            sx={{ px: 4, py: 1.5 }}
-          >
-            Pular (Jornada Tradicional)
+            Voltar para Sentimentos
           </Button>
         </Box>
       </Box>

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { theme } from './theme';
+import { ThemeProviderWrapper } from './contexts/ThemeContext';
 import Home from './pages/Home';
 import JourneyIntro from './components/JourneyIntro';
 import MovieJourneyWrapper from './components/MovieJourneyWrapper';
@@ -15,8 +14,7 @@ import MovieJourneyTrackerPage from './pages/admin/MovieJourneyTrackerPage';
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeProviderWrapper>
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -34,7 +32,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </ThemeProvider>
+    </ThemeProviderWrapper>
   );
 }
 

@@ -23,6 +23,8 @@ import {
   JourneyOptionFlow, 
   getPersonalizedJourneyFlow 
 } from '../services/api';
+import { useThemeManager } from '../contexts/ThemeContext';
+import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 
 interface PersonalizedJourneyProps {
   selectedSentiment: MainSentiment;
@@ -95,6 +97,8 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [stepHistory, setStepHistory] = useState<JourneyStepFlow[]>([]);
+  const { mode } = useThemeManager();
+  const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
   useEffect(() => {
     const loadPersonalizedJourney = async () => {
@@ -182,7 +186,15 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         console.log('✅ Sugestões de filmes encontradas, navegando para página de resultados');
         console.log('Sugestões:', option.movieSuggestions);
         navigate('/sugestoes/minimal', { 
-          state: { movieSuggestions: option.movieSuggestions } 
+          state: { 
+            movieSuggestions: option.movieSuggestions,
+            journeyContext: {
+              selectedSentiment,
+              selectedIntention,
+              journeyType: 'personalized',
+              returnPath: '/intro'
+            }
+          } 
         });
         return;
       } else {
@@ -367,29 +379,57 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           {/* Cabeçalho com contexto */}
           <Fade in={true} timeout={500}>
             <Box sx={{ mb: 4, width: '100%' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mb: 3 }}>
-                <Chip 
-                  label={selectedSentiment.name}
-                  color="primary"
-                  variant="outlined"
-                />
-                <Chip 
-                  label={getIntentionLabel(selectedIntention.type)}
-                  color={getIntentionColor(selectedIntention.type)}
-                />
+              <Box sx={{ mb: 3, textAlign: 'center' }}>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    mb: 1,
+                    color: mode === 'dark' ? 'white' : 'black'
+                  }}
+                >
+                  Jornada emocional:
+                </Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                  <Chip
+                    label={selectedSentiment.name}
+                    variant="outlined"
+                    sx={{
+                      borderColor: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                      color: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                      height: '40px',
+                      borderRadius: '20px',
+                      borderWidth: '2px',
+                      '& .MuiChip-label': {
+                        px: 2
+                      }
+                    }}
+                    size="medium"
+                  />
+                  <Chip 
+                    label={getIntentionLabel(selectedIntention.type)}
+                    variant="outlined"
+                    sx={{
+                      borderColor: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                      color: currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                      height: '40px',
+                      borderRadius: '20px',
+                      borderWidth: '2px',
+                      '& .MuiChip-label': {
+                        px: 2
+                      }
+                    }}
+                    size="medium"
+                  />
+                </Box>
               </Box>
               
               <Typography variant="h4" gutterBottom>
                 {step.customQuestion || step.question}
               </Typography>
-              
-              {step.contextualHint && (
-                <Alert severity="info" sx={{ mt: 2, mb: 3, maxWidth: 600, mx: 'auto' }}>
-                  <Typography variant="body2">
-                    💡 {step.contextualHint}
-                  </Typography>
-                </Alert>
-              )}
             </Box>
           </Fade>
           
@@ -427,6 +467,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                           p: 3,
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
+                          backgroundColor: mode === 'light' ? '#f5f5f5' : undefined,
                           '&:hover': { 
                             bgcolor: 'action.hover',
                             transform: 'translateY(-2px)',
@@ -459,7 +500,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
               {stepHistory.length > 0 ? 'Voltar' : 'Alterar Intenção'}
             </Button>
             <Button
-              variant="text"
+              variant="outlined"
               onClick={onRestart}
               sx={{ px: 4, py: 1.5 }}
             >
@@ -467,27 +508,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             </Button>
           </Box>
 
-          {/* Indicador de Progresso */}
-          {journeyFlow && (
-            <Box sx={{ mt: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="caption" color="text.secondary">
-                Passo {(stepHistory.length + 1)} de {journeyFlow.steps.length}
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 0.5 }}>
-                {Array.from({ length: journeyFlow.steps.length }).map((_, index) => (
-                  <Box
-                    key={index}
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: '50%',
-                      bgcolor: index <= stepHistory.length ? 'primary.main' : 'grey.300'
-                    }}
-                  />
-                ))}
-              </Box>
-            </Box>
-          )}
+
         </Box>
       </Container>
     );
