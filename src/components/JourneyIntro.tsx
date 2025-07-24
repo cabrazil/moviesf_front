@@ -33,10 +33,13 @@ const JourneyIntro: React.FC = () => {
         
         // Verificar se está restaurando uma jornada
         const restoreState = location.state;
-        if (restoreState?.restoreJourney && restoreState.selectedSentiment) {
+        console.log('🔍 JourneyIntro - Verificando state:', restoreState);
+        
+        if (restoreState?.restoreJourney && restoreState.selectedSentiment && restoreState.selectedSentiment.id) {
           console.log('🔄 Restaurando jornada...', restoreState);
           
           // Configurar tema do sentimento
+          console.log('🎨 Configurando tema para sentimento ID:', restoreState.selectedSentiment.id);
           selectSentimentTheme(restoreState.selectedSentiment.id);
           
           // Restaurar estados
@@ -55,8 +58,12 @@ const JourneyIntro: React.FC = () => {
           }
           
           // Limpar o state para não restaurar novamente
-          navigate('/intro', { replace: true });
+          // navigate('/intro', { replace: true }); // REMOVIDO - estava causando perda de contexto
+        } else if (restoreState?.restoreJourney) {
+          console.log('⚠️ JourneyIntro - Tentativa de restauração sem sentimento válido:', restoreState);
+          resetToDefaultTheme();
         } else {
+          console.log('🔍 JourneyIntro - Nenhuma restauração necessária, resetando tema');
           resetToDefaultTheme();
         }
       } catch (error) {
@@ -90,6 +97,7 @@ const JourneyIntro: React.FC = () => {
   };
 
   const handleBackToSentiment = () => {
+    console.log('🔄 handleBackToSentiment - Resetando para seleção de sentimento');
     setSelectedSentiment(null);
     setSelectedIntention(null);
     setUseTraditionalJourney(false);
@@ -104,6 +112,7 @@ const JourneyIntro: React.FC = () => {
   };
 
   const handleRestart = () => {
+    console.log('🔄 handleRestart - Reiniciando jornada completamente');
     setSelectedSentiment(null);
     setSelectedIntention(null);
     setUseTraditionalJourney(false);

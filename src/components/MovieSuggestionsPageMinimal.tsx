@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Container, Stack, Chip, Tooltip, Grid, Card, CardContent } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
@@ -15,13 +15,78 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
+  // Debug inicial do componente
+  console.log('🎬 MovieSuggestionsPageMinimal carregado:', {
+    movieSuggestions: movieSuggestions.length,
+    journeyContext,
+    locationState: location.state,
+    mode
+  });
+
+  // Salvar journeyContext no localStorage como backup
+  useEffect(() => {
+    if (journeyContext) {
+      localStorage.setItem('journeyContext', JSON.stringify(journeyContext));
+      console.log('💾 JourneyContext salvo no localStorage:', journeyContext);
+    }
+  }, [journeyContext]);
+
   const MOVIES_PER_PAGE = 4;
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
+    console.log('🔍 Debug getSentimentColor:', {
+      journeyContext,
+      locationState: location.state,
+      currentSentimentColors
+    });
+    
+    // Verificar se temos o journeyContext com sentimento
     if (journeyContext?.selectedSentiment?.id) {
-      return currentSentimentColors[journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
+      const color = currentSentimentColors[journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
+      console.log('🎨 Cor do sentimento (journeyContext):', color, 'ID:', journeyContext.selectedSentiment.id);
+      return color;
     }
+    
+    // Verificar se temos o sentimento diretamente no state da localização
+    const state = location.state;
+    if (state?.sentimentId) {
+      const color = currentSentimentColors[state.sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
+      console.log('🎨 Cor do sentimento (state.sentimentId):', color, 'ID:', state.sentimentId);
+      return color;
+    }
+    
+    // Verificar se temos o sentimento no journeyContext do state
+    if (state?.journeyContext?.selectedSentiment?.id) {
+      const color = currentSentimentColors[state.journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
+      console.log('🎨 Cor do sentimento (state.journeyContext):', color, 'ID:', state.journeyContext.selectedSentiment.id);
+      return color;
+    }
+    
+    // Verificar se temos o sentimento no journeyContext do state (estrutura alternativa)
+    if (state?.journeyContext?.selectedSentiment) {
+      const sentimentId = state.journeyContext.selectedSentiment.id || state.journeyContext.selectedSentiment;
+      const color = currentSentimentColors[sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
+      console.log('🎨 Cor do sentimento (state.journeyContext alt):', color, 'ID:', sentimentId);
+      return color;
+    }
+    
+    // Verificar localStorage como último recurso
+    try {
+      const savedContext = localStorage.getItem('journeyContext');
+      if (savedContext) {
+        const parsedContext = JSON.parse(savedContext);
+        if (parsedContext?.selectedSentiment?.id) {
+          const color = currentSentimentColors[parsedContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
+          console.log('🎨 Cor do sentimento (localStorage):', color, 'ID:', parsedContext.selectedSentiment.id);
+          return color;
+        }
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao ler journeyContext do localStorage:', error);
+    }
+    
+    console.log('🎨 Cor do sentimento: padrão (#1976d2) - nenhum sentimento encontrado');
     return '#1976d2'; // Cor padrão se não houver sentimento
   };
 
@@ -44,14 +109,36 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   };
 
   const handleBack = () => {
-    if (journeyContext) {
+    // Garantir que temos o contexto da jornada
+    let contextToPass = journeyContext || location.state?.journeyContext;
+    
+    // Se não temos contexto, tentar recuperar do localStorage
+    if (!contextToPass) {
+      try {
+        const savedContext = localStorage.getItem('journeyContext');
+        if (savedContext) {
+          contextToPass = JSON.parse(savedContext);
+          console.log('🔄 Contexto recuperado do localStorage:', contextToPass);
+        }
+      } catch (error) {
+        console.warn('⚠️ Erro ao recuperar contexto do localStorage:', error);
+      }
+    }
+    
+    console.log('🔄 Navegando de volta...', {
+      journeyContext,
+      locationState: location.state,
+      contextToPass
+    });
+    
+    if (contextToPass) {
       // Voltar para /intro com o contexto da jornada para restaurar o estado
       navigate('/intro', { 
         state: { 
           restoreJourney: true,
-          selectedSentiment: journeyContext.selectedSentiment,
-          selectedIntention: journeyContext.selectedIntention,
-          journeyType: journeyContext.journeyType
+          selectedSentiment: contextToPass.selectedSentiment,
+          selectedIntention: contextToPass.selectedIntention,
+          journeyType: contextToPass.journeyType
         } 
       });
     } else {

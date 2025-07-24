@@ -12,11 +12,11 @@ export function Header() {
           <Link to="/" className="flex items-center">
             <img
               src="/moviesf-logo.png"
-              alt="MoviesF Logo"
+              alt="emoFilms Logo"
               className="h-6 w-auto mr-2"
             />
             <span className="text-xl font-semibold text-gray-900">
-              MoviesF
+              emoFilms
             </span>
           </Link>
 
