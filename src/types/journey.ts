@@ -51,4 +51,7 @@ export interface Movie {
   thumbnail?: string;
   original_title?: string;
   runtime?: number;
+  imdbRating?: number;
+  rottenTomatoesRating?: number;
+  metacriticRating?: number;
 } 

@@ -5,6 +5,10 @@ import { MovieSuggestionFlow } from '../services/api';
 import { CalendarMonth, Person, ChevronLeft, ChevronRight, Star, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
+import tmdbLogo from '../assets/themoviedb.svg';
+import imdbLogo from '../assets/imdb.png';
+import rtLogo from '../assets/rottentomatoes.png';
+import metacriticLogo from '../assets/metascore.svg';
 
 const MovieSuggestionsPageMinimal: React.FC = () => {
   const location = useLocation();
@@ -22,6 +26,17 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     locationState: location.state,
     mode
   });
+
+  // Debug: Verificar campos do primeiro filme
+  if (movieSuggestions.length > 0) {
+    console.log('🔍 Campos do primeiro filme:', {
+      title: movieSuggestions[0].movie.title,
+      imdbRating: movieSuggestions[0].movie.imdbRating,
+      vote_average: (movieSuggestions[0].movie as any).vote_average,
+      rottenTomatoesRating: movieSuggestions[0].movie.rottenTomatoesRating,
+      metacriticRating: movieSuggestions[0].movie.metacriticRating
+    });
+  }
 
   // Salvar journeyContext no localStorage como backup
   useEffect(() => {
@@ -78,7 +93,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         const parsedContext = JSON.parse(savedContext);
         if (parsedContext?.selectedSentiment?.id) {
           const color = currentSentimentColors[parsedContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
-          console.log('🎨 Cor do sentimento (localStorage):', color, 'ID:', parsedContext.selectedSentiment.id);
+          //console.log('🎨 Cor do sentimento (localStorage):', color, 'ID:', parsedContext.selectedSentiment.id);
           return color;
         }
       }
@@ -90,9 +105,28 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     return '#1976d2'; // Cor padrão se não houver sentimento
   };
 
-  // Ordenar todas as sugestões e calcular paginação
+  // Ordenar e paginar sugestões
   const { totalPages, displaySuggestions } = useMemo(() => {
-    const sorted = [...movieSuggestions].sort((a, b) => a.movie.title.localeCompare(b.movie.title, 'pt-BR'));
+    // Ordenar todos os filmes por imdbRating (descendente)
+    const sorted = [...movieSuggestions].sort((a, b) => {
+      // Forçar conversão para número, mesmo se vier como string
+      const aRating = a.movie.imdbRating !== null && a.movie.imdbRating !== undefined ? Number(a.movie.imdbRating) : -Infinity;
+      const bRating = b.movie.imdbRating !== null && b.movie.imdbRating !== undefined ? Number(b.movie.imdbRating) : -Infinity;
+      
+      // Ordem descendente por imdbRating
+      if (bRating !== aRating) {
+        return bRating - aRating;
+      }
+      
+      // Se empatar no imdbRating, usar vote_average como segundo critério
+      const aVoteAverage = (a.movie as any).vote_average !== null && (a.movie as any).vote_average !== undefined ? Number((a.movie as any).vote_average) : -Infinity;
+      const bVoteAverage = (b.movie as any).vote_average !== null && (b.movie as any).vote_average !== undefined ? Number((b.movie as any).vote_average) : -Infinity;
+      if (bVoteAverage !== aVoteAverage) return bVoteAverage - aVoteAverage;
+      
+      // Se ainda empatar, ordenar por título
+      return a.movie.title.localeCompare(b.movie.title, 'pt-BR');
+    });
+    
     const total = Math.ceil(sorted.length / MOVIES_PER_PAGE);
     const start = currentPage * MOVIES_PER_PAGE;
     const end = start + MOVIES_PER_PAGE;
@@ -163,6 +197,10 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     return text.substring(0, lastSpace) + '...';
   };
 
+  // Componentes de ícone para ratings
+  const RatingIcon: React.FC<{ src: string; alt: string; size?: number; colorFilter?: string }> = ({ src, alt, size = 18, colorFilter }) => (
+    <img src={src} alt={alt} style={{ width: size, height: size, objectFit: 'contain', verticalAlign: 'middle', marginRight: 2, filter: colorFilter || undefined }} />
+  );
 
 
   if (!displaySuggestions.length) {
@@ -259,16 +297,52 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                           )}
                         </Stack>
 
-                        {/* Informações do filme: Rating, Duração e Classificação */}
+                        {/* Informações do filme: Ratings, Duração e Classificação */}
                         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }}>
-                          {(suggestion.movie as any).vote_average && (
+                          {/* TMDB */}
+                          {typeof (suggestion.movie as any).vote_average !== 'undefined' && (suggestion.movie as any).vote_average !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <Star sx={{ fontSize: 16, color: '#FFD700' }} />
+                              <RatingIcon src={tmdbLogo} alt="TMDB" size={20} />
                               <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
                                 {Number((suggestion.movie as any).vote_average).toFixed(1)}
                               </Typography>
                             </Box>
                           )}
+                          {/* IMDb */}
+                          {typeof suggestion.movie.imdbRating !== 'undefined' && suggestion.movie.imdbRating !== null && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <RatingIcon src={imdbLogo} alt="IMDb" size={16} />
+                              <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+                                {Number(suggestion.movie.imdbRating).toFixed(1)}
+                              </Typography>
+                            </Box>
+                          )}
+                          {/* Rotten Tomatoes */}
+                          {typeof suggestion.movie.rottenTomatoesRating !== 'undefined' && suggestion.movie.rottenTomatoesRating !== null && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <RatingIcon src={rtLogo} alt="Rotten Tomatoes" size={16} />
+                              <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+                                {Number(suggestion.movie.rottenTomatoesRating).toFixed(0)}%
+                              </Typography>
+                            </Box>
+                          )}
+                          {/* Metacritic */}
+                          {typeof suggestion.movie.metacriticRating !== 'undefined' && suggestion.movie.metacriticRating !== null && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <RatingIcon src={metacriticLogo} alt="Metacritic" size={16} />
+                              <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+                                {Number(suggestion.movie.metacriticRating).toFixed(0)}
+                              </Typography>
+                            </Box>
+                          )}
+                          {/* Barra vertical de separação */}
+                          {(typeof (suggestion.movie as any).vote_average !== 'undefined' && (suggestion.movie as any).vote_average !== null) ||
+                           (typeof suggestion.movie.imdbRating !== 'undefined' && suggestion.movie.imdbRating !== null) ||
+                           (typeof suggestion.movie.rottenTomatoesRating !== 'undefined' && suggestion.movie.rottenTomatoesRating !== null) ||
+                           (typeof suggestion.movie.metacriticRating !== 'undefined' && suggestion.movie.metacriticRating !== null) ? (
+                            <Typography variant="caption" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+                          ) : null}
+                          {/* Duração */}
                           {suggestion.movie.runtime && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                               <AccessTime sx={{ fontSize: 16, color: 'text.secondary' }} />
@@ -277,6 +351,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                               </Typography>
                             </Box>
                           )}
+                          {/* Classificação */}
                           {(suggestion.movie as any).certification && (
                             <Chip 
                               label={(suggestion.movie as any).certification} 

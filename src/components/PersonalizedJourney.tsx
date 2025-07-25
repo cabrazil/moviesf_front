@@ -453,7 +453,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   >
                     {step.options.map((option: JourneyOptionFlow) => (
                       <MenuItem key={option.id} value={option.id}>
-                        {option.text}
+                        {option.text} ({option.id})
                       </MenuItem>
                     ))}
                   </Select>
@@ -476,7 +476,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                         }}
                         onClick={() => handleOptionSelect(option)}
                       >
-                        <Typography variant="h6">{option.text}</Typography>
+                        <Typography variant="h6">{option.text} ({option.id})</Typography>
                         {option.description && (
                           <Typography variant="body2" color="text.secondary">
                             {option.description}

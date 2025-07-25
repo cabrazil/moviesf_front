@@ -44,4 +44,7 @@ export interface Movie {
   movieSentiments?: MovieSentiment[];
   movieSuggestions?: MovieSuggestion[];
   movieSuggestionFlows?: MovieSuggestionFlow[];
+  imdbRating?: number;
+  rottenTomatoesRating?: number;
+  metacriticRating?: number;
 } 
