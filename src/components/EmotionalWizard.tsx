@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getEmotionalFlow, getMovieSuggestions } from '../services/api';
-import { JourneyFlow, MovieSuggestion } from '../types';
+import { JourneyFlow, MovieSuggestion } from '../services/api';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 export const EmotionalWizard = () => {

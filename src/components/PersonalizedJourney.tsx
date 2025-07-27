@@ -12,7 +12,6 @@ import {
   FormControl, 
   InputLabel,
   Chip,
-  Alert,
   Fade
 } from '@mui/material';
 import { 
@@ -297,15 +296,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
     return labels[type as keyof typeof labels] || type;
   };
 
-  const getIntentionColor = (type: string): 'primary' | 'secondary' | 'success' | 'warning' => {
-    const colors = {
-      'PROCESS': 'primary' as const,
-      'TRANSFORM': 'secondary' as const,
-      'MAINTAIN': 'success' as const,
-      'EXPLORE': 'warning' as const
-    };
-    return colors[type as keyof typeof colors] || 'primary';
-  };
+  
 
   if (loading) {
     return (

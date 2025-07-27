@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Settings } from 'lucide-react'
+import { Home } from 'lucide-react'
 
 export function Header() {
   const location = useLocation()

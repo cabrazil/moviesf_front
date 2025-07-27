@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Paper, Container, Fade, useTheme, Button } from '@mui/material';
+import { Box, Typography, Grid, Paper, Container, Button } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MainSentiment, getMainSentiments, EmotionalIntention } from '../services/api';
 import EmotionalIntentionStep from './EmotionalIntentionStep';
@@ -22,7 +22,6 @@ const JourneyIntro: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [useTraditionalJourney, setUseTraditionalJourney] = useState(false);
   const { selectSentimentTheme, resetToDefaultTheme, mode } = useThemeManager();
-  const theme = useTheme();
 
   useEffect(() => {
     const loadSentiments = async () => {
@@ -90,10 +89,6 @@ const JourneyIntro: React.FC = () => {
   const handleSkipIntention = () => {
     setUseTraditionalJourney(true);
     setCurrentStep('journey');
-  };
-
-  const handleStartRecommendations = () => {
-    setCurrentStep('recommendations');
   };
 
   const handleBackToSentiment = () => {

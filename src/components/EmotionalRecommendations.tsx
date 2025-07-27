@@ -13,7 +13,6 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Rating,
   Container,
   Fade
 } from '@mui/material';

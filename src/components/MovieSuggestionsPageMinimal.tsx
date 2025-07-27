@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Stack, Chip, Tooltip, Grid, Card, CardContent } from '@mui/material';
+import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
-import { CalendarMonth, Person, ChevronLeft, ChevronRight, Star, AccessTime, Favorite } from '@mui/icons-material';
+import { CalendarMonth, Person, ChevronLeft, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import tmdbLogo from '../assets/themoviedb.svg';
@@ -189,13 +189,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     setCurrentPage(prev => Math.min(totalPages - 1, prev + 1));
   };
 
-  const truncateText = (text: string, maxLength: number = 120): string => {
-    if (!text) return '';
-    if (text.length <= maxLength) return text;
-    
-    const lastSpace = text.substring(0, maxLength).lastIndexOf(' ');
-    return text.substring(0, lastSpace) + '...';
-  };
+  
 
   // Componentes de ícone para ratings
   const RatingIcon: React.FC<{ src: string; alt: string; size?: number; colorFilter?: string }> = ({ src, alt, size = 18, colorFilter }) => (

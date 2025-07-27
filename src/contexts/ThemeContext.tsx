@@ -23,15 +23,11 @@ export const useThemeManager = () => {
 };
 
 export const ThemeProviderWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<ThemeMode>('dark');
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    const savedMode = localStorage.getItem('themeMode');
+    return savedMode === 'light' ? 'light' : 'dark';
+  });
   const [currentSentimentId, setCurrentSentimentId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const savedMode = localStorage.getItem('themeMode') as ThemeMode;
-    if (savedMode) {
-      setMode(savedMode);
-    }
-  }, []);
 
   const themeManager = useMemo(() => ({
     toggleThemeMode: () => {
