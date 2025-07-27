@@ -16,8 +16,6 @@ dist-ssr
 # Scripts
 src/scripts
 
-# Admin
-src/components/admin
 # Environment
 .env
 .env.*
