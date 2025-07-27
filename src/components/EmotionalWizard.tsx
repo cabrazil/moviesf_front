@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getEmotionalFlow, getMovieSuggestions } from '../services/api';
-import { JourneyFlow, MovieSuggestion } from '../services/api';
+import { JourneyFlow } from '../services/api';
+import { MovieSuggestion } from '../types';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 export const EmotionalWizard = () => {
@@ -95,7 +96,7 @@ export const EmotionalWizard = () => {
                 {suggestion.movie.year} • {suggestion.movie.director}
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
-                {suggestion.movie.genres.map((genre) => (
+                {suggestion.movie.genres.map((genre: string) => (
                   <span
                     key={genre}
                     className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded"

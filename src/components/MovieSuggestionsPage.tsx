@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Grid, Paper, Container, Chip, Stack, Divider, Card, CardContent, IconButton } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
-import { Movie as MovieIcon, CalendarMonth, Person, PlayCircle, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { CalendarMonth, Person, PlayCircle, ExpandMore, ExpandLess } from '@mui/icons-material';
 
 const MovieSuggestionsPage: React.FC = () => {
   const location = useLocation();

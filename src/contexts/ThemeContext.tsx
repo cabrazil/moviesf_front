@@ -1,5 +1,5 @@
-import React, { createContext, useState, useMemo, useContext, ReactNode, useEffect } from 'react';
-import { ThemeProvider as MuiThemeProvider, Theme } from '@mui/material/styles';
+import React, { createContext, useState, useMemo, useContext, ReactNode } from 'react';
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { lightSentimentThemes, darkSentimentThemes, defaultLightTheme, defaultDarkTheme } from '../styles/themes';
 

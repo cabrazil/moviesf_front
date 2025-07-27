@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Grid, Paper, Container, Button, Chip } from '@mui/material';
-import { MainSentiment, EmotionalIntention, EmotionalIntentionsResponse, getEmotionalIntentions } from '../services/api';
+import { MainSentiment, EmotionalIntention, getEmotionalIntentions } from '../services/api';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import IntentionIcon from './IntentionIcon';
@@ -16,7 +15,6 @@ interface EmotionalIntentionStepProps {
 const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
   selectedSentiment,
   onIntentionSelect,
-  onSkip,
   onBack
 }) => {
   const [loading, setLoading] = useState(true);
