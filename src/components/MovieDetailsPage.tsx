@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button } from '@mui/material';
-import { Star, AccessTime } from '@mui/icons-material';
+
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom';

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getEmotionalFlow, getMovieSuggestions } from '../services/api';
-import { EmotionalFlow, MovieSuggestion } from '../types';
+import { getJourneyFlow } from '../services/api';
+import { JourneyFlow, MovieSuggestion } from '../types';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 export const EmotionalWizard = () => {
@@ -19,12 +19,12 @@ export const EmotionalWizard = () => {
       setLoading(true);
       setError(null);
       const currentPath = newPath?.join(',');
-      const response = await getEmotionalFlow(currentPath);
+      const response = await getJourneyFlow(currentPath);
       setFlow(response);
 
       if (response.isComplete) {
-        const suggestions = await getMovieSuggestions(response.emotionalStateId, newPath || []);
-        setSuggestions(suggestions);
+        // const suggestions = await getMovieSuggestions(response.emotionalStateId, newPath || []);
+        // setSuggestions(suggestions);
       }
     } catch (err) {
       setError('Erro ao carregar o fluxo. Por favor, tente novamente.');

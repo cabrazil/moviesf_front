@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { getEmotionalState, createEmotionalState, updateEmotionalState, getMainSentiments } from '../../services/api';
-import { EmotionalState, MainSentiment } from '../../services/api';
+import { useParams, Link } from 'react-router-dom';
+import api, { getMainSentiments, MainSentiment } from '../../services/api';
 
 interface JourneyStep {
   question: string;
@@ -13,7 +12,6 @@ interface JourneyStep {
 }
 
 const EmotionalStateForm: React.FC = () => {
-  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,9 +47,9 @@ const EmotionalStateForm: React.FC = () => {
             description: state.description,
             mainSentimentId: state.mainSentimentId,
             isActive: state.isActive,
-            journeySteps: state.journeySteps.map(step => ({
+            journeySteps: state.journeySteps.map((step: any) => ({
               question: step.question,
-              options: step.options.map(opt => ({
+              options: step.options.map((opt: any) => ({
                 text: opt.text,
                 nextStepId: opt.nextStepId,
                 isEndState: opt.isEndState

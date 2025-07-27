@@ -9,6 +9,7 @@ export interface MainSentiment {
   id: number;
   name: string;
   description: string;
+  keywords: string[];
   journeyFlow?: JourneyFlow;
 }
 

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'movies' | 'emotional-states' | 'suggestions'>('movies');
 
   return (
