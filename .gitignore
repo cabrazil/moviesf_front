@@ -13,6 +13,11 @@ dist
 dist-ssr
 *.local
 
+# Scripts
+src/scripts
+
+# Admin
+src/components/admin
 # Environment
 .env
 .env.*
