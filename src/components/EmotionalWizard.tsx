@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { getJourneyFlow } from '../services/api';
+import { getEmotionalFlow, getMovieSuggestions } from '../services/api';
 import { JourneyFlow, MovieSuggestion } from '../types';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 
 export const EmotionalWizard = () => {
-  const [flow, setFlow] = useState<EmotionalFlow | null>(null);
+  const [flow, setFlow] = useState<JourneyFlow | null>(null);
   const [path, setPath] = useState<string[]>([]);
   const [suggestions, setSuggestions] = useState<MovieSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,12 +19,12 @@ export const EmotionalWizard = () => {
       setLoading(true);
       setError(null);
       const currentPath = newPath?.join(',');
-      const response = await getJourneyFlow(currentPath);
+      const response = await getEmotionalFlow(currentPath);
       setFlow(response);
 
       if (response.isComplete) {
-        // const suggestions = await getMovieSuggestions(response.emotionalStateId, newPath || []);
-        // setSuggestions(suggestions);
+        const suggestions = await getMovieSuggestions(response.emotionalStateId!, newPath || []);
+        setSuggestions(suggestions);
       }
     } catch (err) {
       setError('Erro ao carregar o fluxo. Por favor, tente novamente.');
@@ -126,7 +126,7 @@ export const EmotionalWizard = () => {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-8">{flow.currentQuestion}</h2>
         <div className="flex flex-col gap-4">
-          {flow.options?.map((option) => (
+          {flow.options?.map((option: any) => (
             <button
               key={option.text}
               onClick={() => handleOptionClick(option.text)}

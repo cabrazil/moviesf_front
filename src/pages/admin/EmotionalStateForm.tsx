@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import api, { getMainSentiments, MainSentiment } from '../../services/api';
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import { getEmotionalState, createEmotionalState, updateEmotionalState, getMainSentiments, EmotionalState, MainSentiment } from '../../services/api';
 
 interface JourneyStep {
   question: string;
@@ -12,6 +12,7 @@ interface JourneyStep {
 }
 
 const EmotionalStateForm: React.FC = () => {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -17,6 +17,43 @@ export interface JourneyFlow {
   id: number;
   mainSentimentId: number;
   steps: JourneyStepFlow[];
+  isComplete: boolean;
+  currentQuestion: string;
+  options: any[];
+  emotionalStateId?: number;
+}
+
+export interface EmotionalState {
+  name: string;
+  description: string;
+  mainSentimentId: number;
+  isActive: boolean;
+  journeySteps: any[];
+}
+
+export const getEmotionalState = async (id: number): Promise<EmotionalState> => {
+  console.log(id);
+  return new Promise(resolve => resolve({} as EmotionalState));
+}
+
+export const createEmotionalState = async (data: any): Promise<any> => {
+  console.log(data);
+  return new Promise(resolve => resolve({}));
+}
+
+export const updateEmotionalState = async (id: number, data: any): Promise<any> => {
+  console.log(id, data);
+  return new Promise(resolve => resolve({}));
+}
+
+export const getEmotionalFlow = async (path: any): Promise<JourneyFlow> => {
+  console.log(path);
+  return new Promise(resolve => resolve({} as JourneyFlow));
+}
+
+export const getMovieSuggestions = async (id: number, path: any): Promise<any> => {
+  console.log(id, path);
+  return new Promise(resolve => resolve([]));
 }
 
 export interface JourneyStepFlow {
