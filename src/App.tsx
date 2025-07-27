@@ -5,12 +5,6 @@ import JourneyIntro from './components/JourneyIntro';
 import MovieJourneyWrapper from './components/MovieJourneyWrapper';
 import MovieSuggestionsPage from './components/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './components/MovieSuggestionsPageMinimal';
-import MovieListPage from './pages/admin/MovieList';
-import MainSentimentList from './pages/admin/MainSentimentList';
-import JourneyFlowList from './pages/admin/JourneyFlowList';
-import JourneyOptionFlowDetails from './pages/admin/JourneyOptionFlowDetails';
-import AdminLayout from './components/AdminLayout';
-import MovieJourneyTrackerPage from './pages/admin/MovieJourneyTrackerPage';
 import MovieDetailsPage from './components/MovieDetailsPage';
 
 function App() {
@@ -24,14 +18,6 @@ function App() {
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/filme/:id" element={<MovieDetailsPage />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="movies" element={<MovieListPage />} />
-            <Route path="main-sentiments" element={<MainSentimentList />} />
-            <Route path="journey-flows" element={<JourneyFlowList />} />
-            <Route path="journey-option-flows" element={<JourneyOptionFlowDetails />} />
-            <Route path="journey-option-flows/:id" element={<JourneyOptionFlowDetails />} />
-            <Route path="movie-journeys" element={<MovieJourneyTrackerPage />} />
-          </Route>
         </Routes>
       </Router>
     </ThemeProviderWrapper>

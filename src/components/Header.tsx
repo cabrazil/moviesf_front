@@ -34,19 +34,6 @@ export function Header() {
               <Home className="h-3 w-3 mr-1" />
               Home
             </Link>
-            <Link
-              to="/admin"
-              className={`
-                inline-flex items-center px-3 py-2 rounded-md text-sm font-medium
-                ${isAdminPage
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
-                }
-              `}
-            >
-              <Settings className="h-3 w-3 mr-1" />
-              Área Admin
-            </Link>
           </nav>
         </div>
       </div>
