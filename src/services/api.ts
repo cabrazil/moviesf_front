@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Movie } from '../types';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://moviesf-back.vercel.app',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://moviesf-back.vercel.app'),
 });
 
 export interface MainSentiment {
@@ -154,11 +154,19 @@ export const getPersonalizedJourneyFlow = async (
   emotionalIntentionId: number
 ): Promise<PersonalizedJourneyFlow> => {
   try {
-    const response = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
+    // Tentar primeiro o novo endpoint
+    const response = await api.get(`/api/personalized-journey-v2/${mainSentimentId}/${emotionalIntentionId}`);
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar jornada personalizada:', error);
-    throw error;
+    console.error('Erro ao buscar jornada personalizada (v2):', error);
+    // Fallback para o endpoint original
+    try {
+      const response = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
+      return response.data;
+    } catch (fallbackError) {
+      console.error('Erro ao buscar jornada personalizada (fallback):', fallbackError);
+      throw fallbackError;
+    }
   }
 };
 
