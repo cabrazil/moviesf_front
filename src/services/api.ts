@@ -154,11 +154,19 @@ export const getPersonalizedJourneyFlow = async (
   emotionalIntentionId: number
 ): Promise<PersonalizedJourneyFlow> => {
   try {
-    const response = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
+    // Usar novo endpoint que funciona
+    const response = await api.get(`/api/personalized-flow/${mainSentimentId}/${emotionalIntentionId}`);
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar jornada personalizada:', error);
-    throw error;
+    // Fallback para endpoint antigo se necessário
+    try {
+      const fallbackResponse = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
+      return fallbackResponse.data;
+    } catch (fallbackError) {
+      console.error('Erro no fallback:', fallbackError);
+      throw error;
+    }
   }
 };
 
