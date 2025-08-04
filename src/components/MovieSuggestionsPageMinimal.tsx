@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent } from '@mui/material';
+import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, FormControlLabel, Checkbox } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
 import { CalendarMonth, Person, ChevronLeft, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
@@ -16,6 +16,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const movieSuggestions: MovieSuggestionFlow[] = location.state?.movieSuggestions || [];
   const journeyContext = location.state?.journeyContext;
   const [currentPage, setCurrentPage] = useState(0);
+  const [showPre1980, setShowPre1980] = useState(true);
+  const [showPost1980, setShowPost1980] = useState(true);
+
+  // Reset da página quando os filtros mudarem
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [showPre1980, showPost1980]);
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
@@ -27,7 +34,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     mode
   });
 
-  // Debug: Verificar campos do primeiro filme
+  // Debug: Verificar campos do primeiro filme sempre que o componente for carregado
   if (movieSuggestions.length > 0) {
     console.log('🔍 Campos do primeiro filme:', {
       title: movieSuggestions[0].movie.title,
@@ -47,6 +54,20 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   }, [journeyContext]);
 
   const MOVIES_PER_PAGE = 4;
+
+  // Filtrar filmes baseado no ano
+  const filteredSuggestions = useMemo(() => {
+    return movieSuggestions.filter(suggestion => {
+      const year = suggestion.movie.year;
+      if (!year) return true; // Se não tem ano, mostra
+      
+      if (year < 1980) {
+        return showPre1980;
+      } else {
+        return showPost1980;
+      }
+    });
+  }, [movieSuggestions, showPre1980, showPost1980]);
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
@@ -107,8 +128,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
   // Ordenar e paginar sugestões
   const { totalPages, displaySuggestions } = useMemo(() => {
-    // Ordenar todos os filmes por imdbRating (descendente)
-    const sorted = [...movieSuggestions].sort((a, b) => {
+    // Ordenar filmes filtrados por imdbRating (descendente)
+    const sorted = [...filteredSuggestions].sort((a, b) => {
       // Forçar conversão para número, mesmo se vier como string
       const aRating = a.movie.imdbRating !== null && a.movie.imdbRating !== undefined ? Number(a.movie.imdbRating) : -Infinity;
       const bRating = b.movie.imdbRating !== null && b.movie.imdbRating !== undefined ? Number(b.movie.imdbRating) : -Infinity;
@@ -136,7 +157,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       totalPages: total,
       displaySuggestions: display
     };
-  }, [movieSuggestions, currentPage]);
+  }, [filteredSuggestions, currentPage]);
 
   const handleRestart = () => {
     navigate('/');
@@ -198,14 +219,32 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
 
   if (!displaySuggestions.length) {
+    // Verificar se é porque não há filmes originais ou porque os filtros estão desmarcados
+    const hasOriginalMovies = movieSuggestions.length > 0;
+    const hasActiveFilters = showPre1980 || showPost1980;
+    
     return (
       <Container maxWidth="lg">
         <Box sx={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <Typography variant="h5" gutterBottom>
-            Nenhuma sugestão de filme encontrada.
+            {hasOriginalMovies && !hasActiveFilters 
+              ? 'Nenhum filme encontrado com os filtros atuais.' 
+              : 'Nenhuma sugestão de filme encontrada.'
+            }
           </Typography>
-          <Button variant="contained" onClick={handleRestart} sx={{ mt: 4 }}>
-            Voltar ao Início
+          
+          {hasOriginalMovies && !hasActiveFilters ? (
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              Tente marcar pelo menos um dos filtros de ano para ver os filmes.
+            </Typography>
+          ) : null}
+          
+          <Button 
+            variant="contained" 
+            onClick={hasOriginalMovies && !hasActiveFilters ? handleBack : handleRestart} 
+            sx={{ mt: 4 }}
+          >
+            {hasOriginalMovies && !hasActiveFilters ? 'Voltar' : 'Voltar ao Início'}
           </Button>
         </Box>
       </Container>
@@ -216,19 +255,47 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ minHeight: '80vh', py: 2 }}>
         {/* Cabeçalho Minimalista */}
-        <Box sx={{ textAlign: 'center', mb: 2 }}>
+        <Box sx={{ textAlign: 'center', mb: 1 }}>
           <Typography variant="h4" gutterBottom>
             Filmes cuidadosamente sugeridos para você
           </Typography>
-          {totalPages > 1 && (
-            <Typography variant="body2" color="text.secondary">
-              Página {currentPage + 1} de {totalPages} • {movieSuggestions.length} {movieSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
-            </Typography>
-          )}
         </Box>
 
+        {/* Filtro de Ano */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPre1980}
+                onChange={(e) => setShowPre1980(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Filmes Anteriores a 1980"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={showPost1980}
+                onChange={(e) => setShowPost1980(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Filmes Pós-1980"
+          />
+        </Box>
+
+        {/* Informações de Paginação */}
+        {totalPages > 1 && (
+          <Box sx={{ textAlign: 'center', mb: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+            </Typography>
+          </Box>
+        )}
+
         {/* Grid de Filmes */}
-        <Grid container spacing={3} sx={{ mb: 2 }}>
+        <Grid container spacing={3} sx={{ mb: 1 }}>
           {displaySuggestions.map((suggestion) => {
             const reason = suggestion.reason || '';
             
@@ -458,51 +525,58 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           })}
         </Grid>
 
-        {/* Controles de Paginação */}
-        {totalPages > 1 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={goToPreviousPage}
-              disabled={currentPage === 0}
-              startIcon={<ChevronLeft />}
-              sx={{ px: 3, py: 1 }}
-            >
-              Anterior
-            </Button>
-            
-            <Typography variant="body2" color="text.secondary" sx={{ mx: 2 }}>
-              {currentPage + 1} de {totalPages}
-            </Typography>
-            
-            <Button
-              variant="outlined"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages - 1}
-              endIcon={<ChevronRight />}
-              sx={{ px: 3, py: 1 }}
-            >
-              Próximo
-            </Button>
-          </Box>
-        )}
-
-        {/* Navegação */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+        {/* Footer com Paginação e Navegação */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 1 }}>
+          {/* Botões de Navegação */}
           <Button
             variant="outlined"
             onClick={handleBack}
-            sx={{ px: 3, py: 1.5 }}
+            sx={{ px: 3, py: 1 }}
           >
             Voltar
           </Button>
+          
           <Button
             variant="outlined"
             onClick={handleRestart}
-            sx={{ px: 4, py: 1.5 }}
+            sx={{ px: 3, py: 1, whiteSpace: 'nowrap' }}
           >
             Nova Jornada
           </Button>
+
+          {/* Separador visual */}
+          {totalPages > 1 && (
+            <Box sx={{ width: 1, height: 20, bgcolor: 'divider', mx: 2 }} />
+          )}
+
+          {/* Controles de Paginação */}
+          {totalPages > 1 && (
+            <>
+              <Button
+                variant="outlined"
+                onClick={goToPreviousPage}
+                disabled={currentPage === 0}
+                startIcon={<ChevronLeft />}
+                sx={{ px: 2, py: 1 }}
+              >
+                Anterior
+              </Button>
+              
+              <Typography variant="body2" color="text.secondary" sx={{ mx: 1, whiteSpace: 'nowrap' }}>
+                {currentPage + 1} de {totalPages}
+              </Typography>
+              
+              <Button
+                variant="outlined"
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages - 1}
+                endIcon={<ChevronRight />}
+                sx={{ px: 2, py: 1 }}
+              >
+                Próximo
+              </Button>
+            </>
+          )}
         </Box>
       </Box>
     </Container>
