@@ -67,10 +67,28 @@ const MovieDetailsPage: React.FC = () => {
 
         {/* Informações do filme */}
         <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' }, maxWidth: { xs: '100%', md: 700 } }}>
-          {/* Título e infos principais */}
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 1, textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '1.3rem', md: '1.6rem' } }}>{movie.title}</Typography>
+          {/* Título e ano */}
+          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, mb: 1, justifyContent: { xs: 'center', md: 'flex-start' } }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '1.3rem', md: '1.6rem' }, lineHeight: 1.2 }}>{movie.title}</Typography>
+            {movie.year && (
+              <Chip 
+                label={movie.year} 
+                size="small" 
+                sx={{ 
+                  borderColor: themeColor, 
+                  color: themeColor, 
+                  bgcolor: 'transparent', 
+                  borderWidth: 1, 
+                  borderStyle: 'solid', 
+                  fontSize: '0.85rem', 
+                  height: 22,
+                  alignSelf: 'flex-start',
+                  mt: 0.5
+                }} 
+              />
+            )}
+          </Box>
           <Stack direction="row" spacing={2} justifyContent={{ xs: 'center', md: 'flex-start' }} alignItems="center" sx={{ mb: 1 }}>
-            <Typography variant="body2" sx={{ color: '#fff', fontWeight: 600, fontSize: { xs: '0.98rem', md: '1.08rem' }, letterSpacing: 1, textTransform: 'uppercase' }}>{movie.year}</Typography>
             {/* Ratings */}
             {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -101,22 +119,33 @@ const MovieDetailsPage: React.FC = () => {
              (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
              (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
              (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
-              <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+              <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}></Typography>
             ) : null}
-            {/* Duração */}
-            {movie.runtime && (
-              <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{movie.runtime} min</Typography>
+          </Stack>
+          {/* Diretor, duração e classificação */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.2, justifyContent: { xs: 'center', md: 'flex-start' }, flexWrap: 'wrap' }}>
+            {movie.director && (
+              <>
+                <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
+                  Diretor: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.director}</span>
+                </Typography>
+                {(movie.runtime || movie.certification) && (
+                  <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+                )}
+              </>
             )}
-            {/* Classificação */}
+            {movie.runtime && (
+              <>
+                <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{movie.runtime} min</Typography>
+                {movie.certification && (
+                  <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+                )}
+              </>
+            )}
             {movie.certification && (
               <Chip label={movie.certification} size="small" sx={{ bgcolor: themeColor, color: '#fff', fontSize: '0.85rem', height: 22 }} />
             )}
-          </Stack>
-          {movie.director && (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1.2, textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '0.95rem', md: '1rem' } }}>
-              Diretor: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.director}</span>
-            </Typography>
-          )}
+          </Box>
 
           {/* Linha horizontal na cor do sentimento */}
           <Divider sx={{ borderColor: themeColor, opacity: 0.7, mb: 1.2, width: '100%' }} />
