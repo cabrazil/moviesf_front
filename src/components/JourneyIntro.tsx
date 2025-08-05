@@ -124,7 +124,7 @@ const JourneyIntro: React.FC = () => {
   if (currentStep === 'sentiment') {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ py: 4, textAlign: 'center' }}>
+        <Box sx={{ py: 2, textAlign: 'center' }}>
           <Typography variant="h3" gutterBottom sx={{ 
           fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.75rem' },
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
@@ -133,7 +133,7 @@ const JourneyIntro: React.FC = () => {
         </Typography>
           <Typography variant="h6" color="text.secondary">Escolha o sentimento que melhor descreve seu estado emocional.</Typography>
         </Box>
-        <Grid container spacing={3} sx={{ mt: 4 }}>
+        <Grid container spacing={3} sx={{ mt: 2 }}>
           {sentiments.map((sentiment) => (
             <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
               <Paper
@@ -156,7 +156,7 @@ const JourneyIntro: React.FC = () => {
                   </Typography>
                 </Box>
                 <Typography variant="body2" color="text.secondary">
-                  {sentiment.description}
+                  {sentiment.shortDescription}
                 </Typography>
               </Paper>
             </Grid>

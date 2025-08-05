@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, FormControlLabel, Checkbox } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
-import { CalendarMonth, Person, ChevronLeft, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
+import { CalendarMonth, Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import tmdbLogo from '../assets/themoviedb.svg';

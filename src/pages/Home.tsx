@@ -27,7 +27,7 @@ const Home: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '100vh',
+          minHeight: '90vh',
           textAlign: 'center',
           pt: { xs: 1, sm: 2, md: 3 },
           pb: { xs: 1, sm: 2, md: 3 },

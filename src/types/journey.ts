@@ -2,6 +2,7 @@ export interface MainSentiment {
   id: number;
   name: string;
   description: string;
+  shortDescription?: string;
   keywords: string[];
   journeyFlow?: JourneyFlow;
 }

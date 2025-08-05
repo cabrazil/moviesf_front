@@ -9,6 +9,7 @@ export interface MainSentiment {
   id: number;
   name: string;
   description: string;
+  shortDescription?: string;
   keywords: string[];
   journeyFlow?: JourneyFlow;
 }
@@ -289,6 +290,7 @@ export interface MovieJourney {
     id: number;
     name: string;
     description: string;
+    shortDescription?: string;
   };
   journeyFlow?: {
     id: number;

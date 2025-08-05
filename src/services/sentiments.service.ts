@@ -16,6 +16,7 @@ export interface MainSentiment {
   id: number
   name: string
   description: string | null
+  shortDescription: string | null
   keywords: string[]
   subSentiments: SubSentiment[]
   createdAt: string
