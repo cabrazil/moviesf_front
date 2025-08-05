@@ -399,7 +399,10 @@ const MovieJourney: React.FC<MovieJourneyProps> = ({
                 />
               </Box>
               
-              <Typography variant="h4" gutterBottom>
+              <Typography variant="h4" gutterBottom sx={{ 
+                fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
+                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+              }}>
                 {step.question}
               </Typography>
             </Box>

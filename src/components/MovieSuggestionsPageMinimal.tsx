@@ -256,7 +256,10 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       <Box sx={{ minHeight: '80vh', py: 2 }}>
         {/* Cabeçalho Minimalista */}
         <Box sx={{ textAlign: 'center', mb: 1 }}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom sx={{ 
+            fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
+            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+          }}>
             Filmes cuidadosamente sugeridos para você
           </Typography>
         </Box>

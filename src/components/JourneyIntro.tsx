@@ -125,7 +125,12 @@ const JourneyIntro: React.FC = () => {
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Typography variant="h3" gutterBottom>Como você está se sentindo hoje?</Typography>
+          <Typography variant="h3" gutterBottom sx={{ 
+          fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.75rem' },
+          lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+        }}>
+          Como você está se sentindo hoje?
+        </Typography>
           <Typography variant="h6" color="text.secondary">Escolha o sentimento que melhor descreve seu estado emocional.</Typography>
         </Box>
         <Grid container spacing={3} sx={{ mt: 4 }}>
