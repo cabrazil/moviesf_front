@@ -127,7 +127,8 @@ const JourneyIntro: React.FC = () => {
         <Box sx={{ py: 2, textAlign: 'center' }}>
           <Typography variant="h2" gutterBottom sx={{ 
           fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
-          lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+          lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+          fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
         }}>
           Como você está se sentindo hoje?
         </Typography>
