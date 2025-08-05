@@ -16,13 +16,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const movieSuggestions: MovieSuggestionFlow[] = location.state?.movieSuggestions || [];
   const journeyContext = location.state?.journeyContext;
   const [currentPage, setCurrentPage] = useState(0);
-  const [showPre1980, setShowPre1980] = useState(true);
-  const [showPost1980, setShowPost1980] = useState(true);
+  const [showPre1990, setShowPre1990] = useState(true);
+  const [showPost1990, setShowPost1990] = useState(true);
 
   // Reset da página quando os filtros mudarem
   useEffect(() => {
     setCurrentPage(0);
-  }, [showPre1980, showPost1980]);
+  }, [showPre1990, showPost1990]);
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
@@ -61,13 +61,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       const year = suggestion.movie.year;
       if (!year) return true; // Se não tem ano, mostra
       
-      if (year < 1980) {
-        return showPre1980;
+      if (year < 1990) {
+        return showPre1990;
       } else {
-        return showPost1980;
+        return showPost1990;
       }
     });
-  }, [movieSuggestions, showPre1980, showPost1980]);
+  }, [movieSuggestions, showPre1990, showPost1990]);
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
@@ -221,7 +221,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   if (!displaySuggestions.length) {
     // Verificar se é porque não há filmes originais ou porque os filtros estão desmarcados
     const hasOriginalMovies = movieSuggestions.length > 0;
-    const hasActiveFilters = showPre1980 || showPost1980;
+    const hasActiveFilters = showPre1990 || showPost1990;
     
     return (
       <Container maxWidth="lg">
@@ -266,22 +266,22 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           <FormControlLabel
             control={
               <Checkbox
-                checked={showPre1980}
-                onChange={(e) => setShowPre1980(e.target.checked)}
+                checked={showPre1990}
+                onChange={(e) => setShowPre1990(e.target.checked)}
                 color="primary"
               />
             }
-            label="Filmes Anteriores a 1980"
+            label="Filmes Anteriores a 1990"
           />
           <FormControlLabel
             control={
               <Checkbox
-                checked={showPost1980}
-                onChange={(e) => setShowPost1980(e.target.checked)}
+                checked={showPost1990}
+                onChange={(e) => setShowPost1990(e.target.checked)}
                 color="primary"
               />
             }
-            label="Filmes Pós-1980"
+            label="Filmes Pós-1990"
           />
         </Box>
 
@@ -556,7 +556,6 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 variant="outlined"
                 onClick={goToPreviousPage}
                 disabled={currentPage === 0}
-                startIcon={<ChevronLeft />}
                 sx={{ px: 2, py: 1 }}
               >
                 Anterior
@@ -570,7 +569,6 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 variant="outlined"
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages - 1}
-                endIcon={<ChevronRight />}
                 sx={{ px: 2, py: 1 }}
               >
                 Próximo
