@@ -108,15 +108,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           O que você gostaria de fazer com esse sentimento?
         </Typography>
         
-        <Box sx={{ mb: 3, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              color: mode === 'dark' ? 'white' : 'black'
-            }}
-          >
-            Sentimento:
-          </Typography> 
+        <Box sx={{ mb: 3, textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
           <Chip
             label={selectedSentiment.name}
             variant="outlined"
