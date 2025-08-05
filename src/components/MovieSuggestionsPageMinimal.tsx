@@ -274,7 +274,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 color="primary"
               />
             }
-            label="Filmes Anteriores a 1990"
+            label="Antes de 1990"
           />
           <FormControlLabel
             control={
@@ -284,7 +284,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 color="primary"
               />
             }
-            label="Filmes Pós-1990"
+            label="Pós-1990"
           />
         </Box>
 
