@@ -683,7 +683,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           <Button
             variant="outlined"
             onClick={handleRestart}
-            sx={{ px: 3, py: 1, whiteSpace: 'nowrap' }}
+            sx={{ 
+              px: 3, 
+              py: 1, 
+              whiteSpace: { xs: 'normal', sm: 'nowrap' },
+              textAlign: 'center'
+            }}
           >
             Nova Jornada
           </Button>
