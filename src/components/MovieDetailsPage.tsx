@@ -29,7 +29,7 @@ const MovieDetailsPage: React.FC = () => {
       
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/movie/${id}/details`);
+        const response = await fetch(`https://moviesf-back.vercel.app/api/movie/${id}/details`);
         
         if (!response.ok) {
           throw new Error('Filme não encontrado');
