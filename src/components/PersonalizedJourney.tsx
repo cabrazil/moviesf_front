@@ -12,7 +12,8 @@ import {
   FormControl, 
   InputLabel,
   Chip,
-  Fade
+  Fade,
+  LinearProgress
 } from '@mui/material';
 import { 
   MainSentiment, 
@@ -92,6 +93,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [journeyFlow, setJourneyFlow] = useState<PersonalizedJourneyFlow | null>(null);
   const [currentStep, setCurrentStep] = useState<JourneyStepFlow | null>(null);
   const [selectedOption, setSelectedOption] = useState<string>('');
@@ -103,7 +105,20 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
     const loadPersonalizedJourney = async () => {
       try {
         setLoading(true);
+        setLoadingProgress(0);
+        
+        // Simular progresso para feedback visual
+        const progressInterval = setInterval(() => {
+          setLoadingProgress(prev => {
+            if (prev < 90) return prev + 10;
+            return prev;
+          });
+        }, 100);
+        
         const flow = await getPersonalizedJourneyFlow(selectedSentiment.id, selectedIntention.id);
+        
+        clearInterval(progressInterval);
+        setLoadingProgress(100);
         
         // Validar integridade da jornada personalizada
         const validation = validatePersonalizedJourneyIntegrity(flow);
@@ -150,7 +165,8 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         });
         
         setCurrentStep(firstStep);
-        setLoading(false);
+        // Pequeno delay para mostrar o progresso completo
+        setTimeout(() => setLoading(false), 200);
       } catch (error) {
         console.error('Erro ao carregar jornada personalizada:', error);
         setError('Erro ao carregar a jornada personalizada. Por favor, tente novamente mais tarde.');
@@ -300,12 +316,58 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-          <p className="text-gray-600">Carregando jornada personalizada...</p>
-        </div>
-      </div>
+      <Container maxWidth="md">
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '70vh',
+            textAlign: 'center',
+            py: 4
+          }}
+        >
+          <Box sx={{ mb: 3 }}>
+            <Box 
+              sx={{ 
+                width: 40, 
+                height: 40, 
+                border: 3, 
+                borderColor: 'primary.main',
+                borderTopColor: 'transparent',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                mb: 2,
+                '@keyframes spin': {
+                  '0%': { transform: 'rotate(0deg)' },
+                  '100%': { transform: 'rotate(360deg)' }
+                }
+              }} 
+            />
+            <Typography variant="h6" color="text.secondary">
+              Preparando sua jornada...
+            </Typography>
+            <Box sx={{ width: '100%', maxWidth: 300, mt: 2, mb: 1 }}>
+              <LinearProgress 
+                variant="determinate" 
+                value={loadingProgress} 
+                sx={{ 
+                  height: 6, 
+                  borderRadius: 3,
+                  backgroundColor: 'grey.300',
+                  '& .MuiLinearProgress-bar': {
+                    borderRadius: 3
+                  }
+                }} 
+              />
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {loadingProgress < 100 ? `${Math.round(loadingProgress)}%` : 'Quase pronto...'}
+            </Typography>
+          </Box>
+        </Box>
+      </Container>
     );
   }
 

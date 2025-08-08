@@ -227,19 +227,73 @@ const MovieDetailsPage: React.FC = () => {
           {/* Disponível em */}
           <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
             <Typography variant="subtitle1" sx={{ mb: 0.5, color: '#fff', textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '1rem', md: '1.1rem' } }}>Disponível em:</Typography>
-            <Stack direction="row" spacing={1} justifyContent={{ xs: 'center', md: 'flex-start' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              gap: 0.8, 
+              justifyContent: { xs: 'center', md: 'flex-start' },
+              maxWidth: '100%'
+            }}>
               {(movieData.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0)
-                ? movieData.subscriptionPlatforms.map((platform: any) => (
-                    <Chip 
-                      key={platform.id} 
-                      label={platform.name} 
-                      size="small" 
-                      sx={{ borderColor: themeColor, color: themeColor, bgcolor: 'transparent', borderWidth: 1, borderStyle: 'solid', fontSize: '0.85rem', height: 22 }} 
-                    />
-                  ))
+                ? movieData.subscriptionPlatforms.map((platform: any, index: number) => {
+                    // Função para obter ícone baseado no accessType
+                    const getAccessIcon = (accessType: string) => {
+                      switch (accessType) {
+                        case 'INCLUDED_WITH_SUBSCRIPTION':
+                        case 'HYBRID_OR_UNKNOWN':
+                          return ''; // Sem ícone para assinatura
+                        case 'PURCHASE':
+                          return '💰';
+                        case 'RENTAL':
+                          return '📅'; // Ícone de calendário para aluguel
+                        default:
+                          return '';
+                      }
+                    };
+
+                    // Função para obter texto de tooltip baseado no accessType
+                    const getAccessTooltip = (accessType: string) => {
+                      switch (accessType) {
+                        case 'INCLUDED_WITH_SUBSCRIPTION':
+                        case 'HYBRID_OR_UNKNOWN':
+                          return 'Incluído na assinatura';
+                        case 'PURCHASE':
+                          return 'Disponível para compra';
+                        case 'RENTAL':
+                          return 'Disponível para aluguel';
+                        default:
+                          return '';
+                      }
+                    };
+
+                    const accessIcon = getAccessIcon(platform.accessType);
+                    const displayLabel = accessIcon ? `${accessIcon} ${platform.name}` : platform.name;
+
+                    return (
+                      <Chip 
+                        key={`${platform.id}-${platform.accessType}-${index}`} 
+                        label={displayLabel}
+                        title={getAccessTooltip(platform.accessType)}
+                        size="small" 
+                        sx={{ 
+                          borderColor: themeColor, 
+                          color: themeColor, 
+                          bgcolor: 'transparent', 
+                          borderWidth: 1, 
+                          borderStyle: 'solid', 
+                          fontSize: '0.8rem', 
+                          height: 22,
+                          minWidth: 'auto',
+                          '& .MuiChip-label': {
+                            px: 1.5
+                          }
+                        }} 
+                      />
+                    );
+                  })
                 : <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.95rem' }}>Não disponível em streaming</Typography>
               }
-            </Stack>
+            </Box>
           </Box>
         </Box>
       </Box>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Grid, Paper, Container, Button } from '@mui/material';
+import { Box, Typography, Grid, Paper, Container, Button, Skeleton, Fade } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MainSentiment, getMainSentiments, EmotionalIntention } from '../services/api';
 import EmotionalIntentionStep from './EmotionalIntentionStep';
@@ -116,7 +116,41 @@ const JourneyIntro: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Carregando...</div>; // Simplified loader
+    return (
+      <Container maxWidth="lg">
+        <Box sx={{ py: 2, textAlign: 'center' }}>
+          <Skeleton 
+            variant="text" 
+            width="60%" 
+            height={60} 
+            sx={{ mx: 'auto', mb: 2 }} 
+          />
+          <Skeleton 
+            variant="text" 
+            width="80%" 
+            height={32} 
+            sx={{ mx: 'auto' }} 
+          />
+        </Box>
+        <Grid container spacing={3} sx={{ mt: 2 }}>
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Paper sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <Skeleton variant="circular" width={24} height={24} />
+                  <Skeleton variant="text" width="70%" height={32} />
+                </Box>
+                <Skeleton variant="text" width="100%" height={20} />
+                <Skeleton variant="text" width="80%" height={20} />
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Skeleton variant="rectangular" width={180} height={48} sx={{ borderRadius: 1 }} />
+        </Box>
+      </Container>
+    );
   }
 
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
@@ -124,42 +158,46 @@ const JourneyIntro: React.FC = () => {
   if (currentStep === 'sentiment') {
     return (
       <Container maxWidth="lg">
-        <Box sx={{ py: 2, textAlign: 'center' }}>
-          <Typography variant="h2" gutterBottom sx={{ 
-          fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
-          lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
-          fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
-        }}>
-          Como você está se sentindo hoje?
-        </Typography>
-          <Typography variant="h6" color="text.secondary">Escolha o sentimento que melhor descreve seu estado emocional.</Typography>
-        </Box>
+        <Fade in={true} timeout={600}>
+          <Box sx={{ py: 2, textAlign: 'center' }}>
+            <Typography variant="h2" gutterBottom sx={{ 
+            fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
+            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+            fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
+          }}>
+            Como você está se sentindo hoje?
+          </Typography>
+            <Typography variant="h6" color="text.secondary">Escolha o sentimento que melhor descreve seu estado emocional.</Typography>
+          </Box>
+        </Fade>
         <Grid container spacing={3} sx={{ mt: 2 }}>
-          {sentiments.map((sentiment) => (
+          {sentiments.map((sentiment, index) => (
             <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
-              <Paper
-                onClick={() => handleSentimentSelect(sentiment)}
-                sx={{
-                  p: 3,
-                  cursor: 'pointer',
-                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                  border: `2px solid ${currentSentimentColors[sentiment.id as keyof typeof currentSentimentColors]}`, // Use specific sentiment color for border
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 6,
-                  }
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                  <SentimentIcon sentimentId={sentiment.id} size={24} />
-                  <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
-                    {sentiment.name}
+              <Fade in={true} timeout={800 + (index * 100)}>
+                <Paper
+                  onClick={() => handleSentimentSelect(sentiment)}
+                  sx={{
+                    p: 3,
+                    cursor: 'pointer',
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    border: `2px solid ${currentSentimentColors[sentiment.id as keyof typeof currentSentimentColors]}`, // Use specific sentiment color for border
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 6,
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <SentimentIcon sentimentId={sentiment.id} size={24} />
+                    <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
+                      {sentiment.name}
+                    </Typography>
+                  </Box>
+                  <Typography variant="body2" color="text.secondary">
+                    {sentiment.shortDescription}
                   </Typography>
-                </Box>
-                <Typography variant="body2" color="text.secondary">
-                  {sentiment.shortDescription}
-                </Typography>
-              </Paper>
+                </Paper>
+              </Fade>
             </Grid>
           ))}
         </Grid>
