@@ -90,8 +90,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           });
         }
         
-        // Se não há plataformas de streaming no filme, não filtrar
-        if (movieStreamingPlatforms.length === 0) return true;
+        // Se não há plataformas de streaming no filme, não deve aparecer quando há filtros ativos
+        if (movieStreamingPlatforms.length === 0) return false;
         
         // Verificar se o filme tem pelo menos uma das plataformas selecionadas
         const hasSelectedPlatform = movieStreamingPlatforms.some((platform: any) => {
@@ -258,7 +258,24 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Garantir que temos o contexto da jornada
+    // Se há filtros de streaming ativos, voltar para a tela de filtros
+    const hasStreamingFilters = streamingFilters && (
+      streamingFilters.subscriptionPlatforms.length > 0 || 
+      (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
+    );
+    
+    if (hasStreamingFilters) {
+      // Voltar para a tela de filtros com o contexto da jornada
+      navigate('/filters', { 
+        state: { 
+          ...location.state,
+          journeyContext: journeyContext || location.state?.journeyContext
+        } 
+      });
+      return;
+    }
+    
+    // Caso contrário, voltar para a tela de introdução (comportamento original)
     let contextToPass = journeyContext || location.state?.journeyContext;
     
     // Se não temos contexto, tentar recuperar do localStorage
@@ -342,10 +359,10 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           
           <Button 
             variant="contained" 
-            onClick={hasOriginalMovies && !hasActiveFilters ? handleBack : handleRestart} 
+            onClick={hasOriginalMovies ? handleBack : handleRestart} 
             sx={{ mt: 4 }}
           >
-            {hasOriginalMovies && !hasActiveFilters ? 'Voltar' : 'Voltar ao Início'}
+            {hasOriginalMovies ? 'Voltar' : 'Voltar ao Início'}
           </Button>
         </Box>
       </Container>
