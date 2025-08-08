@@ -8,14 +8,12 @@ import {
   Checkbox,
   Button,
   Paper,
-  Divider,
-  useTheme,
-  useMediaQuery
+  useTheme
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface StreamingFiltersProps {
-  onFiltersChange?: (filters: StreamingFilters) => void;
+  // Removido onFiltersChange pois não está sendo usado
 }
 
 export interface StreamingFilters {
@@ -24,9 +22,8 @@ export interface StreamingFilters {
   includeRentalPurchase: boolean;
 }
 
-const StreamingFilters: React.FC<StreamingFiltersProps> = ({ onFiltersChange }) => {
+const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const location = useLocation();
 
