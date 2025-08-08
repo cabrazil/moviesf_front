@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button } from '@mui/material';
 
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import { useThemeManager } from '../contexts/ThemeContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import tmdbLogo from '../assets/themoviedb.svg';
 import imdbLogo from '../assets/imdb.png';
 import rtLogo from '../assets/rottentomatoes.png';
@@ -12,23 +12,62 @@ import metacriticLogo from '../assets/metascore.svg';
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
+  const { id } = useParams();
   const state = location.state || {};
-  const movie = state.movie;
-  const reason = state.reason;
+  const [movieData, setMovieData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const reason = state.reason || 'Filme cuidadosamente selecionado para você.';
   const sentimentId = state.sentimentId;
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
   const themeColor = currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2';
 
-  // Verificar se os dados necessários estão disponíveis
-  if (!movie || !reason || !sentimentId) {
+  useEffect(() => {
+    const fetchMovieDetails = async () => {
+      if (!id) return;
+      
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3000/api/movie/${id}/details`);
+        
+        if (!response.ok) {
+          throw new Error('Filme não encontrado');
+        }
+        
+        const data = await response.json();
+        setMovieData(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro ao carregar dados do filme');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovieDetails();
+  }, [id]);
+
+  if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Typography variant="h6" color="text.secondary">
-          Dados do filme não encontrados.
+          Carregando...
         </Typography>
       </Box>
     );
   }
+
+  if (error || !movieData) {
+    return (
+      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="h6" color="text.secondary">
+          {error || 'Dados do filme não encontrados.'}
+        </Typography>
+      </Box>
+    );
+  }
+
+  const movie = movieData.movie;
 
   // Componente de ícone para ratings
   const RatingIcon: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 20 }) => (
@@ -189,9 +228,14 @@ const MovieDetailsPage: React.FC = () => {
           <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
             <Typography variant="subtitle1" sx={{ mb: 0.5, color: '#fff', textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '1rem', md: '1.1rem' } }}>Disponível em:</Typography>
             <Stack direction="row" spacing={1} justifyContent={{ xs: 'center', md: 'flex-start' }}>
-              {(movie.streamingPlatforms && movie.streamingPlatforms.length > 0)
-                ? movie.streamingPlatforms.map((platform: string) => (
-                    <Chip key={platform} label={platform} size="small" sx={{ borderColor: themeColor, color: themeColor, bgcolor: 'transparent', borderWidth: 1, borderStyle: 'solid', fontSize: '0.85rem', height: 22 }} />
+              {(movieData.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0)
+                ? movieData.subscriptionPlatforms.map((platform: any) => (
+                    <Chip 
+                      key={platform.id} 
+                      label={platform.name} 
+                      size="small" 
+                      sx={{ borderColor: themeColor, color: themeColor, bgcolor: 'transparent', borderWidth: 1, borderStyle: 'solid', fontSize: '0.85rem', height: 22 }} 
+                    />
                   ))
                 : <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.95rem' }}>Não disponível em streaming</Typography>
               }
