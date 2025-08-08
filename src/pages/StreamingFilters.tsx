@@ -8,6 +8,7 @@ import {
   Checkbox,
   Button,
   Paper,
+  Chip,
   useTheme
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -148,46 +149,37 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               🎬 Plataformas de Assinatura
             </Typography>
 
-            <Grid container spacing={1.0}>
+            <Grid container spacing={1.5}>
               {subscriptionPlatforms.map((platform) => (
                 <Grid item xs={12} sm={6} md={2.4} key={platform}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedSubscriptionPlatforms.includes(platform)}
-                        onChange={() => handleSubscriptionPlatformChange(platform)}
-                        sx={{
-                          color: theme.palette.primary.main,
-                          '&.Mui-checked': {
-                            color: theme.palette.primary.main,
-                          },
-                        }}
-                      />
-                    }
-                    label={
-                      <Typography 
-                        variant="body1"
-                        sx={{ 
-                          fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                          fontWeight: 500
-                        }}
-                      >
-                        {platform}
-                      </Typography>
-                    }
+                  <Chip
+                    label={platform}
+                    onClick={() => handleSubscriptionPlatformChange(platform)}
+                    clickable
                     sx={{
                       width: '100%',
-                      margin: 0,
-                      padding: 0.6,
-                      borderRadius: 1,
+                      height: 'auto',
+                      minHeight: '40px',
+                      fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                      fontWeight: 500,
                       backgroundColor: selectedSubscriptionPlatforms.includes(platform) 
-                        ? `${theme.palette.primary.main}20` 
+                        ? theme.palette.primary.main
                         : 'transparent',
-                      border: selectedSubscriptionPlatforms.includes(platform)
-                        ? `1px solid ${theme.palette.primary.main}`
-                        : '1px solid transparent',
+                                              color: selectedSubscriptionPlatforms.includes(platform)
+                          ? theme.palette.primary.contrastText
+                          : theme.palette.text.secondary,
+                      border: `2px solid ${theme.palette.primary.main}`,
+                      transition: 'all 0.2s ease',
                       '&:hover': {
-                        backgroundColor: `${theme.palette.primary.main}10`,
+                        backgroundColor: selectedSubscriptionPlatforms.includes(platform)
+                          ? theme.palette.primary.dark
+                          : `${theme.palette.primary.main}10`,
+                        transform: 'translateY(-1px)',
+                        boxShadow: 2
+                      },
+                      '&:active': {
+                        transform: 'translateY(0px)',
+                        boxShadow: 1
                       }
                     }}
                   />
@@ -256,46 +248,37 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                 🛒 Lojas de Filmes (Aluguel/Compra)
               </Typography>
 
-              <Grid container spacing={1.0}>
+              <Grid container spacing={1.5}>
                 {rentalPurchasePlatforms.map((platform) => (
                   <Grid item xs={12} sm={6} key={platform}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={selectedRentalPurchasePlatforms.includes(platform)}
-                          onChange={() => handleRentalPurchasePlatformChange(platform)}
-                          sx={{
-                            color: theme.palette.primary.main,
-                            '&.Mui-checked': {
-                              color: theme.palette.primary.main,
-                            },
-                          }}
-                        />
-                      }
-                      label={
-                        <Typography 
-                          variant="body1"
-                          sx={{ 
-                            fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                            fontWeight: 500
-                          }}
-                        >
-                          {platform}
-                        </Typography>
-                      }
+                    <Chip
+                      label={platform}
+                      onClick={() => handleRentalPurchasePlatformChange(platform)}
+                      clickable
                       sx={{
                         width: '100%',
-                        margin: 0,
-                        padding: 0.8,
-                        borderRadius: 1,
+                        height: 'auto',
+                        minHeight: '40px',
+                        fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                        fontWeight: 500,
                         backgroundColor: selectedRentalPurchasePlatforms.includes(platform) 
-                          ? `${theme.palette.primary.main}20` 
+                          ? theme.palette.primary.main
                           : 'transparent',
-                        border: selectedRentalPurchasePlatforms.includes(platform)
-                          ? `1px solid ${theme.palette.primary.main}`
-                          : '1px solid transparent',
+                        color: selectedRentalPurchasePlatforms.includes(platform)
+                          ? theme.palette.primary.contrastText
+                          : theme.palette.text.secondary,
+                        border: `2px solid ${theme.palette.primary.main}`,
+                        transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: `${theme.palette.primary.main}10`,
+                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform)
+                            ? theme.palette.primary.dark
+                            : `${theme.palette.primary.main}10`,
+                          transform: 'translateY(-1px)',
+                          boxShadow: 2
+                        },
+                        '&:active': {
+                          transform: 'translateY(0px)',
+                          boxShadow: 1
                         }
                       }}
                     />

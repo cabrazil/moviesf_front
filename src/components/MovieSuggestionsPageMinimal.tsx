@@ -464,10 +464,20 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               <Grid item xs={12} md={6} key={suggestion.movie.id}>
                 <Card 
                   elevation={3}
+                  onClick={() => {
+                    navigate(`/filme/${suggestion.movie.id}`, {
+                      state: {
+                        movie: suggestion.movie,
+                        reason: suggestion.reason,
+                        sentimentId: journeyContext?.selectedSentiment?.id
+                      }
+                    });
+                  }}
                   sx={{ 
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
+                    cursor: 'pointer',
                     transition: 'transform 0.2s, box-shadow 0.2s',
                     backgroundColor: mode === 'light' ? '#f5f5f5' : undefined,
                     '&:hover': {
@@ -624,22 +634,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                             borderRadius: 1,
                             backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
                             border: `1px solid ${getSentimentColor()}20`,
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                              backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.04)',
-                              borderColor: `${getSentimentColor()}40`,
-                              transform: 'translateY(-1px)'
-                            }
-                          }}
-                          onClick={() => {
-                            navigate(`/filme/${suggestion.movie.id}`, {
-                              state: {
-                                movie: suggestion.movie,
-                                reason: suggestion.reason,
-                                sentimentId: journeyContext?.selectedSentiment?.id
-                              }
-                            });
+                            transition: 'all 0.2s ease'
                           }}
                         >
                           <Favorite 
