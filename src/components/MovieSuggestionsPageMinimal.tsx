@@ -15,6 +15,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const navigate = useNavigate();
   const movieSuggestions: MovieSuggestionFlow[] = location.state?.movieSuggestions || [];
   const journeyContext = location.state?.journeyContext;
+  const streamingFilters = location.state?.streamingFilters;
   const [currentPage, setCurrentPage] = useState(0);
   const [showPre1990, setShowPre1990] = useState(true);
   const [showPost1990, setShowPost1990] = useState(true);
@@ -55,19 +56,112 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
   const MOVIES_PER_PAGE = 4;
 
-  // Filtrar filmes baseado no ano
+  // Filtrar filmes baseado no ano e plataformas de streaming
   const filteredSuggestions = useMemo(() => {
     return movieSuggestions.filter(suggestion => {
+      // Filtro por ano
       const year = suggestion.movie.year;
-      if (!year) return true; // Se não tem ano, mostra
-      
-      if (year < 1990) {
-        return showPre1990;
-      } else {
-        return showPost1990;
+      if (year) {
+        if (year < 1990 && !showPre1990) return false;
+        if (year >= 1990 && !showPost1990) return false;
       }
+      
+            // Filtro por plataformas de streaming (se aplicável)
+      if (streamingFilters) {
+        // Se não há filtros selecionados, mostrar todos os filmes
+        const hasNoFilters = streamingFilters.subscriptionPlatforms.length === 0 && 
+          (!streamingFilters.includeRentalPurchase || streamingFilters.rentalPurchasePlatforms.length === 0);
+        
+        if (hasNoFilters) {
+          return true;
+        }
+
+        const movieStreamingPlatforms = (suggestion.movie as any).platforms || [];
+        
+        // Debug: Log da estrutura do filme para entender o problema
+        if (suggestion.movie.title === 'Corra!') {
+          console.log('🎬 Debug filme "Corra!" - Dados do filme:', {
+            movieId: suggestion.movie.id,
+            movieTitle: suggestion.movie.title,
+            rawMovieData: suggestion.movie,
+            platformsField: (suggestion.movie as any).platforms,
+            hasPlatforms: Array.isArray(movieStreamingPlatforms),
+            platformsLength: movieStreamingPlatforms.length
+          });
+        }
+        
+        // Se não há plataformas de streaming no filme, não filtrar
+        if (movieStreamingPlatforms.length === 0) return true;
+        
+        // Verificar se o filme tem pelo menos uma das plataformas selecionadas
+        const hasSelectedPlatform = movieStreamingPlatforms.some((platform: any) => {
+          const platformName = platform.streamingPlatform?.name || '';
+          const accessType = platform.accessType || '';
+          
+          // Debug: Log das plataformas do filme
+          if (suggestion.movie.title === 'Corra!') {
+            console.log('🎬 Debug filme "Corra!" - Estrutura completa:', {
+              movieStreamingPlatforms,
+              totalPlatforms: movieStreamingPlatforms.length,
+              platform,
+              platformName,
+              accessType,
+              selectedSubscriptionPlatforms: streamingFilters.subscriptionPlatforms,
+              selectedRentalPlatforms: streamingFilters.rentalPurchasePlatforms
+            });
+          }
+          
+          // Verificar plataformas de assinatura
+          if (streamingFilters.subscriptionPlatforms.length > 0) {
+            const isSubscriptionPlatform = streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
+              if (selectedPlatform === 'Outras plataformas') {
+                // Lógica para outras plataformas não listadas
+                return !streamingFilters.subscriptionPlatforms.some((p: string) => 
+                  p !== 'Outras plataformas' && platformName.toLowerCase().includes(p.replace(' (Assinatura)', '').toLowerCase())
+                );
+              }
+              
+              // Normalizar nomes para comparação
+              const cleanSelectedPlatform = selectedPlatform.replace(' (Assinatura)', '').toLowerCase().trim();
+              const cleanPlatformName = platformName.toLowerCase().trim();
+              
+              // Verificação exata ou contém
+              return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+            });
+            
+            if (isSubscriptionPlatform && accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
+              return true;
+            }
+          }
+          
+          // Verificar plataformas de aluguel/compra
+          if (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0) {
+            const isRentalPurchasePlatform = streamingFilters.rentalPurchasePlatforms.some((selectedPlatform: string) => {
+              const cleanSelectedPlatform = selectedPlatform
+                .replace(' (Aluguel/Compra)', '')
+                .replace(' (Aluguel/Compra/Gratuito)', '')
+                .toLowerCase()
+                .trim();
+              const cleanPlatformName = platformName.toLowerCase().trim();
+              
+              // Verificação exata ou contém
+              return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+            });
+            
+            if (isRentalPurchasePlatform && (accessType === 'PURCHASE' || accessType === 'RENTAL')) {
+              return true;
+            }
+          }
+          
+          return false;
+        });
+        
+        return hasSelectedPlatform;
+      }
+      
+      return true;
     });
-  }, [movieSuggestions, showPre1990, showPost1990]);
+  }, [movieSuggestions, showPre1990, showPost1990, streamingFilters]);
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
@@ -222,20 +316,27 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     // Verificar se é porque não há filmes originais ou porque os filtros estão desmarcados
     const hasOriginalMovies = movieSuggestions.length > 0;
     const hasActiveFilters = showPre1990 || showPost1990;
+    const hasStreamingFilters = streamingFilters && (
+      streamingFilters.subscriptionPlatforms.length > 0 || 
+      (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
+    );
     
     return (
       <Container maxWidth="lg">
         <Box sx={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <Typography variant="h5" gutterBottom>
-            {hasOriginalMovies && !hasActiveFilters 
+            {hasOriginalMovies && (!hasActiveFilters || !hasStreamingFilters)
               ? 'Nenhum filme encontrado com os filtros atuais.' 
               : 'Nenhuma sugestão de filme encontrada.'
             }
           </Typography>
           
-          {hasOriginalMovies && !hasActiveFilters ? (
+          {hasOriginalMovies && (!hasActiveFilters || !hasStreamingFilters) ? (
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              Tente marcar pelo menos um dos filtros de ano para ver os filmes.
+              {!hasActiveFilters 
+                ? 'Tente marcar pelo menos um dos filtros de ano para ver os filmes.'
+                : 'Tente ajustar os filtros de plataformas de streaming para ver mais filmes.'
+              }
             </Typography>
           ) : null}
           
@@ -254,48 +355,88 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   return (
     <Container maxWidth="lg">
       <Box sx={{ minHeight: '80vh', py: 2 }}>
-        {/* Cabeçalho Minimalista */}
-        <Box sx={{ textAlign: 'center', mb: 1 }}>
-          <Typography variant="h4" gutterBottom sx={{ 
-            fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
-            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+        {/* Header Reorganizado */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'flex-start',
+          mb: 2,
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: { xs: 2, md: 0 }
+        }}>
+          {/* Lado Esquerdo: Título + Badge */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: { xs: 'center', md: 'flex-start' },
+            gap: 1
           }}>
-            Filmes cuidadosamente sugeridos para você
-          </Typography>
-        </Box>
-
-        {/* Filtro de Ano */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2, gap: 2 }}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showPre1990}
-                onChange={(e) => setShowPre1990(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="Antes de 1990"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showPost1990}
-                onChange={(e) => setShowPost1990(e.target.checked)}
-                color="primary"
-              />
-            }
-            label="Pós-1990"
-          />
-        </Box>
-
-        {/* Informações de Paginação */}
-        {totalPages > 1 && (
-          <Box sx={{ textAlign: 'center', mb: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+            <Typography variant="h4" sx={{ 
+              fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
+              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+              textAlign: { xs: 'center', md: 'left' }
+            }}>
+              Filmes cuidadosamente sugeridos para você
             </Typography>
+            
+            {/* Indicador de Filtros de Streaming */}
+            {streamingFilters && (
+              <Chip
+                label={`🎬 Filtros de streaming ativos: ${streamingFilters.subscriptionPlatforms.length + streamingFilters.rentalPurchasePlatforms.length} plataforma(s)`}
+                color="primary"
+                variant="outlined"
+                sx={{ fontSize: '0.8rem' }}
+              />
+            )}
           </Box>
-        )}
+
+          {/* Lado Direito: Filtros + Paginação */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: { xs: 'center', md: 'flex-end' },
+            gap: 1
+          }}>
+            {/* Filtro de Ano */}
+            <Box sx={{ display: 'flex', gap: 0.5 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showPre1990}
+                    onChange={(e) => setShowPre1990(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                    Filmes Pré-1990
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={showPost1990}
+                    onChange={(e) => setShowPost1990(e.target.checked)}
+                    color="primary"
+                  />
+                }
+                label={
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                    Filmes Pós-1990
+                  </Typography>
+                }
+              />
+            </Box>
+
+            {/* Informações de Paginação */}
+            {totalPages > 1 && (
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
+                Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+              </Typography>
+            )}
+          </Box>
+        </Box>
 
         {/* Grid de Filmes */}
         <Grid container spacing={3} sx={{ mb: 1 }}>

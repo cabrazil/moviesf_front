@@ -6,6 +6,7 @@ import MovieJourneyWrapper from './components/MovieJourneyWrapper';
 import MovieSuggestionsPage from './components/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './components/MovieSuggestionsPageMinimal';
 import MovieDetailsPage from './components/MovieDetailsPage';
+import StreamingFilters from './pages/StreamingFilters';
 
 function App() {
   return (
@@ -15,8 +16,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/intro" element={<JourneyIntro />} />
           <Route path="/journey" element={<MovieJourneyWrapper />} />
+          <Route path="/filters" element={<StreamingFilters />} />
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
+          <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/filme/:id" element={<MovieDetailsPage />} />
         </Routes>
       </Router>

@@ -182,9 +182,9 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       
       // Verificar se há sugestões de filmes disponíveis
       if (option.movieSuggestions && option.movieSuggestions.length > 0) {
-        console.log('✅ Sugestões de filmes encontradas, navegando para página de resultados');
+        console.log('✅ Sugestões de filmes encontradas, navegando para página de filtros');
         console.log('Sugestões:', option.movieSuggestions);
-        navigate('/sugestoes/minimal', { 
+        navigate('/filters', { 
           state: { 
             movieSuggestions: option.movieSuggestions,
             journeyContext: {
