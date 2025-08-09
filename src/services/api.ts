@@ -2,7 +2,9 @@ import axios from 'axios';
 import { Movie } from '../types';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Forçando localhost para teste local
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? 'https://moviesf-back.vercel.app' 
+    : 'http://localhost:3000',
 });
 
 export interface MainSentiment {
