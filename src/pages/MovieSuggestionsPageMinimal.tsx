@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent } from '@mui/material';
+import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
 import { CalendarMonth, Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
@@ -13,6 +13,9 @@ import metacriticLogo from '../assets/metascore.svg';
 const MovieSuggestionsPageMinimal: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  
   const movieSuggestions: MovieSuggestionFlow[] = location.state?.movieSuggestions || [];
   const journeyContext = location.state?.journeyContext;
   const streamingFilters = location.state?.streamingFilters;
@@ -20,10 +23,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const [showPre1990, setShowPre1990] = useState(true);
   const [showPost1990, setShowPost1990] = useState(true);
 
-  // Reset da página quando os filtros mudarem
+  // Reset da página quando os filtros mudarem (apenas se não for mobile)
   useEffect(() => {
-    setCurrentPage(0);
-  }, [showPre1990, showPost1990]);
+    if (!isMobile) {
+      setCurrentPage(0);
+    }
+  }, [showPre1990, showPost1990, isMobile]);
+  
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
@@ -225,6 +231,15 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       return a.movie.title.localeCompare(b.movie.title, 'pt-BR');
     });
     
+    // Em mobile, mostrar todos os filmes sem paginação
+    if (isMobile) {
+      return {
+        totalPages: 1,
+        displaySuggestions: sorted
+      };
+    }
+    
+    // Em desktop, manter paginação
     const total = Math.ceil(sorted.length / MOVIES_PER_PAGE);
     const start = currentPage * MOVIES_PER_PAGE;
     const end = start + MOVIES_PER_PAGE;
@@ -234,7 +249,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       totalPages: total,
       displaySuggestions: display
     };
-  }, [filteredSuggestions, currentPage]);
+  }, [filteredSuggestions, currentPage, isMobile]);
 
   const handleRestart = () => {
     navigate('/');
@@ -446,10 +461,17 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               />
             </Box>
 
-            {/* Informações de Paginação */}
-            {totalPages > 1 && (
+            {/* Informações de Paginação (apenas em desktop) */}
+            {!isMobile && totalPages > 1 && (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
                 Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+              </Typography>
+            )}
+            
+            {/* Contador simples em mobile */}
+            {isMobile && (
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
               </Typography>
             )}
           </Box>
@@ -705,13 +727,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             Nova Jornada
           </Button>
 
-          {/* Separador visual */}
-          {totalPages > 1 && (
+          {/* Separador visual (apenas em desktop) */}
+          {!isMobile && totalPages > 1 && (
             <Box sx={{ width: 1, height: 20, bgcolor: 'divider', mx: 2 }} />
           )}
 
-          {/* Controles de Paginação */}
-          {totalPages > 1 && (
+          {/* Controles de Paginação (apenas em desktop) */}
+          {!isMobile && totalPages > 1 && (
             <>
               <Button
                 variant="outlined"
