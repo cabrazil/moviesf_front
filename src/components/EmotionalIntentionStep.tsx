@@ -8,7 +8,6 @@ import IntentionIcon from './IntentionIcon';
 interface EmotionalIntentionStepProps {
   selectedSentiment: MainSentiment;
   onIntentionSelect: (intention: EmotionalIntention) => void;
-  onSkip: () => void;
   onBack: () => void;
 }
 

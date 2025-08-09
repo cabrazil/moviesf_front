@@ -100,8 +100,44 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    // Verificar se viemos da tela de sugestões sem filmes (para evitar loop)
+    // Se há journeyContext, voltar para a jornada personalizada
+    const journeyContext = location.state?.journeyContext;
+    
+    if (journeyContext) {
+      // Voltar para /intro com o contexto da jornada para restaurar o estado
+      navigate('/intro', { 
+        state: { 
+          restoreJourney: true,
+          selectedSentiment: journeyContext.selectedSentiment,
+          selectedIntention: journeyContext.selectedIntention,
+          journeyType: journeyContext.journeyType
+        } 
+      });
+    } else {
+      // Fallback para navegação padrão
+      navigate(-1);
+    }
   };
+
+  // Extrair o texto da opção selecionada na jornada anterior
+  const movieSuggestions = location.state?.movieSuggestions || [];
+  
+  // Debug: verificar estrutura dos dados
+  console.log('🔍 StreamingFilters - location.state:', location.state);
+  console.log('🔍 StreamingFilters - movieSuggestions:', movieSuggestions);
+  console.log('🔍 StreamingFilters - movieSuggestions.length:', movieSuggestions.length);
+  if (movieSuggestions.length > 0) {
+    console.log('🔍 StreamingFilters - primeiro movieSuggestion:', movieSuggestions[0]);
+    console.log('🔍 StreamingFilters - journeyOptionFlow:', movieSuggestions[0].journeyOptionFlow);
+  }
+  
+  const selectedOptionText = location.state?.selectedOptionText || 
+    (movieSuggestions.length > 0 && movieSuggestions[0].journeyOptionFlow 
+      ? movieSuggestions[0].journeyOptionFlow.text 
+      : null);
+  
+  console.log('🔍 StreamingFilters - selectedOptionText:', selectedOptionText);
 
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
@@ -120,6 +156,38 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         >
           Ótima escolha! Agora, onde você gostaria de assistir a este tipo de filme?
         </Typography>
+        
+        {/* Texto da opção selecionada */}
+        {selectedOptionText && (
+          <Typography 
+            variant="h6"
+            align="center"
+            sx={{ 
+              color: 'text.secondary',
+              fontSize: { xs: '0.9rem', sm: '1rem' },
+              fontWeight: 'normal',
+              opacity: 0.8,
+              fontStyle: 'italic'
+            }}
+          >
+            "{selectedOptionText}"
+          </Typography>
+        )}
+        
+        {/* Debug temporário - remover depois */}
+        {movieSuggestions.length > 0 && !selectedOptionText && (
+          <Typography 
+            variant="body2"
+            align="center"
+            sx={{ 
+              color: 'orange',
+              fontSize: '0.8rem',
+              fontStyle: 'italic'
+            }}
+          >
+            Debug: {movieSuggestions.length} sugestões encontradas
+          </Typography>
+        )}
       </Box>
 
       <Grid container spacing={2}>

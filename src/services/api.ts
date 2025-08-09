@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Movie } from '../types';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : 'https://moviesf-back.vercel.app'),
+  baseURL: 'http://localhost:3000', // Forçando localhost para teste local
 });
 
 export interface MainSentiment {
@@ -155,19 +155,11 @@ export const getPersonalizedJourneyFlow = async (
   emotionalIntentionId: number
 ): Promise<PersonalizedJourneyFlow> => {
   try {
-    // Usar novo endpoint que funciona
-    const response = await api.get(`/api/personalized-flow/${mainSentimentId}/${emotionalIntentionId}`);
+    const response = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
     return response.data;
   } catch (error) {
     console.error('Erro ao buscar jornada personalizada:', error);
-    // Fallback para endpoint antigo se necessário
-    try {
-      const fallbackResponse = await api.get(`/api/personalized-journey/${mainSentimentId}/${emotionalIntentionId}`);
-      return fallbackResponse.data;
-    } catch (fallbackError) {
-      console.error('Erro no fallback:', fallbackError);
-      throw error;
-    }
+    throw error;
   }
 };
 

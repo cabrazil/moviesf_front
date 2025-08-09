@@ -200,9 +200,21 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       if (option.movieSuggestions && option.movieSuggestions.length > 0) {
         console.log('✅ Sugestões de filmes encontradas, navegando para página de filtros');
         console.log('Sugestões:', option.movieSuggestions);
+        console.log('✅ Texto da opção selecionada:', option.text);
+        
+        // Adicionar o texto da opção às sugestões para uso na tela de filtros
+        const movieSuggestionsWithOptionText = option.movieSuggestions.map((suggestion: any) => ({
+          ...suggestion,
+          journeyOptionFlow: {
+            ...suggestion.journeyOptionFlow,
+            text: option.text
+          }
+        }));
+        
         navigate('/filters', { 
           state: { 
-            movieSuggestions: option.movieSuggestions,
+            movieSuggestions: movieSuggestionsWithOptionText,
+            selectedOptionText: option.text, // Backup direto
             journeyContext: {
               selectedSentiment,
               selectedIntention,

@@ -2,8 +2,9 @@ import React from 'react';
 import { SvgIconComponent } from '@mui/icons-material';
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined';
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
-import BalanceOutlinedIcon from '@mui/icons-material/BalanceOutlined';
-import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
+
+import LightbulbOutlinedIcon from '@mui/icons-material/LightbulbOutlined';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 interface IntentionIconProps {
@@ -21,13 +22,13 @@ const IntentionIcon: React.FC<IntentionIconProps> = ({ intentionType, size = 24 
     // Representa mudança e transformação do estado emocional
     'TRANSFORM': AutorenewOutlinedIcon,     
     
-    // Manter - ícone de equilíbrio/balança (substituindo ⚖️)
-    // Representa estabilidade e preservação do estado atual
-    'MAINTAIN': BalanceOutlinedIcon,        
+    // Manter - ícone de escudo/proteção (substituindo ⚖️)
+    // Representa proteção e preservação do estado emocional atual
+    'MAINTAIN': ShieldOutlinedIcon,        
     
-    // Explorar - ícone de exploração/bússola (substituindo 🔍)
-    // Representa descoberta e exploração de novos sentimentos
-    'EXPLORE': ExploreOutlinedIcon,         
+    // Explorar - ícone de lâmpada/insight (substituindo 🔍)
+    // Representa descoberta e compreensão de nuances emocionais
+    'EXPLORE': LightbulbOutlinedIcon,         
   };
 
   const IconComponent = iconMap[intentionType] || HelpOutlineIcon;

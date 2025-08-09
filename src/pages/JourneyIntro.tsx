@@ -2,15 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Grid, Paper, Container, Button, Skeleton, Fade } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { MainSentiment, getMainSentiments, EmotionalIntention } from '../services/api';
-import EmotionalIntentionStep from './EmotionalIntentionStep';
-import EmotionalRecommendations from './EmotionalRecommendations';
-import PersonalizedJourney from './PersonalizedJourney';
-import MovieJourney from './MovieJourney';
+import EmotionalIntentionStep from '../components/EmotionalIntentionStep';
+
+import PersonalizedJourney from '../components/PersonalizedJourney';
 import { useThemeManager } from '../contexts/ThemeContext';
-import SentimentIcon from './SentimentIcon';
+import SentimentIcon from '../components/SentimentIcon';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes'; // Import sentimentColors
 
-type JourneyStep = 'sentiment' | 'intention' | 'journey' | 'recommendations';
+type JourneyStep = 'sentiment' | 'intention' | 'journey';
 
 const JourneyIntro: React.FC = () => {
   const navigate = useNavigate();
@@ -20,7 +19,7 @@ const JourneyIntro: React.FC = () => {
   const [selectedIntention, setSelectedIntention] = useState<EmotionalIntention | null>(null);
   const [currentStep, setCurrentStep] = useState<JourneyStep>('sentiment');
   const [loading, setLoading] = useState(true);
-  const [useTraditionalJourney, setUseTraditionalJourney] = useState(false);
+
   const { selectSentimentTheme, resetToDefaultTheme, mode } = useThemeManager();
 
   useEffect(() => {
@@ -48,11 +47,7 @@ const JourneyIntro: React.FC = () => {
           }
           
           // Determinar tipo de jornada e ir para o step correto
-          if (restoreState.journeyType === 'traditional') {
-            setUseTraditionalJourney(true);
-            setCurrentStep('journey');
-          } else if (restoreState.journeyType === 'personalized' && restoreState.selectedIntention) {
-            setUseTraditionalJourney(false);
+          if (restoreState.journeyType === 'personalized' && restoreState.selectedIntention) {
             setCurrentStep('journey');
           }
           
@@ -86,23 +81,20 @@ const JourneyIntro: React.FC = () => {
     setCurrentStep('journey');
   };
 
-  const handleSkipIntention = () => {
-    setUseTraditionalJourney(true);
-    setCurrentStep('journey');
-  };
+
 
   const handleBackToSentiment = () => {
     console.log('🔄 handleBackToSentiment - Resetando para seleção de sentimento');
     setSelectedSentiment(null);
     setSelectedIntention(null);
-    setUseTraditionalJourney(false);
+    
     setCurrentStep('sentiment');
     resetToDefaultTheme();
   };
 
   const handleBackToIntention = () => {
     setSelectedIntention(null);
-    setUseTraditionalJourney(false);
+    
     setCurrentStep('intention');
   };
 
@@ -110,7 +102,7 @@ const JourneyIntro: React.FC = () => {
     console.log('🔄 handleRestart - Reiniciando jornada completamente');
     setSelectedSentiment(null);
     setSelectedIntention(null);
-    setUseTraditionalJourney(false);
+    
     setCurrentStep('sentiment');
     resetToDefaultTheme();
   };
@@ -221,36 +213,15 @@ const JourneyIntro: React.FC = () => {
       <EmotionalIntentionStep
         selectedSentiment={selectedSentiment}
         onIntentionSelect={handleIntentionSelect}
-        onSkip={handleSkipIntention}
+
         onBack={handleBackToSentiment}
       />
     );
   }
 
-  if (currentStep === 'journey' && selectedSentiment) {
-    if (useTraditionalJourney || !selectedIntention) {
-      return (
-        <MovieJourney
-          selectedSentiment={selectedSentiment}
-          onBack={handleBackToIntention}
-          onRestart={handleRestart}
-        />
-      );
-    } else {
-      return (
-        <PersonalizedJourney
-          selectedSentiment={selectedSentiment}
-          selectedIntention={selectedIntention}
-          onBack={handleBackToIntention}
-          onRestart={handleRestart}
-        />
-      );
-    }
-  }
-
-  if (currentStep === 'recommendations' && selectedSentiment && selectedIntention) {
+  if (currentStep === 'journey' && selectedSentiment && selectedIntention) {
     return (
-      <EmotionalRecommendations
+      <PersonalizedJourney
         selectedSentiment={selectedSentiment}
         selectedIntention={selectedIntention}
         onBack={handleBackToIntention}
@@ -258,6 +229,8 @@ const JourneyIntro: React.FC = () => {
       />
     );
   }
+
+
 
   return null;
 };

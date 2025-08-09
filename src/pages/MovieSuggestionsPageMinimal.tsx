@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, FormControlLabel, Checkbox } from '@mui/material';
+import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
 import { CalendarMonth, Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
@@ -34,6 +34,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     locationState: location.state,
     mode
   });
+
+
 
   // Debug: Verificar campos do primeiro filme sempre que o componente for carregado
   if (movieSuggestions.length > 0) {
@@ -78,17 +80,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
         const movieStreamingPlatforms = (suggestion.movie as any).platforms || [];
         
-        // Debug: Log da estrutura do filme para entender o problema
-        if (suggestion.movie.title === 'Corra!') {
-          console.log('🎬 Debug filme "Corra!" - Dados do filme:', {
-            movieId: suggestion.movie.id,
-            movieTitle: suggestion.movie.title,
-            rawMovieData: suggestion.movie,
-            platformsField: (suggestion.movie as any).platforms,
-            hasPlatforms: Array.isArray(movieStreamingPlatforms),
-            platformsLength: movieStreamingPlatforms.length
-          });
-        }
+
         
         // Se não há plataformas de streaming no filme, não deve aparecer quando há filtros ativos
         if (movieStreamingPlatforms.length === 0) return false;
@@ -98,18 +90,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           const platformName = platform.streamingPlatform?.name || '';
           const accessType = platform.accessType || '';
           
-          // Debug: Log das plataformas do filme
-          if (suggestion.movie.title === 'Corra!') {
-            console.log('🎬 Debug filme "Corra!" - Estrutura completa:', {
-              movieStreamingPlatforms,
-              totalPlatforms: movieStreamingPlatforms.length,
-              platform,
-              platformName,
-              accessType,
-              selectedSubscriptionPlatforms: streamingFilters.subscriptionPlatforms,
-              selectedRentalPlatforms: streamingFilters.rentalPurchasePlatforms
-            });
-          }
+
           
           // Verificar plataformas de assinatura
           if (streamingFilters.subscriptionPlatforms.length > 0) {
@@ -124,6 +105,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               // Normalizar nomes para comparação
               const cleanSelectedPlatform = selectedPlatform.replace(' (Assinatura)', '').toLowerCase().trim();
               const cleanPlatformName = platformName.toLowerCase().trim();
+              
+
               
               // Verificação exata ou contém
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
@@ -258,7 +241,16 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   };
 
   const handleBack = () => {
-    // Se há filtros de streaming ativos, voltar para a tela de filtros
+    // Determinar se temos filmes originais para decidir o comportamento
+    const hasOriginalMovies = movieSuggestions.length > 0;
+    
+    // Se não há filmes originais, ir direto para início
+    if (!hasOriginalMovies) {
+      navigate('/');
+      return;
+    }
+    
+    // Se há filtros de streaming ativos e filmes originais, voltar para a tela de filtros
     const hasStreamingFilters = streamingFilters && (
       streamingFilters.subscriptionPlatforms.length > 0 || 
       (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
@@ -294,7 +286,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     console.log('🔄 Navegando de volta...', {
       journeyContext,
       locationState: location.state,
-      contextToPass
+      contextToPass,
+      hasOriginalMovies,
+      hasStreamingFilters
     });
     
     if (contextToPass) {
@@ -415,34 +409,40 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             gap: 1
           }}>
             {/* Filtro de Ano */}
-            <Box sx={{ display: 'flex', gap: 0.5 }}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showPre1990}
-                    onChange={(e) => setShowPre1990(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-                    Filmes Pré-1990
-                  </Typography>
-                }
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Chip
+                label="Filmes Pré-1990"
+                onClick={() => setShowPre1990(!showPre1990)}
+                variant={showPre1990 ? "filled" : "outlined"}
+                color={showPre1990 ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showPost1990}
-                    onChange={(e) => setShowPost1990(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-                    Filmes Pós-1990
-                  </Typography>
-                }
+              <Chip
+                label="Filmes Pós-1990"
+                onClick={() => setShowPost1990(!showPost1990)}
+                variant={showPost1990 ? "filled" : "outlined"}
+                color={showPost1990 ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
               />
             </Box>
 
