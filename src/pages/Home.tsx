@@ -11,11 +11,19 @@ const Home: React.FC = () => {
   const { mode, toggleThemeMode } = useThemeManager();
 
   const handleStart = () => {
-    navigate('/intro');
+    try {
+      navigate('/intro');
+    } catch (error) {
+      console.error('Erro ao navegar para /intro:', error);
+    }
   };
 
   const handleFilmes = () => {
-    navigate('/filme/a-caso-do-lago'); // Exemplo de filme sem caracteres especiais
+    try {
+      navigate('/filme/a-caso-do-lago'); // Exemplo de filme sem caracteres especiais
+    } catch (error) {
+      console.error('Erro ao navegar para /filme:', error);
+    }
   };
 
   return (
@@ -46,31 +54,43 @@ const Home: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="md">
+      <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '90vh',
+          minHeight: { xs: '80vh', sm: '90vh' },
           textAlign: 'center',
-          pt: { xs: 1, sm: 2, md: 3 },
-          pb: { xs: 1, sm: 2, md: 3 },
+          pt: { xs: 2, sm: 2, md: 3 },
+          pb: { xs: 2, sm: 2, md: 3 },
         }}
       >
-        <Typography variant="h5" component="h2" sx={{ mb: 0.5, color: 'text.primary' }}>
+        <Typography variant="h5" component="h2" sx={{ 
+          mb: 0.5, 
+          color: 'text.primary',
+          fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' }
+        }}>
           Bem-vindo(a) ao
         </Typography>
         <Box
           component="img"
           src={logo}
           alt="Logo do projeto"
+          onError={(e) => {
+            console.error('Erro ao carregar logo:', e);
+            // Fallback para texto se a imagem falhar
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
           sx={{
             width: { xs: 200, sm: 250, md: 300 },
             height: 'auto',
-            marginBottom: 0, // Adjusted marginBottom
+            marginBottom: 0,
             filter: mode === 'dark' ? 'invert(1) drop-shadow(0px 4px 8px rgba(255,255,255,0.2))' : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.2))',
+            maxWidth: '100%',
+            objectFit: 'contain'
           }}
         />
 
@@ -83,20 +103,27 @@ const Home: React.FC = () => {
           Encontre o filme perfeito para seu momento
         </Typography>
 
-        <Typography variant="h6" color="text.secondary" paragraph sx={{ maxWidth: 600, mt: 1, mb: 1 }}>
+        <Typography variant="h6" color="text.secondary" paragraph sx={{ 
+          maxWidth: 600, 
+          mt: 1, 
+          mb: 1,
+          fontSize: { xs: '0.9rem', sm: '1rem' },
+          px: { xs: 1, sm: 0 }
+        }}>
           O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
         </Typography>
 
-        <Box sx={{ mt: 0 }}>
+        <Box sx={{ mt: 0, px: { xs: 2, sm: 0 } }}>
           <Button
             variant="contained"
             size="large"
             onClick={handleStart}
             sx={{ 
-              px: 5, 
-              py: 1.5,
-              fontSize: '1.2rem',
+              px: { xs: 4, sm: 5 }, 
+              py: { xs: 1.2, sm: 1.5 },
+              fontSize: { xs: '1rem', sm: '1.2rem' },
               borderRadius: 2,
+              width: { xs: '100%', sm: 'auto' }
             }}
           >
             Vamos começar
