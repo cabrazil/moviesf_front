@@ -3,7 +3,9 @@ import { Movie } from '../types';
 
 // Configuração base do axios
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // URL do backend
+  baseURL: process.env.NODE_ENV === 'production' 
+    ? 'https://moviesf-back.vercel.app' 
+    : 'http://localhost:3000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
