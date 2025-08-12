@@ -28,8 +28,13 @@ const Home: React.FC = () => {
 
   return (
     <>
-      {/* Menu Filmes */}
-      <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+      {/* Menu Filmes - Oculto em mobile para evitar confusão */}
+      <AppBar position="static" sx={{ 
+        backgroundColor: 'transparent', 
+        boxShadow: 'none', 
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        display: { xs: 'none', sm: 'block' } // Oculto em mobile
+      }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
             emoFilms
@@ -53,6 +58,21 @@ const Home: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Menu simplificado para mobile - apenas toggle de tema */}
+      <Box sx={{ 
+        display: { xs: 'flex', sm: 'none' }, 
+        justifyContent: 'flex-end', 
+        p: 2,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        zIndex: 1
+      }}>
+        <IconButton onClick={toggleThemeMode} color="inherit" sx={{ color: 'text.primary' }}>
+          {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+        </IconButton>
+      </Box>
 
       <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
       <Box
