@@ -70,7 +70,7 @@ const Home: React.FC = () => {
         <Typography variant="h5" component="h2" sx={{ 
           mb: 0.5, 
           color: 'text.primary',
-          fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' }
+          fontSize: { xs: '1.3rem', sm: '1.25rem', md: '1.5rem' }
         }}>
           Bem-vindo(a) ao
         </Typography>
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
         />
 
         <Typography variant="h2" component="h1" gutterBottom sx={{ 
-          fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
+          fontSize: { xs: '1.6rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
           mt: 1, 
           mb: 1,
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
@@ -107,7 +107,7 @@ const Home: React.FC = () => {
           maxWidth: 600, 
           mt: 1, 
           mb: 1,
-          fontSize: { xs: '0.9rem', sm: '1rem' },
+          fontSize: { xs: '1.1rem', sm: '1rem' },
           px: { xs: 1, sm: 0 }
         }}>
           O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
@@ -121,7 +121,7 @@ const Home: React.FC = () => {
             sx={{ 
               px: { xs: 4, sm: 5 }, 
               py: { xs: 1.2, sm: 1.5 },
-              fontSize: { xs: '1rem', sm: '1.2rem' },
+              fontSize: { xs: '1.1rem', sm: '1.2rem' },
               borderRadius: 2,
               width: { xs: '100%', sm: 'auto' }
             }}
