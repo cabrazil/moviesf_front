@@ -4,8 +4,10 @@ import Home from './pages/Home';
 import JourneyIntro from './pages/JourneyIntro';
 import MovieSuggestionsPage from './pages/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './pages/MovieSuggestionsPageMinimal';
-import MovieDetailsPage from './pages/MovieDetailsPage';
+
 import StreamingFilters from './pages/StreamingFilters';
+import MovieDetailWrapper from './pages/MovieDetailWrapper';
+
 
 function App() {
   return (
@@ -18,7 +20,8 @@ function App() {
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
-          <Route path="/filme/:id" element={<MovieDetailsPage />} />
+          <Route path="/filme/:id" element={<MovieDetailWrapper />} />
+          <Route path="/filme/:slug" element={<MovieDetailWrapper />} />
         </Routes>
       </Router>
     </ThemeProviderWrapper>

@@ -12,7 +12,8 @@ import metacriticLogo from '../assets/metascore.svg';
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
-  const { id } = useParams();
+  const { id, slug } = useParams();
+  const movieId = id || slug; // Pegar o ID de qualquer um dos parâmetros
   const state = location.state || {};
   const [movieData, setMovieData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -25,17 +26,22 @@ const MovieDetailsPage: React.FC = () => {
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
-      if (!id) return;
+      if (!movieId) {
+        setError('ID do filme não encontrado');
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
         const baseURL = process.env.NODE_ENV === 'production' 
           ? 'https://moviesf-back.vercel.app' 
           : 'http://localhost:3000';
-        const response = await fetch(`${baseURL}/api/movie/${id}/details`);
+        
+        const response = await fetch(`${baseURL}/api/movie/${movieId}/details`);
         
         if (!response.ok) {
-          throw new Error('Filme não encontrado');
+          throw new Error(`Filme não encontrado (${response.status})`);
         }
         
         const data = await response.json();
@@ -48,7 +54,7 @@ const MovieDetailsPage: React.FC = () => {
     };
 
     fetchMovieDetails();
-  }, [id]);
+  }, [movieId, state]);
 
   if (loading) {
     return (

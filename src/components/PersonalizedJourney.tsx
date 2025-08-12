@@ -66,6 +66,11 @@ const validatePersonalizedJourneyIntegrity = (journeyFlow: PersonalizedJourneyFl
           errors.push(`Opção "${option.text}" do step ${step.stepId} não é final mas não possui nextStepId`);
         }
         
+        // NOVA VALIDAÇÃO: Verificar se opções com nextStepId têm isEndState = false
+        if (option.nextStepId && option.isEndState === true) {
+          errors.push(`Opção "${option.text}" do step ${step.stepId} possui nextStepId mas isEndState = true (inconsistência)`);
+        }
+        
         if (option.isEndState === true && (!option.movieSuggestions || option.movieSuggestions.length === 0)) {
           errors.push(`Opção "${option.text}" do step ${step.stepId} é final mas não possui sugestões de filmes`);
         }
@@ -192,7 +197,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
     // Adicionar step atual ao histórico antes de navegar
     setStepHistory(prev => [...prev, currentStep]);
 
-    // TESTE EXPLÍCITO DO CAMPO isEndState
+    // LÓGICA CORRIGIDA: Verificar isEndState primeiro
     if (option.isEndState === true) {
       console.log('✅ Estado final detectado (isEndState = true)');
       
@@ -231,7 +236,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       }
     }
 
-    // CASO isEndState = false, deve apresentar novo step
+    // LÓGICA CORRIGIDA: Se isEndState = false, SEMPRE deve ter nextStepId
     if (option.isEndState === false) {
       console.log('➡️ Continuando jornada personalizada (isEndState = false)');
       
@@ -242,25 +247,25 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         return;
       }
 
-             console.log('🔍 Buscando próximo step com ID:', option.nextStepId);
-       console.log('🔍 Steps disponíveis na jornada personalizada:');
-       journeyFlow.steps.forEach(step => {
-         console.log(`  - Step ID: ${step.id}, StepId: "${step.stepId}", Order: ${step.order}`);
-       });
+      console.log('🔍 Buscando próximo step com ID:', option.nextStepId);
+      console.log('🔍 Steps disponíveis na jornada personalizada:');
+      journeyFlow.steps.forEach(step => {
+        console.log(`  - Step ID: ${step.id}, StepId: "${step.stepId}", Order: ${step.order}`);
+      });
 
-       // Buscar o próximo step pelo nextStepId na estrutura da jornada
-       // Tentar busca exata primeiro
-       let nextStep = journeyFlow.steps.find(
-         (step: JourneyStepFlow) => step.stepId === option.nextStepId
-       );
+      // Buscar o próximo step pelo nextStepId na estrutura da jornada
+      // Tentar busca exata primeiro
+      let nextStep = journeyFlow.steps.find(
+        (step: JourneyStepFlow) => step.stepId === option.nextStepId
+      );
 
-       // Se não encontrar, tentar busca com trim (remover espaços)
-       if (!nextStep && option.nextStepId) {
-         console.log('🔍 Tentando busca com trim...');
-         nextStep = journeyFlow.steps.find(
-           (step: JourneyStepFlow) => step.stepId.trim() === option.nextStepId!.trim()
-         );
-       }
+      // Se não encontrar, tentar busca com trim (remover espaços)
+      if (!nextStep && option.nextStepId) {
+        console.log('🔍 Tentando busca com trim...');
+        nextStep = journeyFlow.steps.find(
+          (step: JourneyStepFlow) => step.stepId.trim() === option.nextStepId!.trim()
+        );
+      }
 
       if (nextStep) {
         console.log('✅ Próximo step encontrado:', {
@@ -287,6 +292,52 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         console.error('❌ Próximo step não encontrado na estrutura da jornada personalizada');
         console.log('Steps disponíveis:', journeyFlow.steps.map(s => ({ id: s.id, stepId: s.stepId })));
         setError(`Erro ao avançar: próximo passo "${option.nextStepId}" não encontrado. Por favor, contate o suporte.`);
+        return;
+      }
+    }
+
+    // CASO ESPECIAL: Se isEndState não está definido, verificar se há nextStepId
+    if (option.isEndState === undefined || option.isEndState === null) {
+      console.log('⚠️ isEndState não definido, verificando nextStepId...');
+      
+      if (option.nextStepId) {
+        console.log('➡️ nextStepId encontrado, continuando jornada...');
+        // Reutilizar a lógica de navegação para próximo step
+        let nextStep = journeyFlow.steps.find(
+          (step: JourneyStepFlow) => step.stepId === option.nextStepId
+        );
+
+        if (!nextStep && option.nextStepId) {
+          nextStep = journeyFlow.steps.find(
+            (step: JourneyStepFlow) => step.stepId.trim() === option.nextStepId!.trim()
+          );
+        }
+
+        if (nextStep) {
+          console.log('✅ Próximo step encontrado (isEndState undefined):', {
+            id: nextStep.id,
+            stepId: nextStep.stepId,
+            question: nextStep.question,
+            optionsCount: nextStep.options?.length || 0
+          });
+
+          if (!nextStep.options || nextStep.options.length === 0) {
+            console.warn('⚠️ Próximo step não possui opções disponíveis');
+            setError('Próximo passo não possui opções disponíveis. Por favor, tente novamente.');
+            return;
+          }
+
+          setCurrentStep(nextStep);
+          setSelectedOption('');
+          console.log('✅ Navegação para próximo step concluída (isEndState undefined)');
+        } else {
+          console.error('❌ Próximo step não encontrado (isEndState undefined)');
+          setError(`Erro ao avançar: próximo passo "${option.nextStepId}" não encontrado. Por favor, contate o suporte.`);
+          return;
+        }
+      } else {
+        console.error('❌ isEndState não definido e sem nextStepId');
+        setError('Erro na configuração da opção: estado não definido. Por favor, contate o suporte.');
         return;
       }
     }

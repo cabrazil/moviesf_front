@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Typography, Container, IconButton } from '@mui/material';
+import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { useThemeManager } from '../contexts/ThemeContext';
@@ -14,13 +14,39 @@ const Home: React.FC = () => {
     navigate('/intro');
   };
 
+  const handleFilmes = () => {
+    navigate('/filme/a-caso-do-lago'); // Exemplo de filme sem caracteres especiais
+  };
+
   return (
-    <Container maxWidth="md">
-      <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
-        <IconButton sx={{ ml: 1 }} onClick={toggleThemeMode} color="inherit">
-          {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
-        </IconButton>
-      </Box>
+    <>
+      {/* Menu Filmes */}
+      <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
+            emoFilms
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button 
+              color="inherit" 
+              onClick={handleFilmes}
+              sx={{ 
+                color: 'text.primary',
+                typography: 'h6',
+                textTransform: 'none',
+                fontWeight: 'normal'
+              }}
+            >
+              Filmes
+            </Button>
+            <IconButton sx={{ ml: 1 }} onClick={toggleThemeMode} color="inherit">
+              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      <Container maxWidth="md">
       <Box
         sx={{
           display: 'flex',
@@ -78,6 +104,7 @@ const Home: React.FC = () => {
         </Box>
       </Box>
     </Container>
+    </>
   );
 };
 

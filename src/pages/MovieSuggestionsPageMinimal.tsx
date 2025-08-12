@@ -22,13 +22,14 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showPre1990, setShowPre1990] = useState(true);
   const [showPost1990, setShowPost1990] = useState(true);
+  const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('smart');
 
-  // Reset da página quando os filtros mudarem (apenas se não for mobile)
+  // Reset da página quando os filtros ou ordenação mudarem (apenas se não for mobile)
   useEffect(() => {
     if (!isMobile) {
       setCurrentPage(0);
     }
-  }, [showPre1990, showPost1990, isMobile]);
+  }, [showPre1990, showPost1990, sortType, isMobile]);
   
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
@@ -101,18 +102,23 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           // Verificar plataformas de assinatura
           if (streamingFilters.subscriptionPlatforms.length > 0) {
             const isSubscriptionPlatform = streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
-              if (selectedPlatform === 'Outras plataformas') {
-                // Lógica para outras plataformas não listadas
-                return !streamingFilters.subscriptionPlatforms.some((p: string) => 
-                  p !== 'Outras plataformas' && platformName.toLowerCase().includes(p.replace(' (Assinatura)', '').toLowerCase())
+              // Se for o marcador especial para "Outras Plataformas"
+              if (selectedPlatform === '__OTHER_PLATFORMS__') {
+                // Verificar se a plataforma NÃO está nas principais
+                const mainPlatforms = [
+                  'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay', 
+                  'apple tv+', 'claro video'
+                ];
+                const isMainPlatform = mainPlatforms.some(main => 
+                  platformName.toLowerCase().includes(main)
                 );
+                // Retornar true se NÃO for uma plataforma principal
+                return !isMainPlatform;
               }
               
               // Normalizar nomes para comparação
-              const cleanSelectedPlatform = selectedPlatform.replace(' (Assinatura)', '').toLowerCase().trim();
+              const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
               const cleanPlatformName = platformName.toLowerCase().trim();
-              
-
               
               // Verificação exata ou contém
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
@@ -154,40 +160,26 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
-    console.log('🔍 Debug getSentimentColor:', {
-      journeyContext,
-      locationState: location.state,
-      currentSentimentColors
-    });
-    
     // Verificar se temos o journeyContext com sentimento
     if (journeyContext?.selectedSentiment?.id) {
-      const color = currentSentimentColors[journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
-      console.log('🎨 Cor do sentimento (journeyContext):', color, 'ID:', journeyContext.selectedSentiment.id);
-      return color;
+      return currentSentimentColors[journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
     }
     
     // Verificar se temos o sentimento diretamente no state da localização
     const state = location.state;
     if (state?.sentimentId) {
-      const color = currentSentimentColors[state.sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
-      console.log('🎨 Cor do sentimento (state.sentimentId):', color, 'ID:', state.sentimentId);
-      return color;
+      return currentSentimentColors[state.sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
     }
     
     // Verificar se temos o sentimento no journeyContext do state
     if (state?.journeyContext?.selectedSentiment?.id) {
-      const color = currentSentimentColors[state.journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
-      console.log('🎨 Cor do sentimento (state.journeyContext):', color, 'ID:', state.journeyContext.selectedSentiment.id);
-      return color;
+      return currentSentimentColors[state.journeyContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
     }
     
     // Verificar se temos o sentimento no journeyContext do state (estrutura alternativa)
     if (state?.journeyContext?.selectedSentiment) {
       const sentimentId = state.journeyContext.selectedSentiment.id || state.journeyContext.selectedSentiment;
-      const color = currentSentimentColors[sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
-      console.log('🎨 Cor do sentimento (state.journeyContext alt):', color, 'ID:', sentimentId);
-      return color;
+      return currentSentimentColors[sentimentId as keyof typeof currentSentimentColors] || '#1976d2';
     }
     
     // Verificar localStorage como último recurso
@@ -196,38 +188,80 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       if (savedContext) {
         const parsedContext = JSON.parse(savedContext);
         if (parsedContext?.selectedSentiment?.id) {
-          const color = currentSentimentColors[parsedContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
-          //console.log('🎨 Cor do sentimento (localStorage):', color, 'ID:', parsedContext.selectedSentiment.id);
-          return color;
+          return currentSentimentColors[parsedContext.selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2';
         }
       }
     } catch (error) {
       console.warn('⚠️ Erro ao ler journeyContext do localStorage:', error);
     }
     
-    console.log('🎨 Cor do sentimento: padrão (#1976d2) - nenhum sentimento encontrado');
     return '#1976d2'; // Cor padrão se não houver sentimento
   };
 
   // Ordenar e paginar sugestões
   const { totalPages, displaySuggestions } = useMemo(() => {
-    // Ordenar filmes filtrados por imdbRating (descendente)
     const sorted = [...filteredSuggestions].sort((a, b) => {
-      // Forçar conversão para número, mesmo se vier como string
-      const aRating = a.movie.imdbRating !== null && a.movie.imdbRating !== undefined ? Number(a.movie.imdbRating) : -Infinity;
-      const bRating = b.movie.imdbRating !== null && b.movie.imdbRating !== undefined ? Number(b.movie.imdbRating) : -Infinity;
-      
-      // Ordem descendente por imdbRating
-      if (bRating !== aRating) {
-        return bRating - aRating;
+      switch (sortType) {
+        case 'smart':
+          // ESTRATÉGIA DE ORDENAÇÃO VARIADA - Score de diversidade
+          const getDiversityScore = (suggestion: MovieSuggestionFlow) => {
+            const movie = suggestion.movie;
+            
+            // Fator 1: Rating (peso 40%)
+            const imdbRating = movie.imdbRating !== null && movie.imdbRating !== undefined ? Number(movie.imdbRating) : 0;
+            const voteAverage = (movie as any).vote_average !== null && (movie as any).vote_average !== undefined ? Number((movie as any).vote_average) : 0;
+            const ratingScore = (imdbRating * 0.6) + (voteAverage * 0.4);
+            
+            // Fator 2: Relevância da sugestão (peso 30%) - usar relevanceScore
+            const relevanceScore = (suggestion as any).relevanceScore ? Number((suggestion as any).relevanceScore) : 0;
+            
+            // Fator 3: Ano do filme (peso 15%) - favorecer filmes mais recentes levemente
+            const yearScore = movie.year ? (movie.year - 1900) / 100 : 0;
+            
+            // Fator 4: Diversidade por título (peso 15%) - usar hash do título para distribuição
+            const titleHash = movie.title.split('').reduce((hash, char) => {
+              return ((hash << 5) - hash + char.charCodeAt(0)) & 0xffffffff;
+            }, 0);
+            const titleScore = (titleHash % 100) / 100;
+            
+            // Score final ponderado
+            return (ratingScore * 0.4) + (relevanceScore * 0.3) + (yearScore * 0.15) + (titleScore * 0.15);
+          };
+          
+          const scoreA = getDiversityScore(a);
+          const scoreB = getDiversityScore(b);
+          
+          if (scoreB !== scoreA) return scoreB - scoreA;
+          break;
+          
+        case 'rating':
+          // Ordenação por rating (IMDb + TMDB)
+          const aRating = a.movie.imdbRating !== null && a.movie.imdbRating !== undefined ? Number(a.movie.imdbRating) : -Infinity;
+          const bRating = b.movie.imdbRating !== null && b.movie.imdbRating !== undefined ? Number(b.movie.imdbRating) : -Infinity;
+          
+          if (bRating !== aRating) return bRating - aRating;
+          
+          const aVoteAverage = (a.movie as any).vote_average !== null && (a.movie as any).vote_average !== undefined ? Number((a.movie as any).vote_average) : -Infinity;
+          const bVoteAverage = (b.movie as any).vote_average !== null && (b.movie as any).vote_average !== undefined ? Number((b.movie as any).vote_average) : -Infinity;
+          if (bVoteAverage !== aVoteAverage) return bVoteAverage - aVoteAverage;
+          break;
+          
+        case 'year':
+          // Ordenação por ano (mais recentes primeiro)
+          const aYear = a.movie.year || 0;
+          const bYear = b.movie.year || 0;
+          if (bYear !== aYear) return bYear - aYear;
+          break;
+          
+        case 'relevance':
+          // Ordenação por relevância (baseada no relevanceScore)
+          const aRelevance = (a as any).relevanceScore ? Number((a as any).relevanceScore) : 0;
+          const bRelevance = (b as any).relevanceScore ? Number((b as any).relevanceScore) : 0;
+          if (bRelevance !== aRelevance) return bRelevance - aRelevance;
+          break;
       }
       
-      // Se empatar no imdbRating, usar vote_average como segundo critério
-      const aVoteAverage = (a.movie as any).vote_average !== null && (a.movie as any).vote_average !== undefined ? Number((a.movie as any).vote_average) : -Infinity;
-      const bVoteAverage = (b.movie as any).vote_average !== null && (b.movie as any).vote_average !== undefined ? Number((b.movie as any).vote_average) : -Infinity;
-      if (bVoteAverage !== aVoteAverage) return bVoteAverage - aVoteAverage;
-      
-      // Se ainda empatar, ordenar por título
+      // Critério secundário: ordenar por título
       return a.movie.title.localeCompare(b.movie.title, 'pt-BR');
     });
     
@@ -249,7 +283,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       totalPages: total,
       displaySuggestions: display
     };
-  }, [filteredSuggestions, currentPage, isMobile]);
+  }, [filteredSuggestions, currentPage, isMobile, sortType]);
 
   const handleRestart = () => {
     navigate('/');
@@ -447,6 +481,78 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 onClick={() => setShowPost1990(!showPost1990)}
                 variant={showPost1990 ? "filled" : "outlined"}
                 color={showPost1990 ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
+              />
+            </Box>
+
+            {/* Seletor de Ordenação */}
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-end' } }}>
+              <Chip
+                label="Inteligente"
+                onClick={() => setSortType('smart')}
+                variant={sortType === 'smart' ? "filled" : "outlined"}
+                color={sortType === 'smart' ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
+              />
+              <Chip
+                label="Rating"
+                onClick={() => setSortType('rating')}
+                variant={sortType === 'rating' ? "filled" : "outlined"}
+                color={sortType === 'rating' ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
+              />
+              <Chip
+                label="Ano"
+                onClick={() => setSortType('year')}
+                variant={sortType === 'year' ? "filled" : "outlined"}
+                color={sortType === 'year' ? "primary" : "default"}
+                size="small"
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  height: 28,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    transform: 'translateY(-1px)',
+                    boxShadow: 2
+                  }
+                }}
+              />
+              <Chip
+                label="Relevância"
+                onClick={() => setSortType('relevance')}
+                variant={sortType === 'relevance' ? "filled" : "outlined"}
+                color={sortType === 'relevance' ? "primary" : "default"}
                 size="small"
                 sx={{
                   cursor: 'pointer',

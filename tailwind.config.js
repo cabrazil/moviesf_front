@@ -19,8 +19,30 @@ export default {
         white: '#FFFFFF',
         black: '#000000',
         gray: '#adb5bd',
-      }
+      },
+      lineClamp: {
+        2: '2',
+        3: '3',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function({ addUtilities }: any) {
+      const newUtilities = {
+        '.line-clamp-2': {
+          display: '-webkit-box',
+          '-webkit-line-clamp': '2',
+          '-webkit-box-orient': 'vertical',
+          overflow: 'hidden',
+        },
+        '.line-clamp-3': {
+          display: '-webkit-box',
+          '-webkit-line-clamp': '3',
+          '-webkit-box-orient': 'vertical',
+          overflow: 'hidden',
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 } 

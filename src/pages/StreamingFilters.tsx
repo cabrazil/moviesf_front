@@ -33,23 +33,30 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
   const [selectedRentalPurchasePlatforms, setSelectedRentalPurchasePlatforms] = useState<string[]>([]);
 
-  // Plataformas de assinatura
-  const subscriptionPlatforms = [
+  // Plataformas de assinatura principais
+  const mainSubscriptionPlatforms = [
+    'Prime Video',
     'Netflix',
-    'Prime Video (Assinatura)',
-    'HBO Max',
     'Disney+',
-    'Paramount+',
-    'Apple TV+',
+    'HBO Max',
     'Globoplay',
-    'Claro Video',
+    'Apple TV+',
+    'Claro Video'
+  ];
+
+  // Outras plataformas (serão agrupadas)
+  const otherSubscriptionPlatforms = [
+    'Paramount+',
     'Telecine',
     'Looke',
     'MUBI',
     'Reserva Imovision',
     'MGM+',
     'Claro tv+',
-    'Outras plataformas'
+    'Filmelier+',
+    'Belas Artes à La Carte',
+    'GOSPEL PLAY',
+    'FilmBox+'
   ];
 
   // Plataformas de aluguel/compra
@@ -84,8 +91,23 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   };
 
   const handleShowSuggestions = () => {
+    // Processar plataformas selecionadas
+    let processedSubscriptionPlatforms = [...selectedSubscriptionPlatforms];
+    
+    // Se "Outras Plataformas" estiver selecionada, usar lógica especial
+    if (selectedSubscriptionPlatforms.includes('Outras Plataformas')) {
+      // Remover "Outras Plataformas" da lista
+      processedSubscriptionPlatforms = processedSubscriptionPlatforms.filter(p => p !== 'Outras Plataformas');
+      
+      // Adicionar as outras plataformas conhecidas
+      processedSubscriptionPlatforms = [...processedSubscriptionPlatforms, ...otherSubscriptionPlatforms];
+      
+      // Marcar que "Outras Plataformas" foi selecionada para lógica especial no filtro
+      processedSubscriptionPlatforms.push('__OTHER_PLATFORMS__');
+    }
+
     const filters: StreamingFilters = {
-      subscriptionPlatforms: selectedSubscriptionPlatforms,
+      subscriptionPlatforms: processedSubscriptionPlatforms,
       rentalPurchasePlatforms: selectedRentalPurchasePlatforms,
       includeRentalPurchase: includeRentalPurchase
     };
@@ -218,7 +240,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             </Typography>
 
             <Grid container spacing={1.5}>
-              {subscriptionPlatforms.map((platform) => (
+              {/* Plataformas principais */}
+              {mainSubscriptionPlatforms.map((platform: string) => (
                 <Grid item xs={12} sm={6} md={2.4} key={platform}>
                   <Chip
                     label={platform}
@@ -233,9 +256,9 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       backgroundColor: selectedSubscriptionPlatforms.includes(platform) 
                         ? theme.palette.primary.main
                         : 'transparent',
-                                              color: selectedSubscriptionPlatforms.includes(platform)
-                          ? theme.palette.primary.contrastText
-                          : theme.palette.text.secondary,
+                      color: selectedSubscriptionPlatforms.includes(platform)
+                        ? theme.palette.primary.contrastText
+                        : theme.palette.text.secondary,
                       border: `2px solid ${theme.palette.primary.main}`,
                       transition: 'all 0.2s ease',
                       '&:hover': {
@@ -253,6 +276,41 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                   />
                 </Grid>
               ))}
+              
+              {/* Outras plataformas */}
+              <Grid item xs={12} sm={6} md={2.4}>
+                <Chip
+                  label="Outras Plataformas"
+                  onClick={() => handleSubscriptionPlatformChange('Outras Plataformas')}
+                  clickable
+                  sx={{
+                    width: '100%',
+                    height: 'auto',
+                    minHeight: '40px',
+                    fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                    fontWeight: 500,
+                    backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
+                      ? theme.palette.primary.main
+                      : 'transparent',
+                    color: selectedSubscriptionPlatforms.includes('Outras Plataformas')
+                      ? theme.palette.primary.contrastText
+                      : theme.palette.text.secondary,
+                    border: `2px solid ${theme.palette.primary.main}`,
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas')
+                        ? theme.palette.primary.dark
+                        : `${theme.palette.primary.main}10`,
+                      transform: 'translateY(-1px)',
+                      boxShadow: 2
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px)',
+                      boxShadow: 1
+                    }
+                  }}
+                />
+              </Grid>
             </Grid>
           </Paper>
         </Grid>

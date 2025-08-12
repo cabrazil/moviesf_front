@@ -1,11 +1,47 @@
 import axios from 'axios';
 import { Movie } from '../types';
 
+// Configuração base do axios
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' 
-    ? 'https://moviesf-back.vercel.app' 
-    : 'http://localhost:3000',
+  baseURL: 'http://localhost:3000', // URL do backend
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
+// Interceptor para requisições
+api.interceptors.request.use(
+  (config) => {
+    // Adicionar token se existir
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para respostas
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Tratamento de erros
+    if (error.response?.status === 401) {
+      // Token expirado ou inválido
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export { api };
 
 export interface MainSentiment {
   id: number;
@@ -318,6 +354,4 @@ export const getMovieJourneys = async (movieId: string): Promise<MovieJourneysRe
     console.error('Erro ao buscar jornadas do filme:', error);
     throw error;
   }
-};
-
-export default api; 
+}; 
