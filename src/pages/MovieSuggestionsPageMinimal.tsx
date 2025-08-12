@@ -24,6 +24,11 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const [showPost1990, setShowPost1990] = useState(true);
   const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('smart');
 
+  // Scroll para o topo quando o componente for carregado
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Reset da página quando os filtros ou ordenação mudarem (apenas se não for mobile)
   useEffect(() => {
     if (!isMobile) {
