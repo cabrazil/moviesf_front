@@ -25,7 +25,10 @@ const JourneyIntro: React.FC = () => {
   useEffect(() => {
     const loadSentiments = async () => {
       try {
+        console.log('🔄 JourneyIntro - Iniciando carregamento de sentimentos...');
         const data = await getMainSentiments();
+        console.log('✅ JourneyIntro - Sentimentos carregados:', data.length, 'sentimentos');
+        
         const sortedSentiments = data.sort((a, b) => a.id - b.id);
         setSentiments(sortedSentiments);
         
@@ -61,7 +64,9 @@ const JourneyIntro: React.FC = () => {
           resetToDefaultTheme();
         }
       } catch (error) {
-        console.error('Erro ao carregar sentimentos:', error);
+        console.error('❌ Erro ao carregar sentimentos:', error);
+        // Adicionar fallback para dispositivos móveis
+        setSentiments([]);
       } finally {
         setLoading(false);
       }
@@ -149,7 +154,7 @@ const JourneyIntro: React.FC = () => {
 
   if (currentStep === 'sentiment') {
     return (
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Fade in={true} timeout={600}>
           <Box sx={{ py: 2, textAlign: 'center' }}>
             <Typography variant="h2" gutterBottom sx={{ 
@@ -159,40 +164,70 @@ const JourneyIntro: React.FC = () => {
           }}>
             Como você está se sentindo hoje?
           </Typography>
-            <Typography variant="h6" color="text.secondary">Escolha o sentimento que melhor descreve seu estado emocional.</Typography>
+            <Typography variant="h6" color="text.secondary" sx={{
+              fontSize: { xs: '0.9rem', sm: '1rem' },
+              px: { xs: 1, sm: 0 }
+            }}>
+              Escolha o sentimento que melhor descreve seu estado emocional.
+            </Typography>
           </Box>
         </Fade>
-        <Grid container spacing={3} sx={{ mt: 2 }}>
-          {sentiments.map((sentiment, index) => (
-            <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
-              <Fade in={true} timeout={800 + (index * 100)}>
-                <Paper
-                  onClick={() => handleSentimentSelect(sentiment)}
-                  sx={{
-                    p: 3,
-                    cursor: 'pointer',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    border: `2px solid ${currentSentimentColors[sentiment.id as keyof typeof currentSentimentColors]}`, // Use specific sentiment color for border
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: 6,
-                    }
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <SentimentIcon sentimentId={sentiment.id} size={24} />
-                    <Typography variant="h6" component="h2" sx={{ fontWeight: 'bold' }}>
-                      {sentiment.name}
+        {sentiments.length > 0 ? (
+          <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: 2, px: { xs: 1, sm: 0 } }}>
+            {sentiments.map((sentiment, index) => (
+              <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
+                <Fade in={true} timeout={800 + (index * 100)}>
+                  <Paper
+                    onClick={() => handleSentimentSelect(sentiment)}
+                    sx={{
+                      p: { xs: 2, sm: 3 },
+                      cursor: 'pointer',
+                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                      border: `2px solid ${currentSentimentColors[sentiment.id as keyof typeof currentSentimentColors]}`,
+                      minHeight: { xs: '120px', sm: 'auto' },
+                      '&:hover': {
+                        transform: { xs: 'none', sm: 'translateY(-4px)' },
+                        boxShadow: { xs: 2, sm: 6 },
+                      },
+                      '&:active': {
+                        transform: { xs: 'scale(0.98)', sm: 'translateY(-4px)' },
+                      }
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                      <SentimentIcon sentimentId={sentiment.id} size={24} />
+                      <Typography variant="h6" component="h2" sx={{ 
+                        fontWeight: 'bold',
+                        fontSize: { xs: '1rem', sm: '1.25rem' }
+                      }}>
+                        {sentiment.name}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary" sx={{
+                      fontSize: { xs: '0.85rem', sm: '0.875rem' },
+                      lineHeight: { xs: 1.3, sm: 1.4 }
+                    }}>
+                      {sentiment.shortDescription}
                     </Typography>
-                  </Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {sentiment.shortDescription}
-                  </Typography>
-                </Paper>
-              </Fade>
-            </Grid>
-          ))}
-        </Grid>
+                  </Paper>
+                </Fade>
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Box sx={{ textAlign: 'center', py: 4 }}>
+            <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+              Não foi possível carregar os sentimentos.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => window.location.reload()}
+              sx={{ px: 4, py: 1.5 }}
+            >
+              Tentar Novamente
+            </Button>
+          </Box>
+        )}
         
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Button
