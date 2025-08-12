@@ -578,26 +578,38 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   </Select>
                 </FormControl>
               ) : (
-                <Grid container spacing={2}>
+                <Grid container spacing={{ xs: 2, sm: 2 }} sx={{ px: { xs: 1, sm: 0 } }}>
                   {step.options.map((option: JourneyOptionFlow) => (
                     <Grid item xs={12} sm={6} key={option.id}>
                       <Paper
                         sx={{
-                          p: 3,
+                          p: { xs: 2, sm: 3 },
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
                           backgroundColor: mode === 'light' ? '#f5f5f5' : undefined,
+                          minHeight: { xs: '120px', sm: 'auto' },
                           '&:hover': { 
                             bgcolor: 'action.hover',
-                            transform: 'translateY(-2px)',
-                            boxShadow: 3
+                            transform: { xs: 'none', sm: 'translateY(-2px)' },
+                            boxShadow: { xs: 2, sm: 3 }
+                          },
+                          '&:active': {
+                            transform: { xs: 'scale(0.98)', sm: 'translateY(-2px)' },
                           }
                         }}
                         onClick={() => handleOptionSelect(option)}
                       >
-                        <Typography variant="h6">{option.text} ({option.id})</Typography>
+                        <Typography variant="h6" sx={{
+                          fontSize: { xs: '1rem', sm: '1.25rem' },
+                          mb: { xs: 1, sm: 1 }
+                        }}>
+                          {option.text}
+                        </Typography>
                         {option.description && (
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" color="text.secondary" sx={{
+                            fontSize: { xs: '0.9rem', sm: '0.875rem' },
+                            lineHeight: { xs: 1.3, sm: 1.4 }
+                          }}>
                             {option.description}
                           </Typography>
                         )}

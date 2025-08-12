@@ -131,7 +131,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           Escolha sua intenção emocional:
         </Typography>
 
-        <Grid container spacing={3} sx={{ maxWidth: '1000px' }}>
+        <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ maxWidth: '1000px', px: { xs: 1, sm: 0 } }}>
           {intentions
             .sort((a, b) => {
               // Definir ordem específica para as intenções
@@ -144,38 +144,44 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
             <Grid item xs={12} sm={6} key={intention.id}>
               <Paper
                 sx={{
-                  p: 3,
+                  p: { xs: 2, sm: 3 },
                   cursor: 'pointer',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   transition: 'all 0.3s ease',
+                  minHeight: { xs: '140px', sm: 'auto' },
                   '&:hover': { 
                     bgcolor: 'action.hover',
-                    transform: 'translateY(-2px)',
-                    boxShadow: 3
+                    transform: { xs: 'none', sm: 'translateY(-2px)' },
+                    boxShadow: { xs: 2, sm: 3 }
+                  },
+                  '&:active': {
+                    transform: { xs: 'scale(0.98)', sm: 'translateY(-2px)' },
                   }
                 }}
                 onClick={() => onIntentionSelect(intention)}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <Box sx={{ mr: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
+                  <Box sx={{ mr: { xs: 1, sm: 2 } }}>
                     <IntentionIcon intentionType={intention.type} size={32} />
                   </Box>
                   <Box>
-                    {/* <Chip 
-                      label={getIntentionLabel(intention.type)}
-                      color={getIntentionColor(intention.type)}
-                      size="small"
-                      sx={{ mb: 1 }}
-                    /> */}
-                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    <Typography variant="h6" sx={{ 
+                      fontWeight: 'bold',
+                      fontSize: { xs: '1rem', sm: '1.25rem' }
+                    }}>
                       {getIntentionLabel(intention.type)}
                     </Typography>
                   </Box>
                 </Box>
                 
-                <Typography variant="body1" sx={{ mb: 2, flexGrow: 1 }}>
+                <Typography variant="body1" sx={{ 
+                  mb: { xs: 1, sm: 2 }, 
+                  flexGrow: 1,
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  lineHeight: { xs: 1.3, sm: 1.4 }
+                }}>
                   {intention.description}
                 </Typography>
                 
