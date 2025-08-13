@@ -33,15 +33,36 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
   const [selectedRentalPurchasePlatforms, setSelectedRentalPurchasePlatforms] = useState<string[]>([]);
 
-  // Plataformas de assinatura principais
+  // Mapeamento das plataformas principais com seus logos
   const mainSubscriptionPlatforms = [
-    'Prime Video',
-    'Netflix',
-    'Disney+',
-    'HBO Max',
-    'Globoplay',
-    'Apple TV+',
-    'Claro Video'
+    {
+      name: 'Prime Video',
+      logo: '/platforms/amazonprimevideo.avif'
+    },
+    {
+      name: 'Netflix',
+      logo: '/platforms/netflix.avif'
+    },
+    {
+      name: 'Disney+',
+      logo: '/platforms/disneyplus.avif'
+    },
+    {
+      name: 'HBO Max',
+      logo: '/platforms/max.avif'
+    },
+    {
+      name: 'Globoplay',
+      logo: '/platforms/globoplay.avif'
+    },
+    {
+      name: 'Apple TV+',
+      logo: '/platforms/itunes.avif'
+    },
+    {
+      name: 'Claro Video',
+      logo: '/platforms/clarovideo.avif'
+    }
   ];
 
   // Outras plataformas (serão agrupadas)
@@ -59,27 +80,39 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     'FilmBox+'
   ];
 
-  // Plataformas de aluguel/compra
+  // Plataformas de aluguel/compra com logos
   const rentalPurchasePlatforms = [
-    'Google Play Filmes (Aluguel/Compra)',
-    'Microsoft Store (Aluguel/Compra)',
-    'YouTube (Aluguel/Compra/Gratuito)',
-    'Prime Video (Aluguel/Compra)'
+    {
+      name: 'Google Play Filmes (Aluguel/Compra)',
+      logo: '/platforms/play.avif'
+    },
+    {
+      name: 'Microsoft Store (Aluguel/Compra)',
+      logo: '/platforms/microsoft-store.jpg'
+    },
+    {
+      name: 'YouTube (Aluguel/Compra/Gratuito)',
+      logo: '/platforms/logo-youtube.png'
+    },
+    {
+      name: 'Prime Video (Aluguel/Compra)',
+      logo: '/platforms/amazonprimevideo.avif'
+    }
   ];
 
-  const handleSubscriptionPlatformChange = (platform: string) => {
+  const handleSubscriptionPlatformChange = (platformName: string) => {
     setSelectedSubscriptionPlatforms(prev => 
-      prev.includes(platform)
-        ? prev.filter(p => p !== platform)
-        : [...prev, platform]
+      prev.includes(platformName)
+        ? prev.filter(p => p !== platformName)
+        : [...prev, platformName]
     );
   };
 
-  const handleRentalPurchasePlatformChange = (platform: string) => {
+  const handleRentalPurchasePlatformChange = (platformName: string) => {
     setSelectedRentalPurchasePlatforms(prev => 
-      prev.includes(platform)
-        ? prev.filter(p => p !== platform)
-        : [...prev, platform]
+      prev.includes(platformName)
+        ? prev.filter(p => p !== platformName)
+        : [...prev, platformName]
     );
   };
 
@@ -241,28 +274,39 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
             <Grid container spacing={1.5}>
               {/* Plataformas principais */}
-              {mainSubscriptionPlatforms.map((platform: string) => (
-                <Grid item xs={12} sm={6} md={2.4} key={platform}>
+              {mainSubscriptionPlatforms.map((platform) => (
+                <Grid item xs={12} sm={6} md={3} key={platform.name}>
                   <Chip
-                    label={platform}
-                    onClick={() => handleSubscriptionPlatformChange(platform)}
+                    icon={
+                      <img 
+                        src={platform.logo} 
+                        alt={platform.name}
+                                              style={{
+                        width: '70px',
+                        height: '70px',
+                        objectFit: 'contain',
+                        filter: 'none',
+                        zIndex: 1,
+                        position: 'relative'
+                      }}
+                      />
+                    }
+                    onClick={() => handleSubscriptionPlatformChange(platform.name)}
                     clickable
                     sx={{
                       width: '100%',
                       height: 'auto',
-                      minHeight: '40px',
-                      fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                      fontWeight: 500,
-                      backgroundColor: selectedSubscriptionPlatforms.includes(platform) 
-                        ? theme.palette.primary.main
+                      minHeight: '60px',
+                      padding: '4px',
+                      backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                        ? 'transparent'
                         : 'transparent',
-                      color: selectedSubscriptionPlatforms.includes(platform)
-                        ? theme.palette.primary.contrastText
-                        : theme.palette.text.secondary,
-                      border: `2px solid ${theme.palette.primary.main}`,
+                      border: selectedSubscriptionPlatforms.includes(platform.name) 
+                        ? `4px solid ${theme.palette.primary.main}`
+                        : `2px solid ${theme.palette.primary.main}`,
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        backgroundColor: selectedSubscriptionPlatforms.includes(platform)
+                        backgroundColor: selectedSubscriptionPlatforms.includes(platform.name)
                           ? theme.palette.primary.dark
                           : `${theme.palette.primary.main}10`,
                         transform: 'translateY(-1px)',
@@ -271,6 +315,14 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       '&:active': {
                         transform: 'translateY(0px)',
                         boxShadow: 1
+                      },
+                      '& .MuiChip-icon': {
+                        margin: '0',
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
                       }
                     }}
                   />
@@ -278,7 +330,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               ))}
               
               {/* Outras plataformas */}
-              <Grid item xs={12} sm={6} md={2.4}>
+              <Grid item xs={12} sm={6} md={3}>
                 <Chip
                   label="Outras Plataformas"
                   onClick={() => handleSubscriptionPlatformChange('Outras Plataformas')}
@@ -286,7 +338,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                   sx={{
                     width: '100%',
                     height: 'auto',
-                    minHeight: '40px',
+                    minHeight: '60px',
+                    padding: '4px',
                     fontSize: { xs: '0.8rem', sm: '0.85rem' },
                     fontWeight: 500,
                     backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
@@ -376,27 +429,38 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
               <Grid container spacing={1.5}>
                 {rentalPurchasePlatforms.map((platform) => (
-                  <Grid item xs={12} sm={6} key={platform}>
+                  <Grid item xs={12} sm={6} md={3} key={platform.name}>
                     <Chip
-                      label={platform}
-                      onClick={() => handleRentalPurchasePlatformChange(platform)}
+                      icon={
+                        <img 
+                          src={platform.logo} 
+                          alt={platform.name}
+                          style={{
+                            width: '70px',
+                            height: '70px',
+                            objectFit: 'contain',
+                            filter: 'none',
+                            zIndex: 1,
+                            position: 'relative'
+                          }}
+                        />
+                      }
+                      onClick={() => handleRentalPurchasePlatformChange(platform.name)}
                       clickable
                       sx={{
                         width: '100%',
                         height: 'auto',
-                        minHeight: '40px',
-                        fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                        fontWeight: 500,
-                        backgroundColor: selectedRentalPurchasePlatforms.includes(platform) 
-                          ? theme.palette.primary.main
+                        minHeight: '60px',
+                        padding: '4px',
+                        backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name) 
+                          ? 'transparent'
                           : 'transparent',
-                        color: selectedRentalPurchasePlatforms.includes(platform)
-                          ? theme.palette.primary.contrastText
-                          : theme.palette.text.secondary,
-                        border: `2px solid ${theme.palette.primary.main}`,
+                        border: selectedRentalPurchasePlatforms.includes(platform.name) 
+                          ? `4px solid ${theme.palette.primary.main}`
+                          : `2px solid ${theme.palette.primary.main}`,
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform)
+                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name)
                             ? theme.palette.primary.dark
                             : `${theme.palette.primary.main}10`,
                           transform: 'translateY(-1px)',
@@ -405,6 +469,14 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                         '&:active': {
                           transform: 'translateY(0px)',
                           boxShadow: 1
+                        },
+                        '& .MuiChip-icon': {
+                          margin: '0',
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
                         }
                       }}
                     />

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
+import logoWhite from '../assets/logo_white.png';
 import { useThemeManager } from '../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon icon for dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for light mode
@@ -52,7 +53,16 @@ const Home: React.FC = () => {
             >
               Filmes
             </Button>
-            <IconButton sx={{ ml: 1 }} onClick={toggleThemeMode} color="inherit">
+            <IconButton 
+              sx={{ 
+                ml: 1, 
+                color: mode === 'dark' ? 'white' : 'black',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }} 
+              onClick={toggleThemeMode}
+            >
               {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
           </Box>
@@ -69,7 +79,15 @@ const Home: React.FC = () => {
         right: 0,
         zIndex: 1
       }}>
-        <IconButton onClick={toggleThemeMode} color="inherit" sx={{ color: 'text.primary' }}>
+        <IconButton 
+          onClick={toggleThemeMode} 
+          sx={{ 
+            color: mode === 'dark' ? 'white' : 'black',
+            '&:hover': {
+              backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+            }
+          }}
+        >
           {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
         </IconButton>
       </Box>
@@ -96,7 +114,7 @@ const Home: React.FC = () => {
         </Typography>
         <Box
           component="img"
-          src={logo}
+          src={mode === 'dark' ? logoWhite : logo}
           alt="Logo do projeto"
           onError={(e) => {
             console.error('Erro ao carregar logo:', e);
@@ -108,11 +126,14 @@ const Home: React.FC = () => {
             width: { xs: 200, sm: 250, md: 300 },
             height: 'auto',
             marginBottom: 0,
-            filter: mode === 'dark' ? 'invert(1) drop-shadow(0px 4px 8px rgba(255,255,255,0.2))' : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.2))',
+            filter: mode === 'dark' 
+              ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))' 
+              : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
             maxWidth: '100%',
             objectFit: 'contain'
           }}
         />
+
 
         <Typography variant="h2" component="h1" gutterBottom sx={{ 
           fontSize: { xs: '1.6rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
