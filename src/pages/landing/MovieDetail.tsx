@@ -142,7 +142,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
           : 'http://localhost:3000';
         
         // Usar a API específica para landing page
-        const response = await fetch(`${baseURL}/api/movie/${finalSlug}/hero`);
+        const response = await fetch(`${baseURL}/api/public/filme/${finalSlug}`);
         
         if (!response.ok) {
           throw new Error(`Filme não encontrado (${response.status})`);
@@ -152,8 +152,9 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         console.log('✅ MovieDetail - Dados reais carregados:', data);
         
         setMovie(data.movie);
-        setSubscriptionPlatforms(data.subscriptionPlatforms || []);
-        setReason(data.reason);
+        // A API pública não retorna subscriptionPlatforms e reason, então usamos arrays vazios
+        setSubscriptionPlatforms([]);
+        setReason(null);
         // setSimilarMovies([]); // Por enquanto vazio, depois implementamos
         setLoading(false);
       } catch (error) {
