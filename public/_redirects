@@ -1,0 +1,3 @@
+# Redirecionamentos para React Router
+/filme/*    /index.html   200
+/*          /index.html   200
