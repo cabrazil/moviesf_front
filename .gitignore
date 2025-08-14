@@ -37,8 +37,8 @@ src/scripts
 
 # Landing Page - Comentar/descomentar conforme necessário
 # Para deploy sem LP na Vercel, descomente as linhas abaixo:
-src/pages/landing/
-src/pages/MovieDetailWrapper.tsx
-src/components/landing/
+# src/pages/landing/
+# src/pages/MovieDetailWrapper.tsx
+# src/components/landing/
 
 # Para deploy com LP na Vercel, mantenha comentado (padrão)
