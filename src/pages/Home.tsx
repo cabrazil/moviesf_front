@@ -123,7 +123,7 @@ const Home: React.FC = () => {
             target.style.display = 'none';
           }}
           sx={{
-            width: { xs: 200, sm: 250, md: 300 },
+            width: { xs: 280, sm: 250, md: 300 },
             height: 'auto',
             marginBottom: 0,
             filter: mode === 'dark' 

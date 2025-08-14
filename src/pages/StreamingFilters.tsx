@@ -436,8 +436,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                           src={platform.logo} 
                           alt={platform.name}
                           style={{
-                            width: '70px',
-                            height: '70px',
+                            width: { xs: '80px', sm: '70px' },
+                            height: { xs: '80px', sm: '70px' },
                             objectFit: 'contain',
                             filter: 'none',
                             zIndex: 1,

@@ -38,7 +38,12 @@ const MovieDetailsPage: React.FC = () => {
           ? 'https://moviesf-back.vercel.app' 
           : 'http://localhost:3000';
         
-        const response = await fetch(`${baseURL}/api/movie/${movieId}/details`);
+        // Detectar se é UUID ou slug
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(movieId);
+        
+        // Usar rota diferente baseada no tipo de identificador
+        const endpoint = isUUID ? 'details' : 'hero';
+        const response = await fetch(`${baseURL}/api/movie/${movieId}/${endpoint}`);
         
         if (!response.ok) {
           throw new Error(`Filme não encontrado (${response.status})`);
