@@ -166,14 +166,15 @@ const JourneyIntro: React.FC = () => {
           </Typography>
             <Typography variant="h6" color="text.secondary" sx={{
               fontSize: { xs: '0.9rem', sm: '1rem' },
-              px: { xs: 1, sm: 0 }
+              px: { xs: 1, sm: 0 },
+              mb: 4
             }}>
               Escolha o sentimento que melhor descreve seu estado emocional.
             </Typography>
           </Box>
         </Fade>
         {sentiments.length > 0 ? (
-          <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: 2, px: { xs: 1, sm: 0 } }}>
+          <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: 4, px: { xs: 1, sm: 0 } }}>
             {sentiments.map((sentiment, index) => (
               <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
                 <Fade in={true} timeout={800 + (index * 100)}>
