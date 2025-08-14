@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import MovieDetailsPage from './MovieDetailsPage';
-// import { MovieDetail } from './landing/MovieDetail';
-// Forçar push para Vercel - build fix
+import { MovieDetail } from './landing/MovieDetail';
 
 const MovieDetailWrapper: React.FC = () => {
   const { identifier } = useParams();
@@ -19,8 +18,8 @@ const MovieDetailWrapper: React.FC = () => {
   if (isUUID) {
     return <MovieDetailsPage />;
   } else {
-    // Para slug, usar a Landing Page (temporariamente desabilitado)
-    return <div>Landing Page em desenvolvimento</div>;
+    // Para slug, usar a Landing Page
+    return <MovieDetail slug={identifier} />;
   }
 };
 

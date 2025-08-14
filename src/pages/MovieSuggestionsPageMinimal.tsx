@@ -44,7 +44,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     movieSuggestions: movieSuggestions.length,
     journeyContext,
     locationState: location.state,
-    mode
+    mode,
+    isMobile
   });
 
 
@@ -71,8 +72,16 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const MOVIES_PER_PAGE = 4;
 
   // Filtrar filmes baseado no ano e plataformas de streaming
-  const filteredSuggestions = useMemo(() => {
-    return movieSuggestions.filter(suggestion => {
+  const filteredSuggestions = useMemo((): MovieSuggestionFlow[] => {
+    console.log('🔍 Filtros aplicados:', {
+      isMobile,
+      streamingFilters,
+      movieSuggestionsCount: movieSuggestions.length,
+      showPre1990,
+      showPost1990
+    });
+    
+    const result = movieSuggestions.filter(suggestion => {
       // Filtro por ano
       const year = suggestion.movie.year;
       if (year) {
@@ -161,6 +170,15 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       
       return true;
     });
+    
+    console.log('🔍 Resultado dos filtros:', {
+      isMobile,
+      totalMovies: movieSuggestions.length,
+      filteredMovies: result.length,
+      streamingFiltersApplied: !!streamingFilters
+    });
+    
+    return result;
   }, [movieSuggestions, showPre1990, showPost1990, streamingFilters]);
 
   // Função para obter a cor do sentimento atual
