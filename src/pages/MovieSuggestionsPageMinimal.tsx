@@ -45,7 +45,10 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     journeyContext,
     locationState: location.state,
     mode,
-    isMobile
+    isMobile,
+    userAgent: navigator.userAgent,
+    browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : 
+             navigator.userAgent.includes('Safari') ? 'Safari' : 'Other'
   });
 
 
