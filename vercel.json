@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/filme/(.*)",
+      "destination": "/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
