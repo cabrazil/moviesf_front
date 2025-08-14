@@ -19,8 +19,7 @@ function App() {
           <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
           <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
           <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
-          <Route path="/filme/:id" element={<MovieDetailWrapper />} />
-          <Route path="/filme/:slug" element={<MovieDetailWrapper />} />
+          <Route path="/filme/:identifier" element={<MovieDetailWrapper />} />
 
         </Routes>
       </Router>

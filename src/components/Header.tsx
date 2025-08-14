@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { Home } from 'lucide-react'
 
 export function Header() {
-  const location = useLocation()
-  const isAdminPage = location.pathname.startsWith('/admin')
+  // const location = useLocation()
+  
 
   return (
     <header className="bg-white shadow-sm">
@@ -25,7 +25,7 @@ export function Header() {
               to="/"
               className={`
                 inline-flex items-center px-3 py-2 rounded-md text-sm font-medium
-                ${!isAdminPage
+                ${true
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
                 }

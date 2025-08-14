@@ -12,15 +12,21 @@ import metacriticLogo from '../assets/metascore.svg';
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
-  const { id, slug } = useParams();
-  const movieId = id || slug; // Pegar o ID de qualquer um dos parâmetros
+  const { identifier } = useParams();
+  const movieId = identifier; // Usar o novo parâmetro unificado
   const state = location.state || {};
   const [movieData, setMovieData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  const reason = state.reason || 'Filme cuidadosamente selecionado para você.';
-  const sentimentId = state.sentimentId;
+  // Debug: Verificar se o state está sendo recebido
+  console.log('🎬 MovieDetailsPage - movieId:', movieId);
+  console.log('🎬 MovieDetailsPage - location.state:', location.state);
+  console.log('🎬 MovieDetailsPage - state:', state);
+  
+  // Extrair valores do state uma vez para evitar recriação
+  const reason = state?.reason || 'Filme cuidadosamente selecionado para você.';
+  const sentimentId = state?.sentimentId;
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
   const themeColor = currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2';
 
@@ -59,7 +65,7 @@ const MovieDetailsPage: React.FC = () => {
     };
 
     fetchMovieDetails();
-  }, [movieId, state]);
+  }, [movieId]); // Removido 'state' das dependências
 
   if (loading) {
     return (
