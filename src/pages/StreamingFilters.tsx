@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -12,6 +12,7 @@ import {
   useTheme
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getStreamingPlatforms, getPlatformLogoUrlMedium } from '../services/streaming.service';
 
 interface StreamingFiltersProps {
   // Removido onFiltersChange pois não está sendo usado
@@ -32,38 +33,19 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [includeRentalPurchase, setIncludeRentalPurchase] = useState(false);
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
   const [selectedRentalPurchasePlatforms, setSelectedRentalPurchasePlatforms] = useState<string[]>([]);
+  
 
-  // Mapeamento das plataformas principais com seus logos
-  const mainSubscriptionPlatforms = [
-    {
-      name: 'Prime Video',
-      logo: '/platforms/amazonprimevideo.avif'
-    },
-    {
-      name: 'Netflix',
-      logo: '/platforms/netflix.avif'
-    },
-    {
-      name: 'Disney+',
-      logo: '/platforms/disneyplus.avif'
-    },
-    {
-      name: 'HBO Max',
-      logo: '/platforms/max.avif'
-    },
-    {
-      name: 'Globoplay',
-      logo: '/platforms/globoplay.avif'
-    },
-    {
-      name: 'Apple TV+',
-      logo: '/platforms/itunes.avif'
-    },
-    {
-      name: 'Claro Video',
-      logo: '/platforms/clarovideo.avif'
-    }
-  ];
+
+  // Mapeamento das plataformas principais com seus logos (agora dinâmicos)
+  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([
+    { name: 'Prime Video', logo: '/platforms/amazonprimevideo.avif' },
+    { name: 'Netflix', logo: '/platforms/netflix.avif' },
+    { name: 'Disney+', logo: '/platforms/disneyplus.avif' },
+    { name: 'HBO Max', logo: '/platforms/max.avif' },
+    { name: 'Globoplay', logo: '/platforms/globoplay.avif' },
+    { name: 'Apple TV+', logo: '/platforms/itunes.avif' },
+    { name: 'Claro Video', logo: '/platforms/clarovideo.avif' }
+  ]);
 
   // Outras plataformas (serão agrupadas)
   const otherSubscriptionPlatforms = [
@@ -81,24 +63,47 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   ];
 
   // Plataformas de aluguel/compra com logos
-  const rentalPurchasePlatforms = [
-    {
-      name: 'Google Play Filmes (Aluguel/Compra)',
-      logo: '/platforms/play.avif'
-    },
-    {
-      name: 'Microsoft Store (Aluguel/Compra)',
-      logo: '/platforms/microsoft-store.jpg'
-    },
-    {
-      name: 'YouTube (Aluguel/Compra/Gratuito)',
-      logo: '/platforms/logo-youtube.png'
-    },
-    {
-      name: 'Prime Video (Aluguel/Compra)',
-      logo: '/platforms/amazonprimevideo.avif'
-    }
-  ];
+  const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{name: string, logo: string}>>([
+    { name: 'Google Play Filmes (Aluguel/Compra)', logo: '/platforms/play.avif' },
+    { name: 'Microsoft Store (Aluguel/Compra)', logo: '/platforms/microsoft-store.jpg' },
+    { name: 'YouTube (Aluguel/Compra/Gratuito)', logo: '/platforms/logo-youtube.png' },
+    { name: 'Prime Video (Aluguel/Compra)', logo: '/platforms/amazonprimevideo.avif' }
+  ]);
+
+  // Carregar logos dinâmicos do backend
+  useEffect(() => {
+    const loadPlatformLogos = async () => {
+      try {
+        const platformsData = await getStreamingPlatforms();
+        
+        // Atualizar logos das plataformas principais
+        const updatedMainPlatforms = mainSubscriptionPlatforms.map(platform => {
+          const dbPlatform = platformsData.find(p => p.name === platform.name);
+          return {
+            name: platform.name,
+            logo: dbPlatform ? getPlatformLogoUrlMedium(dbPlatform.logoPath) : platform.logo
+          };
+        });
+        setMainSubscriptionPlatforms(updatedMainPlatforms);
+
+        // Atualizar logos das plataformas de aluguel/compra
+        const updatedRentalPlatforms = rentalPurchasePlatforms.map(platform => {
+          const dbPlatform = platformsData.find(p => p.name === platform.name);
+          return {
+            name: platform.name,
+            logo: dbPlatform ? getPlatformLogoUrlMedium(dbPlatform.logoPath) : platform.logo
+          };
+        });
+        setRentalPurchasePlatforms(updatedRentalPlatforms);
+        
+      } catch (err) {
+        console.error('Erro ao carregar logos das plataformas:', err);
+        // Em caso de erro, mantém os logos estáticos
+      }
+    };
+
+    loadPlatformLogos();
+  }, []);
 
   const handleSubscriptionPlatformChange = (platformName: string) => {
     setSelectedSubscriptionPlatforms(prev => 
@@ -194,6 +199,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   
   console.log('🔍 StreamingFilters - selectedOptionText:', selectedOptionText);
 
+
+
   return (
     <Container maxWidth="lg" sx={{ py: 3 }}>
       <Box sx={{ mb: 3 }}>
@@ -281,14 +288,14 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       <img 
                         src={platform.logo} 
                         alt={platform.name}
-                                              style={{
-                        width: '70px',
-                        height: '70px',
-                        objectFit: 'contain',
-                        filter: 'none',
-                        zIndex: 1,
-                        position: 'relative'
-                      }}
+                        style={{
+                          width: '70px',
+                          height: '70px',
+                          objectFit: 'contain',
+                          filter: 'none',
+                          zIndex: 1,
+                          position: 'relative'
+                        }}
                       />
                     }
                     onClick={() => handleSubscriptionPlatformChange(platform.name)}
@@ -299,22 +306,28 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       minHeight: '60px',
                       padding: '4px',
                       backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
-                        ? 'transparent'
+                        ? `${theme.palette.primary.main}15`
                         : 'transparent',
                       border: selectedSubscriptionPlatforms.includes(platform.name) 
-                        ? `4px solid ${theme.palette.primary.main}`
+                        ? `3px solid ${theme.palette.primary.main}`
                         : `2px solid ${theme.palette.primary.main}`,
-                      transition: 'all 0.2s ease',
+                      borderRadius: '12px',
+                      position: 'relative',
+                      transition: 'all 0.3s ease',
+                      cursor: 'pointer',
                       '&:hover': {
                         backgroundColor: selectedSubscriptionPlatforms.includes(platform.name)
-                          ? theme.palette.primary.dark
+                          ? `${theme.palette.primary.main}25`
                           : `${theme.palette.primary.main}10`,
-                        transform: 'translateY(-1px)',
-                        boxShadow: 2
+                        transform: 'translateY(-2px)',
+                        boxShadow: selectedSubscriptionPlatforms.includes(platform.name) 
+                          ? `0 4px 12px ${theme.palette.primary.main}40`
+                          : `0 4px 8px ${theme.palette.primary.main}20`,
+                        borderColor: theme.palette.primary.dark
                       },
                       '&:active': {
-                        transform: 'translateY(0px)',
-                        boxShadow: 1
+                        transform: 'translateY(-1px)',
+                        boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
                       },
                       '& .MuiChip-icon': {
                         margin: '0',
@@ -322,8 +335,23 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                         height: '100%',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
-                      }
+                        justifyContent: 'center',
+                        transition: 'all 0.3s ease'
+                      },
+                      // Indicador de seleção (canto superior direito)
+                      '&::after': selectedSubscriptionPlatforms.includes(platform.name) ? {
+                        content: '""',
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        width: '12px',
+                        height: '12px',
+                        backgroundColor: theme.palette.primary.main,
+                        borderRadius: '50%',
+                        border: `2px solid ${theme.palette.background.paper}`,
+                        zIndex: 2,
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                      } : {}
                     }}
                   />
                 </Grid>
@@ -343,24 +371,46 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                     fontSize: { xs: '0.8rem', sm: '0.85rem' },
                     fontWeight: 500,
                     backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
-                      ? theme.palette.primary.main
+                      ? `${theme.palette.primary.main}15`
                       : 'transparent',
                     color: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                      ? theme.palette.primary.contrastText
+                      ? theme.palette.primary.main
                       : theme.palette.text.secondary,
-                    border: `2px solid ${theme.palette.primary.main}`,
-                    transition: 'all 0.2s ease',
+                    border: selectedSubscriptionPlatforms.includes('Outras Plataformas')
+                      ? `3px solid ${theme.palette.primary.main}`
+                      : `2px solid ${theme.palette.primary.main}`,
+                    borderRadius: '12px',
+                    position: 'relative',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer',
                     '&:hover': {
                       backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                        ? theme.palette.primary.dark
+                        ? `${theme.palette.primary.main}25`
                         : `${theme.palette.primary.main}10`,
-                      transform: 'translateY(-1px)',
-                      boxShadow: 2
+                      transform: 'translateY(-2px)',
+                      boxShadow: selectedSubscriptionPlatforms.includes('Outras Plataformas')
+                        ? `0 4px 12px ${theme.palette.primary.main}40`
+                        : `0 4px 8px ${theme.palette.primary.main}20`,
+                      borderColor: theme.palette.primary.dark
                     },
                     '&:active': {
-                      transform: 'translateY(0px)',
-                      boxShadow: 1
-                    }
+                      transform: 'translateY(-1px)',
+                      boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
+                    },
+                    // Indicador de seleção (canto superior direito)
+                    '&::after': selectedSubscriptionPlatforms.includes('Outras Plataformas') ? {
+                      content: '""',
+                      position: 'absolute',
+                      top: '8px',
+                      right: '8px',
+                      width: '12px',
+                      height: '12px',
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: '50%',
+                      border: `2px solid ${theme.palette.background.paper}`,
+                      zIndex: 2,
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                    } : {}
                   }}
                 />
               </Grid>
@@ -453,22 +503,28 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                         minHeight: '60px',
                         padding: '4px',
                         backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name) 
-                          ? 'transparent'
+                          ? `${theme.palette.primary.main}15`
                           : 'transparent',
                         border: selectedRentalPurchasePlatforms.includes(platform.name) 
-                          ? `4px solid ${theme.palette.primary.main}`
+                          ? `3px solid ${theme.palette.primary.main}`
                           : `2px solid ${theme.palette.primary.main}`,
-                        transition: 'all 0.2s ease',
+                        borderRadius: '12px',
+                        position: 'relative',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer',
                         '&:hover': {
                           backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name)
-                            ? theme.palette.primary.dark
+                            ? `${theme.palette.primary.main}25`
                             : `${theme.palette.primary.main}10`,
-                          transform: 'translateY(-1px)',
-                          boxShadow: 2
+                          transform: 'translateY(-2px)',
+                          boxShadow: selectedRentalPurchasePlatforms.includes(platform.name) 
+                            ? `0 4px 12px ${theme.palette.primary.main}40`
+                            : `0 4px 8px ${theme.palette.primary.main}20`,
+                          borderColor: theme.palette.primary.dark
                         },
                         '&:active': {
-                          transform: 'translateY(0px)',
-                          boxShadow: 1
+                          transform: 'translateY(-1px)',
+                          boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
                         },
                         '& .MuiChip-icon': {
                           margin: '0',
@@ -476,8 +532,23 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                           height: '100%',
                           display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center'
-                        }
+                          justifyContent: 'center',
+                          transition: 'all 0.3s ease'
+                        },
+                        // Indicador de seleção (canto superior direito)
+                        '&::after': selectedRentalPurchasePlatforms.includes(platform.name) ? {
+                          content: '""',
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: theme.palette.primary.main,
+                          borderRadius: '50%',
+                          border: `2px solid ${theme.palette.background.paper}`,
+                          zIndex: 2,
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        } : {}
                       }}
                     />
                   </Grid>

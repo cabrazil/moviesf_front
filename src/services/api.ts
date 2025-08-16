@@ -12,6 +12,10 @@ const api = axios.create({
   },
 });
 
+// Log da URL base para debug
+console.log('🌐 API Base URL:', api.defaults.baseURL);
+console.log('🔧 Environment:', process.env.NODE_ENV);
+
 // Interceptor para requisições
 api.interceptors.request.use(
   (config) => {

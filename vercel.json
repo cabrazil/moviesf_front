@@ -23,5 +23,9 @@
         }
       ]
     }
-  ]
+  ],
+  "env": {
+    "VITE_TMDB_IMAGE_BASE_URL": "https://image.tmdb.org/t/p",
+    "VITE_TMDB_IMAGE_SIZE": "w185"
+  }
 }
