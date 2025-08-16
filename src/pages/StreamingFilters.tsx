@@ -9,7 +9,9 @@ import {
   Button,
   Paper,
   Chip,
-  useTheme
+  useTheme,
+  Skeleton,
+  CircularProgress
 } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getStreamingPlatforms, getPlatformLogoUrlMedium } from '../services/streaming.service';
@@ -34,7 +36,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
   const [selectedRentalPurchasePlatforms, setSelectedRentalPurchasePlatforms] = useState<string[]>([]);
   
-
+  // Estado de loading para evitar sobreposição de logos
+  const [isLoadingLogos, setIsLoadingLogos] = useState(true);
 
   // Mapeamento das plataformas principais com seus logos (agora dinâmicos)
   const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([
@@ -70,9 +73,32 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     { name: 'Prime Video (Aluguel/Compra)', logo: '/platforms/amazonprimevideo.avif' }
   ]);
 
+  // Função para preload de imagens
+  const preloadImage = (src: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+      img.src = src;
+    });
+  };
+
+  // Função para preload de múltiplas imagens
+  const preloadImages = async (platforms: Array<{name: string, logo: string}>) => {
+    const imagePromises = platforms.map(platform => preloadImage(platform.logo));
+    try {
+      await Promise.all(imagePromises);
+      return true;
+    } catch (error) {
+      console.warn('Algumas imagens falharam ao carregar:', error);
+      return false;
+    }
+  };
+
   // Carregar logos dinâmicos do backend
   useEffect(() => {
     const loadPlatformLogos = async () => {
+      setIsLoadingLogos(true);
       try {
         const platformsData = await getStreamingPlatforms();
         
@@ -95,10 +121,15 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
           };
         });
         setRentalPurchasePlatforms(updatedRentalPlatforms);
+
+        // Preload das imagens para evitar flash
+        await preloadImages([...updatedMainPlatforms, ...updatedRentalPlatforms]);
         
       } catch (err) {
         console.error('Erro ao carregar logos das plataformas:', err);
         // Em caso de erro, mantém os logos estáticos
+      } finally {
+        setIsLoadingLogos(false);
       }
     };
 
@@ -236,6 +267,22 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
           </Typography>
         )}
         
+        {/* Indicador de loading */}
+        {isLoadingLogos && (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 2 }}>
+            <CircularProgress size={20} />
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: "text.secondary",
+                fontSize: { xs: '0.8rem', sm: '0.9rem' }
+              }}
+            >
+              Carregando logos das plataformas...
+            </Typography>
+          </Box>
+        )}
+
         {/* Debug temporário - remover depois */}
         {movieSuggestions.length > 0 && !selectedOptionText && (
           <Typography 
@@ -281,34 +328,113 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
             <Grid container spacing={1.5}>
               {/* Plataformas principais */}
-              {mainSubscriptionPlatforms.map((platform) => (
-                <Grid item xs={12} sm={6} md={3} key={platform.name}>
+              {isLoadingLogos ? (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton variant="rectangular" height={60} />
+                </Grid>
+              ) : (
+                mainSubscriptionPlatforms.map((platform) => (
+                  <Grid item xs={12} sm={6} md={3} key={platform.name}>
+                    <Chip
+                      icon={
+                        <img 
+                          src={platform.logo} 
+                          alt={platform.name}
+                          style={{
+                            width: '70px',
+                            height: '70px',
+                            objectFit: 'contain',
+                            filter: 'none',
+                            zIndex: 1,
+                            position: 'relative'
+                          }}
+                        />
+                      }
+                      onClick={() => handleSubscriptionPlatformChange(platform.name)}
+                      clickable
+                      sx={{
+                        width: '100%',
+                        height: 'auto',
+                        minHeight: '60px',
+                        padding: '4px',
+                        backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                          ? `${theme.palette.primary.main}15`
+                          : 'transparent',
+                        border: selectedSubscriptionPlatforms.includes(platform.name) 
+                          ? `3px solid ${theme.palette.primary.main}`
+                          : `2px solid ${theme.palette.primary.main}`,
+                        borderRadius: '12px',
+                        position: 'relative',
+                        transition: 'all 0.3s ease',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: selectedSubscriptionPlatforms.includes(platform.name)
+                            ? `${theme.palette.primary.main}25`
+                            : `${theme.palette.primary.main}10`,
+                          transform: 'translateY(-2px)',
+                          boxShadow: selectedSubscriptionPlatforms.includes(platform.name) 
+                            ? `0 4px 12px ${theme.palette.primary.main}40`
+                            : `0 4px 8px ${theme.palette.primary.main}20`,
+                          borderColor: theme.palette.primary.dark
+                        },
+                        '&:active': {
+                          transform: 'translateY(-1px)',
+                          boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
+                        },
+                        '& .MuiChip-icon': {
+                          margin: '0',
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          transition: 'all 0.3s ease'
+                        },
+                        // Indicador de seleção (canto superior direito)
+                        '&::after': selectedSubscriptionPlatforms.includes(platform.name) ? {
+                          content: '""',
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '12px',
+                          height: '12px',
+                          backgroundColor: theme.palette.primary.main,
+                          borderRadius: '50%',
+                          border: `2px solid ${theme.palette.background.paper}`,
+                          zIndex: 2,
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        } : {}
+                      }}
+                    />
+                  </Grid>
+                ))
+              )}
+              
+              {/* Outras plataformas */}
+              {isLoadingLogos ? (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Skeleton variant="rectangular" height={60} />
+                </Grid>
+              ) : (
+                <Grid item xs={12} sm={6} md={3}>
                   <Chip
-                    icon={
-                      <img 
-                        src={platform.logo} 
-                        alt={platform.name}
-                        style={{
-                          width: '70px',
-                          height: '70px',
-                          objectFit: 'contain',
-                          filter: 'none',
-                          zIndex: 1,
-                          position: 'relative'
-                        }}
-                      />
-                    }
-                    onClick={() => handleSubscriptionPlatformChange(platform.name)}
+                    label="Outras Plataformas"
+                    onClick={() => handleSubscriptionPlatformChange('Outras Plataformas')}
                     clickable
                     sx={{
                       width: '100%',
                       height: 'auto',
                       minHeight: '60px',
                       padding: '4px',
-                      backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                      fontSize: { xs: '0.8rem', sm: '0.85rem' },
+                      fontWeight: 500,
+                      backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
                         ? `${theme.palette.primary.main}15`
                         : 'transparent',
-                      border: selectedSubscriptionPlatforms.includes(platform.name) 
+                      color: selectedSubscriptionPlatforms.includes('Outras Plataformas')
+                        ? theme.palette.primary.main
+                        : theme.palette.text.secondary,
+                      border: selectedSubscriptionPlatforms.includes('Outras Plataformas')
                         ? `3px solid ${theme.palette.primary.main}`
                         : `2px solid ${theme.palette.primary.main}`,
                       borderRadius: '12px',
@@ -316,11 +442,11 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
                       '&:hover': {
-                        backgroundColor: selectedSubscriptionPlatforms.includes(platform.name)
+                        backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas')
                           ? `${theme.palette.primary.main}25`
                           : `${theme.palette.primary.main}10`,
                         transform: 'translateY(-2px)',
-                        boxShadow: selectedSubscriptionPlatforms.includes(platform.name) 
+                        boxShadow: selectedSubscriptionPlatforms.includes('Outras Plataformas')
                           ? `0 4px 12px ${theme.palette.primary.main}40`
                           : `0 4px 8px ${theme.palette.primary.main}20`,
                         borderColor: theme.palette.primary.dark
@@ -329,17 +455,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                         transform: 'translateY(-1px)',
                         boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
                       },
-                      '& .MuiChip-icon': {
-                        margin: '0',
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transition: 'all 0.3s ease'
-                      },
                       // Indicador de seleção (canto superior direito)
-                      '&::after': selectedSubscriptionPlatforms.includes(platform.name) ? {
+                      '&::after': selectedSubscriptionPlatforms.includes('Outras Plataformas') ? {
                         content: '""',
                         position: 'absolute',
                         top: '8px',
@@ -355,65 +472,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                     }}
                   />
                 </Grid>
-              ))}
-              
-              {/* Outras plataformas */}
-              <Grid item xs={12} sm={6} md={3}>
-                <Chip
-                  label="Outras Plataformas"
-                  onClick={() => handleSubscriptionPlatformChange('Outras Plataformas')}
-                  clickable
-                  sx={{
-                    width: '100%',
-                    height: 'auto',
-                    minHeight: '60px',
-                    padding: '4px',
-                    fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                    fontWeight: 500,
-                    backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
-                      ? `${theme.palette.primary.main}15`
-                      : 'transparent',
-                    color: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                      ? theme.palette.primary.main
-                      : theme.palette.text.secondary,
-                    border: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                      ? `3px solid ${theme.palette.primary.main}`
-                      : `2px solid ${theme.palette.primary.main}`,
-                    borderRadius: '12px',
-                    position: 'relative',
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                        ? `${theme.palette.primary.main}25`
-                        : `${theme.palette.primary.main}10`,
-                      transform: 'translateY(-2px)',
-                      boxShadow: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                        ? `0 4px 12px ${theme.palette.primary.main}40`
-                        : `0 4px 8px ${theme.palette.primary.main}20`,
-                      borderColor: theme.palette.primary.dark
-                    },
-                    '&:active': {
-                      transform: 'translateY(-1px)',
-                      boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
-                    },
-                    // Indicador de seleção (canto superior direito)
-                    '&::after': selectedSubscriptionPlatforms.includes('Outras Plataformas') ? {
-                      content: '""',
-                      position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      width: '12px',
-                      height: '12px',
-                      backgroundColor: theme.palette.primary.main,
-                      borderRadius: '50%',
-                      border: `2px solid ${theme.palette.background.paper}`,
-                      zIndex: 2,
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                    } : {}
-                  }}
-                />
-              </Grid>
+              )}
             </Grid>
           </Paper>
         </Grid>
@@ -478,81 +537,87 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               </Typography>
 
               <Grid container spacing={1.5}>
-                {rentalPurchasePlatforms.map((platform) => (
-                  <Grid item xs={12} sm={6} md={3} key={platform.name}>
-                    <Chip
-                      icon={
-                        <img 
-                          src={platform.logo} 
-                          alt={platform.name}
-                          style={{
-                            width: '80px',
-                            height: '80px',
-                            objectFit: 'contain',
-                            filter: 'none',
-                            zIndex: 1,
-                            position: 'relative'
-                          }}
-                        />
-                      }
-                      onClick={() => handleRentalPurchasePlatformChange(platform.name)}
-                      clickable
-                      sx={{
-                        width: '100%',
-                        height: 'auto',
-                        minHeight: '60px',
-                        padding: '4px',
-                        backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name) 
-                          ? `${theme.palette.primary.main}15`
-                          : 'transparent',
-                        border: selectedRentalPurchasePlatforms.includes(platform.name) 
-                          ? `3px solid ${theme.palette.primary.main}`
-                          : `2px solid ${theme.palette.primary.main}`,
-                        borderRadius: '12px',
-                        position: 'relative',
-                        transition: 'all 0.3s ease',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name)
-                            ? `${theme.palette.primary.main}25`
-                            : `${theme.palette.primary.main}10`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: selectedRentalPurchasePlatforms.includes(platform.name) 
-                            ? `0 4px 12px ${theme.palette.primary.main}40`
-                            : `0 4px 8px ${theme.palette.primary.main}20`,
-                          borderColor: theme.palette.primary.dark
-                        },
-                        '&:active': {
-                          transform: 'translateY(-1px)',
-                          boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
-                        },
-                        '& .MuiChip-icon': {
-                          margin: '0',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.3s ease'
-                        },
-                        // Indicador de seleção (canto superior direito)
-                        '&::after': selectedRentalPurchasePlatforms.includes(platform.name) ? {
-                          content: '""',
-                          position: 'absolute',
-                          top: '8px',
-                          right: '8px',
-                          width: '12px',
-                          height: '12px',
-                          backgroundColor: theme.palette.primary.main,
-                          borderRadius: '50%',
-                          border: `2px solid ${theme.palette.background.paper}`,
-                          zIndex: 2,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                        } : {}
-                      }}
-                    />
+                {isLoadingLogos ? (
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Skeleton variant="rectangular" height={60} />
                   </Grid>
-                ))}
+                ) : (
+                  rentalPurchasePlatforms.map((platform) => (
+                    <Grid item xs={12} sm={6} md={3} key={platform.name}>
+                      <Chip
+                        icon={
+                          <img 
+                            src={platform.logo} 
+                            alt={platform.name}
+                            style={{
+                              width: '80px',
+                              height: '80px',
+                              objectFit: 'contain',
+                              filter: 'none',
+                              zIndex: 1,
+                              position: 'relative'
+                            }}
+                          />
+                        }
+                        onClick={() => handleRentalPurchasePlatformChange(platform.name)}
+                        clickable
+                        sx={{
+                          width: '100%',
+                          height: 'auto',
+                          minHeight: '60px',
+                          padding: '4px',
+                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name) 
+                            ? `${theme.palette.primary.main}15`
+                            : 'transparent',
+                          border: selectedRentalPurchasePlatforms.includes(platform.name) 
+                            ? `3px solid ${theme.palette.primary.main}`
+                            : `2px solid ${theme.palette.primary.main}`,
+                          borderRadius: '12px',
+                          position: 'relative',
+                          transition: 'all 0.3s ease',
+                          cursor: 'pointer',
+                          '&:hover': {
+                            backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name)
+                              ? `${theme.palette.primary.main}25`
+                              : `${theme.palette.primary.main}10`,
+                            transform: 'translateY(-2px)',
+                            boxShadow: selectedRentalPurchasePlatforms.includes(platform.name) 
+                              ? `0 4px 12px ${theme.palette.primary.main}40`
+                              : `0 4px 8px ${theme.palette.primary.main}20`,
+                            borderColor: theme.palette.primary.dark
+                          },
+                          '&:active': {
+                            transform: 'translateY(-1px)',
+                            boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
+                          },
+                          '& .MuiChip-icon': {
+                            margin: '0',
+                            width: '100%',
+                            height: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.3s ease'
+                          },
+                          // Indicador de seleção (canto superior direito)
+                          '&::after': selectedRentalPurchasePlatforms.includes(platform.name) ? {
+                            content: '""',
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            width: '12px',
+                            height: '12px',
+                            backgroundColor: theme.palette.primary.main,
+                            borderRadius: '50%',
+                            border: `2px solid ${theme.palette.background.paper}`,
+                            zIndex: 2,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                          } : {}
+                        }}
+                      />
+                    </Grid>
+                  ))
+                )}
               </Grid>
             </Paper>
           </Grid>
