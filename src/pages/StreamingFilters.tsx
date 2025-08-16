@@ -39,15 +39,15 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   // Estado de loading para evitar sobreposição de logos
   const [isLoadingLogos, setIsLoadingLogos] = useState(true);
 
-  // Mapeamento das plataformas principais com seus logos (agora dinâmicos)
+  // Mapeamento das plataformas principais (logos serão carregados dinamicamente)
   const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([
-    { name: 'Prime Video', logo: '/platforms/amazonprimevideo.avif' },
-    { name: 'Netflix', logo: '/platforms/netflix.avif' },
-    { name: 'Disney+', logo: '/platforms/disneyplus.avif' },
-    { name: 'HBO Max', logo: '/platforms/max.avif' },
-    { name: 'Globoplay', logo: '/platforms/globoplay.avif' },
-    { name: 'Apple TV+', logo: '/platforms/itunes.avif' },
-    { name: 'Claro Video', logo: '/platforms/clarovideo.avif' }
+    { name: 'Prime Video', logo: '' },
+    { name: 'Netflix', logo: '' },
+    { name: 'Disney+', logo: '' },
+    { name: 'HBO Max', logo: '' },
+    { name: 'Globoplay', logo: '' },
+    { name: 'Apple TV+', logo: '' },
+    { name: 'Claro Video', logo: '' }
   ]);
 
   // Outras plataformas (serão agrupadas)
@@ -65,12 +65,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     'FilmBox+'
   ];
 
-  // Plataformas de aluguel/compra com logos
+  // Plataformas de aluguel/compra (logos serão carregados dinamicamente)
   const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{name: string, logo: string}>>([
-    { name: 'Google Play Filmes (Aluguel/Compra)', logo: '/platforms/play.avif' },
-    { name: 'Microsoft Store (Aluguel/Compra)', logo: '/platforms/microsoft-store.jpg' },
-    { name: 'YouTube (Aluguel/Compra/Gratuito)', logo: '/platforms/logo-youtube.png' },
-    { name: 'Prime Video (Aluguel/Compra)', logo: '/platforms/amazonprimevideo.avif' }
+    { name: 'Google Play Filmes (Aluguel/Compra)', logo: '' },
+    { name: 'Microsoft Store (Aluguel/Compra)', logo: '' },
+    { name: 'YouTube (Aluguel/Compra/Gratuito)', logo: '' },
+    { name: 'Prime Video (Aluguel/Compra)', logo: '' }
   ]);
 
   // Função para preload de imagens
@@ -105,9 +105,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         // Atualizar logos das plataformas principais
         const updatedMainPlatforms = mainSubscriptionPlatforms.map(platform => {
           const dbPlatform = platformsData.find(p => p.name === platform.name);
+          if (!dbPlatform || !dbPlatform.logoPath) {
+            throw new Error(`Logo não encontrado para plataforma: ${platform.name}`);
+          }
           return {
             name: platform.name,
-            logo: dbPlatform ? getPlatformLogoUrlMedium(dbPlatform.logoPath) : platform.logo
+            logo: getPlatformLogoUrlMedium(dbPlatform.logoPath)
           };
         });
         setMainSubscriptionPlatforms(updatedMainPlatforms);
@@ -115,9 +118,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         // Atualizar logos das plataformas de aluguel/compra
         const updatedRentalPlatforms = rentalPurchasePlatforms.map(platform => {
           const dbPlatform = platformsData.find(p => p.name === platform.name);
+          if (!dbPlatform || !dbPlatform.logoPath) {
+            throw new Error(`Logo não encontrado para plataforma: ${platform.name}`);
+          }
           return {
             name: platform.name,
-            logo: dbPlatform ? getPlatformLogoUrlMedium(dbPlatform.logoPath) : platform.logo
+            logo: getPlatformLogoUrlMedium(dbPlatform.logoPath)
           };
         });
         setRentalPurchasePlatforms(updatedRentalPlatforms);
@@ -127,7 +133,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         
       } catch (err) {
         console.error('Erro ao carregar logos das plataformas:', err);
-        // Em caso de erro, mantém os logos estáticos
+        // Em caso de erro, mantém o loading state para mostrar skeleton
       } finally {
         setIsLoadingLogos(false);
       }

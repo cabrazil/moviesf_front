@@ -23,7 +23,7 @@ export const getStreamingPlatforms = async (): Promise<StreamingPlatform[]> => {
 
 export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize = TMDB_CONFIG.IMAGE_SIZE as TMDBImageSize): string => {
   if (!logoPath) {
-    return '/platforms/netflix.avif'; // Logo padrão (usando Netflix como fallback)
+    throw new Error('Logo path não pode ser null ou vazio');
   }
   
   // Se já é uma URL completa, retorna como está
