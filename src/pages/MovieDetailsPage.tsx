@@ -27,6 +27,11 @@ const MovieDetailsPage: React.FC = () => {
   // Extrair valores do state uma vez para evitar recriação
   const reason = state?.reason || 'Filme cuidadosamente selecionado para você.';
   const sentimentId = state?.sentimentId;
+  const intentionType = state?.intentionType;
+  
+  // Debug: Verificar os valores extraídos
+  console.log('🎬 MovieDetailsPage - sentimentId:', sentimentId);
+  console.log('🎬 MovieDetailsPage - intentionType:', intentionType);
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
   const themeColor = currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2';
 
@@ -88,6 +93,35 @@ const MovieDetailsPage: React.FC = () => {
   }
 
   const movie = movieData.movie;
+
+  // Função para obter o nome do sentimento
+  const getSentimentName = (sentimentId: number): string => {
+    const sentimentNames: { [key: number]: string } = {
+      13: 'Feliz / Alegre',
+      14: 'Triste',
+      15: 'Calmo(a)',
+      16: 'Ansioso(a)',
+      17: 'Animado(a)',
+      18: 'Cansado(a)'
+    };
+    return sentimentNames[sentimentId] || 'Emocionado(a)';
+  };
+
+  // Função para obter o nome da intenção
+  const getIntentionName = (intentionType: string): string => {
+    const intentionNames: { [key: string]: string } = {
+      'PROCESS': 'PROCESSAR',
+      'TRANSFORM': 'TRANSFORMAR',
+      'MAINTAIN': 'MANTER',
+      'EXPLORE': 'EXPLORAR'
+    };
+    return intentionNames[intentionType] || 'PROCESSAR';
+  };
+
+  // Criar a frase completa
+  const fullReason = sentimentId && intentionType && movie 
+    ? `Para quem está ${getSentimentName(sentimentId)} e quer ${getIntentionName(intentionType)}, ${movie.title} oferece ${reason}`
+    : reason;
 
   // Componente de ícone para ratings
   const RatingIcon: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 20 }) => (
@@ -226,7 +260,7 @@ const MovieDetailsPage: React.FC = () => {
           <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
             <Typography variant="subtitle1" sx={{ mb: 0.5, color: '#fff', textAlign: { xs: 'center', md: 'left' }, fontSize: { xs: '1rem', md: '1.1rem' } }}>Por que assistir?</Typography>
             <Paper elevation={0} sx={{ bgcolor: mode === 'light' ? '#f5f5f5' : '#222', color: 'text.secondary', p: 1.5, borderRadius: 2, border: `1.5px solid ${themeColor}40`, fontStyle: 'italic', maxWidth: 700, textAlign: { xs: 'center', md: 'left' }, fontSize: '0.97rem' }}>
-              {reason}
+              {fullReason}
             </Paper>
           </Box>
 

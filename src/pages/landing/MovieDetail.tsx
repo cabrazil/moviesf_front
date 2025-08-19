@@ -112,12 +112,20 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
     id: string;
     name: string;
     category: string;
+    logoPath: string;
+    hasFreeTrial: boolean;
+    freeTrialDuration: string | null;
+    baseUrl: string | null;
     accessType: string;
   }>>([]);
   const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{
     id: string;
     name: string;
     category: string;
+    logoPath: string;
+    hasFreeTrial: boolean;
+    freeTrialDuration: string | null;
+    baseUrl: string | null;
     accessType: string;
   }>>([]);
   const [reason, setReason] = useState<string | null>(null);

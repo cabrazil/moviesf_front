@@ -623,7 +623,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                       state: {
                         movie: suggestion.movie,
                         reason: suggestion.reason,
-                        sentimentId: journeyContext?.selectedSentiment?.id
+                        sentimentId: journeyContext?.selectedSentiment?.id,
+                        intentionType: journeyContext?.selectedIntention?.type
                       }
                     });
                   }}
