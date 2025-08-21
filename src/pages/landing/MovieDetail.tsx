@@ -915,7 +915,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         bgcolor: 'transparent'
                       }}
                     >
-                      Filmes que evocam a mesma Emoção
+                      Filmes que despertam a mesma Emoção
                     </Button>
                   </Stack>
                 </Box>
