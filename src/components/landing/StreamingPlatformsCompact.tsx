@@ -305,17 +305,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
         </Box>
       )}
 
-      {/* Observações legais */}
-      {(unifiedSubscriptionPlatforms.some(p => p.hasFreeTrial) || unifiedRentalPurchasePlatforms.length > 0) && (
-        <Box sx={{ mt: 1 }}>
-          <Typography variant="h6" component="h6" color="text.secondary" sx={{ 
-            fontSize: '0.75rem',
-            fontWeight: 400
-          }}>
-            *Os períodos e termos de teste grátis podem variar. Consulte a plataforma para detalhes atualizados.
-          </Typography>
-        </Box>
-      )}
+
     </Box>
   );
 };

@@ -33,7 +33,9 @@ const Home: React.FC = () => {
       <AppBar position="static" sx={{ 
         backgroundColor: 'transparent', 
         boxShadow: 'none', 
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        borderBottom: mode === 'dark' 
+          ? '1px solid rgba(255,255,255,0.1)' 
+          : '1px solid rgba(0,0,0,0.2)',
         display: { xs: 'none', sm: 'block' } // Oculto em mobile
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -63,7 +65,7 @@ const Home: React.FC = () => {
               }} 
               onClick={toggleThemeMode}
             >
-              {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
           </Box>
         </Toolbar>
@@ -88,7 +90,7 @@ const Home: React.FC = () => {
             }
           }}
         >
-          {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
         </IconButton>
       </Box>
 
