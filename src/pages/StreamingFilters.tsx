@@ -67,18 +67,22 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
   // Plataformas de aluguel/compra (logos serão carregados dinamicamente)
   const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{name: string, logo: string}>>([
-    { name: 'Google Play Filmes (Aluguel/Compra)', logo: '' },
-    { name: 'Microsoft Store (Aluguel/Compra)', logo: '' },
-    { name: 'YouTube (Aluguel/Compra/Gratuito)', logo: '' },
-    { name: 'Prime Video (Aluguel/Compra)', logo: '' }
+    { name: 'Google Play', logo: '' },
+    { name: 'Microsoft Store', logo: '' },
+    { name: 'YouTube (Gratuito)', logo: '' },
+    { name: 'Prime Video', logo: '' }
   ]);
 
   // Função para preload de imagens
   const preloadImage = (src: string): Promise<void> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => reject(new Error(`Failed to load image: ${src}`));
+      img.onload = () => {
+        resolve();
+      };
+      img.onerror = () => {
+        reject(new Error(`Failed to load image: ${src}`));
+      };
       img.src = src;
     });
   };
@@ -90,9 +94,55 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
       await Promise.all(imagePromises);
       return true;
     } catch (error) {
-      console.warn('Algumas imagens falharam ao carregar:', error);
+      console.warn('⚠️ StreamingFilters - Algumas imagens falharam ao carregar:', error);
       return false;
     }
+  };
+
+  // Função para buscar plataforma de forma mais flexível
+  const findPlatformByName = (platformName: string, platformsData: any[]) => {
+    // Busca exata primeiro
+    let platform = platformsData.find(p => p.name === platformName);
+    
+    if (platform) {
+      return platform;
+    }
+    
+    // Busca por nomes simplificados (removendo sufixos como "(Aluguel/Compra)")
+    const simplifiedName = platformName.replace(/\s*\([^)]*\)/g, '').trim();
+    platform = platformsData.find(p => p.name === simplifiedName);
+    
+    if (platform) {
+      return platform;
+    }
+    
+    // Busca por nomes que contenham palavras-chave
+    const keywords = simplifiedName.split(' ').filter(word => word.length > 2);
+    platform = platformsData.find(p => 
+      keywords.some(keyword => 
+        p.name.toLowerCase().includes(keyword.toLowerCase())
+      )
+    );
+    
+    return platform;
+  };
+
+  // Placeholder SVG para imagens que não carregam
+  const createPlaceholderSVG = (platformName: string) => {
+    const initials = platformName
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+    
+    return `data:image/svg+xml;base64,${btoa(`
+      <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+        <rect width="80" height="80" fill="#f0f0f0" rx="8"/>
+        <text x="40" y="45" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#666">${initials}</text>
+        <text x="40" y="60" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#999">${platformName.split(' ')[0]}</text>
+      </svg>
+    `)}`;
   };
 
   // Carregar logos dinâmicos do backend
@@ -104,35 +154,45 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         
         // Atualizar logos das plataformas principais
         const updatedMainPlatforms = mainSubscriptionPlatforms.map(platform => {
-          const dbPlatform = platformsData.find(p => p.name === platform.name);
+          const dbPlatform = findPlatformByName(platform.name, platformsData);
           if (!dbPlatform || !dbPlatform.logoPath) {
             throw new Error(`Logo não encontrado para plataforma: ${platform.name}`);
           }
+          const logoUrl = getPlatformLogoUrlMedium(dbPlatform.logoPath);
           return {
             name: platform.name,
-            logo: getPlatformLogoUrlMedium(dbPlatform.logoPath)
+            logo: logoUrl
           };
         });
         setMainSubscriptionPlatforms(updatedMainPlatforms);
 
         // Atualizar logos das plataformas de aluguel/compra
         const updatedRentalPlatforms = rentalPurchasePlatforms.map(platform => {
-          const dbPlatform = platformsData.find(p => p.name === platform.name);
+          const dbPlatform = findPlatformByName(platform.name, platformsData);
           if (!dbPlatform || !dbPlatform.logoPath) {
-            throw new Error(`Logo não encontrado para plataforma: ${platform.name}`);
+            console.warn(`⚠️ StreamingFilters - Logo não encontrado para plataforma de aluguel: ${platform.name}`);
+            // Em vez de quebrar, retorna um placeholder
+            return {
+              name: platform.name,
+              logo: createPlaceholderSVG(platform.name) // Use o placeholder SVG
+            };
           }
+          const logoUrl = getPlatformLogoUrlMedium(dbPlatform.logoPath);
           return {
             name: platform.name,
-            logo: getPlatformLogoUrlMedium(dbPlatform.logoPath)
+            logo: logoUrl
           };
         });
         setRentalPurchasePlatforms(updatedRentalPlatforms);
 
         // Preload das imagens para evitar flash
-        await preloadImages([...updatedMainPlatforms, ...updatedRentalPlatforms]);
+        const preloadResult = await preloadImages([...updatedMainPlatforms, ...updatedRentalPlatforms]);
+        if (!preloadResult) {
+          console.warn('⚠️ StreamingFilters - Algumas imagens falharam no preload, mas continuando...');
+        }
         
       } catch (err) {
-        console.error('Erro ao carregar logos das plataformas:', err);
+        console.error('❌ StreamingFilters - Erro ao carregar logos das plataformas:', err);
         // Em caso de erro, mantém o loading state para mostrar skeleton
       } finally {
         setIsLoadingLogos(false);
@@ -220,22 +280,11 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   // Extrair o texto da opção selecionada na jornada anterior
   const movieSuggestions = location.state?.movieSuggestions || [];
   
-  // Debug: verificar estrutura dos dados
-  console.log('🔍 StreamingFilters - location.state:', location.state);
-  console.log('🔍 StreamingFilters - movieSuggestions:', movieSuggestions);
-  console.log('🔍 StreamingFilters - movieSuggestions.length:', movieSuggestions.length);
-  if (movieSuggestions.length > 0) {
-    console.log('🔍 StreamingFilters - primeiro movieSuggestion:', movieSuggestions[0]);
-    console.log('🔍 StreamingFilters - journeyOptionFlow:', movieSuggestions[0].journeyOptionFlow);
-  }
-  
   const selectedOptionText = location.state?.selectedOptionText || 
     (movieSuggestions.length > 0 && movieSuggestions[0].journeyOptionFlow 
       ? movieSuggestions[0].journeyOptionFlow.text 
       : null);
   
-  console.log('🔍 StreamingFilters - selectedOptionText:', selectedOptionText);
-
 
 
   return (
@@ -287,21 +336,6 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               Carregando logos das plataformas...
             </Typography>
           </Box>
-        )}
-
-        {/* Debug temporário - remover depois */}
-        {movieSuggestions.length > 0 && !selectedOptionText && (
-          <Typography 
-            variant="body2"
-            align="center"
-            sx={{ 
-              color: 'orange',
-              fontSize: '0.8rem',
-              fontStyle: 'italic'
-            }}
-          >
-            Debug: {movieSuggestions.length} sugestões encontradas
-          </Typography>
         )}
       </Box>
 

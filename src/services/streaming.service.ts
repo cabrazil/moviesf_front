@@ -31,8 +31,14 @@ export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize 
     return logoPath;
   }
   
-  // Se é um path relativo do TMDB, constrói a URL completa
-  if (logoPath.startsWith('/')) {
+  // Se é um path relativo do TMDB (contém extensão de imagem e não é um path local)
+  if (logoPath.startsWith('/') && (logoPath.includes('.jpg') || logoPath.includes('.png') || logoPath.includes('.jpeg'))) {
+    // Verificar se é um path local (como /platforms/...)
+    if (logoPath.startsWith('/platforms/')) {
+      // Para paths locais, retornar como está (será resolvido pelo servidor)
+      return logoPath;
+    }
+    // Se é um path do TMDB, constrói a URL completa
     return `${TMDB_CONFIG.IMAGE_BASE_URL}/${size}${logoPath}`;
   }
   
