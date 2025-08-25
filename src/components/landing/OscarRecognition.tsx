@@ -118,13 +118,14 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
       <Typography 
-        variant="body2" 
+        variant="h2" 
+        component="h2"
         sx={{ 
           mb: 1, 
           color: '#1976d2', 
-          fontWeight: 500,
+          fontWeight: 600,
           textAlign: { xs: 'center', md: 'left' },
-          fontSize: { xs: '0.95rem', md: '1rem' }
+          fontSize: { xs: '1.1rem', md: '1.2rem' }
         }}
       >
         Reconhecimento no Oscar
@@ -147,11 +148,11 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
       <Typography 
         variant="body2" 
         sx={{ 
-          fontWeight: 600, 
-          mb: 1,
-          color: '#1976d2',
-          fontSize: { xs: '0.9rem', md: '0.95rem' },
-          textAlign: { xs: 'center', md: 'left' }
+          mb: 1, 
+          color: '#1976d2', 
+          fontWeight: 500,
+          textAlign: { xs: 'center', md: 'left' },
+          fontSize: { xs: '0.95rem', md: '1rem' }
         }}
       >
         Outras Indicações ({oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : oscarAwards.nominations[0]?.year || 2024}):
