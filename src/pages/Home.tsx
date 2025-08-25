@@ -40,7 +40,7 @@ const Home: React.FC = () => {
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-            emoFilms
+            vibesfilm
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button 
@@ -53,7 +53,7 @@ const Home: React.FC = () => {
                 fontWeight: 'normal'
               }}
             >
-              Filmes
+              Blog
             </Button>
             <IconButton 
               sx={{ 
@@ -143,7 +143,7 @@ const Home: React.FC = () => {
           mb: 1,
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
         }}>
-          Encontre o filme perfeito para seu momento
+          Encontre o filme perfeito para sua vibe!
         </Typography>
 
         <Typography variant="h6" color="text.secondary" paragraph sx={{ 

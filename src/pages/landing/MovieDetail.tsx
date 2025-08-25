@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button, Container, IconButton, AppBar, Toolbar, Tooltip } from '@mui/material';
 import { MovieMetaTags } from '../../components/landing/MetaTags';
 import { StreamingPlatformsCompact } from '../../components/landing/StreamingPlatformsCompact';
+import OscarRecognition from '../../components/landing/OscarRecognition';
 // import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 // import StarIcon from '@mui/icons-material/Star';
 import ShareIcon from '@mui/icons-material/Share';
@@ -50,6 +51,7 @@ interface Movie {
   landingPageHook?: string;
   contentWarnings?: string;
   targetAudienceForLP?: string;
+  awardsSummary?: string;
   emotionalTags?: string[];
   mainCast?: Array<{
     actorName: string;
@@ -68,6 +70,20 @@ interface Movie {
     type: string;
     language: string;
     isMain: boolean;
+  } | null;
+  oscarAwards?: {
+    wins: Array<{
+      category: string;
+      year: number;
+      personName?: string;
+    }>;
+    nominations: Array<{
+      category: string;
+      year: number;
+      personName?: string;
+    }>;
+    totalWins: number;
+    totalNominations: number;
   } | null;
   platforms: Array<{
     streamingPlatform: {
@@ -124,6 +140,52 @@ interface Movie {
 interface MovieDetailProps {
   slug?: string;
 }
+
+// Função para formatar premiações para exibição na LP
+const formatAwardsForDisplay = (awardsSummary: string): { firstLine: string; secondLine?: string } => {
+  if (!awardsSummary || awardsSummary.trim() === '') {
+    return { firstLine: '' };
+  }
+
+  // Remover "no no total" duplicado se existir
+  let cleaned = awardsSummary.replace(/no no total/g, 'no total');
+  
+  // Padrões para dividir em duas linhas
+  const patterns = [
+    // "Ganhou X Oscars. Y vitórias e Z indicações no total"
+    /^(Ganhou \d+ Oscars?)\.\s*(.+)$/i,
+    // "Indicado a X Oscars. Y vitórias e Z indicações no total"  
+    /^(Indicado a \d+ Oscars?)\.\s*(.+)$/i,
+    // "Ganhou X [premio]. Y vitórias e Z indicações no total"
+    /^(Ganhou \d+ [^.]+)\.\s*(.+)$/i,
+    // "Indicado a X [premio]. Y vitórias e Z indicações no total"
+    /^(Indicado a \d+ [^.]+)\.\s*(.+)$/i
+  ];
+
+  for (const pattern of patterns) {
+    const match = cleaned.match(pattern);
+    if (match) {
+      return {
+        firstLine: match[1].trim(),
+        secondLine: match[2].trim()
+      };
+    }
+  }
+
+  // Se não matched nenhum padrão, exibir em uma linha só
+  // Mas se for muito longo (>50 caracteres), tentar quebrar no ponto
+  if (cleaned.length > 50) {
+    const dotIndex = cleaned.indexOf('.');
+    if (dotIndex > 0 && dotIndex < cleaned.length - 1) {
+      return {
+        firstLine: cleaned.substring(0, dotIndex).trim(),
+        secondLine: cleaned.substring(dotIndex + 1).trim()
+      };
+    }
+  }
+
+  return { firstLine: cleaned };
+};
 
 // Função para extrair o texto do landingPageHook
 const extractHookText = (landingPageHook: string): string => {
@@ -328,7 +390,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-              emoFilms
+              vibesFilm
             </Typography>
             <IconButton 
               sx={{ 
@@ -395,7 +457,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
-            emoFilms
+            vibesFilm
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button 
@@ -436,7 +498,14 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
             }}
           >
             {/* Poster e informações - Lado esquerdo */}
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' }, flexShrink: 0 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: { xs: 'center', md: 'flex-start' }, 
+              flexShrink: 0,
+              width: { xs: '100%', md: 320 },
+              maxWidth: { xs: '100%', md: 320 }
+            }}>
               {/* Poster */}
               <Box sx={{ position: 'relative', mb: 3 }}>
                 <Box
@@ -580,6 +649,55 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   </Stack>
                 </Box>
               )}
+
+              {/* Seção 5: Premiações Oscar ou Premiações Gerais */}
+              {movie.oscarAwards ? (
+                // Se tem dados do Oscar, mostrar seção de Reconhecimento no Oscar
+                <OscarRecognition 
+                  movieTitle={movie.title}
+                  oscarAwards={movie.oscarAwards}
+                />
+              ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
+                // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
+                <Box sx={{ width: '100%', mt: 2 }}>
+                  <Typography variant="body2" sx={{ 
+                    mb: 1, 
+                    color: '#1976d2', 
+                    fontWeight: 500,
+                    textAlign: { xs: 'center', md: 'left' },
+                    fontSize: { xs: '0.95rem', md: '1rem' }
+                  }}>
+                    Premiações
+                  </Typography>
+                  <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                    {(() => {
+                      const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
+                      return (
+                        <>
+                          <Typography variant="body2" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '0.95rem' },
+                            lineHeight: 1.4,
+                            color: 'text.primary',
+                            fontWeight: 500
+                          }}>
+                            {firstLine}
+                          </Typography>
+                          {secondLine && (
+                            <Typography variant="body2" sx={{ 
+                              fontSize: { xs: '0.85rem', md: '0.9rem' },
+                              lineHeight: 1.4,
+                              color: 'text.secondary',
+                              mt: 0.25
+                            }}>
+                              {secondLine}
+                            </Typography>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </Box>
+                </Box>
+              ) : null}
             </Box>
 
             {/* Informações do filme - Lado direito */}
@@ -589,7 +707,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: { xs: 'center', md: 'flex-start' }, 
-              maxWidth: { xs: '100%', md: '100%' } 
+              maxWidth: { xs: '100%', md: 'calc(100% - 320px - 48px)' } // 320px da coluna esquerda + 48px do gap
             }}>
               {/* Título e ano - H1 */}
               <Box sx={{ 
@@ -606,7 +724,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   lineHeight: 1.2,
                   color: 'text.primary'
                 }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | emoFilms
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesFilm
                 </Typography>
               </Box>
 
@@ -651,6 +769,9 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 }}>
                   Onde assistir hoje?
                 </Typography>
+
+
+
                 <StreamingPlatformsCompact 
                   subscriptionPlatforms={subscriptionPlatforms}
                   rentalPurchasePlatforms={rentalPurchasePlatforms}
@@ -676,15 +797,48 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
 
               {/* Por que assistir? - H2 */}
               <Box sx={{ mt: 1, mb: 2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-                <Typography variant="h2" component="h2" sx={{ 
-                  mb: 0.5, 
-                  color: '#1976d2', 
-                  textAlign: { xs: 'center', md: 'left' }, 
-                  fontSize: { xs: '1.1rem', md: '1.3rem' }, 
-                  fontWeight: 600 
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', md: 'row' }, 
+                  alignItems: { xs: 'center', md: 'flex-start' }, 
+                  justifyContent: 'space-between',
+                  gap: 2,
+                  mb: 0.5,
+                  width: '100%'
                 }}>
-                  Por que assistir este filme?
-                </Typography>
+                  <Typography variant="h2" component="h2" sx={{ 
+                    color: '#1976d2', 
+                    textAlign: { xs: 'center', md: 'left' }, 
+                    fontSize: { xs: '1.1rem', md: '1.3rem' }, 
+                    fontWeight: 600 
+                  }}>
+                    Por que assistir este filme?
+                  </Typography>
+                  
+                  <Button
+                    variant="contained"
+                    size="medium"
+                    onClick={() => navigate('/')}
+                    sx={{
+                      bgcolor: '#1976d2',
+                      color: 'white',
+                      fontSize: { xs: '0.9rem', md: '1rem' },
+                      fontWeight: 600,
+                      py: 1.5,
+                      px: 3,
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      boxShadow: 2,
+                      '&:hover': {
+                        bgcolor: '#1565c0',
+                        boxShadow: 3,
+                      },
+                      minWidth: { xs: '100%', md: 'auto' }
+                    }}
+                  >
+                    🎭 Quer o filme perfeito para sua Vibe?
+                  </Button>
+                </Box>
                 <Paper elevation={0} sx={{ 
                   bgcolor: 'transparent', 
                   color: 'text.secondary', 
@@ -761,7 +915,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         Tags Emocionais Chave:
                       </Typography>
                       <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                        {movie.emotionalTags.map((tag, index) => (
+                        {movie.emotionalTags.slice(0, 6).map((tag, index) => (
                           <Chip 
                             key={index} 
                             label={tag} 
@@ -782,38 +936,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 </Paper>
               </Box>
 
-              {/* CTA Grande - Após a seção "Para quem pode ser esse filme?" */}
-              <Box sx={{ 
-                mt: 1, 
-                mb: 3, 
-                width: '100%', 
-                display: 'flex', 
-                justifyContent: { xs: 'center', md: 'flex-start' } 
-              }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => navigate('/')}
-                  sx={{
-                    bgcolor: '#1976d2',
-                    color: 'white',
-                    fontSize: { xs: '1rem', md: '1.1rem' },
-                    fontWeight: 600,
-                    py: 2,
-                    px: 4,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    boxShadow: 3,
-                    '&:hover': {
-                      bgcolor: '#1565c0',
-                      boxShadow: 4,
-                    },
-                    minWidth: { xs: '100%', md: 'auto' }
-                  }}
-                >
-                  🎭 Quer o filme perfeito para seu momento/sentimento?
-                </Button>
-              </Box>
+
 
               {/* Sinopse - H2 */}
               {movie.description && (

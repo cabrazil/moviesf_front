@@ -9,6 +9,8 @@ interface MovieMetaTagsProps {
     vote_average?: number;
     genres?: string[];
     thumbnail?: string;
+    targetAudienceForLP?: string;
+    landingPageHook?: string;
   };
   platforms: Array<{
     name: string;
@@ -31,11 +33,36 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
 
   // Gerar descrição otimizada para SEO
   const generateDescription = () => {
-    const baseDesc = `Descubra onde assistir ${title}${year ? ` (${year})` : ''}`;
-    const movieDesc = description ? ` ${description.substring(0, 150)}${description.length > 150 ? '...' : ''}` : '';
-    const journeyDesc = ` Conheça sua jornada emocional e como Emofilms te ajuda a encontrar o filme ideal para cada sentimento.`;
+    const baseDesc = `Descubra onde assistir ${title}${year ? ` (${year})` : ''} online`;
     
-    return `${baseDesc}${movieDesc}${journeyDesc}`;
+    // Determinar tipos de acesso disponíveis
+    const hasSubscription = platforms.some(p => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION');
+    const hasRentalPurchase = rentalPurchasePlatforms.length > 0;
+    
+    let availabilityText = '';
+    if (hasSubscription && hasRentalPurchase) {
+      availabilityText = ' Disponível em streaming e aluguel/compra.';
+    } else if (hasSubscription) {
+      availabilityText = ' Disponível em plataformas de streaming (teste gratuito para novos usuários).';
+    } else if (hasRentalPurchase) {
+      availabilityText = ' Disponível para aluguel e compra digital.';
+    } else {
+      availabilityText = ' Consulte as plataformas para disponibilidade.';
+    }
+    
+    // Priorizar targetAudienceForLP (conteúdo emocional da melhor curadoria)
+    if (movie.targetAudienceForLP) {
+      const emotionalDesc = movie.targetAudienceForLP.length > 120 
+        ? `${movie.targetAudienceForLP.substring(0, 120)}...` 
+        : movie.targetAudienceForLP;
+      return `${baseDesc}. ${emotionalDesc}${availabilityText}`;
+    }
+    
+    // Fallback para description tradicional
+    const movieDesc = description ? ` ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}` : '';
+    const journeyDesc = ` Encontre o filme ideal para seu estado emocional.`;
+    
+    return `${baseDesc}${movieDesc}${journeyDesc}${availabilityText}`;
   };
 
   // Gerar título otimizado para SEO
