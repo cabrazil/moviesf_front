@@ -21,6 +21,8 @@ const MovieDetailsPage: React.FC = () => {
   
   // Extrair valores do state uma vez para evitar recriação
   const sentimentId = state?.sentimentId;
+  const intentionType = state?.intentionType;
+  const reason = state?.reason;
   
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
   const themeColor = currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2';
@@ -84,12 +86,77 @@ const MovieDetailsPage: React.FC = () => {
 
   const movie = movieData?.movie;
 
+  // Função para gerar conteúdo personalizado baseado na jornada emocional
+  const getPersonalizedContent = (): { title: string; content: React.ReactNode } => {
+    if (!sentimentId || !intentionType || !reason) {
+      // Se não temos dados da jornada, usar conteúdo padrão
+      return {
+        title: "Por que assistir este filme?",
+        content: movie.landingPageHook ? 
+          movie.landingPageHook.replace(/<[^>]*>/g, '') : 
+          "Este filme oferece uma experiência cinematográfica única que vale a pena assistir."
+      };
+    }
+
+    // Mapear sentimentos para nomes amigáveis (IDs corretos do banco)
+    const sentimentNames: { [key: number]: string } = {
+      13: "Feliz / Alegre",
+      14: "Triste", 
+      15: "Calmo(a)",
+      16: "Ansioso(a)",
+      17: "Animado(a)",
+      18: "Cansado(a)"
+    };
+
+    // Mapear intenções para nomes amigáveis
+    const intentionNames: { [key: string]: string } = {
+      "PROCESS": "Processar",
+      "MAINTAIN": "Manter",
+      "TRANSFORM": "Transformar",
+      "REPLACE": "Substituir",
+      "EXPLORE": "Explorar"
+    };
+
+    const sentimentName = sentimentNames[sentimentId] || "emocional";
+    const intentionName = intentionNames[intentionType] || "emocional";
+
+    // Função para gerar conectores naturais baseados na intenção
+    const getConnector = (intention: string) => {
+      const connectors: { [key: string]: string } = {
+        "PROCESS": "este filme traz",
+        "MAINTAIN": "este filme oferece",
+        "TRANSFORM": "este filme pode te ajudar através de",
+        "REPLACE": "este filme é ideal com",
+        "EXPLORE": "este filme oferece"
+      };
+      return connectors[intention] || "este filme oferece";
+    };
+
+    const connector = getConnector(intentionType);
+
+    // Garantir que o reason comece com minúscula para fluidez
+    const formattedReason = reason.charAt(0).toLowerCase() + reason.slice(1);
+
+    return {
+      title: "Por que assistir este filme?",
+      content: (
+        <>
+          Para quem está <strong className="text-blue-600 font-semibold">{sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{intentionName}</strong>, {connector} {formattedReason}
+        </>
+      )
+    };
+  };
+
+  const personalizedContent = getPersonalizedContent();
+
   // Debug: Verificar dados do elenco e streaming
   console.log('🎬 MovieDetailsPage - movie:', movie);
   console.log('🎬 MovieDetailsPage - mainCast:', movie?.mainCast);
   console.log('🎬 MovieDetailsPage - mainCast length:', movie?.mainCast?.length);
   console.log('🎬 MovieDetailsPage - movieData:', movieData);
   console.log('🎬 MovieDetailsPage - subscriptionPlatforms:', movieData?.subscriptionPlatforms);
+  console.log('🎬 MovieDetailsPage - journey data:', { sentimentId, intentionType, reason });
+  console.log('🎬 MovieDetailsPage - personalized content:', personalizedContent);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', pb: 8 }}>
@@ -290,7 +357,7 @@ const MovieDetailsPage: React.FC = () => {
                   >
                     <span style={{ color: 'text.secondary', fontWeight: 500 }}>{actor.actorName}</span>
                     {actor.characterName && (
-                      <span style={{ color: 'text.secondary', fontStyle: 'italic' }}> como {actor.characterName}</span>
+                      <span style={{ color: 'text.secondary', fontStyle: 'italic', fontSize: '0.85rem' }}> como {actor.characterName}</span>
                     )}
                   </Typography>
                 ))}
@@ -466,7 +533,7 @@ const MovieDetailsPage: React.FC = () => {
               textAlign: { xs: 'center', md: 'left' }, 
               fontSize: { xs: '1rem', md: '1.1rem' },
               fontWeight: 600
-            }}>Por que assistir este filme?</Typography>
+            }}>{personalizedContent.title}</Typography>
             <Paper elevation={0} sx={{ 
               bgcolor: 'transparent', 
               color: 'text.secondary', 
@@ -478,10 +545,7 @@ const MovieDetailsPage: React.FC = () => {
               textAlign: { xs: 'center', md: 'left' }, 
               fontSize: '0.97rem' 
             }}>
-              {movie.landingPageHook ? 
-                movie.landingPageHook.replace(/<[^>]*>/g, '') : // Remove tags HTML se houver
-                `Este filme oferece uma experiência cinematográfica única que vale a pena assistir.`
-              }
+              {personalizedContent.content}
             </Paper>
           </Box>
 
@@ -606,7 +670,7 @@ const MovieDetailsPage: React.FC = () => {
                   >
                     <span style={{ color: 'text.secondary', fontWeight: 500 }}>{actor.actorName}</span>
                     {actor.characterName && (
-                      <span style={{ color: 'text.secondary', fontStyle: 'italic' }}> como {actor.characterName}</span>
+                      <span style={{ color: 'text.secondary', fontStyle: 'italic', fontSize: '0.85rem' }}> como {actor.characterName}</span>
                     )}
                   </Typography>
                 ))}
@@ -638,8 +702,8 @@ const MovieDetailsPage: React.FC = () => {
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center',
-                        width: 50,
-                        height: 50,
+                        width: 65,
+                        height: 65,
                         borderRadius: 1,
                         overflow: 'hidden',
                         bgcolor: 'background.paper',
@@ -653,7 +717,7 @@ const MovieDetailsPage: React.FC = () => {
                             width: '100%', 
                             height: '100%', 
                             objectFit: 'contain',
-                            padding: '4px'
+                            padding: '6px'
                           }}
                           onError={(e) => {
                             console.error(`❌ Erro ao carregar logo de ${platform.name}:`, e);
@@ -684,8 +748,8 @@ const MovieDetailsPage: React.FC = () => {
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center',
-                        width: 50,
-                        height: 50,
+                        width: 65,
+                        height: 65,
                         borderRadius: 1,
                         overflow: 'hidden',
                         bgcolor: 'background.paper',
@@ -695,7 +759,7 @@ const MovieDetailsPage: React.FC = () => {
                         <Typography 
                           variant="caption" 
                           sx={{ 
-                            fontSize: '0.7rem',
+                            fontSize: '0.8rem',
                             textAlign: 'center',
                             color: 'text.secondary',
                             px: 0.5
