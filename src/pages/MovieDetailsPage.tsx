@@ -39,7 +39,7 @@ const MovieDetailsPage: React.FC = () => {
         setLoading(true);
         const baseURL = process.env.NODE_ENV === 'production' 
           ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3000';
+          : 'http://localhost:3001'
         
         // Detectar se é UUID ou slug
         const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(movieId);
