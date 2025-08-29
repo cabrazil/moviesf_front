@@ -15,6 +15,7 @@ interface SecurityMonitorProps {
 
 const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
   const [securityEvents, setSecurityEvents] = useState<SecurityEvent[]>([]);
+  const [showMonitor, setShowMonitor] = useState(false);
 
   useEffect(() => {
     // Monitorar mudanças no DOM para detectar injeções suspeitas
@@ -50,42 +51,28 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
       }
     };
 
-    // Monitorar mudanças de URL
+    // Monitorar mudanças de URL usando History API
     const handleUrlChange = () => {
       checkUrlSecurity(window.location.href);
     };
 
-    // Monitorar tentativas de abertura de popups
-    const originalOpen = window.open;
-    window.open = function(url?: string | URL, target?: string, features?: string) {
-      if (url && typeof url === 'string' && detectPhishingAttempt(url)) {
-        logSecurityEvent('Phishing attempt detected', { url, target, features });
-        addSecurityEvent('critical', 'Tentativa de phishing detectada');
-        return null;
+    // Monitorar tentativas de abertura de popups de forma mais segura
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      // Verificar se há redirecionamentos suspeitos
+      const currentUrl = window.location.href;
+      if (detectPhishingAttempt(currentUrl)) {
+        logSecurityEvent('Suspicious URL detected on page unload', { url: currentUrl });
+        addSecurityEvent('high', 'URL suspeita detectada durante navegação');
       }
-      return originalOpen.call(this, url, target, features);
     };
 
-    // Monitorar tentativas de redirecionamento
-    const originalAssign = window.location.assign;
-    const originalReplace = window.location.replace;
-    
-    window.location.assign = function(url: string | URL) {
-      if (typeof url === 'string' && detectPhishingAttempt(url)) {
-        logSecurityEvent('Suspicious redirect attempt', { url });
-        addSecurityEvent('high', 'Tentativa de redirecionamento suspeito');
-        return;
+    // Monitorar mudanças de hash
+    const handleHashChange = () => {
+      const newUrl = window.location.href;
+      if (detectPhishingAttempt(newUrl)) {
+        logSecurityEvent('Suspicious hash change detected', { url: newUrl });
+        addSecurityEvent('high', 'Mudança de hash suspeita detectada');
       }
-      return originalAssign.call(this, url);
-    };
-
-    window.location.replace = function(url: string | URL) {
-      if (typeof url === 'string' && detectPhishingAttempt(url)) {
-        logSecurityEvent('Suspicious redirect attempt', { url });
-        addSecurityEvent('high', 'Tentativa de redirecionamento suspeito');
-        return;
-      }
-      return originalReplace.call(this, url);
     };
 
     // Iniciar observadores
@@ -103,7 +90,8 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
     // Adicionar event listeners
     document.addEventListener('click', handleClick);
     window.addEventListener('popstate', handleUrlChange);
-    window.addEventListener('hashchange', handleUrlChange);
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Verificar ambiente de segurança
     if (!isSecureEnvironment()) {
@@ -116,12 +104,8 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
       attributeObserver.disconnect();
       document.removeEventListener('click', handleClick);
       window.removeEventListener('popstate', handleUrlChange);
-      window.removeEventListener('hashchange', handleUrlChange);
-      
-      // Restaurar funções originais
-      window.open = originalOpen;
-      window.location.assign = originalAssign;
-      window.location.replace = originalReplace;
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
@@ -166,7 +150,12 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
       
       // Mostrar aviso ao usuário
       if (confirm('Este link parece suspeito. Deseja continuar mesmo assim?')) {
-        window.open(url, '_blank', 'noopener,noreferrer');
+        // Usar uma abordagem mais segura para abrir links
+        const link = document.createElement('a');
+        link.href = url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.click();
       }
     }
   };
@@ -199,11 +188,42 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
     setSecurityEvents([]);
   };
 
-  // Em desenvolvimento, mostrar painel de monitoramento
-  if (process.env.NODE_ENV === 'development' && securityEvents.length > 0) {
-    return (
-      <div style={{ position: 'relative' }}>
-        {children}
+  // Botão para mostrar/ocultar o monitor (apenas em desenvolvimento)
+  const toggleMonitor = () => {
+    setShowMonitor(!showMonitor);
+  };
+
+  return (
+    <>
+      {children}
+      
+      {/* Botão flutuante para ativar o monitor (apenas em desenvolvimento) */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={toggleMonitor}
+          style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            width: '50px',
+            height: '50px',
+            borderRadius: '50%',
+            backgroundColor: securityEvents.length > 0 ? '#f44336' : '#4CAF50',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+            fontSize: '20px',
+            zIndex: 9998,
+            boxShadow: '0 2px 10px rgba(0,0,0,0.3)'
+          }}
+          title={`Monitor de Segurança (${securityEvents.length} eventos)`}
+        >
+          🔒
+        </button>
+      )}
+
+      {/* Painel de monitoramento (apenas quando ativado) */}
+      {process.env.NODE_ENV === 'development' && showMonitor && (
         <div style={{
           position: 'fixed',
           top: '10px',
@@ -219,45 +239,65 @@ const SecurityMonitor: React.FC<SecurityMonitorProps> = ({ children }) => {
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
             <h4 style={{ margin: 0, color: '#fff' }}>🔒 Security Monitor</h4>
-            <button 
-              onClick={clearEvents}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
-                color: '#fff', 
-                cursor: 'pointer',
-                fontSize: '12px'
-              }}
-            >
-              Clear
-            </button>
-          </div>
-          {securityEvents.map(event => (
-            <div 
-              key={event.id}
-              style={{
-                padding: '8px',
-                marginBottom: '5px',
-                backgroundColor: getSeverityColor(event.severity),
-                borderRadius: '4px',
-                fontSize: '12px'
-              }}
-            >
-              <div style={{ fontWeight: 'bold', color: '#fff' }}>
-                {event.severity.toUpperCase()}
-              </div>
-              <div style={{ color: '#fff' }}>{event.message}</div>
-              <div style={{ color: '#ccc', fontSize: '10px' }}>
-                {event.timestamp.toLocaleTimeString()}
-              </div>
+            <div>
+              <button 
+                onClick={clearEvents}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  color: '#fff', 
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  marginRight: '10px'
+                }}
+              >
+                Clear
+              </button>
+              <button 
+                onClick={toggleMonitor}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  color: '#fff', 
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                ✕
+              </button>
             </div>
-          ))}
+          </div>
+          
+          {securityEvents.length === 0 ? (
+            <div style={{ color: '#ccc', textAlign: 'center', padding: '20px' }}>
+              Nenhum evento de segurança detectado
+            </div>
+          ) : (
+            securityEvents.map(event => (
+              <div 
+                key={event.id}
+                style={{
+                  padding: '8px',
+                  marginBottom: '5px',
+                  backgroundColor: getSeverityColor(event.severity),
+                  borderRadius: '4px',
+                  fontSize: '12px'
+                }}
+              >
+                <div style={{ fontWeight: 'bold', color: '#fff' }}>
+                  {event.severity.toUpperCase()}
+                </div>
+                <div style={{ color: '#fff' }}>{event.message}</div>
+                <div style={{ color: '#ccc', fontSize: '10px' }}>
+                  {event.timestamp.toLocaleTimeString()}
+                </div>
+              </div>
+            ))
+          )}
         </div>
-      </div>
-    );
-  }
-
-  return <>{children}</>;
+      )}
+    </>
+  );
 };
 
 const getSeverityColor = (severity: SecurityEvent['severity']): string => {
