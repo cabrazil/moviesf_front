@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Movie } from '../types';
+import { isValidUrl, logSecurityEvent, rateLimiter, generateCSRFToken } from '../utils/security';
 
 // Configuração base do axios
 const api = axios.create({
@@ -9,6 +10,7 @@ const api = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
   },
 });
 
@@ -19,14 +21,43 @@ console.log('🔧 Environment:', process.env.NODE_ENV);
 // Interceptor para requisições
 api.interceptors.request.use(
   (config) => {
-    // Adicionar token se existir
+    // Rate limiting
+    const clientId = getClientIdentifier();
+    if (!rateLimiter.isAllowed(clientId)) {
+      logSecurityEvent('Rate limit exceeded', { clientId, url: config.url });
+      return Promise.reject(new Error('Too many requests. Please try again later.'));
+    }
+
+    // Adicionar token CSRF
+    const csrfToken = generateCSRFToken();
+    config.headers['X-CSRF-Token'] = csrfToken;
+    
+    // Adicionar token de autenticação se existir
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // Validar URLs de destino
+    if (config.url && !isValidUrl(`${config.baseURL}${config.url}`)) {
+      logSecurityEvent('Invalid URL request', { url: config.url });
+      return Promise.reject(new Error('Invalid request URL'));
+    }
+
+    // Log de requisição segura
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔒 Secure API Request:', {
+        method: config.method,
+        url: config.url,
+        hasAuth: !!token,
+        timestamp: new Date().toISOString()
+      });
+    }
+
     return config;
   },
   (error) => {
+    logSecurityEvent('API Request Error', { error: error.message });
     return Promise.reject(error);
   }
 );
@@ -34,18 +65,72 @@ api.interceptors.request.use(
 // Interceptor para respostas
 api.interceptors.response.use(
   (response) => {
+    // Validar resposta
+    if (response.data && typeof response.data === 'object') {
+      // Sanitizar dados de resposta se necessário
+      response.data = sanitizeResponseData(response.data);
+    }
+
     return response;
   },
   (error) => {
-    // Tratamento de erros
+    // Tratamento de erros de segurança
     if (error.response?.status === 401) {
       // Token expirado ou inválido
       localStorage.removeItem('token');
+      logSecurityEvent('Authentication failed', { 
+        status: error.response.status,
+        url: error.config?.url 
+      });
       window.location.href = '/login';
+    } else if (error.response?.status === 403) {
+      logSecurityEvent('Access forbidden', { 
+        status: error.response.status,
+        url: error.config?.url 
+      });
+    } else if (error.response?.status === 429) {
+      logSecurityEvent('Rate limit exceeded', { 
+        status: error.response.status,
+        url: error.config?.url 
+      });
     }
+
     return Promise.reject(error);
   }
 );
+
+/**
+ * Gera um identificador único para o cliente
+ */
+function getClientIdentifier(): string {
+  // Usar uma combinação de user agent e timestamp
+  const userAgent = navigator.userAgent;
+  const timestamp = Math.floor(Date.now() / (1000 * 60)); // Minuto atual
+  return btoa(`${userAgent}-${timestamp}`).substring(0, 16);
+}
+
+/**
+ * Sanitiza dados de resposta para prevenir XSS
+ */
+function sanitizeResponseData(data: any): any {
+  if (typeof data === 'string') {
+    return data.replace(/[<>]/g, '');
+  }
+  
+  if (Array.isArray(data)) {
+    return data.map(item => sanitizeResponseData(item));
+  }
+  
+  if (typeof data === 'object' && data !== null) {
+    const sanitized: any = {};
+    for (const [key, value] of Object.entries(data)) {
+      sanitized[key] = sanitizeResponseData(value);
+    }
+    return sanitized;
+  }
+  
+  return data;
+}
 
 export { api };
 

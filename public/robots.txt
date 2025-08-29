@@ -1,0 +1,53 @@
+User-agent: *
+Allow: /
+
+# Permitir acesso a recursos públicos
+Allow: /favicon.png
+Allow: /favicon_*.png
+Allow: /vite.svg
+
+# Bloquear acesso a arquivos sensíveis
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /.env
+Disallow: /config/
+Disallow: /logs/
+
+# Bloquear bots maliciosos conhecidos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: Ezooms
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+# Permitir apenas Google e Bing
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Sitemap
+Sitemap: https://emofilms.com/sitemap.xml
+
+# Crawl-delay para bots respeitosos
+Crawl-delay: 1

@@ -1,15 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" title="Vibes and Films" />
     <link rel="shortcut icon" type="image/png" href="/favicon.png" title="Vibes e Films" />
     <meta name="description" content="Vibes and Films - Descubra filmes para seu estado emocional" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vibesfilm - Vibes e Films</title>
+    
+    <!-- Meta tags de segurança -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    
+    <!-- Prevenção de phishing e segurança -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="format-detection" content="date=no" />
+    <meta name="format-detection" content="address=no" />
+    <meta name="format-detection" content="email=no" />
+    
+    <!-- Open Graph com informações seguras -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vibes and Films" />
+    <meta property="og:locale" content="pt_BR" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@vibesandfilms" />
+    
+    <!-- Verificação de propriedade do site -->
+    <meta name="google-site-verification" content="" />
+    <meta name="msvalidate.01" content="" />
+    
+    <title>Vibes and Films - Descubra filmes para seu estado emocional</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Script de segurança para detectar tentativas de phishing -->
+    <script>
+      // Detectar redirecionamentos suspeitos
+      (function() {
+        const originalOpen = window.open;
+        window.open = function(url, target, features) {
+          if (url && !url.startsWith(window.location.origin) && !url.startsWith('https://')) {
+            console.warn('Tentativa de abertura de URL suspeita bloqueada:', url);
+            return null;
+          }
+          return originalOpen.call(this, url, target, features);
+        };
+        
+        // Detectar mudanças suspeitas no location
+        const originalAssign = window.location.assign;
+        const originalReplace = window.location.replace;
+        
+        window.location.assign = function(url) {
+          if (url && !url.startsWith(window.location.origin) && !url.startsWith('https://')) {
+            console.warn('Tentativa de redirecionamento suspeito bloqueado:', url);
+            return;
+          }
+          return originalAssign.call(this, url);
+        };
+        
+        window.location.replace = function(url) {
+          if (url && !url.startsWith(window.location.origin) && !url.startsWith('https://')) {
+            console.warn('Tentativa de redirecionamento suspeito bloqueado:', url);
+            return;
+          }
+          return originalReplace.call(this, url);
+        };
+      })();
+    </script>
   </body>
 </html>
