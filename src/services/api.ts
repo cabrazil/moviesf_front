@@ -6,7 +6,7 @@ import { isValidUrl, logSecurityEvent, rateLimiter, generateCSRFToken } from '..
 const api = axios.create({
   baseURL: process.env.NODE_ENV === 'production' 
     ? 'https://moviesf-back.vercel.app' 
-    : 'http://localhost:3001',
+    : 'http://localhost:3000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -28,9 +28,11 @@ api.interceptors.request.use(
       return Promise.reject(new Error('Too many requests. Please try again later.'));
     }
 
-    // Adicionar token CSRF
-    const csrfToken = generateCSRFToken();
-    config.headers['X-CSRF-Token'] = csrfToken;
+    // Adicionar token CSRF apenas em produção
+    if (process.env.NODE_ENV === 'production') {
+      const csrfToken = generateCSRFToken();
+      config.headers['X-CSRF-Token'] = csrfToken;
+    }
     
     // Adicionar token de autenticação se existir
     const token = localStorage.getItem('token');
@@ -42,16 +44,6 @@ api.interceptors.request.use(
     if (config.url && !isValidUrl(`${config.baseURL}${config.url}`)) {
       logSecurityEvent('Invalid URL request', { url: config.url });
       return Promise.reject(new Error('Invalid request URL'));
-    }
-
-    // Log de requisição segura
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🔒 Secure API Request:', {
-        method: config.method,
-        url: config.url,
-        hasAuth: !!token,
-        timestamp: new Date().toISOString()
-      });
     }
 
     return config;

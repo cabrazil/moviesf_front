@@ -12,7 +12,9 @@ const ALLOWED_DOMAINS = [
   'www.youtube.com',
   'youtube.com',
   'fonts.googleapis.com',
-  'fonts.gstatic.com'
+  'fonts.gstatic.com',
+  'localhost',
+  '127.0.0.1'
 ];
 
 // Lista de protocolos permitidos
@@ -213,7 +215,12 @@ export const isSecureEnvironment = (): boolean => {
  */
 export const preventClickjacking = (): void => {
   if (window.self !== window.top && window.top) {
-    window.top.location = window.self.location;
+    try {
+      window.top.location.href = window.self.location.href;
+    } catch (error) {
+      // Se não conseguir acessar window.top, pode ser um iframe legítimo
+      console.warn('Clickjacking prevention: Cannot access top window');
+    }
   }
 };
 
