@@ -18,6 +18,7 @@ import metacriticLogo from '../../assets/metascore.svg';
 
 
 
+
 // Componente RatingIcon
 const RatingIcon: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 20 }) => (
   <Box
@@ -116,6 +117,13 @@ interface Movie {
         };
       };
     };
+  }>;
+  quotes?: Array<{
+    id: number;
+    text: string;
+    author?: string;
+    vehicle?: string;
+    url?: string;
   }>;
 }
 
@@ -362,6 +370,29 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 }
               }
             }
+          ],
+          quotes: [
+            {
+              id: 1,
+              text: "Um feito cinematográfico arrebatador. Você vive cada segundo de perigo junto com os protagonistas. É a prova de que o cinema ainda pode nos surpreender.",
+              author: "Peter Debruge",
+              vehicle: "Variety",
+              url: "https://variety.com/2024/1917-review/"
+            },
+            {
+              id: 2,
+              text: "Uma experiência visceralmente imersiva. A câmera é um terceiro soldado correndo, se escondendo e sofrendo junto com os personagens. É uma obra-prima.",
+              author: "Jason Bailey",
+              vehicle: "The New York Times",
+              url: "https://www.nytimes.com/2024/1917-review/"
+            },
+            {
+              id: 3,
+              text: "Um filme que merece cada Oscar que ganhou. Uma jornada angustiante e belamente filmada que deixa você sem fôlego.",
+              author: "Rogerio Garcia",
+              vehicle: "Omelete",
+              url: "https://www.omelete.com.br/1917-review/"
+            }
           ]
         };
         
@@ -448,40 +479,38 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         />
       )}
       {/* Header */}
-      <AppBar position="static" sx={{ 
-        backgroundColor: 'transparent', 
-        boxShadow: 'none', 
-        borderBottom: mode === 'dark' 
-          ? '1px solid rgba(255,255,255,0.1)' 
-          : '1px solid rgba(0,0,0,0.2)'
-      }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
-            vibesFilm
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button 
-              color="inherit" 
-              onClick={() => navigate('/')}
-              sx={{ color: 'text.primary' }}
-            >
-              Voltar
-            </Button>
-            <IconButton 
-              sx={{ 
-                ml: 1, 
-                color: mode === 'dark' ? 'white' : 'black',
-                '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                }
-              }} 
-              onClick={toggleThemeMode}
-            >
-              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
+        <AppBar position="static" sx={{ 
+          backgroundColor: mode === 'dark' ? 'transparent' : 'rgba(0,0,0,0.05)',
+          boxShadow: 'none',
+          borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)'
+        }}>
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
+              vibesFilm
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Button 
+                color="inherit" 
+                onClick={() => navigate('/')}
+                sx={{ color: 'text.primary' }}
+              >
+                Voltar
+              </Button>
+              <IconButton 
+                sx={{ 
+                  ml: 1, 
+                  color: mode === 'dark' ? 'white' : 'black',
+                  '&:hover': {
+                    backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                  }
+                }} 
+                onClick={toggleThemeMode}
+              >
+                {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
       <Container maxWidth="xl" sx={{ py: 1, px: { xs: 1, sm: 2, md: 3 } }}>
         {/* Hero Section - Layout ajustado */}
@@ -782,9 +811,9 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   <Typography 
                     variant="caption" 
                     sx={{ 
-                      color: 'text.secondary',
+                      color: mode === 'dark' ? 'text.secondary' : 'text.primary',
                       fontSize: '0.75rem',
-                      opacity: 0.7,
+                      opacity: mode === 'dark' ? 0.7 : 0.9,
                       display: 'block'
                     }}
                   >
@@ -1023,7 +1052,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         bgcolor: 'transparent'
                       }}
                     >
-                      Avaliações
+                      O que a Crítica diz?
                     </Button>
                     <Button
                       variant="text"
@@ -1125,9 +1154,9 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         {movie.fullCast.map((actor, index) => (
                           <Box key={index} sx={{ 
                             p: 2, 
-                            border: '1px solid', 
-                            borderColor: 'grey.200', 
-                            borderRadius: 1,
+                            border: mode === 'dark' ? '1px solid' : '1.5px solid',
+                            borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
+                            borderRadius: mode === 'dark' ? 1 : 2,
                             bgcolor: 'background.paper'
                           }}>
                             <Typography variant="body1" sx={{ 
@@ -1159,20 +1188,72 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 {activeTab === 'reviews' && (
                   <Box>
                     <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                      Avaliações de Usuários
+                      O que a Crítica diz?
                     </Typography>
-                    <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                      Avaliações de usuários em breve...
-                    </Typography>
-                    <Stack spacing={2}>
-                      {[1, 2, 3].map((item) => (
-                        <Paper key={item} sx={{ p: 2, bgcolor: 'grey.50' }}>
-                          <Typography variant="body2" color="text.secondary">
-                            "Avaliação {item} - Lorem ipsum dolor sit amet..."
-                          </Typography>
-                        </Paper>
-                      ))}
-                    </Stack>
+                    {movie.quotes && movie.quotes.length > 0 ? (
+                      <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: 1.5 
+                      }}>
+                        {movie.quotes.map((quote) => (
+                          <Box 
+                            key={quote.id} 
+                            component="blockquote"
+                            sx={{ 
+                              p: 2, 
+                              border: mode === 'dark' ? '1px solid' : '1.5px solid',
+                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
+                              borderRadius: mode === 'dark' ? 1 : 2,
+                              bgcolor: 'background.paper',
+                              margin: 0,
+                              fontStyle: 'italic',
+                              position: 'relative'
+                            }}
+                          >
+                            <Typography variant="body2" sx={{ 
+                              fontSize: '0.9rem', 
+                              lineHeight: 1.5,
+                              color: 'text.secondary',
+                              mb: 1
+                            }}>
+                              "{quote.text}"
+                            </Typography>
+                            <Typography variant="body2" sx={{ 
+                              fontWeight: 500, 
+                              fontSize: '0.8rem', 
+                              color: 'text.primary',
+                              fontStyle: 'normal'
+                            }}>
+                              {quote.author ? `— ${quote.author}` : ''}
+                              {quote.vehicle && quote.url ? (
+                                <span>
+                                  ,{' '}
+                                  <a 
+                                    href={quote.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    style={{ 
+                                      color: '#1976d2', 
+                                      textDecoration: 'underline',
+                                      cursor: 'pointer'
+                                    }}
+                                  >
+                                    {quote.vehicle}
+                                  </a>
+                                </span>
+                              ) : quote.vehicle ? (
+                                `, ${quote.vehicle}`
+                              ) : ''}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                        Nenhuma crítica encontrada no momento.
+                      </Typography>
+                    )}
                   </Box>
                 )}
 
