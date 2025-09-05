@@ -350,8 +350,23 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       try {
         const savedContext = localStorage.getItem('journeyContext');
         if (savedContext) {
-          contextToPass = JSON.parse(savedContext);
-          console.log('🔄 Contexto recuperado do localStorage:', contextToPass);
+          const parsedContext = JSON.parse(savedContext);
+          
+          // Validar se o contexto recuperado é válido
+          const isValidContext = parsedContext && 
+            parsedContext.selectedSentiment && 
+            parsedContext.selectedSentiment.id &&
+            parsedContext.selectedIntention &&
+            parsedContext.selectedIntention.id &&
+            typeof parsedContext.selectedSentiment.id === 'number' &&
+            typeof parsedContext.selectedIntention.id === 'number';
+          
+          if (isValidContext) {
+            contextToPass = parsedContext;
+            console.log('🔄 Contexto válido recuperado do localStorage:', contextToPass);
+          } else {
+            console.warn('⚠️ Contexto do localStorage inválido:', parsedContext);
+          }
         }
       } catch (error) {
         console.warn('⚠️ Erro ao recuperar contexto do localStorage:', error);

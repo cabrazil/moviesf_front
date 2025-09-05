@@ -169,7 +169,11 @@ class RateLimiter {
   }
 }
 
-export const rateLimiter = new RateLimiter();
+// Rate limiter mais permissivo em desenvolvimento
+export const rateLimiter = new RateLimiter(
+  process.env.NODE_ENV === 'development' ? 50 : 10, // Mais requisições em dev
+  process.env.NODE_ENV === 'development' ? 30000 : 60000 // Janela menor em dev
+);
 
 /**
  * Gera um token CSRF simples

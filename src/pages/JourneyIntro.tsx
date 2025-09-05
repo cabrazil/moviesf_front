@@ -36,8 +36,22 @@ const JourneyIntro: React.FC = () => {
         const restoreState = location.state;
         console.log('🔍 JourneyIntro - Verificando state:', restoreState);
         
-        if (restoreState?.restoreJourney && restoreState.selectedSentiment && restoreState.selectedSentiment.id) {
-          console.log('🔄 Restaurando jornada...', restoreState);
+        // Validação robusta antes da restauração
+        const isValidRestoreState = restoreState?.restoreJourney && 
+          restoreState.selectedSentiment && 
+          restoreState.selectedSentiment.id &&
+          restoreState.selectedIntention &&
+          restoreState.selectedIntention.id &&
+          typeof restoreState.selectedSentiment.id === 'number' &&
+          typeof restoreState.selectedIntention.id === 'number';
+        
+        if (isValidRestoreState) {
+          console.log('🔄 Restaurando jornada com validação completa...', {
+            sentimentId: restoreState.selectedSentiment.id,
+            intentionId: restoreState.selectedIntention.id,
+            sentimentName: restoreState.selectedSentiment.name,
+            intentionType: restoreState.selectedIntention.type
+          });
           
           // Configurar tema do sentimento
           console.log('🎨 Configurando tema para sentimento ID:', restoreState.selectedSentiment.id);
@@ -57,7 +71,16 @@ const JourneyIntro: React.FC = () => {
           // Limpar o state para não restaurar novamente
           // navigate('/intro', { replace: true }); // REMOVIDO - estava causando perda de contexto
         } else if (restoreState?.restoreJourney) {
-          console.log('⚠️ JourneyIntro - Tentativa de restauração sem sentimento válido:', restoreState);
+          console.log('⚠️ JourneyIntro - Tentativa de restauração com dados inválidos:', {
+            hasRestoreJourney: !!restoreState.restoreJourney,
+            hasSelectedSentiment: !!restoreState.selectedSentiment,
+            hasSelectedIntention: !!restoreState.selectedIntention,
+            sentimentId: restoreState.selectedSentiment?.id,
+            intentionId: restoreState.selectedIntention?.id,
+            sentimentIdType: typeof restoreState.selectedSentiment?.id,
+            intentionIdType: typeof restoreState.selectedIntention?.id,
+            fullState: restoreState
+          });
           resetToDefaultTheme();
         } else {
           console.log('🔍 JourneyIntro - Nenhuma restauração necessária, resetando tema');

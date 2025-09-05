@@ -22,21 +22,64 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
+  // Cache para intenções emocionais
+  const [intentionsCache, setIntentionsCache] = useState<Map<number, EmotionalIntention[]>>(new Map());
+  
+  // Flag para evitar requisições duplicadas
+  const [isLoadingIntentions, setIsLoadingIntentions] = useState(false);
+
   useEffect(() => {
     const loadIntentions = async () => {
+      // Evitar requisições duplicadas
+      if (isLoadingIntentions) {
+        console.log('⏳ Intenções já estão sendo carregadas, ignorando requisição duplicada');
+        return;
+      }
+      
       try {
+        // Verificar cache primeiro
+        console.log('🔍 Verificando cache de intenções para sentimento ID:', selectedSentiment.id);
+        
+        if (intentionsCache.has(selectedSentiment.id)) {
+          console.log('✅ Intenções encontradas no cache, carregando...');
+          const cachedIntentions = intentionsCache.get(selectedSentiment.id)!;
+          setIntentions(cachedIntentions);
+          setLoading(false);
+          console.log('✅ Intenções carregadas do cache com sucesso');
+          return;
+        }
+        
+        console.log('🔄 Cache não encontrado, carregando da API...');
+        setIsLoadingIntentions(true);
         const data = await getEmotionalIntentions(selectedSentiment.id);
+        
+        // Validar dados recebidos
+        if (!data || !data.intentions || !Array.isArray(data.intentions)) {
+          throw new Error('Dados de intenções inválidos recebidos da API');
+        }
+        
+        // Salvar no cache
+        setIntentionsCache(prev => {
+          const newCache = new Map(prev);
+          newCache.set(selectedSentiment.id, data.intentions);
+          console.log('💾 Intenções salvas no cache para sentimento ID:', selectedSentiment.id);
+          return newCache;
+        });
+        
         setIntentions(data.intentions);
         setLoading(false);
+        setIsLoadingIntentions(false);
+        console.log('✅ Intenções carregadas da API com sucesso');
       } catch (error) {
-        console.error('Erro ao carregar intenções:', error);
+        console.error('❌ Erro ao carregar intenções:', error);
         setError('Erro ao carregar as intenções emocionais. Por favor, tente novamente mais tarde.');
         setLoading(false);
+        setIsLoadingIntentions(false);
       }
     };
 
     loadIntentions();
-  }, [selectedSentiment.id]);
+  }, [selectedSentiment.id, intentionsCache, isLoadingIntentions]);
 
   const getIntentionLabel = (type: string): string => {
     const labels = {
@@ -63,6 +106,21 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
     );
   }
 
+  const handleRetry = () => {
+    console.log('🔄 Tentando recarregar intenções...');
+    setError(null);
+    setLoading(true);
+    setIsLoadingIntentions(false); // Reset da flag para permitir nova requisição
+    
+    // Limpar cache para forçar nova requisição
+    setIntentionsCache(prev => {
+      const newCache = new Map(prev);
+      newCache.delete(selectedSentiment.id);
+      console.log('🗑️ Cache de intenções limpo para sentimento ID:', selectedSentiment.id);
+      return newCache;
+    });
+  };
+
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
@@ -70,7 +128,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           <p className="text-red-500 mb-4">{error}</p>
           <div className="space-x-4">
             <button
-              onClick={() => window.location.reload()}
+              onClick={handleRetry}
               className="px-6 py-3 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
             >
               Tentar Novamente

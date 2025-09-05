@@ -287,10 +287,28 @@ export const getPersonalizedJourneyFlow = async (
 // Novas funções para intenções emocionais
 export const getEmotionalIntentions = async (sentimentId: number): Promise<EmotionalIntentionsResponse> => {
   try {
+    console.log('🌐 Fazendo requisição para intenções emocionais, sentimento ID:', sentimentId);
+    
+    // Validar parâmetro de entrada
+    if (!sentimentId || typeof sentimentId !== 'number' || sentimentId <= 0) {
+      throw new Error(`ID de sentimento inválido: ${sentimentId}`);
+    }
+    
     const response = await api.get(`/api/emotional-intentions/${sentimentId}`);
+    
+    // Validar resposta
+    if (!response.data) {
+      throw new Error('Resposta vazia da API de intenções emocionais');
+    }
+    
+    if (!response.data.intentions || !Array.isArray(response.data.intentions)) {
+      throw new Error('Formato de resposta inválido: intentions não é um array');
+    }
+    
+    console.log('✅ Intenções emocionais carregadas com sucesso:', response.data.intentions.length, 'intenções');
     return response.data;
   } catch (error) {
-    console.error('Erro ao buscar intenções emocionais:', error);
+    console.error('❌ Erro ao buscar intenções emocionais:', error);
     throw error;
   }
 };

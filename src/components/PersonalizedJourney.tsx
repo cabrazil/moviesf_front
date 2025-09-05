@@ -106,9 +106,48 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
+  // Cache para jornadas personalizadas
+  const [journeyCache, setJourneyCache] = useState<Map<string, PersonalizedJourneyFlow>>(new Map());
+  
+  // Flag para evitar requisições duplicadas
+  const [isLoadingJourney, setIsLoadingJourney] = useState(false);
+
   useEffect(() => {
     const loadPersonalizedJourney = async () => {
+      // Evitar requisições duplicadas
+      if (isLoadingJourney) {
+        console.log('⏳ Jornada já está sendo carregada, ignorando requisição duplicada');
+        return;
+      }
+      
       try {
+        // Verificar cache primeiro
+        const cacheKey = `${selectedSentiment.id}-${selectedIntention.id}`;
+        console.log('🔍 Verificando cache para chave:', cacheKey);
+        
+        if (journeyCache.has(cacheKey)) {
+          console.log('✅ Jornada encontrada no cache, carregando...');
+          const cachedFlow = journeyCache.get(cacheKey)!;
+          setJourneyFlow(cachedFlow);
+          
+          // Encontrar o primeiro step do cache
+          let firstStep = cachedFlow.steps.find(step => step.priority === 1);
+          if (!firstStep) {
+            const sortedByPriority = [...cachedFlow.steps].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+            const sortedByOrder = [...cachedFlow.steps].sort((a, b) => a.order - b.order);
+            firstStep = sortedByPriority[0] || sortedByOrder[0];
+          }
+          
+          if (firstStep) {
+            setCurrentStep(firstStep);
+            setLoading(false);
+            console.log('✅ Jornada carregada do cache com sucesso');
+            return;
+          }
+        }
+        
+        console.log('🔄 Cache não encontrado, carregando da API...');
+        setIsLoadingJourney(true);
         setLoading(true);
         setLoadingProgress(0);
         
@@ -136,6 +175,14 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         }
         
         setJourneyFlow(flow);
+        
+        // Salvar no cache
+        setJourneyCache(prev => {
+          const newCache = new Map(prev);
+          newCache.set(cacheKey, flow);
+          console.log('💾 Jornada salva no cache com chave:', cacheKey);
+          return newCache;
+        });
         
         // NOVA LÓGICA PARA JORNADAS BASEADAS EM INTENÇÕES
         // O sistema usa EmotionalIntentionJourneyStep para definir quais steps são usados
@@ -171,16 +218,20 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         
         setCurrentStep(firstStep);
         // Pequeno delay para mostrar o progresso completo
-        setTimeout(() => setLoading(false), 200);
+        setTimeout(() => {
+          setLoading(false);
+          setIsLoadingJourney(false);
+        }, 200);
       } catch (error) {
         console.error('Erro ao carregar jornada personalizada:', error);
         setError('Erro ao carregar a jornada personalizada. Por favor, tente novamente mais tarde.');
         setLoading(false);
+        setIsLoadingJourney(false);
       }
     };
 
     loadPersonalizedJourney();
-  }, [selectedSentiment.id, selectedIntention.id]);
+  }, [selectedSentiment.id, selectedIntention.id, isLoadingJourney]);
 
   const handleOptionSelect = (option: JourneyOptionFlow) => {
     console.log('=== NAVEGAÇÃO DA JORNADA PERSONALIZADA ===');
