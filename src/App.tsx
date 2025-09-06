@@ -7,6 +7,7 @@ import MovieSuggestionsPage from './pages/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './pages/MovieSuggestionsPageMinimal';
 import StreamingFilters from './pages/StreamingFilters';
 import MovieDetailWrapper from './pages/MovieDetailWrapper';
+import { MovieDetailMobile } from './pages/landing/MovieDetailMobile';
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/filme/:identifier" element={<MovieDetailWrapper />} />
+            <Route path="/filme-mobile/:identifier" element={<MovieDetailMobile />} />
 
           </Routes>
         </Router>

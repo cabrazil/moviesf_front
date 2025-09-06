@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Skeleton, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, Skeleton, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { getPlatformLogoUrlMedium } from '../../services/streaming.service';
@@ -24,6 +24,8 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
   subscriptionPlatforms,
   rentalPurchasePlatforms
 }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [logosLoaded, setLogosLoaded] = useState<Set<string>>(new Set());
   const [isLoadingLogos, setIsLoadingLogos] = useState(true);
 
@@ -263,7 +265,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           </Typography>
           <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(2, 1fr)', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', 
             gap: 1.5 
           }}>
             {unifiedSubscriptionPlatforms.map((platform) => (
@@ -286,7 +288,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           </Typography>
           <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(2, 1fr)', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', 
             gap: 1.5 
           }}>
             {unifiedRentalPurchasePlatforms.map((platform) => (

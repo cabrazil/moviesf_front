@@ -8,6 +8,53 @@ import imdbLogo from '../assets/imdb.png';
 import rtLogo from '../assets/rottentomatoes.png';
 import metacriticLogo from '../assets/metascore.svg';
 import { getPlatformLogoUrlMedium } from '../services/streaming.service';
+import OscarRecognition from '../components/landing/OscarRecognition';
+
+// Função para formatar premiações para exibição
+const formatAwardsForDisplay = (awardsSummary: string): { firstLine: string; secondLine?: string } => {
+  if (!awardsSummary || awardsSummary.trim() === '') {
+    return { firstLine: '' };
+  }
+
+  // Remover "no no total" duplicado se existir
+  let cleaned = awardsSummary.replace(/no no total/g, 'no total');
+  
+  // Padrões para dividir em duas linhas
+  const patterns = [
+    // "Ganhou X Oscars. Y vitórias e Z indicações no total"
+    /^(Ganhou \d+ Oscars?)\.\s*(.+)$/i,
+    // "Indicado a X Oscars. Y vitórias e Z indicações no total"  
+    /^(Indicado a \d+ Oscars?)\.\s*(.+)$/i,
+    // "Ganhou X [premio]. Y vitórias e Z indicações no total"
+    /^(Ganhou \d+ [^.]+)\.\s*(.+)$/i,
+    // "Indicado a X [premio]. Y vitórias e Z indicações no total"
+    /^(Indicado a \d+ [^.]+)\.\s*(.+)$/i
+  ];
+
+  for (const pattern of patterns) {
+    const match = cleaned.match(pattern);
+    if (match) {
+      return {
+        firstLine: match[1].trim(),
+        secondLine: match[2].trim()
+      };
+    }
+  }
+
+  // Se não matched nenhum padrão, exibir em uma linha só
+  // Mas se for muito longo (>50 caracteres), tentar quebrar no ponto
+  if (cleaned.length > 50) {
+    const dotIndex = cleaned.indexOf('.');
+    if (dotIndex > 0 && dotIndex < cleaned.length - 1) {
+      return {
+        firstLine: cleaned.substring(0, dotIndex).trim(),
+        secondLine: cleaned.substring(dotIndex + 1).trim()
+      };
+    }
+  }
+
+  return { firstLine: cleaned };
+};
 
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
@@ -41,12 +88,8 @@ const MovieDetailsPage: React.FC = () => {
           ? 'https://moviesf-back.vercel.app' 
           : 'http://localhost:3000'
         
-        // Detectar se é UUID ou slug
-        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(movieId);
-        
-        // Usar rota diferente baseada no tipo de identificador
-        const endpoint = isUUID ? 'details' : 'hero';
-        const response = await fetch(`${baseURL}/api/movie/${movieId}/${endpoint}`);
+        // Para MovieDetailsPage, usar o endpoint details com UUID
+        const response = await fetch(`${baseURL}/api/movie/${movieId}/details`);
         
         if (!response.ok) {
           throw new Error(`Filme não encontrado (${response.status})`);
@@ -91,7 +134,7 @@ const MovieDetailsPage: React.FC = () => {
     if (!sentimentId || !intentionType || !reason) {
       // Se não temos dados da jornada, usar conteúdo padrão
       return {
-        title: "Por que assistir este filme?",
+        title: "Por que assistir a este filme?",
         content: movie.landingPageHook ? 
           movie.landingPageHook.replace(/<[^>]*>/g, '') : 
           "Este filme oferece uma experiência cinematográfica única que vale a pena assistir."
@@ -138,7 +181,7 @@ const MovieDetailsPage: React.FC = () => {
     const formattedReason = reason.charAt(0).toLowerCase() + reason.slice(1);
 
     return {
-      title: "Por que assistir este filme?",
+      title: "Por que assistir a este filme?",
       content: (
         <>
           Para quem está <strong className="text-blue-600 font-semibold">{sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{intentionName}</strong>, {connector} {formattedReason}
@@ -157,6 +200,13 @@ const MovieDetailsPage: React.FC = () => {
   console.log('🎬 MovieDetailsPage - subscriptionPlatforms:', movieData?.subscriptionPlatforms);
   console.log('🎬 MovieDetailsPage - journey data:', { sentimentId, intentionType, reason });
   console.log('🎬 MovieDetailsPage - personalized content:', personalizedContent);
+  
+  // Debug: Verificar dados de premiações
+  console.log('🏆 MovieDetailsPage - oscarAwards:', movie?.oscarAwards);
+  console.log('🏆 MovieDetailsPage - awardsSummary:', movie?.awardsSummary);
+  console.log('🏆 MovieDetailsPage - has oscarAwards:', !!movie?.oscarAwards);
+  console.log('🏆 MovieDetailsPage - has awardsSummary:', !!movie?.awardsSummary);
+  console.log('🏆 MovieDetailsPage - awardsSummary length:', movie?.awardsSummary?.length);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', pb: 8 }}>
@@ -364,6 +414,55 @@ const MovieDetailsPage: React.FC = () => {
               </Box>
             </Box>
           )}
+
+          {/* Seção 5: Premiações e Reconhecimento */}
+          {movie.oscarAwards ? (
+            // Se tem dados estruturados do Oscar, mostrar seção de Reconhecimento no Oscar
+            <OscarRecognition 
+              movieTitle={movie.title}
+              oscarAwards={movie.oscarAwards}
+            />
+          ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
+            // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
+            <Box sx={{ width: '100%', mt: 2 }}>
+              <Typography variant="body2" sx={{ 
+                mb: 1, 
+                color: mode === 'light' ? '#1976d2' : '#fff', 
+                fontWeight: 500,
+                textAlign: { xs: 'center', md: 'left' },
+                fontSize: { xs: '0.9rem', md: '0.95rem' }
+              }}>
+                Premiações e Reconhecimento
+              </Typography>
+              <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                {(() => {
+                  const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
+                  return (
+                    <Box>
+                      <Typography variant="body2" sx={{ 
+                        color: 'text.secondary',
+                        fontSize: '0.97rem',
+                        lineHeight: 1.5,
+                        textAlign: { xs: 'center', md: 'left' }
+                      }}>
+                        {firstLine}
+                      </Typography>
+                      {secondLine && (
+                        <Typography variant="body2" sx={{ 
+                          color: 'text.secondary',
+                          fontSize: '0.97rem',
+                          lineHeight: 1.5,
+                          textAlign: { xs: 'center', md: 'left' }
+                        }}>
+                          {secondLine}
+                        </Typography>
+                      )}
+                    </Box>
+                  );
+                })()}
+              </Box>
+            </Box>
+          ) : null}
         </Box>
 
         {/* Coluna Direita - Conteúdo Principal */}
@@ -677,6 +776,57 @@ const MovieDetailsPage: React.FC = () => {
               </Box>
             </Box>
           )}
+
+          {/* Seção 5: Premiações e Reconhecimento - Mobile */}
+          {movie.oscarAwards ? (
+            // Se tem dados estruturados do Oscar, mostrar seção de Reconhecimento no Oscar
+            <Box sx={{ mb: 1.2, width: '100%' }}>
+              <OscarRecognition 
+                movieTitle={movie.title}
+                oscarAwards={movie.oscarAwards}
+              />
+            </Box>
+          ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
+            // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
+            <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 0.5, 
+                color: mode === 'light' ? '#1976d2' : '#fff', 
+                textAlign: 'center', 
+                fontSize: '1rem',
+                fontWeight: 600
+              }}>
+                Premiações e Reconhecimento
+              </Typography>
+              <Box sx={{ textAlign: 'center', maxWidth: 700 }}>
+                {(() => {
+                  const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
+                  return (
+                    <Box>
+                      <Typography variant="body2" sx={{ 
+                        color: 'text.secondary',
+                        fontSize: '0.97rem',
+                        lineHeight: 1.5,
+                        textAlign: 'center'
+                      }}>
+                        {firstLine}
+                      </Typography>
+                      {secondLine && (
+                        <Typography variant="body2" sx={{ 
+                          color: 'text.secondary',
+                          fontSize: '0.97rem',
+                          lineHeight: 1.5,
+                          textAlign: 'center'
+                        }}>
+                          {secondLine}
+                        </Typography>
+                      )}
+                    </Box>
+                  );
+                })()}
+              </Box>
+            </Box>
+          ) : null}
 
           {/* Disponível em */}
           <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
