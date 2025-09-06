@@ -415,54 +415,6 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
           )}
 
-          {/* Seção 5: Premiações e Reconhecimento */}
-          {movie.oscarAwards ? (
-            // Se tem dados estruturados do Oscar, mostrar seção de Reconhecimento no Oscar
-            <OscarRecognition 
-              movieTitle={movie.title}
-              oscarAwards={movie.oscarAwards}
-            />
-          ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
-            // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
-            <Box sx={{ width: '100%', mt: 2 }}>
-              <Typography variant="body2" sx={{ 
-                mb: 1, 
-                color: mode === 'light' ? '#1976d2' : '#fff', 
-                fontWeight: 500,
-                textAlign: { xs: 'center', md: 'left' },
-                fontSize: { xs: '0.9rem', md: '0.95rem' }
-              }}>
-                Premiações e Reconhecimento
-              </Typography>
-              <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                {(() => {
-                  const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
-                  return (
-                    <Box>
-                      <Typography variant="body2" sx={{ 
-                        color: 'text.secondary',
-                        fontSize: '0.97rem',
-                        lineHeight: 1.5,
-                        textAlign: { xs: 'center', md: 'left' }
-                      }}>
-                        {firstLine}
-                      </Typography>
-                      {secondLine && (
-                        <Typography variant="body2" sx={{ 
-                          color: 'text.secondary',
-                          fontSize: '0.97rem',
-                          lineHeight: 1.5,
-                          textAlign: { xs: 'center', md: 'left' }
-                        }}>
-                          {secondLine}
-                        </Typography>
-                      )}
-                    </Box>
-                  );
-                })()}
-              </Box>
-            </Box>
-          ) : null}
         </Box>
 
         {/* Coluna Direita - Conteúdo Principal */}
@@ -777,10 +729,10 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
           )}
 
-          {/* Seção 5: Premiações e Reconhecimento - Mobile */}
+          {/* Premiações e Reconhecimento */}
           {movie.oscarAwards ? (
             // Se tem dados estruturados do Oscar, mostrar seção de Reconhecimento no Oscar
-            <Box sx={{ mb: 1.2, width: '100%' }}>
+            <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <OscarRecognition 
                 movieTitle={movie.title}
                 oscarAwards={movie.oscarAwards}
