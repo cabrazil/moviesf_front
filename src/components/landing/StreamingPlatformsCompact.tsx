@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Skeleton, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, Button, Skeleton, CircularProgress, useMediaQuery, useTheme, Tooltip } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { getPlatformLogoUrlMedium } from '../../services/streaming.service';
@@ -90,29 +90,34 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
     return 'Ver mais';
   };
 
-  // Componente de plataforma individual
-  const PlatformItem: React.FC<{ platform: StreamingPlatform }> = ({ platform }) => {
+  // Componente de plataforma para assinatura (sem nome)
+  const SubscriptionPlatformItem: React.FC<{ platform: StreamingPlatform }> = ({ platform }) => {
     const isLogoLoaded = logosLoaded.has(platform.id);
     const freeTrialText = getFreeTrialText(platform);
     const ctaText = getCTAText(platform);
-    const isRentalPurchase = platform.accessType === 'RENTAL' || platform.accessType === 'PURCHASE';
 
     return (
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        gap: 2, 
-        p: 1.5,
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        bgcolor: 'background.paper',
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          borderColor: 'primary.main',
-          boxShadow: 2,
-        }
-      }}>
+      <Tooltip 
+        title={`${platform.name} - Assinatura${freeTrialText ? ` (${freeTrialText})` : ''}`}
+        arrow
+        placement="top"
+      >
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          p: 1.5,
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          '&:hover': {
+            borderColor: 'primary.main',
+            boxShadow: 2,
+          }
+        }}>
         {/* Logo */}
         <Box sx={{ position: 'relative', width: 50, height: 50, flexShrink: 0 }}>
           {isLoadingLogos || !isLogoLoaded ? (
@@ -132,19 +137,10 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           )}
         </Box>
 
-        {/* Informações da plataforma */}
+        {/* Informações da plataforma - SEM NOME */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="h6" sx={{ 
-            fontWeight: 600, 
-            fontSize: '1rem',
-            color: 'text.primary',
-            mb: 0.3
-          }}>
-            {platform.name}
-          </Typography>
-          
-          {/* Só exibir teste grátis se NÃO for aluguel/compra */}
-          {freeTrialText && !isRentalPurchase && (
+          {/* Só exibir teste grátis */}
+          {freeTrialText && (
             <Typography variant="body2" sx={{ 
               color: 'success.main',
               fontWeight: 500,
@@ -154,23 +150,13 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
               {freeTrialText}
             </Typography>
           )}
-          
-          {isRentalPurchase && (
-            <Typography variant="body2" sx={{ 
-              color: 'text.secondary',
-              mb: 0.3,
-              fontSize: '0.85rem'
-            }}>
-              (Aluguel e Compra)
-            </Typography>
-          )}
         </Box>
 
         {/* Botão CTA */}
         <Button
           variant={platform.baseUrl ? "contained" : "outlined"}
           size="medium"
-          startIcon={isRentalPurchase ? <ShoppingCartIcon /> : <PlayArrowIcon />}
+          startIcon={<PlayArrowIcon />}
           component={platform.baseUrl ? "a" : "button"}
           href={platform.baseUrl || undefined}
           target={platform.baseUrl ? "_blank" : undefined}
@@ -203,7 +189,101 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
         >
           {platform.baseUrl ? ctaText : 'Indisponível'}
         </Button>
-      </Box>
+        </Box>
+      </Tooltip>
+    );
+  };
+
+  // Componente de plataforma para aluguel/compra (sem nome)
+  const RentalPlatformItem: React.FC<{ platform: StreamingPlatform }> = ({ platform }) => {
+    const isLogoLoaded = logosLoaded.has(platform.id);
+    const ctaText = getCTAText(platform);
+
+    return (
+      <Tooltip 
+        title={`${platform.name} - Aluguel e Compra`}
+        arrow
+        placement="top"
+      >
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          p: 1.5,
+          borderRadius: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+          transition: 'all 0.3s ease',
+          cursor: 'pointer',
+          '&:hover': {
+            borderColor: 'primary.main',
+            boxShadow: 2,
+          }
+        }}>
+        {/* Logo */}
+        <Box sx={{ position: 'relative', width: 50, height: 50, flexShrink: 0 }}>
+          {isLoadingLogos || !isLogoLoaded ? (
+            <Skeleton variant="rectangular" width={50} height={50} />
+          ) : (
+            <Box
+              component="img"
+              src={getPlatformLogoUrlMedium(platform.logoPath)}
+              alt={platform.name}
+              sx={{
+                width: 50,
+                height: 50,
+                objectFit: 'contain',
+                borderRadius: 1,
+              }}
+            />
+          )}
+        </Box>
+
+        {/* Espaço vazio - sem informações de texto */}
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          {/* Sem nome nem texto adicional */}
+        </Box>
+
+        {/* Botão CTA */}
+        <Button
+          variant={platform.baseUrl ? "contained" : "outlined"}
+          size="medium"
+          startIcon={<ShoppingCartIcon />}
+          component={platform.baseUrl ? "a" : "button"}
+          href={platform.baseUrl || undefined}
+          target={platform.baseUrl ? "_blank" : undefined}
+          rel={platform.baseUrl ? "noopener noreferrer" : undefined}
+          disabled={!platform.baseUrl}
+          onClick={!platform.baseUrl ? (e: React.MouseEvent) => e.preventDefault() : undefined}
+          sx={{
+            bgcolor: platform.baseUrl ? '#1976d2' : 'transparent',
+            color: platform.baseUrl ? 'white' : 'text.secondary',
+            fontWeight: 600,
+            textTransform: 'none',
+            px: 2,
+            py: 1,
+            borderRadius: 2,
+            fontSize: '0.85rem',
+            minWidth: 'fit-content',
+            textDecoration: 'none',
+            borderColor: platform.baseUrl ? '#1976d2' : 'text.disabled',
+            '&:hover': {
+              bgcolor: platform.baseUrl ? '#1565c0' : 'transparent',
+              textDecoration: 'none',
+              borderColor: platform.baseUrl ? '#1565c0' : 'text.disabled',
+            },
+            '&:disabled': {
+              bgcolor: 'transparent',
+              color: 'text.disabled',
+              borderColor: 'text.disabled',
+            }
+          }}
+        >
+          {platform.baseUrl ? ctaText : 'Indisponível'}
+        </Button>
+        </Box>
+      </Tooltip>
     );
   };
 
@@ -255,21 +335,13 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
       {/* Seção Assinatura */}
       {unifiedSubscriptionPlatforms.length > 0 && (
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h3" component="h3" sx={{ 
-            mb: 2, 
-            color: 'primary.main',
-            fontWeight: 600,
-            fontSize: '1.2rem'
-          }}>
-            Assinatura:
-          </Typography>
           <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', 
             gap: 1.5 
           }}>
             {unifiedSubscriptionPlatforms.map((platform) => (
-              <PlatformItem key={platform.id} platform={platform} />
+              <SubscriptionPlatformItem key={platform.id} platform={platform} />
             ))}
           </Box>
         </Box>
@@ -278,21 +350,13 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
       {/* Seção Aluguel/Compra */}
       {unifiedRentalPurchasePlatforms.length > 0 && (
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h3" component="h3" sx={{ 
-            mb: 2, 
-            color: 'primary.main',
-            fontWeight: 600,
-            fontSize: '1.2rem'
-          }}>
-            Aluguel/Compra:
-          </Typography>
           <Box sx={{ 
             display: 'grid', 
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', 
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', 
             gap: 1.5 
           }}>
             {unifiedRentalPurchasePlatforms.map((platform) => (
-              <PlatformItem key={platform.id} platform={platform} />
+              <RentalPlatformItem key={platform.id} platform={platform} />
             ))}
           </Box>
         </Box>

@@ -77,8 +77,8 @@ const translateOscarCategory = (category: string): string => {
   return translations[category] || category;
 };
 
-// Função para formatar o texto principal
-const formatMainText = (movieTitle: string, oscarAwards: OscarAwards): string => {
+// Função para formatar o texto de introdução
+const formatIntroText = (movieTitle: string, oscarAwards: OscarAwards): string => {
   const totalNominations = oscarAwards.totalWins + oscarAwards.totalNominations;
   const year = oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : 
                oscarAwards.nominations.length > 0 ? oscarAwards.nominations[0].year : 2024;
@@ -87,21 +87,11 @@ const formatMainText = (movieTitle: string, oscarAwards: OscarAwards): string =>
     return `${movieTitle} foi indicado a ${totalNominations} Oscar${totalNominations > 1 ? 's' : ''} em ${year}.`;
   }
 
-  const winCategories = oscarAwards.wins.map(win => translateOscarCategory(win.category));
-  const winText = winCategories.join(', ');
-
   if (oscarAwards.totalNominations === 0) {
-    return `${movieTitle} conquistou ${winText} em ${year}.`;
+    return `${movieTitle} conquistou ${oscarAwards.totalWins} Oscar${oscarAwards.totalWins > 1 ? 's' : ''} em ${year}.`;
   }
 
-  // Quebrar o texto em mais linhas para melhor legibilidade
-  if (winCategories.length <= 2) {
-    return `${movieTitle} foi indicado a ${totalNominations} Oscar${totalNominations > 1 ? 's' : ''} em ${year},\nconquistou ${winText}.`;
-  } else {
-    // Se há muitas categorias, quebrar em linhas separadas
-    const winTextFormatted = winCategories.join(',\n');
-    return `${movieTitle} foi indicado a ${totalNominations} Oscar${totalNominations > 1 ? 's' : ''} em ${year},\nconquistou:\n${winTextFormatted}.`;
-  }
+  return `${movieTitle} foi indicado a ${totalNominations} Oscar${totalNominations > 1 ? 's' : ''} em ${year}, conquistou:`;
 };
 
 const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAwards }) => {
@@ -119,118 +109,229 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
   const mainAwards = filteredNominations.slice(0, 3);
   const remainingAwards = filteredNominations.slice(3);
 
-  const mainText = formatMainText(movieTitle, oscarAwards);
+  const introText = formatIntroText(movieTitle, oscarAwards);
 
   return (
-    <Box sx={{ width: '100%', mt: 2 }}>
-      <Typography 
-        variant="h2" 
-        component="h2"
-        sx={{ 
-          mb: 1, 
-          color: '#1976d2', 
-          fontWeight: 600,
-          textAlign: { xs: 'center', md: 'left' },
-          fontSize: { xs: '1.1rem', md: '1.2rem' }
-        }}
-      >
-        Reconhecimento no Oscar
-      </Typography>
+    <Box sx={{ 
+      display: 'grid',
+      gridTemplateColumns: { xs: '1fr', md: '1fr' },
+      gap: 2
+    }}>
+      {/* Card Principal - Reconhecimento no Oscar */}
+      <Box sx={{ 
+        pt: 1,
+        pb: 2,
+        px: 0, 
+        position: 'relative',
+        overflow: 'hidden',
+        textAlign: { xs: 'center', md: 'left' }
+      }}>
 
-      <Typography 
-        variant="body2" 
-        sx={{ 
-          mb: 2,
-          lineHeight: 1.4,
-          whiteSpace: 'pre-line',
-          fontSize: { xs: '0.9rem', md: '0.95rem' },
-          textAlign: { xs: 'center', md: 'left' },
-          wordBreak: 'break-word'
-        }}
-      >
-        {mainText}
-      </Typography>
+        <Typography 
+          variant="body1" 
+          sx={{ 
+            mb: 2,
+            lineHeight: 1.6,
+            fontSize: { xs: '1rem', md: '1.1rem' },
+            color: 'text.primary',
+            fontWeight: 500
+          }}
+        >
+          {introText}
+        </Typography>
 
-      <Typography 
-        variant="body2" 
-        sx={{ 
-          mb: 1, 
-          color: '#1976d2', 
-          fontWeight: 500,
-          textAlign: { xs: 'center', md: 'left' },
-          fontSize: { xs: '0.95rem', md: '1rem' }
-        }}
-      >
-        Outras Indicações ({oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : oscarAwards.nominations[0]?.year || 2024}):
-      </Typography>
-
-      <Stack spacing={0.75}>
-        {mainAwards.map((award, index) => (
-          <Typography 
-            key={index} 
-            variant="body2" 
-            sx={{ 
-              fontSize: { xs: '0.85rem', md: '0.9rem' },
-              textAlign: { xs: 'center', md: 'left' },
-              lineHeight: 1.4,
-              wordBreak: 'break-word'
-            }}
-          >
-            • {translateOscarCategory(award.category)}
-            {award.personName && (
-              <span style={{ color: 'text.secondary', fontSize: '0.85em', fontStyle: 'italic' }}>
-                {' -- '}{award.personName}
-              </span>
-            )}
-          </Typography>
-        ))}
-      </Stack>
-
-      {remainingAwards.length > 0 && (
-        <>
-          <Collapse in={showAllNominations}>
-            <Stack spacing={0.75} sx={{ mt: 1 }}>
-              {remainingAwards.map((award, index) => (
+        {/* Grid das Conquistas */}
+        {oscarAwards.wins.length > 0 && (
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+            gap: 1.5,
+            mt: 1,
+            justifyContent: { xs: 'center', md: 'flex-start' }
+          }}>
+            {oscarAwards.wins.map((win, index) => (
+              <Box 
+                key={index}
+                sx={{
+                  p: 2,
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  bgcolor: 'rgba(25, 118, 210, 0.05)',
+                  textAlign: 'center'
+                }}
+              >
                 <Typography 
-                  key={index} 
                   variant="body2" 
                   sx={{ 
-                    fontSize: { xs: '0.85rem', md: '0.9rem' },
-                    textAlign: { xs: 'center', md: 'left' },
+                    fontSize: { xs: '0.9rem', md: '0.95rem' },
                     lineHeight: 1.4,
-                    wordBreak: 'break-word'
+                    fontWeight: 600,
+                    color: '#1976d2'
                   }}
                 >
-                  • {translateOscarCategory(award.category)}
-                  {award.personName && (
-                    <span style={{ color: 'text.secondary', fontSize: '0.85em', fontStyle: 'italic' }}>
-                      {' -- '}{award.personName}
-                    </span>
-                  )}
+                  {translateOscarCategory(win.category)}
                 </Typography>
-              ))}
-            </Stack>
-          </Collapse>
+                {win.personName && (
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontSize: { xs: '0.8rem', md: '0.85rem' },
+                      color: 'text.secondary',
+                      fontStyle: 'italic',
+                      mt: 0.5
+                    }}
+                  >
+                    {win.personName}
+                  </Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+        )}
+      </Box>
 
-          <Button
-            onClick={() => setShowAllNominations(!showAllNominations)}
+      {/* Card de Indicações */}
+      {mainAwards.length > 0 && (
+        <Box sx={{ 
+          pt: 1,
+          pb: 2,
+          px: 0,
+          textAlign: { xs: 'center', md: 'left' }
+        }}>
+          <Typography 
+            variant="body1" 
             sx={{ 
-              mt: 1, 
-              p: 0, 
-              minWidth: 'auto',
-              textTransform: 'none',
-              color: 'primary.main',
-              textAlign: { xs: 'center', md: 'left' },
-              alignSelf: { xs: 'center', md: 'flex-start' },
-              '&:hover': {
-                backgroundColor: 'transparent',
-                textDecoration: 'underline'
-              }
+              mb: 2,
+              lineHeight: 1.6,
+              fontSize: { xs: '1rem', md: '1.1rem' },
+              color: 'text.primary',
+              fontWeight: 500
             }}
           >
-            {showAllNominations ? 'Ver menos...' : `Ver mais...`}
-          </Button>
-        </>
+            Outras Indicações ({oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : oscarAwards.nominations[0]?.year || 2024})
+          </Typography>
+
+          {/* Grid das Indicações */}
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+            gap: 1.5,
+            justifyContent: { xs: 'center', md: 'flex-start' }
+          }}>
+            {mainAwards.map((award, index) => (
+              <Box 
+                key={index}
+                sx={{
+                  p: 2,
+                  border: '1px solid #e0e0e0',
+                  borderRadius: 1,
+                  bgcolor: 'rgba(25, 118, 210, 0.05)',
+                  textAlign: 'center'
+                }}
+              >
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.9rem', md: '0.95rem' },
+                    lineHeight: 1.4,
+                    fontWeight: 600,
+                    color: '#1976d2'
+                  }}
+                >
+                  {translateOscarCategory(award.category)}
+                </Typography>
+                {award.personName && (
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontSize: { xs: '0.8rem', md: '0.85rem' },
+                      color: 'text.secondary',
+                      fontStyle: 'italic',
+                      mt: 0.5
+                    }}
+                  >
+                    {award.personName}
+                  </Typography>
+                )}
+              </Box>
+            ))}
+          </Box>
+
+          {remainingAwards.length > 0 && (
+            <>
+              <Collapse in={showAllNominations}>
+                <Box sx={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                  gap: 1.5,
+                  mt: 2,
+                  justifyContent: { xs: 'center', md: 'flex-start' }
+                }}>
+                  {remainingAwards.map((award, index) => (
+                    <Box 
+                      key={index}
+                      sx={{
+                        p: 2,
+                        border: '1px solid #e0e0e0',
+                        borderRadius: 1,
+                        bgcolor: 'rgba(25, 118, 210, 0.05)',
+                        textAlign: 'center'
+                      }}
+                    >
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontSize: { xs: '0.9rem', md: '0.95rem' },
+                          lineHeight: 1.4,
+                          fontWeight: 600,
+                          color: '#1976d2'
+                        }}
+                      >
+                        {translateOscarCategory(award.category)}
+                      </Typography>
+                      {award.personName && (
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontSize: { xs: '0.8rem', md: '0.85rem' },
+                            color: 'text.secondary',
+                            fontStyle: 'italic',
+                            mt: 0.5
+                          }}
+                        >
+                          {award.personName}
+                        </Typography>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Collapse>
+
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                <Button
+                  variant="outlined"
+                  onClick={() => setShowAllNominations(!showAllNominations)}
+                  sx={{ 
+                    borderColor: '#1976d2',
+                    color: '#1976d2',
+                    textTransform: 'none',
+                    fontSize: '0.9rem',
+                    fontWeight: 500,
+                    px: 3,
+                    py: 1,
+                    '&:hover': {
+                      borderColor: '#1565c0',
+                      color: '#1565c0',
+                      bgcolor: 'rgba(25, 118, 210, 0.04)'
+                    }
+                  }}
+                >
+                  {showAllNominations ? 'Ver menos...' : `Ver mais...`}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
       )}
     </Box>
   );

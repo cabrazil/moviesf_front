@@ -3,6 +3,7 @@ import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar } from 
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import logoWhite from '../assets/logo_white.png';
+import logoHeader from '../assets/logo_header.png';
 import { useThemeManager } from '../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon icon for dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for light mode
@@ -39,13 +40,21 @@ const Home: React.FC = () => {
         display: { xs: 'none', sm: 'block' } // Oculto em mobile
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-            vibesfilm
-          </Typography>
+          <Box
+            component="img"
+            src={logoHeader}
+            alt="VibesFilm Logo"
+            sx={{
+              height: 48,
+              width: 'auto',
+              maxWidth: 320,
+              objectFit: 'contain'
+            }}
+          />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Button 
               color="inherit" 
-              onClick={handleFilmes}
+              onClick={() => window.open('https://blog.vibesfilm.com', '_blank')}
               sx={{ 
                 color: 'text.primary',
                 typography: 'h6',

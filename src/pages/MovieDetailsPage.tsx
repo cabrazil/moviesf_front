@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { Box, Typography, Chip, Divider, Stack, Paper, Button } from '@mui/material';
+import { Box, Typography, Chip, Divider, Stack, Paper, Button, Modal, IconButton } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CloseIcon from '@mui/icons-material/Close';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import tmdbLogo from '../assets/themoviedb.svg';
@@ -65,6 +67,7 @@ const MovieDetailsPage: React.FC = () => {
   const [movieData, setMovieData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [trailerModalOpen, setTrailerModalOpen] = useState(false);
   
   // Extrair valores do state uma vez para evitar recriação
   const sentimentId = state?.sentimentId;
@@ -252,55 +255,18 @@ const MovieDetailsPage: React.FC = () => {
             />
           </Box>
 
-          {/* Informações Técnicas - Visíveis apenas em desktop */}
-          <Box sx={{ 
-            display: { xs: 'none', md: 'flex' },
-            flexDirection: 'column', 
-            alignItems: { xs: 'center', md: 'flex-start' },
-            width: '100%'
-          }}>
-            {/* Diretor */}
-            {movie.director && (
-              <Typography variant="body2" sx={{ 
-                mb: 0.5, 
-                color: 'text.secondary',
-                textAlign: { xs: 'center', md: 'left' },
-                fontSize: { xs: '0.9rem', md: '0.95rem' }
-              }}>
-                Diretor: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.director}</span>
-              </Typography>
-            )}
-
-            {/* Duração e Classificação */}
-            {(movie.runtime || movie.certification) && (
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1, 
-                mb: 0.5,
-                justifyContent: { xs: 'center', md: 'flex-start' }
-              }}>
-                {movie.runtime && (
-                  <>
-                    <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
-                      {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}min
-                    </Typography>
-                    {movie.certification && (
-                      <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
-                    )}
-                  </>
-                )}
-                {movie.certification && (
-                  <Chip label={movie.certification} size="small" sx={{ bgcolor: themeColor, color: '#fff', fontSize: '0.85rem', height: 22 }} />
-                )}
-              </Box>
-            )}
-
-            {/* Avaliações */}
-            {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
-            (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
-            (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
-            (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
+          {/* Avaliações - Visíveis apenas em desktop */}
+          {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
+          (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
+          (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
+          (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
+            <Box sx={{ 
+              display: { xs: 'none', md: 'flex' },
+              flexDirection: 'column', 
+              alignItems: { xs: 'center', md: 'flex-start' },
+              width: '100%',
+              mb: 2
+            }}>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -333,8 +299,8 @@ const MovieDetailsPage: React.FC = () => {
                   </Box>
                 )}
               </Box>
-            ) : null}
-          </Box>
+            </Box>
+          ) : null}
 
           {/* Gêneros - Visíveis apenas em desktop */}
           {movie.genres && movie.genres.length > 0 && (
@@ -356,7 +322,7 @@ const MovieDetailsPage: React.FC = () => {
                 {movie.genres && movie.genres.map((genre: string) => (
                   <Chip 
                     key={genre} 
-                    label={genre} 
+                    label={String(genre)} 
                     size="small" 
                     sx={{ 
                       fontSize: '0.8rem', 
@@ -427,10 +393,10 @@ const MovieDetailsPage: React.FC = () => {
           maxWidth: { xs: '100%', md: 'calc(100% - 320px - 48px)' }, // 320px da coluna esquerda + 48px do gap
           order: { xs: 2, md: 2 } // Segundo em mobile, segundo em desktop
         }}>
-          {/* Título e ano - H1 */}
+          {/* Título - H1 */}
           <Box sx={{ 
             display: 'flex', 
-            alignItems: 'baseline', 
+            alignItems: 'center', 
             gap: 1, 
             mb: 1, 
             justifyContent: { xs: 'center', md: 'flex-start' } 
@@ -443,7 +409,7 @@ const MovieDetailsPage: React.FC = () => {
             }}>{movie.title}</Typography>
             {movie.year && (
               <Chip 
-                label={movie.year} 
+                label={String(movie.year)} 
                 size="small" 
                 sx={{ 
                   bgcolor: themeColor, 
@@ -455,90 +421,386 @@ const MovieDetailsPage: React.FC = () => {
             )}
           </Box>
 
-          {/* Informações Técnicas - Visíveis apenas em mobile */}
+          {/* Informações Técnicas - Abaixo do título */}
           <Box sx={{ 
-            display: { xs: 'flex', md: 'none' },
-            flexDirection: 'column', 
-            alignItems: 'center',
-            width: '100%',
-            mb: 2
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'center', sm: 'flex-start' },
+            gap: { xs: 0.5, sm: 1 },
+            mb: 2,
+            flexWrap: 'wrap',
+            justifyContent: { xs: 'center', md: 'flex-start' }
           }}>
+            {/* Título original */}
+            <Typography variant="body2" sx={{ 
+              color: 'text.secondary',
+              fontSize: '0.9rem',
+              textAlign: { xs: 'center', md: 'left' }
+            }}>
+              Título original: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.title}</span>
+            </Typography>
+            
+            {/* Separador */}
+            <Typography variant="body2" sx={{ 
+              color: 'text.disabled', 
+              display: { xs: 'none', sm: 'block' },
+              fontSize: '0.9rem'
+            }}>|</Typography>
+            
             {/* Diretor */}
             {movie.director && (
+              <>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.secondary',
+                  fontSize: '0.9rem',
+                  textAlign: { xs: 'center', md: 'left' }
+                }}>
+                  Diretor: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.director}</span>
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.disabled', 
+                  display: { xs: 'none', sm: 'block' },
+                  fontSize: '0.9rem'
+                }}>|</Typography>
+              </>
+            )}
+            
+            {/* Duração */}
+            {movie.runtime && (
+              <>
+                <Typography variant="body2" sx={{ 
+                  color: 'text.secondary',
+                  fontSize: '0.9rem',
+                  textAlign: { xs: 'center', md: 'left' }
+                }}>
+                  {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}min
+                </Typography>
+                {movie.certification && (
+                  <Typography variant="body2" sx={{ 
+                    color: 'text.disabled', 
+                    display: { xs: 'none', sm: 'block' },
+                    fontSize: '0.9rem'
+                  }}>|</Typography>
+                )}
+              </>
+            )}
+            
+            {/* Classificação */}
+            {movie.certification && (
               <Typography variant="body2" sx={{ 
-                mb: 0.5, 
                 color: 'text.secondary',
-                textAlign: 'center',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                textAlign: { xs: 'center', md: 'left' }
               }}>
-                Diretor: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.director}</span>
+                Classificação: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.certification}</span>
+              </Typography>
+            )}
+          </Box>
+
+          {/* Botão Assistir Trailer */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: { xs: 'center', md: 'flex-start' },
+            mb: 2
+          }}>
+            <Button
+              variant="contained"
+              startIcon={<PlayArrowIcon />}
+              onClick={() => setTrailerModalOpen(true)}
+              sx={{
+                bgcolor: '#ff6b35',
+                color: 'white',
+                fontSize: { xs: '0.8rem', md: '0.9rem' },
+                fontWeight: 600,
+                py: 1,
+                px: 2,
+                borderRadius: 2,
+                textTransform: 'none',
+                boxShadow: 2,
+                '&:hover': {
+                  bgcolor: '#e55a2b',
+                  boxShadow: 3,
+                },
+                minWidth: { xs: '150px', md: '170px' }
+              }}
+            >
+              Assistir Trailer
+            </Button>
+          </Box>
+
+          {/* Onde assistir hoje */}
+          <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
+            <Typography variant="subtitle1" sx={{ 
+              mb: 1, 
+              color: mode === 'light' ? '#1976d2' : '#fff', 
+              textAlign: { xs: 'center', md: 'left' }, 
+              fontSize: { xs: '1rem', md: '1.1rem' },
+              fontWeight: 600
+            }}>Onde assistir hoje?</Typography>
+            
+            {movieData?.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0 ? (
+              <Box sx={{ width: '100%' }}>
+                {/* Categorizar plataformas */}
+                {(() => {
+                  const subscriptionPlatforms = movieData.subscriptionPlatforms.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION');
+                  const rentalPurchasePlatforms = movieData.subscriptionPlatforms.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE');
+                  
+                  return (
+                    <>
+                      {/* Plataformas de Assinatura */}
+                      {subscriptionPlatforms.length > 0 && (
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="body2" sx={{ 
+                            mb: 1, 
+                            color: 'success.main',
+                            fontWeight: 600,
+                            fontSize: '0.9rem'
+                          }}>
+                            Assinatura
+                          </Typography>
+                          <Stack direction="row" spacing={1} sx={{ 
+                            flexWrap: 'wrap', 
+                            justifyContent: { xs: 'center', md: 'flex-start' },
+                            gap: 1
+                          }}>
+                            {subscriptionPlatforms.map((platform: any, index: number) => {
+                              try {
+                                const logoUrl = getPlatformLogoUrlMedium(platform.logoPath);
+                                return (
+                                  <Box key={`sub-${index}`} sx={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    width: 65,
+                                    height: 65,
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.paper',
+                                    border: '1px solid',
+                                    borderColor: 'success.main',
+                                    opacity: 0.9
+                                  }}>
+                                    <img 
+                                      src={logoUrl} 
+                                      alt={platform.name}
+                                      style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        objectFit: 'contain',
+                                        padding: '6px'
+                                      }}
+                                      onError={(e) => {
+                                        console.error(`❌ Erro ao carregar logo de ${platform.name}:`, e);
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        target.nextElementSibling?.setAttribute('style', 'display: block');
+                                      }}
+                                    />
+                                    <Typography 
+                                      variant="caption" 
+                                      sx={{ 
+                                        display: 'none',
+                                        fontSize: '0.7rem',
+                                        textAlign: 'center',
+                                        color: 'text.secondary',
+                                        px: 0.5
+                                      }}
+                                    >
+                                      {platform.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              } catch (error) {
+                                console.error(`❌ Erro ao processar logo de ${platform.name}:`, error);
+                                return (
+                                  <Box key={`sub-${index}`} sx={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    width: 65,
+                                    height: 65,
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.paper',
+                                    border: '1px solid',
+                                    borderColor: 'success.main'
+                                  }}>
+                                    <Typography 
+                                      variant="caption" 
+                                      sx={{ 
+                                        fontSize: '0.8rem',
+                                        textAlign: 'center',
+                                        color: 'text.secondary',
+                                        px: 0.5
+                                      }}
+                                    >
+                                      {platform.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              }
+                            })}
+                          </Stack>
+                        </Box>
+                      )}
+
+                      {/* Plataformas de Aluguel/Compra */}
+                      {rentalPurchasePlatforms.length > 0 && (
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="body2" sx={{ 
+                            mb: 1, 
+                            color: 'warning.main',
+                            fontWeight: 600,
+                            fontSize: '0.9rem'
+                          }}>
+                            Aluguel/Compra
+                          </Typography>
+                          <Stack direction="row" spacing={1} sx={{ 
+                            flexWrap: 'wrap', 
+                            justifyContent: { xs: 'center', md: 'flex-start' },
+                            gap: 1
+                          }}>
+                            {rentalPurchasePlatforms.map((platform: any, index: number) => {
+                              try {
+                                const logoUrl = getPlatformLogoUrlMedium(platform.logoPath);
+                                return (
+                                  <Box key={`rental-${index}`} sx={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    width: 65,
+                                    height: 65,
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.paper',
+                                    border: '1px solid',
+                                    borderColor: 'warning.main',
+                                    opacity: 0.9
+                                  }}>
+                                    <img 
+                                      src={logoUrl} 
+                                      alt={platform.name}
+                                      style={{ 
+                                        width: '100%', 
+                                        height: '100%', 
+                                        objectFit: 'contain',
+                                        padding: '6px'
+                                      }}
+                                      onError={(e) => {
+                                        console.error(`❌ Erro ao carregar logo de ${platform.name}:`, e);
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        target.nextElementSibling?.setAttribute('style', 'display: block');
+                                      }}
+                                    />
+                                    <Typography 
+                                      variant="caption" 
+                                      sx={{ 
+                                        display: 'none',
+                                        fontSize: '0.7rem',
+                                        textAlign: 'center',
+                                        color: 'text.secondary',
+                                        px: 0.5
+                                      }}
+                                    >
+                                      {platform.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              } catch (error) {
+                                console.error(`❌ Erro ao processar logo de ${platform.name}:`, error);
+                                return (
+                                  <Box key={`rental-${index}`} sx={{ 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    width: 65,
+                                    height: 65,
+                                    borderRadius: 1,
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.paper',
+                                    border: '1px solid',
+                                    borderColor: 'warning.main'
+                                  }}>
+                                    <Typography 
+                                      variant="caption" 
+                                      sx={{ 
+                                        fontSize: '0.8rem',
+                                        textAlign: 'center',
+                                        color: 'text.secondary',
+                                        px: 0.5
+                                      }}
+                                    >
+                                      {platform.name}
+                                    </Typography>
+                                  </Box>
+                                );
+                              }
+                            })}
+                          </Stack>
+                        </Box>
+                      )}
+                    </>
+                  );
+                })()}
+              </Box>
+            ) : (
+              <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: { xs: 'center', md: 'left' } }}>
+                Nenhuma plataforma disponível no momento.
               </Typography>
             )}
 
-            {/* Duração e Classificação */}
-            {(movie.runtime || movie.certification) && (
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1, 
-                mb: 0.5,
-                justifyContent: 'center'
-              }}>
-                {movie.runtime && (
-                  <>
-                    <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>
-                      {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}min
-                    </Typography>
-                    {movie.certification && (
-                      <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
-                    )}
-                  </>
-                )}
-                {movie.certification && (
-                  <Chip label={movie.certification} size="small" sx={{ bgcolor: themeColor, color: '#fff', fontSize: '0.85rem', height: 22 }} />
-                )}
-              </Box>
-            )}
-
-            {/* Avaliações */}
-            {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
-            (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
-            (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
-            (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: 1.5, 
-                mt: 1,
-                justifyContent: 'center'
-              }}>
-                {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <img src={tmdbLogo} alt="TMDB" style={{ width: 16, height: 16 }} />
-                    <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.vote_average).toFixed(1)}</Typography>
-                  </Box>
-                )}
-                {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <img src={imdbLogo} alt="IMDB" style={{ width: 16, height: 16 }} />
-                    <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
-                  </Box>
-                )}
-                {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 16, height: 16 }} />
-                    <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
-                  </Box>
-                )}
-                {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <img src={metacriticLogo} alt="Metacritic" style={{ width: 16, height: 16 }} />
-                    <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
-                  </Box>
-                )}
-              </Box>
-            ) : null}
+            {/* Disclaimer */}
+            <Typography variant="caption" sx={{ 
+              color: 'text.secondary', 
+              textAlign: { xs: 'center', md: 'left' },
+              fontSize: '0.75rem',
+              fontStyle: 'italic',
+              mt: 1,
+              display: 'block'
+            }}>
+              * Os períodos e termos de teste grátis podem variar. Consulte a plataforma para detalhes atualizados.
+            </Typography>
           </Box>
+
+          {/* Avaliações - Visíveis apenas em mobile */}
+          {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
+          (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
+          (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
+          (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
+            <Box sx={{ 
+              display: { xs: 'flex', md: 'none' },
+              alignItems: 'center', 
+              gap: 1.5, 
+              mb: 2,
+              justifyContent: 'center'
+            }}>
+              {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <img src={tmdbLogo} alt="TMDB" style={{ width: 16, height: 16 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.vote_average).toFixed(1)}</Typography>
+                </Box>
+              )}
+              {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <img src={imdbLogo} alt="IMDB" style={{ width: 16, height: 16 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
+                </Box>
+              )}
+              {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 16, height: 16 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
+                </Box>
+              )}
+              {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <img src={metacriticLogo} alt="Metacritic" style={{ width: 16, height: 16 }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
+                </Box>
+              )}
+            </Box>
+          ) : null}
 
           {/* Gêneros - Visíveis apenas em mobile */}
           {movie.genres && movie.genres.length > 0 && (
@@ -560,7 +822,7 @@ const MovieDetailsPage: React.FC = () => {
                 {movie.genres && movie.genres.map((genre: string) => (
                   <Chip 
                     key={genre} 
-                    label={genre} 
+                    label={String(genre)} 
                     size="small" 
                     sx={{ 
                       fontSize: '0.8rem', 
@@ -576,93 +838,140 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
           )}
 
-          {/* Por que assistir este filme? */}
+          {/* A Análise Emocional do Vibesfilm */}
           <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-            <Typography variant="subtitle1" sx={{ 
-              mb: 0.5, 
+            <Typography variant="h6" sx={{ 
+              mb: 2, 
               color: mode === 'light' ? '#1976d2' : '#fff', 
               textAlign: { xs: 'center', md: 'left' }, 
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              fontWeight: 600
-            }}>{personalizedContent.title}</Typography>
-            <Paper elevation={0} sx={{ 
-              bgcolor: 'transparent', 
-              color: 'text.secondary', 
-              p: 1.5, 
-              borderRadius: 2, 
-              border: `1.5px solid ${themeColor}40`, 
-              fontStyle: 'italic', 
-              maxWidth: 700, 
-              textAlign: { xs: 'center', md: 'left' }, 
-              fontSize: '0.97rem' 
-            }}>
-              {personalizedContent.content}
-            </Paper>
-          </Box>
+              fontSize: { xs: '1.1rem', md: '1.3rem' },
+              fontWeight: 700
+            }}>A Análise Emocional do Vibesfilm</Typography>
 
-          {/* Linha horizontal na cor do sentimento */}
-          <Divider sx={{ borderColor: themeColor, opacity: 0.7, mb: 1.2, width: '100%' }} />
+            {/* 1. A Vibe do Filme */}
+            <Box sx={{ mb: 2, width: '100%' }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 1, 
+                color: mode === 'light' ? '#1976d2' : themeColor, 
+                textAlign: { xs: 'center', md: 'left' }, 
+                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontWeight: 600
+              }}>A Vibe do Filme</Typography>
+              <Paper elevation={0} sx={{ 
+                bgcolor: 'transparent', 
+                color: 'text.secondary', 
+                p: 1.5, 
+                borderRadius: 2, 
+                border: `1.5px solid ${themeColor}40`, 
+                fontStyle: 'italic', 
+                maxWidth: 700, 
+                textAlign: { xs: 'center', md: 'left' }, 
+                fontSize: '0.97rem' 
+              }}>
+                {movie.landingPageHook ? 
+                  movie.landingPageHook.replace(/<[^>]*>/g, '') :
+                  "Este filme oferece uma experiência cinematográfica única que vale a pena assistir."
+                }
+              </Paper>
+            </Box>
 
-          {/* Para quem pode ser recomendado esse filme? */}
-          <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-            <Typography variant="subtitle1" sx={{ 
-              mb: 0.5, 
-              color: mode === 'light' ? '#1976d2' : '#fff', 
-              textAlign: { xs: 'center', md: 'left' }, 
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              fontWeight: 600
-            }}>Por que recomendamos este filme?</Typography>
-            <Paper elevation={0} sx={{ 
-              bgcolor: 'transparent', 
-              color: 'text.secondary', 
-              p: 1.5, 
-              borderRadius: 2, 
-              border: `1.5px solid ${themeColor}40`, 
-              fontStyle: 'italic', 
-              maxWidth: 700, 
-              textAlign: { xs: 'center', md: 'left' }, 
-              fontSize: '0.97rem' 
-            }}>
-              {movie.targetAudienceForLP ? 
-                movie.targetAudienceForLP :
-                `Este filme foi cuidadosamente selecionado para oferecer uma experiência cinematográfica única.`
-              }
-              
-              {/* Tags Emocionais */}
-              {movie.emotionalTags && movie.emotionalTags.length > 0 && (
-                <Box sx={{ mt: 1.5 }}>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      mb: 1,
-                      color: mode === 'light' ? '#1976d2' : themeColor,
-                      fontWeight: 500,
-                      fontSize: '0.9rem',
-                      textAlign: { xs: 'center', md: 'left' }
-                    }}
-                  >
-                    Tags Emocionais Chave:
-                  </Typography>
-                  <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                    {movie.emotionalTags.slice(0, 6).map((tag: string, index: number) => (
-                      <Chip 
-                        key={index} 
-                        label={tag} 
-                        size="small" 
-                        sx={{ 
-                          fontSize: '0.8rem', 
-                          height: 24,
-                          bgcolor: mode === 'light' ? 'rgba(25, 118, 210, 0.1)' : `${themeColor}15`,
-                          color: mode === 'light' ? '#1976d2' : themeColor,
-                          border: `1px solid ${mode === 'light' ? 'rgba(25, 118, 210, 0.3)' : `${themeColor}30`}`,
-                          '& .MuiChip-label': { px: 1 }
-                        }} 
-                      />
-                    ))}
-                  </Stack>
+            {/* 2. Para Quem Recomendamos? */}
+            <Box sx={{ mb: 2, width: '100%' }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 1, 
+                color: mode === 'light' ? '#1976d2' : themeColor, 
+                textAlign: { xs: 'center', md: 'left' }, 
+                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontWeight: 600
+              }}>Para Quem Recomendamos?</Typography>
+              <Paper elevation={0} sx={{ 
+                bgcolor: 'transparent', 
+                color: 'text.secondary', 
+                p: 1.5, 
+                borderRadius: 2, 
+                border: `1.5px solid ${themeColor}40`, 
+                fontStyle: 'italic', 
+                maxWidth: 700, 
+                textAlign: { xs: 'center', md: 'left' }, 
+                fontSize: '0.97rem' 
+              }}>
+                {movie.targetAudienceForLP ? 
+                  movie.targetAudienceForLP :
+                  "Este filme foi cuidadosamente selecionado para oferecer uma experiência cinematográfica única."
+                }
+              </Paper>
+            </Box>
+
+            {/* 3. Por que recomendamos para você? (só aparece se veio de uma jornada) */}
+            {sentimentId && intentionType && reason && (
+              <Box sx={{ mb: 2, width: '100%' }}>
+                <Typography variant="subtitle1" sx={{ 
+                  mb: 1, 
+                  color: mode === 'light' ? '#1976d2' : themeColor, 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  fontWeight: 600
+                }}>
+                  Por que recomendamos para <em>você</em>?
+                </Typography>
+                <Paper elevation={0} sx={{ 
+                  bgcolor: 'transparent', 
+                  color: 'text.secondary', 
+                  p: 1.5, 
+                  borderRadius: 2, 
+                  border: `1.5px solid ${themeColor}40`, 
+                  fontStyle: 'italic', 
+                  maxWidth: 700, 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: '0.97rem' 
+                }}>
+                  {personalizedContent.content}
+                </Paper>
+              </Box>
+            )}
+
+            {/* 4. Tags Emocionais Chave */}
+            {movie.emotionalTags && movie.emotionalTags.length > 0 && (
+              <Box sx={{ mb: 2, width: '100%' }}>
+                <Typography variant="subtitle1" sx={{ 
+                  mb: 1, 
+                  color: mode === 'light' ? '#1976d2' : themeColor, 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  fontWeight: 600
+                }}>Tags Emocionais Chave:</Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexWrap: 'wrap', 
+                  gap: 1, 
+                  justifyContent: { xs: 'center', md: 'flex-start' },
+                  maxWidth: 700
+                }}>
+                  {movie.emotionalTags
+                    .sort((a, b) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
+                    .slice(0, 4) // Pegar apenas as 4 mais relevantes
+                    .map((tag: any, index: number) => (
+                    <Box
+                      key={index}
+                      component="li"
+                      sx={{
+                        listStyle: 'none',
+                        bgcolor: mode === 'light' ? 'rgba(25, 118, 210, 0.1)' : `${themeColor}15`,
+                        color: mode === 'light' ? '#1976d2' : themeColor,
+                        border: `1px solid ${mode === 'light' ? 'rgba(25, 118, 210, 0.3)' : `${themeColor}30`}`,
+                        borderRadius: 1,
+                        px: 1.5,
+                        py: 0.5,
+                        fontSize: '0.9rem',
+                        fontWeight: 500
+                      }}
+                    >
+                      {tag.subSentiment}
+                    </Box>
+                  ))}
                 </Box>
-              )}
-            </Paper>
+              </Box>
+            )}
           </Box>
 
           {/* Linha horizontal na cor do sentimento */}
@@ -780,106 +1089,6 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
           ) : null}
 
-          {/* Disponível em */}
-          <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-            <Typography variant="subtitle1" sx={{ 
-              mb: 0.5, 
-              color: mode === 'light' ? '#1976d2' : '#fff', 
-              textAlign: { xs: 'center', md: 'left' }, 
-              fontSize: { xs: '1rem', md: '1.1rem' },
-              fontWeight: 600
-            }}>Disponível em:</Typography>
-            
-            {movieData?.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0 ? (
-              <Stack direction="row" spacing={1} sx={{ 
-                flexWrap: 'wrap', 
-                justifyContent: { xs: 'center', md: 'flex-start' },
-                gap: 1
-              }}>
-                {movieData.subscriptionPlatforms.map((platform: any, index: number) => {
-                  try {
-                    const logoUrl = getPlatformLogoUrlMedium(platform.logoPath);
-                    return (
-                      <Box key={index} sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        width: 65,
-                        height: 65,
-                        borderRadius: 1,
-                        overflow: 'hidden',
-                        bgcolor: 'background.paper',
-                        border: '1px solid',
-                        borderColor: 'divider'
-                      }}>
-                        <img 
-                          src={logoUrl} 
-                          alt={platform.name}
-                          style={{ 
-                            width: '100%', 
-                            height: '100%', 
-                            objectFit: 'contain',
-                            padding: '6px'
-                          }}
-                          onError={(e) => {
-                            console.error(`❌ Erro ao carregar logo de ${platform.name}:`, e);
-                            // Fallback para texto se a imagem falhar
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.nextElementSibling?.setAttribute('style', 'display: block');
-                          }}
-                        />
-                        <Typography 
-                          variant="caption" 
-                          sx={{ 
-                            display: 'none',
-                            fontSize: '0.7rem',
-                            textAlign: 'center',
-                            color: 'text.secondary',
-                            px: 0.5
-                          }}
-                        >
-                          {platform.name}
-                        </Typography>
-                      </Box>
-                    );
-                  } catch (error) {
-                    console.error(`❌ Erro ao processar logo de ${platform.name}:`, error);
-                    return (
-                      <Box key={index} sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center',
-                        width: 65,
-                        height: 65,
-                        borderRadius: 1,
-                        overflow: 'hidden',
-                        bgcolor: 'background.paper',
-                        border: '1px solid',
-                        borderColor: 'divider'
-                      }}>
-                        <Typography 
-                          variant="caption" 
-                          sx={{ 
-                            fontSize: '0.8rem',
-                            textAlign: 'center',
-                            color: 'text.secondary',
-                            px: 0.5
-                          }}
-                        >
-                          {platform.name}
-                        </Typography>
-                      </Box>
-                    );
-                  }
-                })}
-              </Stack>
-            ) : (
-              <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: { xs: 'center', md: 'left' } }}>
-                Nenhuma plataforma disponível no momento.
-              </Typography>
-            )}
-          </Box>
         </Box>
       </Box>
 
@@ -894,6 +1103,116 @@ const MovieDetailsPage: React.FC = () => {
           </Button>
         </Stack>
       </Box>
+
+      {/* Modal do Trailer */}
+      <Modal
+        open={trailerModalOpen}
+        onClose={() => setTrailerModalOpen(false)}
+        aria-labelledby="trailer-modal-title"
+        aria-describedby="trailer-modal-description"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 2
+        }}
+      >
+        <Box sx={{
+          position: 'relative',
+          width: { xs: '95%', sm: '90%', md: '80%', lg: '70%' },
+          maxWidth: '900px',
+          maxHeight: '90vh',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          overflow: 'hidden'
+        }}>
+          {/* Botão de fechar */}
+          <IconButton
+            onClick={() => setTrailerModalOpen(false)}
+            sx={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              bgcolor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              zIndex: 1,
+              '&:hover': {
+                bgcolor: 'rgba(0, 0, 0, 0.7)',
+              }
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          {/* Container do vídeo */}
+          <Box sx={{
+            width: '100%', 
+            maxWidth: { xs: '100%', sm: '600px', md: '800px' }, // Responsivo
+            height: 0, 
+            paddingBottom: { xs: '56.25%', sm: '50%', md: '42.85%' }, // Responsivo
+            position: 'relative',
+            borderRadius: 2,
+            overflow: 'hidden',
+            mx: 'auto' // Centralizar
+          }}>
+            {movie?.mainTrailer ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${movie.mainTrailer.key}`}
+                title={movie.mainTrailer.name}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  border: 0
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <Box sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'grey.100',
+                color: 'text.secondary',
+                p: 3
+              }}>
+                <Typography variant="h6" sx={{ mb: 1, color: 'text.primary' }}>
+                  Trailer não disponível
+                </Typography>
+                <Typography variant="body2" textAlign="center">
+                  Este filme não possui trailer digital disponível no momento.
+                </Typography>
+              </Box>
+            )}
+          </Box>
+
+          {/* Informações do trailer */}
+          {movie?.mainTrailer && (
+            <Box sx={{ 
+              p: 2, 
+              textAlign: 'center',
+              borderTop: '1px solid',
+              borderColor: 'divider'
+            }}>
+              <Typography variant="body2" color="text.secondary">
+                {movie.mainTrailer.name} • {movie.mainTrailer.language === 'pt-BR' ? 'Dublado' : 
+                  movie.mainTrailer.language === 'pt' ? 'Legendado' : 
+                  movie.mainTrailer.language === 'en' ? 'Original' : movie.mainTrailer.language}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 };

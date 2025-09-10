@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import MovieDetailsPage from './MovieDetailsPage';
-import { MovieDetail } from './landing/MovieDetail';
+import MovieDetail from './landing/MovieDetail';
 
 const MovieDetailWrapper: React.FC = () => {
   const { identifier } = useParams();
@@ -19,7 +19,7 @@ const MovieDetailWrapper: React.FC = () => {
     return <MovieDetailsPage />;
   } else {
     // Para slug, usar a Landing Page
-    return <MovieDetail slug={identifier} />;
+    return <MovieDetail slug={identifier || ''} />;
   }
 };
 

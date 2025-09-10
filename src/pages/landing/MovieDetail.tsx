@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button, Container, IconButton, AppBar, Toolbar, Tooltip } from '@mui/material';
 import { MovieMetaTags } from '../../components/landing/MetaTags';
@@ -53,7 +53,11 @@ interface Movie {
   contentWarnings?: string;
   targetAudienceForLP?: string;
   awardsSummary?: string;
-  emotionalTags?: string[];
+  emotionalTags?: Array<{
+    mainSentiment: string;
+    subSentiment: string;
+    relevance: number;
+  }>;
   mainCast?: Array<{
     actorName: string;
     characterName: string;
@@ -218,7 +222,7 @@ const extractHookText = (landingPageHook: string): string => {
 
 
 
-export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
+const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
   const { identifier } = useParams<{ identifier: string }>();
   const navigate = useNavigate();
   const { mode, toggleThemeMode } = useThemeManager();
@@ -252,7 +256,24 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
     slug?: string;
   }>>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'trailer' | 'cast' | 'reviews' | 'similar'>('similar');
+  const [activeTab, setActiveTab] = useState<'trailer' | 'cast' | 'reviews' | 'awards' | 'similar'>('similar');
+  const [showFullCast, setShowFullCast] = useState(false);
+
+  // Filtrar elenco completo para remover duplicatas do elenco principal
+  // Remove atores que já estão no elenco principal
+  const filteredFullCast = useMemo(() => {
+    if (!movie?.fullCast || !movie?.mainCast) return movie?.fullCast || [];
+    
+    // Criar lista de nomes do elenco principal para comparação
+    const mainCastNames = movie.mainCast.map(actor => 
+      actor.actorName.toLowerCase().trim()
+    );
+    
+    // Filtrar elenco completo removendo atores do elenco principal
+    return movie.fullCast.filter(actor => 
+      !mainCastNames.includes(actor.actorName.toLowerCase().trim())
+    );
+  }, [movie?.fullCast, movie?.mainCast]);
 
 
   // Usar o slug da prop ou do parâmetro da URL
@@ -294,110 +315,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         setLoading(false);
       } catch (error) {
         console.error('❌ MovieDetail - Erro ao buscar dados reais:', error);
-        
-        // Fallback para dados mock se a API falhar
-        console.log('🔄 MovieDetail - Usando dados mock como fallback');
-        const mockMovie = {
-          id: '1',
-          title: 'A Caso do Lago',
-          original_title: 'Sharp Objects',
-          year: 2018,
-          director: 'Reese Witherspoon',
-          description: 'Uma investigadora retorna à sua cidade natal para resolver um caso de assassinato que pode estar relacionado a um crime não resolvido de 25 anos atrás.',
-          thumbnail: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-          vote_average: 7.8,
-          vote_count: 8900,
-          runtime: 115,
-          genres: ['Drama', 'Mistério', 'Suspense'],
-          platforms: [
-            {
-              streamingPlatform: {
-                name: 'HBO Max',
-                category: 'streaming'
-              },
-              accessType: 'subscription'
-            },
-            {
-              streamingPlatform: {
-                name: 'Netflix',
-                category: 'streaming'
-              },
-              accessType: 'subscription'
-            },
-            {
-              streamingPlatform: {
-                name: 'Amazon Prime',
-                category: 'streaming'
-              },
-              accessType: 'rental'
-            }
-          ],
-          movieSentiments: [
-            {
-              mainSentiment: {
-                name: 'Mistério',
-                description: 'Filmes que despertam curiosidade e suspense'
-              },
-              subSentiment: {
-                name: 'Investigação',
-                description: 'Histórias de descoberta e resolução'
-              }
-            },
-            {
-              mainSentiment: {
-                name: 'Drama',
-                description: 'Filmes com narrativas emocionais profundas'
-              },
-              subSentiment: {
-                name: 'Suspense',
-                description: 'Tensão e expectativa'
-              }
-            }
-          ],
-          movieSuggestionFlows: [
-            {
-              reason: 'Ideal para quem gosta de mistérios e investigações',
-              relevance: 0.95,
-              journeyOptionFlow: {
-                text: 'Quero algo misterioso',
-                journeyStepFlow: {
-                  question: 'Que tipo de história você busca hoje?',
-                  journeyFlow: {
-                    mainSentiment: {
-                      name: 'Mistério'
-                    }
-                  }
-                }
-              }
-            }
-          ],
-          quotes: [
-            {
-              id: 1,
-              text: "Um feito cinematográfico arrebatador. Você vive cada segundo de perigo junto com os protagonistas. É a prova de que o cinema ainda pode nos surpreender.",
-              author: "Peter Debruge",
-              vehicle: "Variety",
-              url: "https://variety.com/2024/1917-review/"
-            },
-            {
-              id: 2,
-              text: "Uma experiência visceralmente imersiva. A câmera é um terceiro soldado correndo, se escondendo e sofrendo junto com os personagens. É uma obra-prima.",
-              author: "Jason Bailey",
-              vehicle: "The New York Times",
-              url: "https://www.nytimes.com/2024/1917-review/"
-            },
-            {
-              id: 3,
-              text: "Um filme que merece cada Oscar que ganhou. Uma jornada angustiante e belamente filmada que deixa você sem fôlego.",
-              author: "Rogerio Garcia",
-              vehicle: "Omelete",
-              url: "https://www.omelete.com.br/1917-review/"
-            }
-          ]
-        };
-        
-        setMovie(mockMovie);
-        // setSimilarMovies([]);
+        setMovie(null);
         setLoading(false);
       }
     };
@@ -421,7 +339,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-              vibesFilm
+              vibesfilm
             </Typography>
             <IconButton 
               sx={{ 
@@ -479,42 +397,36 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         />
       )}
       {/* Header */}
-        <AppBar position="static" sx={{ 
+      <AppBar position="static" sx={{ 
           backgroundColor: mode === 'dark' ? 'transparent' : 'rgba(0,0,0,0.05)',
-          boxShadow: 'none',
+        boxShadow: 'none', 
           borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)'
-        }}>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
-              vibesFilm
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/')}
-                sx={{ color: 'text.primary' }}
-              >
-                Voltar
-              </Button>
-              <IconButton 
-                sx={{ 
-                  ml: 1, 
-                  color: mode === 'dark' ? 'white' : 'black',
-                  '&:hover': {
-                    backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                  }
-                }} 
-                onClick={toggleThemeMode}
-              >
-                {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
+      }}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
+              vibesfilm
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton 
+              sx={{ 
+                ml: 1, 
+                color: mode === 'dark' ? 'white' : 'black',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }} 
+              onClick={toggleThemeMode}
+            >
+              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </AppBar>
 
-      <Container maxWidth="xl" sx={{ py: 1, px: { xs: 1, sm: 2, md: 3 } }}>
-        {/* Hero Section - Layout ajustado */}
+      <Container maxWidth="xl" sx={{ py: 1, px: { xs: 2, sm: 2, md: 3 }, overflow: 'hidden' }}>
+        {/* Hero Section - Layout Desktop */}
         <Box sx={{ mb: 4 }}>
+          {/* Layout Desktop */}
           <Box 
             sx={{ 
               display: 'flex', 
@@ -524,6 +436,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
               gap: { xs: 0, md: 6 },
               pt: 1,
               maxWidth: '100%',
+              overflow: 'hidden',
             }}
           >
             {/* Poster e informações - Lado esquerdo */}
@@ -563,170 +476,25 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 </IconButton>
               </Box>
 
-              {/* Seção 1: Dados de Rating */}
-              <Box sx={{ mb: 2, width: '100%' }}>
-                <Typography variant="body2" sx={{ 
-                  mb: 1, 
-                  color: '#1976d2', 
-                  fontWeight: 500,
-                  textAlign: { xs: 'center', md: 'left' },
-                  fontSize: { xs: '0.95rem', md: '1rem' }
-                }}>
-                  Rating
-                </Typography>
-                <Stack direction="row" spacing={1} justifyContent={{ xs: 'center', md: 'flex-start' }} alignItems="center" sx={{ flexWrap: 'wrap' }}>
-                  {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <RatingIcon src={tmdbLogo} alt="TMDB" size={16} />
-                      <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{Number(movie.vote_average).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <RatingIcon src={imdbLogo} alt="IMDb" size={14} />
-                      <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <RatingIcon src={rtLogo} alt="Rotten Tomatoes" size={14} />
-                      <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <RatingIcon src={metacriticLogo} alt="Metacritic" size={14} />
-                      <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-
-              {/* Seção 2: Gêneros */}
-              <Box sx={{ mb: 2, width: '100%' }}>
-                <Typography variant="body2" sx={{ 
-                  mb: 1, 
-                  color: '#1976d2', 
-                  fontWeight: 500,
-                  textAlign: { xs: 'center', md: 'left' },
-                  fontSize: { xs: '0.95rem', md: '1rem' }
-                }}>
-                  Gêneros
-                </Typography>
-                <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                  {movie.genres.map((genre, index) => (
-                    <Chip 
-                      key={index} 
-                      label={genre} 
-                      size="medium" 
-                      sx={{ 
-                        fontSize: { xs: '0.85rem', md: '0.9rem' }, 
-                        height: 28,
-                        '& .MuiChip-label': { px: 1.5 }
-                      }} 
-                    />
-                  ))}
-                </Stack>
-              </Box>
-
-              {/* Seção 3: Diretor */}
-              <Box sx={{ width: '100%' }}>
-                <Typography variant="body2" sx={{ 
-                  mb: 1, 
-                  color: '#1976d2', 
-                  fontWeight: 500,
-                  textAlign: { xs: 'center', md: 'left' },
-                  fontSize: { xs: '0.95rem', md: '1rem' }
-                }}>
-                  Diretor
-                </Typography>
-                <Typography variant="body2" sx={{ 
-                  fontSize: { xs: '0.95rem', md: '1rem' },
-                  textAlign: { xs: 'center', md: 'left' }
-                }}>
-                  {movie.director || 'Não informado'}
-                </Typography>
-              </Box>
-
-              {/* Seção 4: Elenco Principal */}
-              {movie.mainCast && movie.mainCast.length > 0 && (
-                <Box sx={{ width: '100%', mt: 2 }}>
-                  <Typography variant="body2" sx={{ 
-                    mb: 1, 
-                    color: '#1976d2', 
-                    fontWeight: 500,
-                    textAlign: { xs: 'center', md: 'left' },
-                    fontSize: { xs: '0.95rem', md: '1rem' }
-                  }}>
-                    Elenco Principal
-                  </Typography>
-                  <Stack spacing={0.75}>
-                    {movie.mainCast.map((actor, index) => (
-                      <Typography key={index} variant="body2" sx={{ 
-                        fontSize: { xs: '0.9rem', md: '0.95rem' },
-                        textAlign: { xs: 'center', md: 'left' },
-                        lineHeight: 1.4
-                      }}>
-                        <span style={{ fontWeight: 500, color: 'text.primary' }}>
-                          {actor.actorName}
-                        </span>
-                        <span style={{ color: 'text.secondary', fontSize: '0.85em', fontStyle: 'italic' }}>
-                          {' '}como {actor.characterName}
-                        </span>
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Box>
-              )}
-
-              {/* Seção 5: Premiações Oscar ou Premiações Gerais */}
-              {movie.oscarAwards ? (
-                // Se tem dados do Oscar, mostrar seção de Reconhecimento no Oscar
-                <OscarRecognition 
-                  movieTitle={movie.title}
-                  oscarAwards={movie.oscarAwards}
-                />
-              ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
-                // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
-                <Box sx={{ width: '100%', mt: 2 }}>
-                  <Typography variant="body2" sx={{ 
-                    mb: 1, 
-                    color: '#1976d2', 
-                    fontWeight: 500,
-                    textAlign: { xs: 'center', md: 'left' },
-                    fontSize: { xs: '0.95rem', md: '1rem' }
-                  }}>
-                    Premiações
-                  </Typography>
-                  <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                    {(() => {
-                      const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
-                      return (
-                        <>
-                          <Typography variant="body2" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '0.95rem' },
-                            lineHeight: 1.4,
+              {/* H1 para Mobile - Logo após a Hero */}
+              <Box sx={{ 
+                display: { xs: 'block', md: 'none' },
+                mt: 2,
+                mb: 2,
+                px: 1
+              }}>
+                <Typography variant="h1" component="h1" sx={{ 
+                  fontWeight: 'bold', 
+                  textAlign: 'center', 
+                  fontSize: '1.4rem', 
+                  lineHeight: 1.3,
                             color: 'text.primary',
-                            fontWeight: 500
+                  wordBreak: 'break-word',
+                  hyphens: 'auto'
                           }}>
-                            {firstLine}
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesfilm
                           </Typography>
-                          {secondLine && (
-                            <Typography variant="body2" sx={{ 
-                              fontSize: { xs: '0.85rem', md: '0.9rem' },
-                              lineHeight: 1.4,
-                              color: 'text.secondary',
-                              mt: 0.25
-                            }}>
-                              {secondLine}
-                            </Typography>
-                          )}
-                        </>
-                      );
-                    })()}
                   </Box>
-                </Box>
-              ) : null}
             </Box>
 
             {/* Informações do filme - Lado direito */}
@@ -738,26 +506,26 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
               alignItems: { xs: 'center', md: 'flex-start' }, 
               maxWidth: { xs: '100%', md: 'calc(100% - 320px - 48px)' } // 320px da coluna esquerda + 48px do gap
             }}>
-              {/* Título e ano - H1 */}
+              {/* Título e ano - H1 - Mobile: abaixo da Hero */}
               <Box sx={{ 
-                display: 'flex', 
+                display: { xs: 'none', md: 'flex' }, 
                 alignItems: 'baseline', 
                 gap: 1, 
                 mb: 1, 
-                justifyContent: { xs: 'center', md: 'flex-start' } 
+                justifyContent: 'flex-start' 
               }}>
                 <Typography variant="h1" component="h1" sx={{ 
                   fontWeight: 'bold', 
-                  textAlign: { xs: 'center', md: 'left' }, 
-                  fontSize: { xs: '1.5rem', md: '2rem' }, 
+                  textAlign: 'left', 
+                  fontSize: '2rem', 
                   lineHeight: 1.2,
                   color: 'text.primary'
                 }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesFilm
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesfilm
                 </Typography>
               </Box>
 
-              {/* Título original, duração e classificação */}
+              {/* Título original, diretor, duração e classificação */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.2, justifyContent: { xs: 'center', md: 'flex-start' }, flexWrap: 'wrap' }}>
                 <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
                   Título original: <span style={{ color: '#1976d2', fontWeight: 500 }}>
@@ -766,6 +534,16 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                       : movie.title}
                   </span>
                 </Typography>
+                {movie.director && (
+                  <>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
+                      |
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
+                      Diretor: <span style={{ color: '#1976d2', fontWeight: 500 }}>{movie.director}</span>
+                    </Typography>
+                  </>
+                )}
                 {movie.runtime && (
                   <>
                     <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
@@ -777,6 +555,9 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 {movie.certification && (
                   <>
                     <Typography variant="body2" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+                    <Typography variant="body2" sx={{ fontSize: { xs: '0.95rem', md: '1rem' } }}>
+                      Classificação: 
+                    </Typography>
                     <Tooltip title="Classificação etária" arrow>
                       <Chip label={movie.certification} size="small" sx={{ bgcolor: '#1976d2', color: '#fff', fontSize: '0.85rem', height: 22 }} />
                     </Tooltip>
@@ -824,50 +605,34 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
 
 
 
-              {/* Por que assistir? - H2 */}
+              {/* Qual é a Vibe de movie.title? - H2 */}
               <Box sx={{ mt: 1, mb: 2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: { xs: 'column', md: 'row' }, 
-                  alignItems: { xs: 'center', md: 'flex-start' }, 
-                  justifyContent: 'space-between',
-                  gap: 2,
+                {/* Desktop: Apenas o título */}
+                <Typography variant="h2" component="h2" sx={{ 
+                  color: '#1976d2', 
+                  textAlign: 'left', 
+                  fontSize: '1.3rem', 
+                  fontWeight: 600,
+                  margin: 0,
                   mb: 0.5,
-                  width: '100%'
+                  display: { xs: 'none', md: 'block' }
                 }}>
-                  <Typography variant="h2" component="h2" sx={{ 
-                    color: '#1976d2', 
-                    textAlign: { xs: 'center', md: 'left' }, 
-                    fontSize: { xs: '1.1rem', md: '1.3rem' }, 
-                    fontWeight: 600 
-                  }}>
-                    Por que assistir a este filme?
-                  </Typography>
-                  
-                  <Button
-                    variant="contained"
-                    size="medium"
-                    onClick={() => navigate('/')}
-                    sx={{
-                      bgcolor: '#FF9F1C',
-                      color: 'white',
-                      fontSize: { xs: '0.9rem', md: '1rem' },
-                      fontWeight: 600,
-                      py: 1.5,
-                      px: 3,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      boxShadow: 2,
-                      '&:hover': {
-                        bgcolor: '#FF8C00',
-                        boxShadow: 3,
-                      },
-                      minWidth: { xs: '100%', md: 'auto' }
-                    }}
-                  >
-                    Encontre filmes para sua Vibe!
-                  </Button>
-                </Box>
+                  Qual é a Vibe de {movie?.title}?
+                </Typography>
+
+                {/* Mobile: Apenas o título */}
+                <Typography variant="h2" component="h2" sx={{ 
+                  color: '#1976d2', 
+                  textAlign: 'center', 
+                  fontSize: '1.1rem', 
+                  fontWeight: 600,
+                  mb: 0.5,
+                  display: { xs: 'block', md: 'none' }
+                }}>
+                  Qual é a Vibe de {movie?.title}?
+                </Typography>
+                
+                {/* Texto "Prepare-se para..." */}
                 <Paper elevation={0} sx={{ 
                   bgcolor: 'transparent', 
                   color: 'text.secondary', 
@@ -876,33 +641,75 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   border: '1.5px solid #1976d240', 
                   fontStyle: 'italic', 
                   textAlign: { xs: 'center', md: 'left' }, 
-                  fontSize: '0.97rem' 
+                  fontSize: '0.97rem',
+                  mb: 2
                 }}>
-                  {movie?.landingPageHook ? extractHookText(movie.landingPageHook) : 'Este filme foi cuidadosamente selecionado para oferecer uma experiência cinematográfica única que ressoa com diferentes estados emocionais. Sua narrativa envolvente e personagens profundos criam uma jornada que pode inspirar, consolar ou desafiar, dependendo do que você busca no momento.'}
-                  
-                  {/* Content Warnings dentro do box */}
-                  {movie?.contentWarnings && 
-                   movie.contentWarnings !== 'Atenção: nenhum alerta de conteúdo significativo.' && (
-                    <Box sx={{ mt: 1.5 }}>
-                      <Typography 
-                        variant="h6" 
-                        component="p" 
-                        sx={{ 
-                          color: 'text.secondary',
-                          fontStyle: 'italic',
-                          fontSize: '0.85rem',
-                          textAlign: { xs: 'center', md: 'left' },
-                          opacity: 0.8
-                        }}
-                      >
-                        {movie.contentWarnings}
-                      </Typography>
-                    </Box>
-                  )}
+                  {movie?.landingPageHook ? extractHookText(movie.landingPageHook) : 'Prepare-se para uma experiência cinematográfica única que ressoa com diferentes estados emocionais. Sua narrativa envolvente e personagens profundos criam uma jornada que pode inspirar, consolar ou desafiar, dependendo do que você busca no momento.'}
                 </Paper>
+
+                {/* Tags Emocionais Chave - H3 */}
+                {movie?.emotionalTags && movie.emotionalTags.length > 0 && (
+                  <Box sx={{ mb: 2, width: '100%' }}>
+                    <Typography variant="h3" component="h3" sx={{ 
+                      mb: 1, 
+                      color: '#1976d2', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1rem', md: '1.1rem' }, 
+                      fontWeight: 600 
+                    }}>
+                      Tags Emocionais Chave:
+                    </Typography>
+                    <Box component="ul" sx={{ 
+                      pl: 2, 
+                      m: 0,
+                      textAlign: { xs: 'center', md: 'left' }
+                    }}>
+                      {movie.emotionalTags
+                        .sort((a, b) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
+                        .slice(0, 4) // Pegar apenas as 4 mais relevantes
+                        .map((tag, index) => (
+                        <Box component="li" key={index} sx={{ 
+                          mb: 0.5,
+                          fontSize: { xs: '0.9rem', md: '1rem' },
+                          color: 'text.primary'
+                        }}>
+                          {tag.subSentiment}
+                        </Box>
+                      ))}
+                    </Box>
+                  </Box>
+                )}
+
+                {/* Alerta de Conteúdo - H3 */}
+                {movie?.contentWarnings && 
+                 movie.contentWarnings !== 'Atenção: nenhum alerta de conteúdo significativo.' && (
+                  <Box sx={{ mb: 2, width: '100%' }}>
+                    <Typography variant="h3" component="h3" sx={{ 
+                      mb: 1, 
+                      color: '#ff6b35', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1rem', md: '1.1rem' }, 
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      justifyContent: { xs: 'center', md: 'flex-start' }
+                    }}>
+                      ⚠️ Alerta de Conteúdo
+                    </Typography>
+                    <Typography variant="body1" sx={{ 
+                      fontSize: { xs: '0.9rem', md: '1rem' },
+                      color: 'text.primary',
+                      textAlign: { xs: 'center', md: 'left' }
+                    }}>
+                      <span style={{ fontWeight: 600 }}>Atenção: </span>{movie.contentWarnings.replace('Atenção: ', '')}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
 
-              {/* Para quem pode ser esse filme? - H2 */}
+
+              {/* Para Quem o vibesfilm Recomenda "movie.title"? - H2 */}
               <Box sx={{ mt: 1, mb: 2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: { xs: 'center', md: 'flex-start' } }}>
                 <Typography variant="h2" component="h2" sx={{ 
                   mb: 0.5, 
@@ -911,7 +718,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   fontSize: { xs: '1.1rem', md: '1.3rem' }, 
                   fontWeight: 600 
                 }}>
-                  Para quem pode ser recomendado este filme?
+                  Para Quem o vibesfilm Recomenda "{movie?.title}"?
                 </Typography>
                 <Paper elevation={0} sx={{ 
                   bgcolor: 'transparent', 
@@ -921,86 +728,81 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   border: '1.5px solid #1976d240', 
                   fontStyle: 'italic', 
                   textAlign: { xs: 'center', md: 'left' }, 
-                  fontSize: '0.97rem' 
+                  fontSize: '0.97rem',
+                  mb: 2
                 }}>
                   {movie?.targetAudienceForLP ? 
                     movie.targetAudienceForLP :
-                    `Este filme foi cuidadosamente selecionado para oferecer uma experiência cinematográfica única.`
+                    'Este filme é ideal para quem busca uma experiência cinematográfica única e envolvente.'
                   }
-                  
-                  {/* Tags Emocionais */}
-                  {movie?.emotionalTags && movie.emotionalTags.length > 0 && (
-                    <Box sx={{ mt: 1.5 }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          mb: 1,
-                          color: '#1976d2',
-                          fontWeight: 500,
-                          fontSize: '0.9rem',
-                          textAlign: { xs: 'center', md: 'left' }
-                        }}
-                      >
-                        Tags Emocionais Chave:
-                      </Typography>
-                      <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                        {movie.emotionalTags.slice(0, 6).map((tag, index) => (
-                          <Chip 
-                            key={index} 
-                            label={tag} 
-                            size="small" 
-                            sx={{ 
-                              fontSize: '0.8rem', 
-                              height: 24,
-                              bgcolor: 'rgba(25, 118, 210, 0.1)',
-                              color: '#1976d2',
-                              border: '1px solid rgba(25, 118, 210, 0.3)',
-                              '& .MuiChip-label': { px: 1 }
-                            }} 
-                          />
-                        ))}
-                      </Stack>
-                    </Box>
-                  )}
                 </Paper>
-              </Box>
 
-              {/* CTA Repetido */}
-              <Box sx={{ mt: 2, mb: 2, width: '100%', display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                <Button
-                  variant="contained"
-                  size="medium"
-                  onClick={() => navigate('/')}
-                  sx={{
-                    bgcolor: '#FF9F1C',
-                    color: 'white',
-                    fontSize: { xs: '0.9rem', md: '1rem' },
-                    fontWeight: 600,
-                    py: 1.5,
-                    px: 3,
-                    borderRadius: 2,
-                    textTransform: 'none',
-                    boxShadow: 2,
-                    '&:hover': {
-                      bgcolor: '#FF8C00',
+                {/* CTA "Encontre o Filme Perfeito para Sua Vibe" */}
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: { xs: 'center', md: 'flex-start' },
+                  width: '100%'
+                }}>
+                  <Typography variant="h3" component="h3" sx={{ 
+                    mb: 1, 
+                    color: '#1976d2', 
+                    textAlign: { xs: 'center', md: 'left' }, 
+                    fontSize: { xs: '1rem', md: '1.1rem' }, 
+                    fontWeight: 600 
+                  }}>
+                    Gostou da nossa análise?
+                  </Typography>
+                  
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={() => navigate('/')}
+                    sx={{
+                      bgcolor: '#ff6b35',
+                      color: 'white',
+                      fontSize: { xs: '1rem', md: '1.1rem' },
+                      fontWeight: 600,
+                      py: 2,
+                      px: 4,
+                      borderRadius: 2,
+                      textTransform: 'none',
                       boxShadow: 3,
-                    },
-                    minWidth: { xs: '100%', md: 'auto' }
-                  }}
-                >
-                  Descubra seu filme ideal agora
-                </Button>
+                      '&:hover': {
+                        bgcolor: '#e55a2b',
+                        boxShadow: 4,
+                      },
+                      minWidth: { xs: '100%', md: 'auto' },
+                      mb: 1
+                    }}
+                  >
+                    Encontre o Filme Perfeito para Sua Vibe
+                  </Button>
+
+                  {/* Microcopy */}
+                  <Typography variant="body2" sx={{ 
+                    fontSize: { xs: '0.8rem', md: '0.9rem' },
+                    color: 'text.secondary',
+                    textAlign: { xs: 'center', md: 'left' },
+                    fontStyle: 'italic',
+                    maxWidth: { xs: '100%', md: '400px' },
+                    lineHeight: 1.4
+                  }}>
+                    Use a curadoria emocional do vibesfilm para nunca mais perder tempo escolhendo o que assistir.
+                  </Typography>
+                </Box>
               </Box>
 
               {/* Sinopse - H2 */}
               {movie.description && (
-                <Box sx={{ mt: 2, width: '100%' }}>
+                <Box sx={{ mt: 3, width: '100%' }}>
                   <Typography variant="h2" component="h2" sx={{ 
-                    mb: 1, 
                     color: '#1976d2', 
                     textAlign: { xs: 'center', md: 'left' }, 
                     fontSize: { xs: '1.1rem', md: '1.3rem' }, 
-                    fontWeight: 600 
+                    fontWeight: 600,
+                    margin: 0,
+                    mb: 1
                   }}>
                     Sinopse
                   </Typography>
@@ -1013,6 +815,144 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   </Typography>
                 </Box>
               )}
+
+              {/* Notas e Gêneros - H2 */}
+              <Box sx={{ mt: 3, width: '100%' }}>
+                <Typography variant="h2" component="h2" sx={{ 
+                  color: '#1976d2', 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: { xs: '1.1rem', md: '1.3rem' }, 
+                  fontWeight: 600,
+                  margin: 0,
+                  mb: 2
+                }}>
+                  Notas e Gêneros
+                </Typography>
+                
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', md: 'row' }, 
+                  gap: { xs: 2, md: 4 },
+                  alignItems: { xs: 'center', md: 'flex-start' }
+                }}>
+                  {/* Notas da Crítica */}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="h3" component="h3" sx={{ 
+                      mb: 1, 
+                      color: '#1976d2', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1rem', md: '1.1rem' }, 
+                      fontWeight: 600 
+                    }}>
+                      Notas da Crítica:
+                    </Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      gap: { xs: 0.5, sm: 1 },
+                      alignItems: { xs: 'center', md: 'flex-start' },
+                      flexWrap: 'wrap'
+                    }}>
+                      {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
+                        <Typography variant="body1" sx={{ 
+                          fontSize: { xs: '0.9rem', md: '1rem' },
+                          color: 'text.primary',
+                          fontWeight: 500
+                        }}>
+                          TMDB {Number(movie.vote_average).toFixed(1)}
+                        </Typography>
+                      )}
+                      {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
+                        <>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.disabled',
+                            display: { xs: 'none', sm: 'block' }
+                          }}>
+                            |
+                          </Typography>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.primary',
+                            fontWeight: 500
+                          }}>
+                            IMDb {Number(movie.imdbRating).toFixed(1)}
+                          </Typography>
+                        </>
+                      )}
+                      {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
+                        <>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.disabled',
+                            display: { xs: 'none', sm: 'block' }
+                          }}>
+                            |
+                          </Typography>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.primary',
+                            fontWeight: 500
+                          }}>
+                            Rotten Tomatoes {Number(movie.rottenTomatoesRating).toFixed(0)}%
+                          </Typography>
+                        </>
+                      )}
+                      {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
+                        <>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.disabled',
+                            display: { xs: 'none', sm: 'block' }
+                          }}>
+                            |
+                          </Typography>
+                          <Typography variant="body1" sx={{ 
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.primary',
+                            fontWeight: 500
+                          }}>
+                            Metacritic {Number(movie.metacriticRating).toFixed(0)}
+                          </Typography>
+                        </>
+                      )}
+                    </Box>
+                  </Box>
+
+                  {/* Gêneros */}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography variant="h3" component="h3" sx={{ 
+                      mb: 1, 
+                      color: '#1976d2', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1rem', md: '1.1rem' }, 
+                      fontWeight: 600 
+                    }}>
+                      Gêneros:
+                    </Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap',
+                      gap: 0.5,
+                      justifyContent: { xs: 'center', md: 'flex-start' }
+                    }}>
+                      {movie.genres.map((genre, index) => (
+                        <Chip 
+                          key={index} 
+                          label={genre} 
+                          size="small" 
+                          sx={{ 
+                            fontSize: { xs: '0.8rem', md: '0.9rem' }, 
+                            height: 28,
+                            '& .MuiChip-label': { px: 1.5 }
+                          }} 
+                        />
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
+              </Box>
+
 
               {/* Sistema de Tabs */}
               <Box sx={{ mt: 3, width: '100%' }}>
@@ -1062,7 +1002,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         bgcolor: 'transparent'
                       }}
                     >
-                      Mais do Elenco
+                      Elenco Principal
                     </Button>
                     <Button
                       variant="text"
@@ -1081,6 +1021,21 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     </Button>
                     <Button
                       variant="text"
+                      onClick={() => setActiveTab('awards')}
+                      sx={{
+                        textTransform: 'none',
+                        fontWeight: 500,
+                        borderRadius: 0,
+                        borderBottom: activeTab === 'awards' ? '2px solid #1976d2' : 'none',
+                        color: activeTab === 'awards' ? '#1976d2' : 'text.secondary',
+                        fontSize: { xs: '0.95rem', md: '1rem' },
+                        bgcolor: 'transparent'
+                      }}
+                    >
+                      Premiações
+                    </Button>
+                    <Button
+                      variant="text"
                       onClick={() => setActiveTab('similar')}
                       sx={{
                         textTransform: 'none',
@@ -1092,7 +1047,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         bgcolor: 'transparent'
                       }}
                     >
-                      Filmes que despertam a mesma Emoção
+                      Filmes Similares
                     </Button>
                   </Stack>
                 </Box>
@@ -1167,21 +1122,89 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
 
                 {activeTab === 'cast' && (
                   <Box>
+                    {/* Elenco Principal */}
+                    {movie.mainCast && movie.mainCast.length > 0 && (
+                      <Box sx={{ mb: 4 }}>
                     <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                      Mais do Elenco
+                          Elenco Principal
                     </Typography>
-                    {movie.fullCast && movie.fullCast.length > 0 ? (
+                        <Box sx={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                          gap: 2 
+                        }}>
+                          {movie.mainCast.map((actor, index) => (
+                            <Box key={index} sx={{ 
+                              p: 2.5, 
+                              border: mode === 'dark' ? '1px solid' : '2px solid',
+                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d2',
+                              borderRadius: mode === 'dark' ? 1 : 2,
+                              bgcolor: mode === 'dark' ? 'background.paper' : 'rgba(25, 118, 210, 0.02)'
+                            }}>
+                              <Typography variant="body1" sx={{ 
+                                fontWeight: 600, 
+                                color: 'text.primary',
+                                fontSize: { xs: '1rem', md: '1.05rem' }
+                              }}>
+                                {actor.actorName}
+                              </Typography>
+                              <Typography variant="body2" sx={{ 
+                                color: 'text.secondary',
+                                fontSize: { xs: '0.85rem', md: '0.9rem' },
+                                mt: 0.5,
+                                fontStyle: 'italic'
+                              }}>
+                                como {actor.characterName}
+                              </Typography>
+                            </Box>
+                          ))}
+                        </Box>
+
+                        {/* Botão Ver mais... */}
+                        {filteredFullCast && filteredFullCast.length > 0 && (
+                          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                            <Button
+                              variant="outlined"
+                              onClick={() => setShowFullCast(!showFullCast)}
+                              sx={{
+                                borderColor: '#1976d2',
+                                color: '#1976d2',
+                                textTransform: 'none',
+                                fontSize: '0.9rem',
+                                fontWeight: 500,
+                                px: 3,
+                                py: 1,
+                                '&:hover': {
+                                  borderColor: '#1565c0',
+                                  color: '#1565c0',
+                                  bgcolor: 'rgba(25, 118, 210, 0.04)'
+                                }
+                              }}
+                            >
+                              {showFullCast ? 'Ver menos...' : 'Ver mais...'}
+                            </Button>
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+
+                    {/* Elenco Completo - Expandível */}
+                    {filteredFullCast && filteredFullCast.length > 0 && showFullCast && (
+                      <Box sx={{ mt: 2 }}>
+                        <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
+                          Elenco Completo
+                        </Typography>
                       <Box sx={{ 
                         display: 'grid', 
                         gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
                         gap: 2 
                       }}>
-                        {movie.fullCast.map((actor, index) => (
+                          {filteredFullCast.map((actor, index) => (
                           <Box key={index} sx={{ 
                             p: 2, 
-                            border: mode === 'dark' ? '1px solid' : '1.5px solid',
-                            borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
-                            borderRadius: mode === 'dark' ? 1 : 2,
+                              border: mode === 'dark' ? '1px solid' : '1.5px solid',
+                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
+                              borderRadius: mode === 'dark' ? 1 : 2,
                             bgcolor: 'background.paper'
                           }}>
                             <Typography variant="body1" sx={{ 
@@ -1202,10 +1225,16 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                           </Box>
                         ))}
                       </Box>
-                    ) : (
-                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                        Informações do elenco em breve...
+                      </Box>
+                    )}
+
+                    {/* Mensagem quando não há elenco completo */}
+                    {(!filteredFullCast || filteredFullCast.length === 0) && (
+                      <Box sx={{ mt: 2 }}>
+                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: 'center', fontStyle: 'italic' }}>
+                          Informações do elenco completo em breve...
                       </Typography>
+                      </Box>
                     )}
                   </Box>
                 )}
@@ -1243,7 +1272,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                               mb: 1
                             }}>
                               "{quote.text}"
-                            </Typography>
+                    </Typography>
                             <Typography variant="body2" sx={{ 
                               fontWeight: 500, 
                               fontSize: '0.8rem', 
@@ -1270,7 +1299,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                               ) : quote.vehicle ? (
                                 `, ${quote.vehicle}`
                               ) : ''}
-                            </Typography>
+                          </Typography>
                           </Box>
                         ))}
                       </Box>
@@ -1282,21 +1311,172 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   </Box>
                 )}
 
+                {activeTab === 'awards' && (
+                  <Box>
+                    <Typography variant="h3" component="h3" sx={{ mb: 3, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
+                      Premiações e Reconhecimento
+                    </Typography>
+                    
+                    {movie.oscarAwards ? (
+                      // Se tem dados estruturados do Oscar, mostrar componente especializado
+                      <Box sx={{ mb: 3 }}>
+                        <OscarRecognition 
+                          movieTitle={movie.title}
+                          oscarAwards={movie.oscarAwards}
+                        />
+                      </Box>
+                    ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
+                      // Se não tem Oscar mas tem texto de premiações gerais
+                      <Box sx={{ 
+                        display: 'grid',
+                        gridTemplateColumns: { xs: '1fr', md: '1fr' },
+                        gap: 2
+                      }}>
+                        <Box sx={{ 
+                          p: 3, 
+                          border: mode === 'dark' ? '1px solid' : '2px solid',
+                          borderColor: mode === 'dark' ? 'grey.200' : '#1976d2',
+                          borderRadius: mode === 'dark' ? 1 : 2,
+                          bgcolor: mode === 'dark' ? 'background.paper' : 'rgba(25, 118, 210, 0.02)',
+                          position: 'relative',
+                          overflow: 'hidden'
+                        }}>
+                          {/* Ícone de prêmio */}
+                          <Box sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                            opacity: 0.1,
+                            fontSize: '2rem'
+                          }}>
+                            🏆
+                          </Box>
+                          
+                          <Typography variant="h4" component="h4" sx={{ 
+                            mb: 2, 
+                            fontSize: '1.1rem', 
+                            fontWeight: 600, 
+                            color: '#1976d2',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
+                          }}>
+                            <span>🏆</span>
+                            Reconhecimento e Premiações
+                          </Typography>
+                          
+                          {(() => {
+                            const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
+                            return (
+                              <Box>
+                                <Typography variant="body1" sx={{ 
+                                  fontSize: { xs: '1rem', md: '1.1rem' },
+                                  lineHeight: 1.6,
+                                  color: 'text.primary',
+                                  fontWeight: 500,
+                                  mb: secondLine ? 2 : 0
+                                }}>
+                                  {firstLine}
+                                </Typography>
+                                {secondLine && (
+                                  <Typography variant="body1" sx={{ 
+                                    fontSize: { xs: '0.95rem', md: '1rem' },
+                                    lineHeight: 1.6,
+                                    color: 'text.secondary',
+                                    fontStyle: 'italic'
+                                  }}>
+                                    {secondLine}
+                                  </Typography>
+                                )}
+                              </Box>
+                            );
+                          })()}
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box sx={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        py: 6,
+                        px: 3,
+                        textAlign: 'center',
+                        border: mode === 'dark' ? '1px dashed' : '2px dashed',
+                        borderColor: mode === 'dark' ? 'grey.300' : '#1976d240',
+                        borderRadius: 2,
+                        bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(25, 118, 210, 0.02)'
+                      }}>
+                        <Box sx={{ 
+                          fontSize: '3rem', 
+                          mb: 2, 
+                          opacity: 0.3 
+                        }}>
+                          🏆
+                        </Box>
+                        <Typography variant="h6" sx={{ 
+                          mb: 1, 
+                          color: 'text.secondary',
+                          fontWeight: 500
+                        }}>
+                          Premiações não disponíveis
+                        </Typography>
+                        <Typography variant="body2" sx={{ 
+                          color: 'text.secondary',
+                          maxWidth: '400px',
+                          lineHeight: 1.5
+                        }}>
+                          Este filme pode não ter recebido grandes premiações ou os dados ainda não foram catalogados.
+                        </Typography>
+                      </Box>
+                    )}
+                  </Box>
+                )}
+
                 {activeTab === 'similar' && (
                   <Box>
-                    <Typography variant="h3" component="h3" sx={{ mb: 1, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                      Filmes que despertam a mesma Emoção
-                    </Typography>
-                    <Typography variant="caption" sx={{ 
-                      color: 'text.secondary',
-                      fontSize: '0.75rem',
-                      fontStyle: 'italic',
-                      display: 'block',
+                    {/* Título e CTA na mesma linha */}
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center',
+                      justifyContent: { xs: 'center', md: 'space-between' },
                       mb: 2,
-                      textAlign: 'center'
+                      flexDirection: { xs: 'column', md: 'row' },
+                      gap: { xs: 2, md: 0 }
                     }}>
-                      (apenas para referência)
-                    </Typography>
+                      <Typography variant="h3" component="h3" sx={{ 
+                        fontSize: '1.1rem', 
+                        fontWeight: 600, 
+                        color: 'text.primary',
+                        margin: 0
+                      }}>
+                        Filmes que despertam a mesma Emoção
+                      </Typography>
+                      
+                      <Button
+                        variant="contained"
+                        size="small"
+                        onClick={() => navigate('/')}
+                        sx={{
+                          bgcolor: '#ff6b35',
+                          color: 'white',
+                          fontSize: { xs: '0.8rem', md: '0.9rem' },
+                          fontWeight: 600,
+                          py: 1,
+                          px: 2,
+                          borderRadius: 2,
+                          textTransform: 'none',
+                          boxShadow: 2,
+                          '&:hover': {
+                            bgcolor: '#e55a2b',
+                            boxShadow: 3,
+                          },
+                          minWidth: 'auto'
+                        }}
+                      >
+                        Quer mais recomendações como esta?
+                      </Button>
+                    </Box>
                     {similarMovies.length > 0 ? (
                       <Box sx={{ 
                         display: 'grid', 
@@ -1308,7 +1488,7 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                           <Box 
                             key={similarMovie.id} 
                             sx={{ 
-                              cursor: 'default',
+                              cursor: 'pointer',
                               borderRadius: 1.5,
                               overflow: 'hidden',
                               boxShadow: 1,
@@ -1316,10 +1496,11 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                               width: '100%',
                               maxWidth: '120px',
                               '&:hover': {
-                                transform: 'none',
-                                boxShadow: 1,
+                                transform: 'translateY(-2px)',
+                                boxShadow: 3,
                               }
                             }}
+                            onClick={() => similarMovie.slug && navigate(`/filme/${similarMovie.slug}`)}
                           >
                             <Box sx={{ 
                               height: 160, 
@@ -1395,35 +1576,11 @@ export const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
               </Box>
             </Box>
           </Box>
-        </Box>
 
-        {/* CTA Final no Rodapé */}
-        <Box sx={{ mt: 4, mb: 3, display: 'flex', justifyContent: 'center' }}>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={() => navigate('/')}
-            sx={{
-              bgcolor: '#FF9F1C',
-              color: 'white',
-              fontSize: { xs: '0.9rem', md: '1rem' },
-              fontWeight: 600,
-              py: 1.5,
-              px: 3,
-              borderRadius: 2,
-              textTransform: 'none',
-              boxShadow: 2,
-              '&:hover': {
-                bgcolor: '#FF8C00',
-                boxShadow: 3,
-              },
-              minWidth: { xs: '100%', md: 'auto' }
-            }}
-          >
-            Experimente vibesFilm agora!
-          </Button>
         </Box>
       </Container>
     </Box>
   );
 };
+
+export default MovieDetail;
