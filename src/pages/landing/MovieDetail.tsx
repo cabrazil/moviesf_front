@@ -11,27 +11,27 @@ import ShareIcon from '@mui/icons-material/Share';
 import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import tmdbLogo from '../../assets/themoviedb.svg';
-import imdbLogo from '../../assets/imdb.png';
-import rtLogo from '../../assets/rottentomatoes.png';
-import metacriticLogo from '../../assets/metascore.svg';
+// import tmdbLogo from '../../assets/themoviedb.svg';
+// import imdbLogo from '../../assets/imdb.png';
+// import rtLogo from '../../assets/rottentomatoes.png';
+// import metacriticLogo from '../../assets/metascore.svg';
 
 
 
 
-// Componente RatingIcon
-const RatingIcon: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 20 }) => (
-  <Box
-    component="img"
-    src={src}
-    alt={alt}
-    sx={{
-      width: size,
-      height: size,
-      objectFit: 'contain'
-    }}
-  />
-);
+// Componente RatingIcon (comentado - não utilizado)
+// const RatingIcon: React.FC<{ src: string; alt: string; size?: number }> = ({ src, alt, size = 20 }) => (
+//   <Box
+//     component="img"
+//     src={src}
+//     alt={alt}
+//     sx={{
+//       width: size,
+//       height: size,
+//       objectFit: 'contain'
+//     }}
+//   />
+// );
 
 interface Movie {
   id: string;

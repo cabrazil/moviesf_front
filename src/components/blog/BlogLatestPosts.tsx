@@ -212,7 +212,7 @@ export function BlogLatestPosts() {
               <option value="all">Todas as Categorias</option>
               {categoriesData.map((category) => (
                 <option key={category.slug} value={category.slug}>
-                  {category.title || category.name}
+                  {category.title}
                 </option>
               ))}
             </select>
@@ -291,7 +291,7 @@ export function BlogLatestPosts() {
               }
             }}
           >
-            {category.title || category.name}
+            {category.title}
           </button>
         ))}
       </div>

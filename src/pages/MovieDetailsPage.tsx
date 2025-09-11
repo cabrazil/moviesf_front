@@ -948,7 +948,7 @@ const MovieDetailsPage: React.FC = () => {
                   maxWidth: 700
                 }}>
                   {movie.emotionalTags
-                    .sort((a, b) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
+                    .sort((a: any, b: any) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
                     .slice(0, 4) // Pegar apenas as 4 mais relevantes
                     .map((tag: any, index: number) => (
                     <Box

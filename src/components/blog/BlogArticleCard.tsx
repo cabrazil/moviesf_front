@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowRight } from 'lucide-react';
+import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import type { BlogPost } from '../../services/blogApi';
 
 interface BlogArticleCardProps {
@@ -208,7 +208,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
       >
         <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
           <img 
-            src={post.imageUrl || post.featuredImage} 
+            src={post.imageUrl} 
             alt={post.imageAlt || post.title}
             style={{
               width: '100%',
@@ -274,7 +274,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
             lineHeight: '1.625',
             fontSize: '0.875rem',
             margin: 0
-          }}>{post.excerpt}</p>
+          }}>{post.description}</p>
 
           <div style={{ 
             display: 'flex', 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Button, Collapse, Stack } from '@mui/material';
+import { Box, Typography, Button, Collapse } from '@mui/material';
 
 interface OscarAward {
   category: string;
