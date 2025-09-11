@@ -20,6 +20,10 @@ export default {
         black: '#000000',
         gray: '#adb5bd',
       },
+      fontFamily: {
+        'display': ['Inter', 'system-ui', 'sans-serif'],
+        'body': ['Inter', 'system-ui', 'sans-serif'],
+      },
       lineClamp: {
         2: '2',
         3: '3',

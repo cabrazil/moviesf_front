@@ -8,9 +8,11 @@ import { useThemeManager } from '../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon icon for dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for light mode
 
+
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { mode, toggleThemeMode } = useThemeManager();
+
 
   const handleStart = () => {
     try {
@@ -20,22 +22,15 @@ const Home: React.FC = () => {
     }
   };
 
-  const handleFilmes = () => {
-    try {
-      navigate('/filme/a-caso-do-lago'); // Exemplo de filme sem caracteres especiais
-    } catch (error) {
-      console.error('Erro ao navegar para /filme:', error);
-    }
-  };
 
   return (
-    <>
+    <div>
       {/* Menu Filmes - Oculto em mobile para evitar confusão */}
-      <AppBar position="static" sx={{ 
-        backgroundColor: 'transparent', 
-        boxShadow: 'none', 
-        borderBottom: mode === 'dark' 
-          ? '1px solid rgba(255,255,255,0.1)' 
+      <AppBar position="static" sx={{
+        backgroundColor: 'transparent',
+        boxShadow: 'none',
+        borderBottom: mode === 'dark'
+          ? '1px solid rgba(255,255,255,0.1)'
           : '1px solid rgba(0,0,0,0.2)',
         display: { xs: 'none', sm: 'block' } // Oculto em mobile
       }}>
@@ -52,10 +47,10 @@ const Home: React.FC = () => {
             }}
           />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button 
-              color="inherit" 
-              onClick={() => window.open('https://blog.vibesfilm.com', '_blank')}
-              sx={{ 
+            <Button
+              color="inherit"
+              onClick={() => navigate('/blog')}
+              sx={{
                 color: 'text.primary',
                 typography: 'h6',
                 textTransform: 'none',
@@ -64,14 +59,14 @@ const Home: React.FC = () => {
             >
               Blog
             </Button>
-            <IconButton 
-              sx={{ 
-                ml: 1, 
+            <IconButton
+              sx={{
+                ml: 1,
                 color: mode === 'dark' ? 'white' : 'black',
                 '&:hover': {
                   backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
                 }
-              }} 
+              }}
               onClick={toggleThemeMode}
             >
               {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
@@ -81,18 +76,18 @@ const Home: React.FC = () => {
       </AppBar>
 
       {/* Menu simplificado para mobile - apenas toggle de tema */}
-      <Box sx={{ 
-        display: { xs: 'flex', sm: 'none' }, 
-        justifyContent: 'flex-end', 
+      <Box sx={{
+        display: { xs: 'flex', sm: 'none' },
+        justifyContent: 'flex-end',
         p: 2,
         position: 'absolute',
         top: 0,
         right: 0,
         zIndex: 1
       }}>
-        <IconButton 
-          onClick={toggleThemeMode} 
-          sx={{ 
+        <IconButton
+          onClick={toggleThemeMode}
+          sx={{
             color: mode === 'dark' ? 'white' : 'black',
             '&:hover': {
               backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
@@ -170,8 +165,8 @@ const Home: React.FC = () => {
             variant="contained"
             size="large"
             onClick={handleStart}
-            sx={{ 
-              px: { xs: 4, sm: 5 }, 
+            sx={{
+              px: { xs: 4, sm: 5 },
               py: { xs: 1.2, sm: 1.5 },
               fontSize: { xs: '1.1rem', sm: '1.2rem' },
               borderRadius: 2,
@@ -183,7 +178,7 @@ const Home: React.FC = () => {
         </Box>
       </Box>
     </Container>
-    </>
+    </div>
   );
 };
 

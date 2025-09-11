@@ -1,0 +1,382 @@
+/* Blog specific styles - From vibesfilm-blog original */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Blog-specific body styles - applied when blog is active */
+body.blog-active {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+
+/* Blog container - Main background with gradient */
+.blog-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* Animated background keyframes */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Custom scrollbar for blog */
+.blog-container ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.blog-container ::-webkit-scrollbar-track {
+  background: rgba(1, 22, 39, 0.1);
+}
+
+.blog-container ::-webkit-scrollbar-thumb {
+  background: #2EC4B6;
+  border-radius: 4px;
+}
+
+.blog-container ::-webkit-scrollbar-thumb:hover {
+  background: #0A6E65;
+}
+
+/* Article cards */
+.article-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px -12px rgba(46, 196, 182, 0.1);
+  border-color: rgba(46, 196, 182, 0.3);
+}
+
+.article-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #011627;
+  transition: color 0.3s ease;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.article-card:hover .article-title {
+  color: #2EC4B6;
+}
+
+.article-excerpt {
+  color: #666;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tag chips */
+.tag-chip {
+  display: inline-block;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  background-color: rgba(46, 196, 182, 0.1);
+  color: #2EC4B6;
+  border: 1px solid rgba(46, 196, 182, 0.2);
+}
+
+.tag-chip:hover {
+  background-color: rgba(46, 196, 182, 0.2);
+}
+
+/* Category badges */
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  background-color: rgba(255, 159, 28, 0.1);
+  color: #FF9F1C;
+  border: 1px solid rgba(255, 159, 28, 0.2);
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Hero gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #2EC4B6 0%, #FF9F1C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button styles */
+.btn-primary {
+  background: #2EC4B6;
+  color: #011627;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  transform: translateY(0);
+  box-shadow: 0 10px 25px -5px rgba(46, 196, 182, 0.25);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0A6E65;
+  transform: scale(1.05);
+  box-shadow: 0 20px 40px -10px rgba(46, 196, 182, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 2px solid #2EC4B6;
+  color: #2EC4B6;
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background-color: #2EC4B6;
+  color: #011627;
+}
+
+/* Navigation styles */
+.nav-link {
+  color: #666;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #2EC4B6;
+}
+
+.nav-link.active {
+  color: #2EC4B6;
+}
+
+/* Article content styles */
+.article-content {
+  max-width: none;
+  color: #666;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.article-html-content {
+  color: #666;
+  line-height: 1.8;
+  font-size: 1.125rem;
+}
+
+.article-html-content h1 {
+  color: #011627;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+.article-html-content h2 {
+  color: #011627;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.article-html-content h3 {
+  color: #011627;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.article-html-content h4 {
+  color: #011627;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.article-html-content p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.article-html-content a {
+  color: #2EC4B6;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  border-bottom: 1px solid rgba(46, 196, 182, 0.3);
+}
+
+.article-html-content a:hover {
+  color: #0A6E65;
+  border-bottom-color: #2EC4B6;
+}
+
+.article-html-content ul,
+.article-html-content ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.article-html-content li {
+  margin-bottom: 0.5rem;
+}
+
+.article-html-content strong {
+  color: #011627;
+  font-weight: 600;
+}
+
+.article-html-content blockquote {
+  border-left: 4px solid #2EC4B6;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #666;
+  margin: 1.5rem 0;
+}
+
+/* Imagens no meio do conteúdo */
+.article-html-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 16px auto;
+  display: block;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+/* Loading animations */
+.skeleton {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tag Article Cards */
+.tag-article-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.tag-article-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: #2EC4B6;
+}
+
+/* Override Material-UI styles for blog */
+.blog-container .MuiAppBar-root {
+  position: static !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.blog-container .MuiToolbar-root {
+  min-height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.blog-container .MuiButton-root {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-transform: none !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+  min-width: auto !important;
+}
+
+.blog-container .MuiTypography-root {
+  margin: 0 !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  letter-spacing: inherit !important;
+}
+
+/* Ensure proper box-sizing for all blog elements */
+.blog-container * {
+  box-sizing: border-box;
+}
+
+/* Article links styling */
+.article-content a,
+.article-html-content a {
+  color: #2EC4B6 !important;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.article-content a:hover,
+.article-html-content a:hover {
+  color: #0A6E65 !important;
+  text-decoration: underline;
+}
