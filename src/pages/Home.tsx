@@ -1,6 +1,7 @@
-import React from 'react';
-import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar, Drawer, List, ListItem, ListItemText, ListItemButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import logo from '../assets/logo.png';
 import logoWhite from '../assets/logo_white.png';
 import logoHeader from '../assets/logo_header.png';
@@ -12,6 +13,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for l
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const { mode, toggleThemeMode } = useThemeManager();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 
   const handleStart = () => {
@@ -25,28 +27,34 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      {/* Menu Filmes - Oculto em mobile para evitar confusão */}
+      {/* Header Responsivo */}
       <AppBar position="static" sx={{
         backgroundColor: 'transparent',
         boxShadow: 'none',
         borderBottom: mode === 'dark'
           ? '1px solid rgba(255,255,255,0.1)'
           : '1px solid rgba(0,0,0,0.2)',
-        display: { xs: 'none', sm: 'block' } // Oculto em mobile
       }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 1, sm: 3 } }}>
+          {/* Logo */}
           <Box
             component="img"
             src={logoHeader}
             alt="VibesFilm Logo"
             sx={{
-              height: 48,
+              height: { xs: 36, sm: 48 },
               width: 'auto',
-              maxWidth: 320,
+              maxWidth: { xs: 200, sm: 320 },
               objectFit: 'contain'
             }}
           />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          
+          {/* Desktop Navigation */}
+          <Box sx={{ 
+            display: { xs: 'none', sm: 'flex' }, 
+            alignItems: 'center', 
+            gap: 2 
+          }}>
             <Button
               color="inherit"
               onClick={() => navigate('/blog')}
@@ -72,31 +80,91 @@ const Home: React.FC = () => {
               {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
             </IconButton>
           </Box>
+
+          {/* Mobile Navigation */}
+          <Box sx={{ 
+            display: { xs: 'flex', sm: 'none' }, 
+            alignItems: 'center', 
+            gap: 1 
+          }}>
+            <IconButton
+              sx={{
+                color: mode === 'dark' ? 'white' : 'black',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }}
+              onClick={toggleThemeMode}
+            >
+              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+            </IconButton>
+            <IconButton
+              sx={{
+                color: mode === 'dark' ? 'white' : 'black',
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }}
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu size={24} />
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
-      {/* Menu simplificado para mobile - apenas toggle de tema */}
-      <Box sx={{
-        display: { xs: 'flex', sm: 'none' },
-        justifyContent: 'flex-end',
-        p: 2,
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        zIndex: 1
-      }}>
-        <IconButton
-          onClick={toggleThemeMode}
-          sx={{
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        sx={{
+          '& .MuiDrawer-paper': {
+            backgroundColor: mode === 'dark' ? '#1a1a1a' : '#ffffff',
             color: mode === 'dark' ? 'white' : 'black',
-            '&:hover': {
-              backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-            }
-          }}
-        >
-          {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-        </IconButton>
-      </Box>
+            width: 280,
+          },
+        }}
+      >
+        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6">Menu</Typography>
+          <IconButton onClick={() => setMobileMenuOpen(false)}>
+            <X size={24} />
+          </IconButton>
+        </Box>
+        <List>
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                navigate('/blog');
+                setMobileMenuOpen(false);
+              }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }}
+            >
+              <ListItemText primary="Blog" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                navigate('/intro');
+                setMobileMenuOpen(false);
+              }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                }
+              }}
+            >
+              <ListItemText primary="Começar Jornada" />
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Drawer>
 
       <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
       <Box
@@ -105,16 +173,16 @@ const Home: React.FC = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: { xs: '80vh', sm: '90vh' },
+          minHeight: { xs: 'calc(100vh - 80px)', sm: 'calc(100vh - 100px)' },
           textAlign: 'center',
-          pt: { xs: 2, sm: 2, md: 3 },
+          pt: { xs: 1, sm: 2, md: 3 },
           pb: { xs: 2, sm: 2, md: 3 },
         }}
       >
         <Typography variant="h5" component="h2" sx={{ 
-          mb: 0.5, 
+          mb: { xs: 0.5, sm: 0.5 }, 
           color: 'text.primary',
-          fontSize: { xs: '1.3rem', sm: '1.25rem', md: '1.5rem' }
+          fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' }
         }}>
           Bem-vindo(a) ao
         </Typography>
@@ -129,7 +197,7 @@ const Home: React.FC = () => {
             target.style.display = 'none';
           }}
           sx={{
-            width: { xs: 280, sm: 250, md: 300 },
+            width: { xs: 240, sm: 250, md: 300 },
             height: 'auto',
             marginBottom: 0,
             filter: mode === 'dark' 
@@ -142,9 +210,9 @@ const Home: React.FC = () => {
 
 
         <Typography variant="h2" component="h1" gutterBottom sx={{ 
-          fontSize: { xs: '1.6rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
-          mt: 1, 
-          mb: 1,
+          fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
+          mt: { xs: 0.5, sm: 1 }, 
+          mb: { xs: 0.5, sm: 1 },
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
         }}>
           Encontre o filme perfeito para sua vibe!
@@ -152,15 +220,15 @@ const Home: React.FC = () => {
 
         <Typography variant="h6" color="text.secondary" paragraph sx={{ 
           maxWidth: 600, 
-          mt: 1, 
-          mb: 1,
-          fontSize: { xs: '1.1rem', sm: '1rem' },
+          mt: { xs: 0.5, sm: 1 }, 
+          mb: { xs: 1, sm: 1 },
+          fontSize: { xs: '1rem', sm: '1rem' },
           px: { xs: 1, sm: 0 }
         }}>
           O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
         </Typography>
 
-        <Box sx={{ mt: 0, px: { xs: 2, sm: 0 } }}>
+        <Box sx={{ mt: { xs: 1, sm: 2 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
           <Button
             variant="contained"
             size="large"
