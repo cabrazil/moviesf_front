@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, User, Tag, Search } from 'lucide-react';
+import logoBlog from '../../assets/logo_blog.png';
 
 export function BlogHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,7 +35,7 @@ export function BlogHeader() {
         {/* Logo */}
         <Link to="/blog" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
           <img 
-            src="/src/assets/logo_blog.png" 
+            src={logoBlog} 
             alt="VibesFilm Logo"
             style={{
               height: 48,

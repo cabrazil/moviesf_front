@@ -1,5 +1,6 @@
 import { Heart, Mail, Instagram, Twitter, Youtube, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logoBlog from '../../assets/logo_blog.png';
 
 export function BlogFooter() {
   const currentYear = new Date().getFullYear();
@@ -58,7 +59,7 @@ export function BlogFooter() {
               marginBottom: '16px' 
             }}>
               <img 
-                src="/src/assets/logo_blog.png" 
+                src={logoBlog} 
                 alt="VibesFilm Blog Logo"
                 style={{
                   height: 48,
