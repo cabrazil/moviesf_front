@@ -1,7 +1,7 @@
 // Serviço de API para o blog
 const API_BASE_URL = import.meta.env.PROD
   ? 'https://moviesf-back.vercel.app/api/blog'
-  : 'http://localhost:3000/api/blog';
+  : 'http://localhost:3333/api/blog';
 
 export interface BlogApiResponse<T> {
   success: boolean;

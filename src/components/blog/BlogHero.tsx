@@ -1,4 +1,4 @@
-export function BlogHero() {
+                           export function BlogHero() {
   const scrollToContent = () => {
     const element = document.getElementById('latest-posts');
     element?.scrollIntoView({ behavior: 'smooth' });

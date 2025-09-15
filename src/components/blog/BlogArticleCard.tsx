@@ -107,8 +107,10 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
               fontSize: '1.5rem',
               fontWeight: '600',
               color: '#FDFFFC',
-              marginBottom: '12px',
-              margin: 0,
+              marginBottom: '6px',
+              marginTop: 0,
+              marginLeft: 0,
+              marginRight: 0,
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -118,18 +120,21 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
             <p style={{
               color: '#E0E0E0',
               marginBottom: '16px',
+              marginTop: 0,
+              marginLeft: 0,
+              marginRight: 0,
               display: '-webkit-box',
               WebkitLineClamp: 3,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
-              lineHeight: '1.625',
-              margin: 0
+              lineHeight: '1.625'
             }}>{post.description}</p>
 
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
-              justifyContent: 'space-between' 
+              justifyContent: 'space-between',
+              marginTop: 0
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <img 
@@ -252,35 +257,40 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
             </div>
           </div>
 
-          <h3 style={{
+          <h2 style={{
             fontSize: '1.125rem',
             fontWeight: '600',
             color: '#FDFFFC',
-            marginBottom: '8px',
-            margin: 0,
+            marginBottom: '6px',
+            marginTop: 0,
+            marginLeft: 0,
+            marginRight: 0,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden'
-          }}>{post.title}</h3>
+          }}>{post.title}</h2>
           
           <p style={{
             color: '#E0E0E0',
             marginBottom: '16px',
+            marginTop: 0,
+            marginLeft: 0,
+            marginRight: 0,
             display: '-webkit-box',
             WebkitLineClamp: 3,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             lineHeight: '1.625',
-            fontSize: '0.875rem',
-            margin: 0
+            fontSize: '0.875rem'
           }}>{post.description}</p>
 
           <div style={{ 
             display: 'flex', 
             alignItems: 'center', 
             gap: '8px', 
-            marginBottom: '12px' 
+            marginBottom: '12px',
+            marginTop: 0
           }}>
             <img 
               src={post.author_image || '/default-avatar.svg'} 

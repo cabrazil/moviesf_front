@@ -16,7 +16,7 @@ const getApiBaseUrl = () => {
                        window.location.hostname === '0.0.0.0';
     
     if (isLocalhost) {
-      return 'http://localhost:3000';
+      return 'http://localhost:3333';
     }
   }
   

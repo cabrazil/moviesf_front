@@ -3,6 +3,7 @@ import { Box, Typography, Button, Collapse } from '@mui/material';
 
 interface OscarAward {
   category: string;
+  categoryName?: string; // Para compatibilidade com backend
   year: number;
   personName?: string;
 }
@@ -169,7 +170,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                     color: '#1976d2'
                   }}
                 >
-                  {translateOscarCategory(win.category)}
+                  {translateOscarCategory(win.categoryName || win.category)}
                 </Typography>
                 {win.personName && (
                   <Typography 
@@ -238,7 +239,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                     color: '#1976d2'
                   }}
                 >
-                  {translateOscarCategory(award.category)}
+                  {translateOscarCategory(award.categoryName || award.category)}
                 </Typography>
                 {award.personName && (
                   <Typography 
@@ -287,7 +288,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                           color: '#1976d2'
                         }}
                       >
-                        {translateOscarCategory(award.category)}
+                        {translateOscarCategory(award.categoryName || award.category)}
                       </Typography>
                       {award.personName && (
                         <Typography 

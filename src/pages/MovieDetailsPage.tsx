@@ -89,7 +89,7 @@ const MovieDetailsPage: React.FC = () => {
         setLoading(true);
         const baseURL = process.env.NODE_ENV === 'production' 
           ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3000'
+          : 'http://localhost:3333'
         
         // Para MovieDetailsPage, usar o endpoint details com UUID
         const response = await fetch(`${baseURL}/api/movie/${movieId}/details`);

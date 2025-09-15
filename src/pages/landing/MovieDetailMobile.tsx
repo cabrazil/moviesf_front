@@ -204,7 +204,7 @@ export const MovieDetailMobile: React.FC<MovieDetailMobileProps> = ({ slug: prop
         
         const baseURL = process.env.NODE_ENV === 'production' 
           ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3000';
+          : 'http://localhost:3333';
         
         // Usar a API específica para landing page
         const response = await fetch(`${baseURL}/api/movie/${finalSlug}/hero`);

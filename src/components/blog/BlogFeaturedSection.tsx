@@ -193,20 +193,20 @@ export function BlogFeaturedSection() {
               fontSize: '1.25rem', 
               fontWeight: '600', 
               color: '#FDFFFC', 
-              marginBottom: '12px',
-              margin: 0
+              marginBottom: '16px',
+              marginTop: 0
             }}>
               📧 Newsletter VibesFilm
             </h3>
             <p style={{ 
               color: '#E0E0E0', 
               fontSize: '0.875rem', 
-              marginBottom: '16px',
-              margin: 0
+              marginBottom: '20px',
+              marginTop: 0
             }}>
               Receba semanalmente artigos exclusivos sobre cinema e emoções direto no seu email.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <input 
                 type="email" 
                 placeholder="Seu melhor email"
@@ -241,8 +241,8 @@ export function BlogFeaturedSection() {
             <p style={{ 
               fontSize: '0.75rem', 
               color: '#E0E0E0', 
-              marginTop: '8px',
-              margin: 0
+              marginTop: '12px',
+              marginBottom: 0
             }}>
               Sem spam, apenas conteúdo de qualidade 🎬
             </p>
