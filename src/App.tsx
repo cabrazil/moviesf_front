@@ -13,6 +13,8 @@ import { BlogLayout } from './components/blog/BlogLayout';
 import { BlogHome } from './pages/blog/BlogHome';
 import { ArticlePage } from './pages/blog/ArticlePage';
 import { TagPage } from './pages/blog/TagPage';
+import { CategoriesPage } from './pages/blog/CategoriesPage';
+import { CategoryPage } from './pages/blog/CategoryPage';
 
 
 function App() {
@@ -33,7 +35,8 @@ function App() {
             
             {/* Blog Routes */}
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
-            <Route path="/blog/categorias" element={<BlogLayout><div className="min-h-screen flex items-center justify-center text-text">Página de Categorias em breve...</div></BlogLayout>} />
+            <Route path="/blog/categorias" element={<BlogLayout><CategoriesPage /></BlogLayout>} />
+            <Route path="/blog/categoria/:categorySlug" element={<BlogLayout><CategoryPage /></BlogLayout>} />
             <Route path="/blog/sobre" element={<BlogLayout><div className="min-h-screen flex items-center justify-center text-text">Página Sobre em breve...</div></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
