@@ -46,6 +46,8 @@ const translateOscarCategory = (category: string): string => {
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
+    'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
+    'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
     'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
     'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
@@ -70,6 +72,9 @@ const translateOscarCategory = (category: string): string => {
     'SPECIAL VISUAL EFFECTS': 'Melhores Efeitos Visuais',
     'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'ORIGINAL SONG': 'Melhor Canção Original',
+    'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (Original Song)': 'Melhor Canção Original',
+    'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
     'ANIMATED FEATURE FILM': 'Melhor Filme de Animação'
@@ -98,13 +103,8 @@ const formatIntroText = (movieTitle: string, oscarAwards: OscarAwards): string =
 const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAwards }) => {
   const [showAllNominations, setShowAllNominations] = useState(false);
 
-  // Filtrar apenas os nomes que contêm "Producers", mantendo as categorias
-  const filteredNominations = oscarAwards.nominations.map(award => {
-    if (award.personName?.includes('Producers')) {
-      return { ...award, personName: undefined };
-    }
-    return award;
-  });
+  // Usar indicações sem filtro
+  const filteredNominations = oscarAwards.nominations;
 
   // Pegar apenas as principais indicações (não vitórias, pois já aparecem no texto principal)
   const mainAwards = filteredNominations.slice(0, 3);
