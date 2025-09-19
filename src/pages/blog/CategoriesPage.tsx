@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Tag, Calendar, Clock, Eye, Heart } from 'lucide-react';
-import { blogApi, type BlogCategory, type BlogPost } from '../../services/blogApi';
+import { ArrowLeft, Tag, Eye, Heart } from 'lucide-react';
+import { blogApi, type BlogCategory } from '../../services/blogApi';
 import { categories } from '../../data/blog/mockPosts';
 
 export function CategoriesPage() {
@@ -40,22 +40,6 @@ export function CategoriesPage() {
     fetchCategories();
   }, []);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
-  const calculateReadingTime = (content: string) => {
-    const textContent = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-    const wordsPerMinute = 200;
-    const wordCount = textContent.split(' ').length;
-    const readingTime = Math.ceil(wordCount / wordsPerMinute);
-    return Math.max(1, Math.min(30, readingTime));
-  };
 
   if (loading) {
     return (
@@ -307,13 +291,13 @@ export function CategoriesPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Eye size={14} color="#2EC4B6" />
                     <span style={{ color: '#E0E0E0', fontSize: '0.75rem' }}>
-                      {category.totalViews || 0} visualizações
+                      {category.articleCount || 0} artigos
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Heart size={14} color="#2EC4B6" />
                     <span style={{ color: '#E0E0E0', fontSize: '0.75rem' }}>
-                      {category.totalLikes || 0} curtidas
+                      Categoria
                     </span>
                   </div>
                 </div>

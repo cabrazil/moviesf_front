@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Tag as TagIcon, Calendar, Clock, Eye, Heart } from 'lucide-react';
+import { ArrowLeft, Tag as TagIcon, Calendar, Clock } from 'lucide-react';
 import { blogApi, type BlogPost, type BlogCategory } from '../../services/blogApi';
 
 export function CategoryPage() {
