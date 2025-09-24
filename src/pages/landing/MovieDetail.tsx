@@ -217,6 +217,63 @@ const extractHookText = (landingPageHook: string): string => {
   }
 };
 
+// Função para gerar título dinâmico baseado na jornada emocional
+const getDynamicTitle = (movie: Movie): string => {
+  // Mapear journeyOptionFlowId para textos descritivos baseado nos dados coletados
+  const journeyTitles: { [key: number]: string } = {
+    43: "Filmes que exploram a tristeza de forma profunda",
+    145: "Filmes que exploram a ambição e excelência",
+    32: "Filmes que exploram o isolamento e relações complexas",
+    159: "Filmes que oferecem entretenimento e leveza",
+    46: "Filmes sobre autodescoberta e crescimento pessoal",
+    120: "Filmes que oferecem conforto e sensação familiar",
+    178: "Filmes que exploram as emoções positivas",
+    98: "Filmes de suspense psicológico e mistérios",
+    103: "Filmes que exploram a ansiedade e pressões sociais",
+    105: "Filmes sobre ansiedade diante do desconhecido",
+    7: "Filmes de romance tocante e reflexivo",
+    101: "Filmes que jogam com a sua percepção com reviravoltas inesperadas"
+  };
+
+  // Lógica baseada no título do filme (implementação temporária para teste)
+  const title = movie.title.toLowerCase();
+  
+  // Mapeamento baseado nos dados coletados
+  if (title.includes('divertida mente') || title.includes('inside out')) {
+    return journeyTitles[43]; // Tristeza
+  }
+  if (title.includes('oppenheimer')) {
+    return journeyTitles[145]; // Ambição e excelência
+  }
+  if (title.includes('adaline') || title.includes('incrível história')) {
+    return journeyTitles[32]; // Isolamento e relações
+  }
+  if (title.includes('cisne negro')) {
+    return journeyTitles[43]; // Tristeza (assumindo baseado nos dados)
+  }
+  if (title.includes('melancolia')) {
+    return journeyTitles[43]; // Tristeza
+  }
+  if (title.includes('aftersun')) {
+    return journeyTitles[43]; // Tristeza
+  }
+  if (title.includes('500 dias')) {
+    return journeyTitles[43]; // Tristeza
+  }
+  if (title.includes('sangue negro')) {
+    return journeyTitles[145]; // Ambição e excelência
+  }
+  if (title.includes('bons companheiros')) {
+    return journeyTitles[145]; // Ambição e excelência
+  }
+  if (title.includes('cidade dos sonhos') || title.includes('mulholland drive')) {
+    return journeyTitles[101];
+  }
+  
+  // Título genérico para filmes não mapeados
+  return "Filmes que despertam a mesma emoção";
+};
+
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
 
 
@@ -1047,7 +1104,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         bgcolor: 'transparent'
                       }}
                     >
-                      Filmes Similares
+                      Filmes Relacionados
                     </Button>
                   </Stack>
                 </Box>
@@ -1450,7 +1507,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         color: 'text.primary',
                         margin: 0
                       }}>
-                        Filmes que despertam a mesma Emoção
+                        {getDynamicTitle(movie)}
                       </Typography>
                       
                       <Button
