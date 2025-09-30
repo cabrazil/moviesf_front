@@ -1,0 +1,210 @@
+/**
+ * Utilitários para gerenciar imagens do blog
+ */
+
+// Tipos para imagens do blog
+export interface BlogImageConfig {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'webp' | 'jpg' | 'png';
+}
+
+// Configurações padrão para diferentes tipos de imagem
+export const BLOG_IMAGE_CONFIGS = {
+  // Imagem destacada do artigo
+  FEATURED: {
+    width: 1200,
+    height: 630,
+    quality: 85,
+    format: 'webp' as const
+  },
+  // Miniaturas para listagem
+  THUMBNAIL: {
+    width: 400,
+    height: 225,
+    quality: 80,
+    format: 'webp' as const
+  },
+  // Imagens no conteúdo do artigo
+  CONTENT: {
+    width: 800,
+    height: 450,
+    quality: 85,
+    format: 'webp' as const
+  },
+  // Imagens compactas para cards
+  CARD: {
+    width: 300,
+    height: 200,
+    quality: 75,
+    format: 'webp' as const
+  }
+} as const;
+
+/**
+ * Gera URL para imagem do blog baseada no caminho
+ * @param imagePath - Caminho da imagem (ex: "blog/articles/2024/janeiro/filme.jpg")
+ * @param config - Configuração de otimização
+ * @returns URL otimizada da imagem
+ */
+export function getBlogImageUrl(
+  imagePath: string, 
+  config: BlogImageConfig = BLOG_IMAGE_CONFIGS.CONTENT
+): string {
+  // Remove barra inicial se existir
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  
+  // Se for uma URL externa, retorna como está
+  if (cleanPath.startsWith('http')) {
+    return cleanPath;
+  }
+  
+  // Para imagens locais, adiciona prefixo de otimização se necessário
+  const baseUrl = import.meta.env.VITE_BLOG_IMAGES_BASE_URL || '/images';
+  
+  // Em produção, você pode usar um serviço de otimização como Cloudinary
+  if (import.meta.env.PROD && import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE) {
+    const serviceUrl = import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE;
+    const params = new URLSearchParams({
+      url: `${baseUrl}/${cleanPath}`,
+      w: config.width?.toString() || '800',
+      h: config.height?.toString() || '450',
+      q: config.quality?.toString() || '85',
+      f: config.format || 'webp'
+    });
+    return `${serviceUrl}?${params.toString()}`;
+  }
+  
+  // Em desenvolvimento, retorna caminho direto
+  return `${baseUrl}/${cleanPath}`;
+}
+
+/**
+ * Gera URL para imagem destacada do artigo
+ */
+export function getFeaturedImageUrl(imagePath: string): string {
+  return getBlogImageUrl(imagePath, BLOG_IMAGE_CONFIGS.FEATURED);
+}
+
+/**
+ * Gera URL para miniatura do artigo
+ */
+export function getThumbnailImageUrl(imagePath: string): string {
+  return getBlogImageUrl(imagePath, BLOG_IMAGE_CONFIGS.THUMBNAIL);
+}
+
+/**
+ * Gera URL para imagem de conteúdo do artigo
+ */
+export function getContentImageUrl(imagePath: string): string {
+  return getBlogImageUrl(imagePath, BLOG_IMAGE_CONFIGS.CONTENT);
+}
+
+/**
+ * Gera URL para imagem de card
+ */
+export function getCardImageUrl(imagePath: string): string {
+  return getBlogImageUrl(imagePath, BLOG_IMAGE_CONFIGS.CARD);
+}
+
+/**
+ * Gera caminho organizado para nova imagem do blog
+ * @param articleSlug - Slug do artigo
+ * @param imageName - Nome da imagem
+ * @param year - Ano (padrão: ano atual - 2025)
+ * @param month - Mês (padrão: mês atual)
+ */
+export function generateBlogImagePath(
+  articleSlug: string,
+  imageName: string,
+  year?: number,
+  month?: number
+): string {
+  const currentDate = new Date();
+  const targetYear = year || 2025; // Ano atual
+  const targetMonth = month || (currentDate.getMonth() + 1);
+  
+  const monthNames = [
+    'janeiro', 'fevereiro', 'marco', 'abril', 'maio', 'junho',
+    'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+  ];
+  
+  const monthName = monthNames[targetMonth - 1];
+  
+  // Remove extensão se existir e adiciona .webp
+  const cleanName = imageName.replace(/\.[^/.]+$/, '');
+  const fileName = `${cleanName}.webp`;
+  
+  return `blog/articles/${targetYear}/${monthName}/${articleSlug}/${fileName}`;
+}
+
+/**
+ * Valida se uma imagem é válida para o blog
+ */
+export function validateBlogImage(file: File): { valid: boolean; error?: string } {
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+  
+  if (!allowedTypes.includes(file.type)) {
+    return {
+      valid: false,
+      error: 'Tipo de arquivo não suportado. Use JPG, PNG, WebP ou GIF.'
+    };
+  }
+  
+  if (file.size > maxSize) {
+    return {
+      valid: false,
+      error: 'Arquivo muito grande. Máximo 5MB.'
+    };
+  }
+  
+  return { valid: true };
+}
+
+/**
+ * Otimiza imagem para web (reduz tamanho mantendo qualidade)
+ */
+export function optimizeImageForWeb(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      // Calcula dimensões otimizadas
+      const maxWidth = 1200;
+      const maxHeight = 800;
+      let { width, height } = img;
+      
+      if (width > maxWidth || height > maxHeight) {
+        const ratio = Math.min(maxWidth / width, maxHeight / height);
+        width *= ratio;
+        height *= ratio;
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Desenha imagem otimizada
+      ctx?.drawImage(img, 0, 0, width, height);
+      
+      // Converte para WebP com qualidade otimizada
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Falha ao otimizar imagem'));
+          }
+        },
+        'image/webp',
+        0.85
+      );
+    };
+    
+    img.onerror = () => reject(new Error('Erro ao carregar imagem'));
+    img.src = URL.createObjectURL(file);
+  });
+}

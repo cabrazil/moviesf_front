@@ -12,5 +12,21 @@ export default defineConfig({
         secure: false,
       }
     }
-  }
+  },
+  // Configuração para otimização de imagens
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (!assetInfo.name) return 'assets/[name]-[hash][extname]'
+          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
+            return `images/[name]-[hash][extname]`
+          }
+          return `assets/[name]-[hash][extname]`
+        }
+      }
+    }
+  },
+  // Configuração para servir imagens estáticas
+  assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg', '**/*.webp']
 })

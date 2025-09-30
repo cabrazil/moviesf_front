@@ -229,7 +229,7 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
     120: "Filmes que oferecem conforto e sensação familiar",
     178: "Filmes que exploram as emoções positivas",
     98: "Filmes de suspense psicológico e mistérios",
-    88: "Filmes sobre dramas de guerra, eventos históricos e lutas por justiça",
+    88: "Filmes sobre dramas de guerra, eventos históricos ou lutas por justiça",
     103: "Filmes que exploram a ansiedade e pressões sociais",
     105: "Filmes sobre ansiedade diante do desconhecido",
     7: "Filmes de romance tocante e reflexivo",
@@ -281,7 +281,7 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
   if (title.includes('tempo de matar')) {
     return journeyTitles[103]; // Ansiedade e pressões sociais
   }
-  if (title.includes('advogado do diabo')) {
+  if (title.includes('advogado do diabo') || title.includes('o sexto sentido')) {
     return journeyTitles[101]; // Reviravoltas inesperadas
   }
   if (title.includes('1917')) {
@@ -293,10 +293,6 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
 };
 
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
-
-
-
-
 const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
   const { identifier } = useParams<{ identifier: string }>();
   const navigate = useNavigate();
