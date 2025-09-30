@@ -229,6 +229,7 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
     120: "Filmes que oferecem conforto e sensação familiar",
     178: "Filmes que exploram as emoções positivas",
     98: "Filmes de suspense psicológico e mistérios",
+    88: "Filmes sobre dramas de guerra, eventos históricos e lutas por justiça",
     103: "Filmes que exploram a ansiedade e pressões sociais",
     105: "Filmes sobre ansiedade diante do desconhecido",
     7: "Filmes de romance tocante e reflexivo",
@@ -282,6 +283,9 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
   }
   if (title.includes('advogado do diabo')) {
     return journeyTitles[101]; // Reviravoltas inesperadas
+  }
+  if (title.includes('1917')) {
+    return journeyTitles[88]; // Drama de guera
   }
   
   // Título genérico para filmes não mapeados
