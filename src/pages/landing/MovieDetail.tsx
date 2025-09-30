@@ -280,6 +280,9 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
   if (title.includes('tempo de matar')) {
     return journeyTitles[103]; // Ansiedade e pressões sociais
   }
+  if (title.includes('advogado do diabo')) {
+    return journeyTitles[101]; // Reviravoltas inesperadas
+  }
   
   // Título genérico para filmes não mapeados
   return "Filmes que despertam a mesma emoção";
