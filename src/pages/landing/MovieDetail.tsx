@@ -218,7 +218,7 @@ const extractHookText = (landingPageHook: string): string => {
 };
 
 // Função para gerar título dinâmico baseado na jornada emocional
-const getDynamicTitle = (movie: Movie): string => {
+const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
   // Mapear journeyOptionFlowId para textos descritivos baseado nos dados coletados
   const journeyTitles: { [key: number]: string } = {
     43: "Filmes que exploram a tristeza de forma profunda",
@@ -235,7 +235,15 @@ const getDynamicTitle = (movie: Movie): string => {
     101: "Filmes que jogam com a sua percepção com reviravoltas inesperadas"
   };
 
-  // Lógica baseada no título do filme (implementação temporária para teste)
+  // Se temos filmes similares, usar o journeyOptionFlowId do primeiro (maior relevanceScore)
+  if (similarMovies && similarMovies.length > 0) {
+    const firstSimilarMovie = similarMovies[0];
+    if (firstSimilarMovie.journeyOptionFlowId && journeyTitles[firstSimilarMovie.journeyOptionFlowId]) {
+      return journeyTitles[firstSimilarMovie.journeyOptionFlowId];
+    }
+  }
+
+  // Fallback: lógica baseada no título do filme (implementação temporária para teste)
   const title = movie.title.toLowerCase();
   
   // Mapeamento baseado nos dados coletados
@@ -268,6 +276,9 @@ const getDynamicTitle = (movie: Movie): string => {
   }
   if (title.includes('cidade dos sonhos') || title.includes('mulholland drive')) {
     return journeyTitles[101];
+  }
+  if (title.includes('tempo de matar')) {
+    return journeyTitles[103]; // Ansiedade e pressões sociais
   }
   
   // Título genérico para filmes não mapeados
@@ -1507,7 +1518,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         color: 'text.primary',
                         margin: 0
                       }}>
-                        {getDynamicTitle(movie)}
+                        {getDynamicTitle(movie, similarMovies)}
                       </Typography>
                       
                       <Button

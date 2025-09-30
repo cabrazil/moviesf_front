@@ -60,7 +60,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
     
     // Fallback para description tradicional
     const movieDesc = description ? ` ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}` : '';
-    const journeyDesc = ` Encontre o filme ideal para seu estado emocional.`;
+    const journeyDesc = ` Encontre o filme perfeito para sua vibe.`;
     
     return `${baseDesc}${movieDesc}${journeyDesc}${availabilityText}`;
   };
@@ -71,7 +71,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
     const yearTitle = year ? ` (${year})` : '';
     const platformTitle = platforms.length > 0 ? ` - Streaming Online` : '';
     
-    return `${baseTitle}${yearTitle}${platformTitle} | EmoFilms`;
+    return `${baseTitle}${yearTitle}${platformTitle} | vibesfilm`;
   };
 
   // Gerar URL canônica
@@ -134,7 +134,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       <meta property="og:image" content={thumbnail} />
       <meta property="og:url" content={generateCanonicalUrl()} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="EmoFilms" />
+      <meta property="og:site_name" content="vibesfilm" />
       
       {/* Twitter Card tags */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -149,7 +149,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       
       {/* Meta tags adicionais */}
       <meta name="robots" content="index, follow" />
-      <meta name="author" content="EmoFilms" />
+      <meta name="author" content="vibesfilm" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Helmet>
   );

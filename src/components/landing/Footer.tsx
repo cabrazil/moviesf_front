@@ -13,7 +13,7 @@ export const Footer: React.FC = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
                 <Heart className="w-5 h-5 text-white" />
               </div>
-              <span className="text-white font-bold text-xl">EmoFilms</span>
+              <span className="text-white font-bold text-xl">vibesfilm</span>
             </Link>
             <p className="text-gray-400 text-sm mb-4">
               Descubra filmes que ressoam com seus sentimentos. 
@@ -121,7 +121,7 @@ export const Footer: React.FC = () => {
         {/* Bottom */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">
-            © 2024 EmoFilms. Todos os direitos reservados.
+            © 2024 vibesfilm. Todos os direitos reservados.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link to="/privacidade" className="text-gray-400 hover:text-white text-sm transition-colors">
