@@ -2,6 +2,8 @@
  * Utilitários para gerenciar imagens do blog
  */
 
+import { getBlogImageUrl as getOptimizedBlogImageUrl } from '../assets/blog-images';
+
 // Tipos para imagens do blog
 export interface BlogImageConfig {
   width?: number;
@@ -60,6 +62,16 @@ export function getBlogImageUrl(
   // Se já começa com /images, retorna como está
   if (imagePath.startsWith('/images/')) {
     return imagePath;
+  }
+  
+  // Tentar usar o sistema otimizado primeiro
+  try {
+    const optimizedUrl = getOptimizedBlogImageUrl(imagePath);
+    if (optimizedUrl && optimizedUrl !== imagePath) {
+      return optimizedUrl;
+    }
+  } catch (error) {
+    // Fallback para sistema antigo
   }
   
   // Se já começa com images/, adiciona apenas a barra inicial
