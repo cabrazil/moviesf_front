@@ -57,37 +57,41 @@ export function getBlogImageUrl(
     return imagePath;
   }
   
-  // Se já começa com /images, retorna como está (para compatibilidade)
+  // Se já começa com /images, retorna como está
   if (imagePath.startsWith('/images/')) {
     return imagePath;
   }
   
-  // Para imagens locais do blog, usar import dinâmico do Vite
-  if (imagePath.startsWith('blog/') || imagePath.startsWith('images/blog/')) {
-    // Remove prefixo 'images/' se existir
-    const cleanPath = imagePath.replace(/^images\//, '');
-    
-    // Em produção, você pode usar um serviço de otimização como Cloudinary
-    if (import.meta.env.PROD && import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE) {
-      const serviceUrl = import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE;
-      const params = new URLSearchParams({
-        url: `/src/assets/blog/${cleanPath}`,
-        w: config.width?.toString() || '800',
-        h: config.height?.toString() || '450',
-        q: config.quality?.toString() || '85',
-        f: config.format || 'webp'
-      });
-      return `${serviceUrl}?${params.toString()}`;
-    }
-    
-    // Usar import dinâmico do Vite para otimização automática
-    return new URL(`/src/assets/blog/${cleanPath}`, import.meta.url).href;
+  // Se já começa com images/, adiciona apenas a barra inicial
+  if (imagePath.startsWith('images/')) {
+    return `/${imagePath}`;
   }
   
-  // Para outros caminhos, manter comportamento original
+  // Para imagens do blog, adiciona prefixo /images/
+  if (imagePath.startsWith('blog/')) {
+    return `/images/${imagePath}`;
+  }
+  
+  // Remove barra inicial se existir
   const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  
+  // Para imagens locais, adiciona prefixo de otimização se necessário
   const baseUrl = import.meta.env.VITE_BLOG_IMAGES_BASE_URL || '/images';
   
+  // Em produção, você pode usar um serviço de otimização como Cloudinary
+  if (import.meta.env.PROD && import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE) {
+    const serviceUrl = import.meta.env.VITE_IMAGE_OPTIMIZATION_SERVICE;
+    const params = new URLSearchParams({
+      url: `${baseUrl}/${cleanPath}`,
+      w: config.width?.toString() || '800',
+      h: config.height?.toString() || '450',
+      q: config.quality?.toString() || '85',
+      f: config.format || 'webp'
+    });
+    return `${serviceUrl}?${params.toString()}`;
+  }
+  
+  // Em desenvolvimento, retorna caminho direto
   return `${baseUrl}/${cleanPath}`;
 }
 
