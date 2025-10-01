@@ -4,6 +4,7 @@ import { Calendar, Clock, User, ArrowLeft, Share2, Heart, Bookmark } from 'lucid
 import { blogApi, type BlogPost } from '../../services/blogApi';
 import { BlogArticleCard } from '../../components/blog/BlogArticleCard';
 import { SeoHead } from '../../components/blog/SeoHead';
+import { processContentImages, getFeaturedImageUrl } from '../../utils/blogImages';
 
 // Adicionar estilos CSS para a animação
 const styles = `
@@ -331,7 +332,7 @@ export function ArticlePage() {
           maxHeight: '400px'
         }}>
           <img 
-            src={post.imageUrl} 
+            src={getFeaturedImageUrl(post.imageUrl || '')} 
             alt={post.imageAlt || post.title}
             style={{
               width: '100%',
@@ -360,7 +361,7 @@ export function ArticlePage() {
               fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
             }}
             dangerouslySetInnerHTML={{ 
-              __html: post.content
+              __html: processContentImages(post.content)
                 .replace(
                   /<img([^>]*)>/gi, 
                   '<img$1 style="max-width: 60%; height: auto; border-radius: 8px; margin: 16px auto; display: block;">'

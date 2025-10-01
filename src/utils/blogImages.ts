@@ -52,13 +52,23 @@ export function getBlogImageUrl(
   imagePath: string, 
   config: BlogImageConfig = BLOG_IMAGE_CONFIGS.CONTENT
 ): string {
+  // Se for uma URL externa, retorna como está
+  if (imagePath.startsWith('http')) {
+    return imagePath;
+  }
+  
+  // Se já começa com /images, retorna como está
+  if (imagePath.startsWith('/images/')) {
+    return imagePath;
+  }
+  
+  // Se já começa com images/, adiciona apenas a barra inicial
+  if (imagePath.startsWith('images/')) {
+    return `/${imagePath}`;
+  }
+  
   // Remove barra inicial se existir
   const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-  
-  // Se for uma URL externa, retorna como está
-  if (cleanPath.startsWith('http')) {
-    return cleanPath;
-  }
   
   // Para imagens locais, adiciona prefixo de otimização se necessário
   const baseUrl = import.meta.env.VITE_BLOG_IMAGES_BASE_URL || '/images';
@@ -161,6 +171,39 @@ export function validateBlogImage(file: File): { valid: boolean; error?: string 
   }
   
   return { valid: true };
+}
+
+/**
+ * Processa imagens locais no conteúdo HTML do artigo
+ * Converte caminhos locais para URLs corretas
+ */
+export function processContentImages(htmlContent: string): string {
+  // Regex para encontrar tags img com src locais
+  const imgRegex = /<img([^>]*)\s+src=["']([^"']+)["']([^>]*)>/gi;
+  
+  return htmlContent.replace(imgRegex, (match, before, src, after) => {
+    // Se já é uma URL externa, não processa
+    if (src.startsWith('http') || src.startsWith('//')) {
+      return match;
+    }
+    
+    // Se é um caminho local, processa
+    if (src.startsWith('/images/') || src.startsWith('images/')) {
+      // Remove prefixo /images/ se existir
+      const cleanPath = src.replace(/^\/?images\//, '');
+      const optimizedUrl = getContentImageUrl(cleanPath);
+      
+      return `<img${before} src="${optimizedUrl}"${after}>`;
+    }
+    
+    // Se é um caminho relativo simples, assume que está em /images/blog/
+    if (!src.startsWith('/') && !src.startsWith('http')) {
+      const optimizedUrl = getContentImageUrl(`blog/${src}`);
+      return `<img${before} src="${optimizedUrl}"${after}>`;
+    }
+    
+    return match;
+  });
 }
 
 /**

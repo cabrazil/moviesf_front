@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import type { BlogPost } from '../../services/blogApi';
+import { getFeaturedImageUrl } from '../../utils/blogImages';
 
 interface BlogArticleCardProps {
   post: BlogPost;
@@ -59,7 +60,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
         >
           <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
             <img 
-              src={post.imageUrl} 
+              src={getFeaturedImageUrl(post.imageUrl || '')} 
               alt={post.imageAlt || post.title}
               style={{
                 width: '100%',
@@ -213,7 +214,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
       >
         <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
           <img 
-            src={post.imageUrl} 
+            src={getFeaturedImageUrl(post.imageUrl || '')} 
             alt={post.imageAlt || post.title}
             style={{
               width: '100%',
