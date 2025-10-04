@@ -2,7 +2,7 @@
  * Utilitários para gerenciar imagens do blog
  */
 
-import { getBlogImageUrl as getOptimizedBlogImageUrl } from '../assets/blog-images';
+import { getBlogImageUrl as getOptimizedBlogImageUrl } from '../lib/blog-images';
 
 // Tipos para imagens do blog
 export interface BlogImageConfig {
