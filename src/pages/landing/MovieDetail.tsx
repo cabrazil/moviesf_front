@@ -129,6 +129,10 @@ interface Movie {
     vehicle?: string;
     url?: string;
   }>;
+  primaryJourney?: {
+    journeyOptionFlowId: number;
+    displayTitle: string | null;
+  } | null;
 }
 
 // interface SimilarMovie {
@@ -219,76 +223,20 @@ const extractHookText = (landingPageHook: string): string => {
 
 // Função para gerar título dinâmico baseado na jornada emocional
 const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
-  // Mapear journeyOptionFlowId para textos descritivos baseado nos dados coletados
-  const journeyTitles: { [key: number]: string } = {
-    43: "Filmes que exploram a tristeza de forma profunda",
-    145: "Filmes que exploram a ambição e excelência",
-    32: "Filmes que exploram o isolamento e relações complexas",
-    159: "Filmes que oferecem entretenimento e leveza",
-    46: "Filmes sobre autodescoberta e crescimento pessoal",
-    120: "Filmes que oferecem conforto e sensação familiar",
-    178: "Filmes que exploram as emoções positivas",
-    98: "Filmes de suspense psicológico e mistérios",
-    88: "Filmes sobre dramas de guerra, eventos históricos ou lutas por justiça",
-    103: "Filmes que exploram a ansiedade e pressões sociais",
-    105: "Filmes sobre ansiedade diante do desconhecido",
-    7: "Filmes de romance tocante e reflexivo",
-    101: "Filmes que jogam com a sua percepção com reviravoltas inesperadas"
-  };
+  // 1. Prioridade: usar displayTitle do filme atual (jornada principal)
+  if (movie.primaryJourney?.displayTitle) {
+    return movie.primaryJourney.displayTitle;
+  }
 
-  // Se temos filmes similares, usar o journeyOptionFlowId do primeiro (maior relevanceScore)
+  // 2. Fallback: usar displayTitle do primeiro filme similar
   if (similarMovies && similarMovies.length > 0) {
     const firstSimilarMovie = similarMovies[0];
-    if (firstSimilarMovie.journeyOptionFlowId && journeyTitles[firstSimilarMovie.journeyOptionFlowId]) {
-      return journeyTitles[firstSimilarMovie.journeyOptionFlowId];
+    if (firstSimilarMovie.displayTitle) {
+      return firstSimilarMovie.displayTitle;
     }
   }
 
-  // Fallback: lógica baseada no título do filme (implementação temporária para teste)
-  const title = movie.title.toLowerCase();
-  
-  // Mapeamento baseado nos dados coletados
-  if (title.includes('divertida mente') || title.includes('inside out')) {
-    return journeyTitles[43]; // Tristeza
-  }
-  if (title.includes('oppenheimer')) {
-    return journeyTitles[145]; // Ambição e excelência
-  }
-  if (title.includes('adaline') || title.includes('incrível história')) {
-    return journeyTitles[32]; // Isolamento e relações
-  }
-  if (title.includes('cisne negro')) {
-    return journeyTitles[43]; // Tristeza (assumindo baseado nos dados)
-  }
-  if (title.includes('melancolia')) {
-    return journeyTitles[43]; // Tristeza
-  }
-  if (title.includes('aftersun')) {
-    return journeyTitles[43]; // Tristeza
-  }
-  if (title.includes('500 dias')) {
-    return journeyTitles[43]; // Tristeza
-  }
-  if (title.includes('sangue negro')) {
-    return journeyTitles[145]; // Ambição e excelência
-  }
-  if (title.includes('bons companheiros')) {
-    return journeyTitles[145]; // Ambição e excelência
-  }
-  if (title.includes('cidade dos sonhos') || title.includes('mulholland drive')) {
-    return journeyTitles[101];
-  }
-  if (title.includes('tempo de matar')) {
-    return journeyTitles[103]; // Ansiedade e pressões sociais
-  }
-  if (title.includes('advogado do diabo') || title.includes('o sexto sentido')) {
-    return journeyTitles[101]; // Reviravoltas inesperadas
-  }
-  if (title.includes('1917')) {
-    return journeyTitles[88]; // Drama de guera
-  }
-  
-  // Título genérico para filmes não mapeados
+  // 3. Fallback final: título genérico
   return "Filmes que despertam a mesma emoção";
 };
 

@@ -47,4 +47,8 @@ export interface Movie {
   imdbRating?: number;
   rottenTomatoesRating?: number;
   metacriticRating?: number;
+  primaryJourney?: {
+    journeyOptionFlowId: number;
+    displayTitle: string | null;
+  } | null;
 } 
