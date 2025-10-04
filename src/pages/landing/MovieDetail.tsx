@@ -358,7 +358,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-              vibesfilm
+              Vibesfilm
             </Typography>
             <IconButton 
               sx={{ 
@@ -423,7 +423,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
-              vibesfilm
+              Vibesfilm
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <IconButton 
@@ -511,7 +511,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   wordBreak: 'break-word',
                   hyphens: 'auto'
                           }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesfilm
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | Vibesfilm
                           </Typography>
                   </Box>
             </Box>
@@ -540,7 +540,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   lineHeight: 1.2,
                   color: 'text.primary'
                 }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | vibesfilm
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | Vibesfilm
                 </Typography>
               </Box>
 
@@ -737,7 +737,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   fontSize: { xs: '1.1rem', md: '1.3rem' }, 
                   fontWeight: 600 
                 }}>
-                  Para Quem o vibesfilm Recomenda "{movie?.title}"?
+                  Para Quem o Vibesfilm Recomenda "{movie?.title}"?
                 </Typography>
                 <Paper elevation={0} sx={{ 
                   bgcolor: 'transparent', 
@@ -807,7 +807,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     maxWidth: { xs: '100%', md: '400px' },
                     lineHeight: 1.4
                   }}>
-                    Use a curadoria emocional do vibesfilm para nunca mais perder tempo escolhendo o que assistir.
+                    Use a curadoria emocional do Vibesfilm para nunca mais perder tempo escolhendo o que assistir.
                   </Typography>
                 </Box>
               </Box>
