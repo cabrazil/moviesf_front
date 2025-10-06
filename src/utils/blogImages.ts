@@ -17,7 +17,7 @@ export const BLOG_IMAGE_CONFIGS = {
   // Imagem destacada do artigo
   FEATURED: {
     width: 1200,
-    height: 630,
+    height: 675, // 16:9 ratio
     quality: 85,
     format: 'webp' as const
   },
@@ -31,7 +31,7 @@ export const BLOG_IMAGE_CONFIGS = {
   // Imagens no conteúdo do artigo
   CONTENT: {
     width: 800,
-    height: 450,
+    height: 600, // Aumentado para melhor qualidade
     quality: 85,
     format: 'webp' as const
   },

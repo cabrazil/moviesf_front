@@ -326,10 +326,11 @@ export function ArticlePage() {
 
         {/* Featured Image */}
         <div style={{ 
-          aspectRatio: '21/9', 
+          aspectRatio: '16/9', 
           borderRadius: '12px', 
           overflow: 'hidden',
-          maxHeight: '400px'
+          maxHeight: '500px',
+          minHeight: '300px'
         }}>
           <img 
             src={getFeaturedImageUrl(post.imageUrl || '')} 
@@ -364,7 +365,7 @@ export function ArticlePage() {
               __html: processContentImages(post.content)
                 .replace(
                   /<img([^>]*)>/gi, 
-                  '<img$1 style="max-width: 60%; height: auto; border-radius: 8px; margin: 16px auto; display: block;">'
+                  '<img$1 style="max-width: 100%; width: 100%; min-width: 300px; min-height: 200px; height: auto; border-radius: 8px; margin: 16px auto; display: block; object-fit: cover;">'
                 )
                 .replace(
                   /<h1([^>]*)>/gi, 

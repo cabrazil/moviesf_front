@@ -126,6 +126,63 @@ export default function AboutPage() {
           padding: '0 40px 48px',
           fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
         }}>
+          {/* Founder Section */}
+          <div style={{ 
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '16px',
+            padding: '32px',
+            color: '#E0E0E0',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
+            marginBottom: '24px'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '24px',
+              flexWrap: 'wrap'
+            }}>
+              {/* Foto do fundador */}
+              <div style={{
+                flex: '0 0 120px',
+                minWidth: '120px'
+              }}>
+                <img 
+                  src="/images/blog/carlos_brasil_silva.jpg" 
+                  alt="Carlos B Silva - Fundador do Vibesfilm"
+                  style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '3px solid #2EC4B6',
+                    boxShadow: '0 4px 12px rgba(46, 196, 182, 0.3)'
+                  }}
+                />
+              </div>
+              
+              {/* Texto sobre o fundador */}
+              <div style={{ flex: 1, minWidth: '300px' }}>
+                <h3 style={{
+                  color: '#FDFFFC',
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  margin: '0 0 8px 0'
+                }}>
+                  Sobre Carlos B Silva
+                </h3>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: '16px',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  Fundador e curador do Vibesfilm. Apaixonado por cinema e pela forma como a tecnologia pode nos ajudar a entender as emoções que os filmes despertam. Carlos acredita que existe um filme perfeito para cada sentimento e dedica-se a construir as pontes entre a arte cinematográfica e a experiência humana.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <article style={{
             backgroundColor: 'rgba(2, 44, 73, 0.3)',
             borderRadius: '16px',
@@ -133,6 +190,17 @@ export default function AboutPage() {
             border: '1px solid rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)'
           }}>
+            {/* Título da seção */}
+            <h2 style={{
+              color: '#FDFFFC',
+              fontSize: '24px',
+              fontWeight: '600',
+              margin: '0 0 24px 0',
+              textAlign: 'center'
+            }}>
+              O Projeto
+            </h2>
+            
             <div style={{
               fontSize: '1.125rem',
               lineHeight: '1.8',
@@ -184,7 +252,7 @@ export default function AboutPage() {
           {/* Features */}
           <section style={{ marginBottom: '48px' }}>
             <h3 style={{
-              fontSize: '2rem',
+              fontSize: '24px',
               fontWeight: 'bold',
               color: '#FDFFFC',
               textAlign: 'center',
@@ -395,15 +463,16 @@ export default function AboutPage() {
             <div style={{
               backgroundColor: 'rgba(2, 44, 73, 0.3)',
               borderRadius: '16px',
-              padding: '48px',
+              padding: '16px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)'
             }}>
               <h3 style={{
-                fontSize: '2rem',
+                fontSize: '24px',
                 fontWeight: 'bold',
                 color: '#FDFFFC',
-                marginBottom: '16px'
+                marginBottom: '16px',
+                textAlign: 'center'
               }}>
                 Blog Vibesfilm
               </h3>
@@ -505,16 +574,17 @@ export default function AboutPage() {
             <div style={{
               backgroundColor: 'rgba(2, 44, 73, 0.3)',
               borderRadius: '16px',
-              padding: '48px',
+              padding: '16px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               textAlign: 'center'
             }}>
               <h3 style={{
-                fontSize: '2rem',
+                fontSize: '24px',
                 fontWeight: 'bold',
                 color: '#FDFFFC',
-                marginBottom: '16px'
+                marginBottom: '8px',
+                textAlign: 'center'
               }}>
                 Nossa Missão
               </h3>

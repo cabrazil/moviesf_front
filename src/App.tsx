@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProviderWrapper } from './contexts/ThemeContext';
+import { CookieBanner } from './components/CookieBanner';
 import Home from './pages/Home';
 import JourneyIntro from './pages/JourneyIntro';
 import MovieSuggestionsPage from './pages/MovieSuggestionsPage';
@@ -18,6 +19,7 @@ import { CategoryPage } from './pages/blog/CategoryPage';
 import AboutPage from './pages/blog/AboutPage';
 import ContactPage from './pages/blog/ContactPage';
 import PrivacyPage from './pages/blog/PrivacyPage';
+import TermsPage from './pages/blog/TermsPage';
 
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
     <HelmetProvider>
       <ThemeProviderWrapper>
         <Router>
+          <CookieBanner />
           <Routes>
             {/* App Routes */}
             <Route path="/" element={<Home />} />
@@ -43,6 +46,7 @@ function App() {
             <Route path="/blog/sobre" element={<BlogLayout><AboutPage /></BlogLayout>} />
             <Route path="/blog/contato" element={<BlogLayout><ContactPage /></BlogLayout>} />
             <Route path="/blog/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
+            <Route path="/blog/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
           </Routes>
