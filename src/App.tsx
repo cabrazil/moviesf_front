@@ -15,6 +15,9 @@ import { ArticlePage } from './pages/blog/ArticlePage';
 import { TagPage } from './pages/blog/TagPage';
 import { CategoriesPage } from './pages/blog/CategoriesPage';
 import { CategoryPage } from './pages/blog/CategoryPage';
+import AboutPage from './pages/blog/AboutPage';
+import ContactPage from './pages/blog/ContactPage';
+import PrivacyPage from './pages/blog/PrivacyPage';
 
 
 function App() {
@@ -37,7 +40,9 @@ function App() {
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
             <Route path="/blog/categorias" element={<BlogLayout><CategoriesPage /></BlogLayout>} />
             <Route path="/blog/categoria/:categorySlug" element={<BlogLayout><CategoryPage /></BlogLayout>} />
-            <Route path="/blog/sobre" element={<BlogLayout><div className="min-h-screen flex items-center justify-center text-text">Página Sobre em breve...</div></BlogLayout>} />
+            <Route path="/blog/sobre" element={<BlogLayout><AboutPage /></BlogLayout>} />
+            <Route path="/blog/contato" element={<BlogLayout><ContactPage /></BlogLayout>} />
+            <Route path="/blog/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
           </Routes>

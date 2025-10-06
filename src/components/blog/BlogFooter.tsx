@@ -14,7 +14,7 @@ export function BlogFooter() {
     ],
     vibesfilm: [
       { name: 'Usar o App', href: '/', external: true },
-      { name: 'Como Funciona', href: '/blog/como-funciona' },
+      { name: 'Como Funciona', href: '/blog/sobre' },
       { name: 'Sobre o Projeto', href: '/blog/sobre' },
       { name: 'Contato', href: '/blog/contato' },
     ],
@@ -73,15 +73,14 @@ export function BlogFooter() {
               color: '#E0E0E0', 
               fontSize: '14px', 
               lineHeight: '1.6', 
-              marginBottom: '20px',
-              margin: 0
-            }}>
-              Descobrindo filmes através das emoções. Artigos, análises e curadoria 
-              cinematográfica para conectar você com o filme ideal para cada momento.
+              marginBottom: '24px'
+            }}>Transformar a experiência de escolha de filmes, conectando pessoas com histórias 
+               que realmente importam para seus corações e mentes. Artigos, análises e curadoria 
+               cinematográfica.
             </p>
             
             {/* Social Links */}
-            <div style={{ display: 'flex', gap: '20px' }}>
+            <div style={{ display: 'flex', gap: '30px' }}>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
