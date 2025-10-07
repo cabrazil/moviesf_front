@@ -50,7 +50,7 @@ function App() {
             <Route path="/app/filme/:identifier" element={<MovieDetailWrapper />} />
             <Route path="/app/filme-mobile/:identifier" element={<MovieDetailMobile />} />
             
-            {/* Legacy redirects */}
+            {/* Legacy redirects for old routes */}
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
             <Route path="/blog/categorias" element={<BlogLayout><CategoriesPage /></BlogLayout>} />
             <Route path="/blog/categoria/:categorySlug" element={<BlogLayout><CategoryPage /></BlogLayout>} />
@@ -60,6 +60,15 @@ function App() {
             <Route path="/blog/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
+            
+            {/* Legacy app routes */}
+            <Route path="/intro" element={<JourneyIntro />} />
+            <Route path="/filters" element={<StreamingFilters />} />
+            <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
+            <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
+            <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
+            <Route path="/filme/:identifier" element={<MovieDetailWrapper />} />
+            <Route path="/filme-mobile/:identifier" element={<MovieDetailMobile />} />
           </Routes>
         </Router>
       </ThemeProviderWrapper>
