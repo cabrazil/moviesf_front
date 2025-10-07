@@ -11,6 +11,9 @@ export function CategoryPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Scroll para o topo quando a página carrega
+    window.scrollTo(0, 0);
+    
     const fetchCategoryData = async () => {
       if (!categorySlug) return;
       

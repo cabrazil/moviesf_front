@@ -90,7 +90,8 @@
           </a>
         </div>
 
-        {/* Stats */}
+        {/* TODO: Implementar seção de estatísticas quando tiver volume significativo */}
+        {/* 
         <div style={{ 
           marginTop: '64px',
           display: 'grid',
@@ -110,6 +111,7 @@
             <div style={{ color: '#E0E0E0' }}>Leitores Mensais</div>
           </div>
         </div>
+        */}
       </div>
     </section>
   );

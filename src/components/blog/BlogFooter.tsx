@@ -6,11 +6,13 @@ export function BlogFooter() {
   const currentYear = new Date().getFullYear();
 
   const footerLinks = {
-    blog: [
-      { name: 'Últimos Artigos', href: '/' },
-      { name: 'Categorias', href: '/categorias' },
-      { name: 'Autores', href: '/autores' },
-      { name: 'Newsletter', href: '/newsletter' },
+    categories: [
+      { name: 'Análises Emocionais', href: '/categoria/analises-emocionais' },
+      { name: 'Clássicos Atemporais', href: '/categoria/classicos-atemporais' },
+      { name: 'Guias e Streaming', href: '/categoria/guias-e-streaming' },
+      { name: 'Jornadas Emocionais', href: '/categoria/jornadas-emocionais' },
+      { name: 'Por Trás das Cenas', href: '/categoria/por-tras-das-cenas' },
+      { name: 'Primeiras Impressões', href: '/categoria/primeiras-impressoes' },
     ],
     vibesfilm: [
       { name: 'Usar o App', href: '/app', external: true },
@@ -110,15 +112,15 @@ export function BlogFooter() {
             </div>
           </div>
 
-          {/* Blog Links */}
+          {/* Categories Links */}
           <div>
             <h4 style={{ 
               color: '#FDFFFC', 
               fontWeight: '600', 
               marginBottom: '14px'
-            }}>Blog</h4>
+            }}>Categorias</h4>
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', listStyle: 'none', padding: 0, margin: 0 }}>
-              {footerLinks.blog.map((link) => (
+              {footerLinks.categories.map((link) => (
                 <li key={link.name}>
                   <Link 
                     to={link.href}

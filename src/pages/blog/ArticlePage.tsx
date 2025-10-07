@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, User, ArrowLeft, Share2, Heart, Bookmark } from 'lucide-react';
+import { Calendar, Clock, User, ArrowLeft, Share2 } from 'lucide-react';
 import { blogApi, type BlogPost } from '../../services/blogApi';
 import { BlogArticleCard } from '../../components/blog/BlogArticleCard';
 import { SeoHead } from '../../components/blog/SeoHead';
@@ -29,7 +29,40 @@ export function ArticlePage() {
   const [error, setError] = useState<string | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
 
+  // Função para compartilhar artigo
+  const handleShare = async () => {
+    const shareData = {
+      title: post?.title || 'Artigo do Vibesfilm',
+      text: post?.description || 'Confira este artigo interessante sobre cinema e emoções',
+      url: window.location.href
+    };
+
+    try {
+      // Tentar usar Web Share API se disponível
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback: copiar link para área de transferência
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copiado para a área de transferência!');
+      }
+    } catch (error) {
+      console.error('Erro ao compartilhar:', error);
+      // Fallback final: copiar link
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Link copiado para a área de transferência!');
+      } catch (clipboardError) {
+        console.error('Erro ao copiar link:', clipboardError);
+        alert('Não foi possível compartilhar. Tente copiar o link manualmente.');
+      }
+    }
+  };
+
   useEffect(() => {
+    // Scroll para o topo quando a página carrega
+    window.scrollTo(0, 0);
+    
     const fetchArticle = async () => {
       if (!slug) return;
       
@@ -243,6 +276,8 @@ export function ArticlePage() {
             marginBottom: '32px',
             flexWrap: 'wrap'
           }}>
+            {/* TODO: Implementar funcionalidades de Curtir e Salvar futuramente */}
+            {/*
             <button style={{
               display: 'flex',
               alignItems: 'center',
@@ -295,28 +330,31 @@ export function ArticlePage() {
               <Bookmark size={16} />
               <span>Salvar</span>
             </button>
-            <button style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '8px 16px',
-              backgroundColor: '#022c49',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '8px',
-              color: '#E0E0E0',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-              e.currentTarget.style.borderColor = '#2EC4B6';
-              e.currentTarget.style.color = '#2EC4B6';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#022c49';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-              e.currentTarget.style.color = '#E0E0E0';
-            }}
+            */}
+            <button 
+              onClick={handleShare}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                backgroundColor: '#022c49',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '8px',
+                color: '#E0E0E0',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
+                e.currentTarget.style.borderColor = '#2EC4B6';
+                e.currentTarget.style.color = '#2EC4B6';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#022c49';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.color = '#E0E0E0';
+              }}
             >
               <Share2 size={16} />
               <span>Compartilhar</span>

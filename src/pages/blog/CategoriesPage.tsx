@@ -10,6 +10,9 @@ export function CategoriesPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Scroll para o topo quando a página carrega
+    window.scrollTo(0, 0);
+    
     const fetchCategories = async () => {
       try {
         setLoading(true);
