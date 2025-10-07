@@ -121,7 +121,7 @@ export function ArticlePage() {
             {error || 'O artigo que você está procurando não existe.'}
           </p>
           <Link 
-            to="/blog" 
+            to="/" 
             style={{
               backgroundColor: '#2EC4B6',
               color: '#011627',
@@ -534,7 +534,7 @@ export function ArticlePage() {
             Use nosso aplicativo para descobrir filmes baseados nas suas emoções e sentimentos atuais.
           </p>
           <a 
-            href="/" 
+            href="/app" 
             style={{
               display: 'inline-flex',
               alignItems: 'center',

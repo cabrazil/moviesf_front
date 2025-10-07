@@ -7,21 +7,21 @@ export function BlogFooter() {
 
   const footerLinks = {
     blog: [
-      { name: 'Últimos Artigos', href: '/blog' },
-      { name: 'Categorias', href: '/blog/categorias' },
-      { name: 'Autores', href: '/blog/autores' },
-      { name: 'Newsletter', href: '/blog/newsletter' },
+      { name: 'Últimos Artigos', href: '/' },
+      { name: 'Categorias', href: '/categorias' },
+      { name: 'Autores', href: '/autores' },
+      { name: 'Newsletter', href: '/newsletter' },
     ],
     vibesfilm: [
-      { name: 'Usar o App', href: '/', external: true },
-      { name: 'Como Funciona', href: '/blog/sobre' },
-      { name: 'Sobre o Projeto', href: '/blog/sobre' },
-      { name: 'Contato', href: '/blog/contato' },
+      { name: 'Usar o App', href: '/app', external: true },
+      { name: 'Como Funciona', href: '/sobre' },
+      { name: 'Sobre o Projeto', href: '/sobre' },
+      { name: 'Contato', href: '/contato' },
     ],
     legal: [
-      { name: 'Política de Privacidade', href: '/blog/privacidade' },
-      { name: 'Termos de Uso', href: '/blog/termos' },
-      { name: 'Cookies', href: '/blog/cookies' },
+      { name: 'Política de Privacidade', href: '/privacidade' },
+      { name: 'Termos de Uso', href: '/termos' },
+      { name: 'Cookies', href: '/cookies' },
     ]
   };
 

@@ -63,7 +63,7 @@
           </button>
           
           <a 
-            href="/" 
+            href="/app" 
             style={{
               backgroundColor: 'transparent',
               color: '#2EC4B6',

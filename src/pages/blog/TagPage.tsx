@@ -108,7 +108,7 @@ export function TagPage() {
             {error || 'A tag que você está procurando não existe.'}
           </p>
           <Link 
-            to="/blog" 
+            to="/" 
             style={{
               backgroundColor: '#2EC4B6',
               color: '#011627',
@@ -387,7 +387,7 @@ export function TagPage() {
               Nenhum artigo encontrado com esta tag.
             </p>
             <Link 
-              to="/blog" 
+              to="/" 
               style={{
                 color: '#2EC4B6',
                 textDecoration: 'none',

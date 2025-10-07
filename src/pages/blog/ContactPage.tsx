@@ -68,7 +68,7 @@ export default function ContactPage() {
           padding: '32px 40px 0' 
         }}>
           <Link 
-            to="/blog" 
+            to="/" 
             style={{
               display: 'inline-flex',
               alignItems: 'center',

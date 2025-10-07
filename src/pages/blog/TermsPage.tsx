@@ -36,7 +36,7 @@ export default function TermsPage() {
         <div style={{ maxWidth: '980px', margin: '0 auto', padding: '24px 16px' }}>
           {/* Top Bar */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-            <Link to="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#E0E0E0', textDecoration: 'none' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#E0E0E0', textDecoration: 'none' }}>
               <ArrowLeft size={18} />
               <span>Voltar ao Blog</span>
             </Link>
@@ -140,7 +140,7 @@ export default function TermsPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>8. Privacidade e Proteção de Dados</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                A sua privacidade é importante para nós. Consulte nossa <a href="/blog/privacidade" style={{ color: '#2EC4B6' }}>Política de Privacidade</a> para obter informações sobre como coletamos, usamos e protegemos seus dados pessoais.
+                A sua privacidade é importante para nós. Consulte nossa <a href="/privacidade" style={{ color: '#2EC4B6' }}>Política de Privacidade</a> para obter informações sobre como coletamos, usamos e protegemos seus dados pessoais.
               </p>
               <p style={{ margin: 0 }}>
                 Ao utilizar nosso site, você consente com o uso das informações conforme descrito em nossa Política de Privacidade.

@@ -36,7 +36,7 @@ export default function PrivacyPage() {
         <div style={{ maxWidth: '980px', margin: '0 auto', padding: '24px 16px' }}>
           {/* Top Bar */}
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
-            <Link to="/blog" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#E0E0E0', textDecoration: 'none' }}>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#E0E0E0', textDecoration: 'none' }}>
               <ArrowLeft size={18} />
               <span>Voltar ao Blog</span>
             </Link>

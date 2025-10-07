@@ -100,7 +100,7 @@ export function BlogHeader() {
             <Search size={20} />
           </button>
           <a 
-            href="/" 
+            href="/app" 
             style={{
               backgroundColor: '#2EC4B6',
               color: '#011627',
@@ -168,7 +168,7 @@ export function BlogHeader() {
             })}
             <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', marginTop: '16px' }}>
               <a 
-                href="/" 
+                href="/app" 
                 style={{
                   display: 'block',
                   backgroundColor: '#2EC4B6',

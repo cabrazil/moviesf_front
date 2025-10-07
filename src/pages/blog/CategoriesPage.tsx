@@ -21,7 +21,12 @@ export function CategoriesPage() {
         
         if (response.success && response.data) {
           console.log('✅ Categorias recebidas da API:', response.data.length);
-          setCategoriesData(response.data);
+          // Mapear article_count para articleCount
+          const mappedData = response.data.map((category: any) => ({
+            ...category,
+            articleCount: category.article_count || 0
+          }));
+          setCategoriesData(mappedData);
         } else {
           console.error('Erro ao buscar categorias, usando dados mock:', response.error);
           // Fallback para dados mock
@@ -92,7 +97,7 @@ export function CategoriesPage() {
             {error}
           </p>
           <Link 
-            to="/blog" 
+            to="/" 
             style={{
               backgroundColor: '#2EC4B6',
               color: '#011627',
@@ -338,7 +343,7 @@ export function CategoriesPage() {
               Nenhuma categoria encontrada.
             </p>
             <Link 
-              to="/blog" 
+              to="/" 
               style={{
                 color: '#2EC4B6',
                 textDecoration: 'none',

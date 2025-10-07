@@ -29,17 +29,28 @@ function App() {
         <Router>
           <CookieBanner />
           <Routes>
-            {/* App Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/intro" element={<JourneyIntro />} />
-            <Route path="/filters" element={<StreamingFilters />} />
-            <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
-            <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
-            <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
-            <Route path="/filme/:identifier" element={<MovieDetailWrapper />} />
-            <Route path="/filme-mobile/:identifier" element={<MovieDetailMobile />} />
+            {/* Blog Routes (now at root) */}
+            <Route path="/" element={<BlogLayout><BlogHome /></BlogLayout>} />
+            <Route path="/categorias" element={<BlogLayout><CategoriesPage /></BlogLayout>} />
+            <Route path="/categoria/:categorySlug" element={<BlogLayout><CategoryPage /></BlogLayout>} />
+            <Route path="/sobre" element={<BlogLayout><AboutPage /></BlogLayout>} />
+            <Route path="/contato" element={<BlogLayout><ContactPage /></BlogLayout>} />
+            <Route path="/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
+            <Route path="/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
+            <Route path="/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
+            <Route path="/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             
-            {/* Blog Routes */}
+            {/* App Routes */}
+            <Route path="/app" element={<Home />} />
+            <Route path="/app/intro" element={<JourneyIntro />} />
+            <Route path="/app/filters" element={<StreamingFilters />} />
+            <Route path="/app/sugestoes" element={<MovieSuggestionsPage />} />
+            <Route path="/app/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
+            <Route path="/app/suggestions" element={<MovieSuggestionsPageMinimal />} />
+            <Route path="/app/filme/:identifier" element={<MovieDetailWrapper />} />
+            <Route path="/app/filme-mobile/:identifier" element={<MovieDetailMobile />} />
+            
+            {/* Legacy redirects */}
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
             <Route path="/blog/categorias" element={<BlogLayout><CategoriesPage /></BlogLayout>} />
             <Route path="/blog/categoria/:categorySlug" element={<BlogLayout><CategoryPage /></BlogLayout>} />
