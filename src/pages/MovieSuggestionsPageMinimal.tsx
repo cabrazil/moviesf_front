@@ -634,7 +634,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 <Card 
                   elevation={3}
                   onClick={() => {
-                    navigate(`/filme/${suggestion.movie.id}`, {
+                    navigate(`/onde-assistir/${suggestion.movie.id}`, {
                       state: {
                         movie: suggestion.movie,
                         reason: suggestion.reason,

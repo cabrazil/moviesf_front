@@ -53,7 +53,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
           <Link
-            to={`/filme/${slug}`}
+            to={`/onde-assistir/${slug}`}
             className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-3 hover:bg-opacity-30"
           >
             <Play className="w-6 h-6 text-white" />
@@ -82,7 +82,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
 
       {/* Movie Info */}
       <div className="p-4">
-        <Link to={`/filme/${slug}`}>
+        <Link to={`/onde-assistir/${slug}`}>
           <h3 className="text-white font-semibold text-lg mb-1 group-hover:text-purple-300 transition-colors">
             {movie.title}
             {movie.year && <span className="text-gray-400"> ({movie.year})</span>}
@@ -127,7 +127,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
               </span>
             </div>
             <Link
-              to={`/filme/${slug}`}
+              to={`/onde-assistir/${slug}`}
               className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
             >
               Ver detalhes
@@ -138,7 +138,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
         {/* CTA Button */}
         <div className="mt-4">
           <Link
-            to={`/filme/${slug}`}
+            to={`/onde-assistir/${slug}`}
             className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 rounded-lg font-semibold hover:from-pink-600 hover:to-purple-700 transition-all duration-300 flex items-center justify-center gap-2"
           >
             <Heart className="w-4 h-4" />

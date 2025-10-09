@@ -1519,7 +1519,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                                 boxShadow: 3,
                               }
                             }}
-                            onClick={() => similarMovie.slug && navigate(`/filme/${similarMovie.slug}`)}
+                            onClick={() => similarMovie.slug && navigate(`/onde-assistir/${similarMovie.slug}`)}
                           >
                             <Box sx={{ 
                               height: 160, 

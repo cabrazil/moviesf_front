@@ -38,6 +38,7 @@ function App() {
             <Route path="/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
             <Route path="/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
+            <Route path="/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             
             {/* App Routes */}
@@ -47,8 +48,8 @@ function App() {
             <Route path="/app/sugestoes" element={<MovieSuggestionsPage />} />
             <Route path="/app/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/app/suggestions" element={<MovieSuggestionsPageMinimal />} />
-            <Route path="/app/filme/:identifier" element={<MovieDetailWrapper />} />
-            <Route path="/app/filme-mobile/:identifier" element={<MovieDetailMobile />} />
+            <Route path="/app/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
+            <Route path="/app/onde-assistir-mobile/:identifier" element={<MovieDetailMobile />} />
             
             {/* Legacy redirects for old routes */}
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
@@ -59,6 +60,7 @@ function App() {
             <Route path="/blog/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
             <Route path="/blog/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
+            <Route path="/blog/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             
             {/* Legacy app routes */}
@@ -67,8 +69,8 @@ function App() {
             <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
             <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
-            <Route path="/filme/:identifier" element={<MovieDetailWrapper />} />
-            <Route path="/filme-mobile/:identifier" element={<MovieDetailMobile />} />
+            <Route path="/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
+            <Route path="/onde-assistir-mobile/:identifier" element={<MovieDetailMobile />} />
           </Routes>
         </Router>
       </ThemeProviderWrapper>

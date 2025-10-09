@@ -9,6 +9,21 @@
       "source": "/blog/(.*)",
       "destination": "/$1",
       "permanent": true
+    },
+    {
+      "source": "/filme/(.*)",
+      "destination": "/onde-assistir/$1",
+      "permanent": true
+    },
+    {
+      "source": "/filme-mobile/(.*)",
+      "destination": "/onde-assistir-mobile/$1",
+      "permanent": true
+    },
+    {
+      "source": "/blog/analise/(.*)",
+      "destination": "/analise/$1",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -17,7 +32,15 @@
       "destination": "/index.html"
     },
     {
-      "source": "/filme/(.*)",
+      "source": "/onde-assistir/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/onde-assistir-mobile/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/analise/(.*)",
       "destination": "/index.html"
     },
     {

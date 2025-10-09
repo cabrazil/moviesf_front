@@ -82,7 +82,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       .replace(/-+/g, '-')
       .trim();
     
-    return `https://emofilms.com/filme/${slug}`;
+    return `https://vibesfilm.com/onde-assistir/${slug}`;
   };
 
   // Gerar Schema.org markup
