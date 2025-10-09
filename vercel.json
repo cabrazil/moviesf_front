@@ -24,6 +24,26 @@
       "source": "/blog/analise/(.*)",
       "destination": "/analise/$1",
       "permanent": true
+    },
+    {
+      "source": "/blog/artigo/oppenheimer-2023-uma-analise-da-trama-da-vibe-e-do-impacto-do-filme",
+      "destination": "/analise/oppenheimer-2023",
+      "permanent": true
+    },
+    {
+      "source": "/blog/artigo/analise-de-nada-de-novo-no-front-2022-a-vibe-a-trama-e-o-horror-da-guerra",
+      "destination": "/analise/nada-de-novo-no-front-2022",
+      "permanent": true
+    },
+    {
+      "source": "/blog/artigo/estrelas-alem-do-tempo-2016-superacao-empoderamento-e-a-forca-da-inteligencia-coletiva",
+      "destination": "/analise/estrelas-alem-do-tempo-2016",
+      "permanent": true
+    },
+    {
+      "source": "/blog/artigo/o-ronco-da-paixao-inesgotavel-por-que-ford-vs-ferrari-2019-e-o-filme-ideal-para-te-recarregar",
+      "destination": "/analise/ford-vs-ferrari-2019",
+      "permanent": true
     }
   ],
   "rewrites": [
