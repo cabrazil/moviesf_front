@@ -70,8 +70,33 @@ export function ArticlePage() {
         setLoading(true);
         setError(null);
         
-        // Mapeamento de slugs otimizados para slugs originais
-        const slugMapping: { [key: string]: string } = {
+        // Função para gerar slug original baseado no slug otimizado
+        const generateOriginalSlug = (optimizedSlug: string): string => {
+          // Padrões comuns de transformação
+          const patterns = [
+            // Padrão: filme-ano -> analise-de-filme-ano-a-vibe-a-trama-e-...
+            {
+              regex: /^(.+)-(\d{4})$/,
+              replacement: 'analise-de-$1-$2-a-vibe-a-trama-e-o-impacto-do-filme'
+            },
+            // Padrão: filme -> analise-de-filme-a-vibe-a-trama-e-...
+            {
+              regex: /^(.+)$/,
+              replacement: 'analise-de-$1-a-vibe-a-trama-e-o-impacto-do-filme'
+            }
+          ];
+
+          for (const pattern of patterns) {
+            if (pattern.regex.test(optimizedSlug)) {
+              return optimizedSlug.replace(pattern.regex, pattern.replacement);
+            }
+          }
+
+          return optimizedSlug;
+        };
+
+        // Mapeamento específico para casos especiais
+        const specialMappings: { [key: string]: string } = {
           'oppenheimer-2023': 'oppenheimer-2023-uma-analise-da-trama-da-vibe-e-do-impacto-do-filme',
           'nada-de-novo-no-front-2022': 'analise-de-nada-de-novo-no-front-2022-a-vibe-a-trama-e-o-horror-da-guerra',
           'estrelas-alem-do-tempo-2016': 'estrelas-alem-do-tempo-2016-superacao-empoderamento-e-a-forca-da-inteligencia-coletiva',
@@ -81,10 +106,23 @@ export function ArticlePage() {
         // Tentar buscar primeiro pelo slug otimizado, depois pelo original
         let articleResponse = await blogApi.getPostBySlug(slug);
         
-        // Se não encontrou e existe mapeamento, tentar com o slug original
-        if (!articleResponse.success && slugMapping[slug]) {
-          console.log(`🔄 Tentando buscar com slug original: ${slugMapping[slug]}`);
-          articleResponse = await blogApi.getPostBySlug(slugMapping[slug]);
+        // Se não encontrou, tentar com mapeamentos
+        if (!articleResponse.success) {
+          let originalSlug = '';
+          
+          // Primeiro, verificar mapeamentos específicos
+          if (specialMappings[slug]) {
+            originalSlug = specialMappings[slug];
+            console.log(`🔄 Mapeamento específico encontrado: ${originalSlug}`);
+          } else {
+            // Gerar slug original automaticamente
+            originalSlug = generateOriginalSlug(slug);
+            console.log(`🔄 Slug original gerado: ${originalSlug}`);
+          }
+          
+          if (originalSlug && originalSlug !== slug) {
+            articleResponse = await blogApi.getPostBySlug(originalSlug);
+          }
         }
         
         if (articleResponse.success && articleResponse.data) {
