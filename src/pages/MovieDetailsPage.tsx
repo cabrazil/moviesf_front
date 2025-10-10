@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button, Modal, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CloseIcon from '@mui/icons-material/Close';
@@ -11,6 +11,7 @@ import rtLogo from '../assets/rottentomatoes.png';
 import metacriticLogo from '../assets/metascore.svg';
 import { getPlatformLogoUrlMedium } from '../services/streaming.service';
 import OscarRecognition from '../components/landing/OscarRecognition';
+import { StreamingPlatformsCompact } from '../components/landing/StreamingPlatformsCompact';
 
 // Função para formatar premiações para exibição
 const formatAwardsForDisplay = (awardsSummary: string): { firstLine: string; secondLine?: string } => {
@@ -61,12 +62,14 @@ const formatAwardsForDisplay = (awardsSummary: string): { firstLine: string; sec
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
+  const navigate = useNavigate();
   const { identifier } = useParams();
   const movieId = identifier; // Usar o novo parâmetro unificado
   const state = location.state || {};
   const [movieData, setMovieData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [similarMovies, setSimilarMovies] = useState<any[]>([]);
   const [trailerModalOpen, setTrailerModalOpen] = useState(false);
   
   // Extrair valores do state uma vez para evitar recriação
@@ -109,6 +112,34 @@ const MovieDetailsPage: React.FC = () => {
 
     fetchMovieDetails();
   }, [movieId]); // Removido 'state' das dependências
+
+  // Buscar filmes similares baseados em RelevanceScore
+  useEffect(() => {
+    const fetchSimilarMovies = async () => {
+      if (!movieData?.movie?.id) {
+        return;
+      }
+      
+      try {
+        const baseURL = process.env.NODE_ENV === 'production' 
+          ? 'https://moviesf-back.vercel.app' 
+          : 'http://localhost:3333';
+        
+        const response = await fetch(`${baseURL}/api/movies/${movieData.movie.id}/similar`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setSimilarMovies(data.slice(0, 6)); // Limitar a 6 filmes
+        } else {
+          console.error('Erro ao buscar filmes similares:', response.status, response.statusText);
+        }
+      } catch (error) {
+        console.error('🔍 MovieDetailsPage - Erro ao buscar filmes similares:', error);
+      }
+    };
+
+    fetchSimilarMovies();
+  }, [movieData?.movie?.id]);
 
   if (loading) {
     return (
@@ -206,6 +237,33 @@ const MovieDetailsPage: React.FC = () => {
   
   // Debug: Verificar dados de premiações
   console.log('🏆 MovieDetailsPage - oscarAwards:', movie?.oscarAwards);
+
+  // Preparar dados das plataformas para StreamingPlatformsCompact
+  const subscriptionPlatforms = movieData?.subscriptionPlatforms
+    ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION')
+    .map((p: any) => ({
+      id: p.id || `${p.name}-${p.accessType}`,
+      name: p.name,
+      category: p.category || 'streaming',
+      logoPath: p.logoPath,
+      hasFreeTrial: p.hasFreeTrial || false,
+      freeTrialDuration: p.freeTrialDuration || null,
+      baseUrl: p.baseUrl || null,
+      accessType: p.accessType
+    })) || [];
+
+  const rentalPurchasePlatforms = movieData?.subscriptionPlatforms
+    ?.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE')
+    .map((p: any) => ({
+      id: p.id || `${p.name}-${p.accessType}`,
+      name: p.name,
+      category: p.category || 'rental',
+      logoPath: p.logoPath,
+      hasFreeTrial: false,
+      freeTrialDuration: null,
+      baseUrl: p.baseUrl || null,
+      accessType: p.accessType
+    })) || [];
   console.log('🏆 MovieDetailsPage - awardsSummary:', movie?.awardsSummary);
   console.log('🏆 MovieDetailsPage - has oscarAwards:', !!movie?.oscarAwards);
   console.log('🏆 MovieDetailsPage - has awardsSummary:', !!movie?.awardsSummary);
@@ -539,11 +597,21 @@ const MovieDetailsPage: React.FC = () => {
             }}>Onde assistir hoje?</Typography>
             
             {movieData?.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0 ? (
+              <StreamingPlatformsCompact 
+                subscriptionPlatforms={subscriptionPlatforms}
+                rentalPurchasePlatforms={rentalPurchasePlatforms}
+              />
+            ) : (
+              <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: { xs: 'center', md: 'flex-start' } }}>
+                Nenhuma plataforma disponível no momento.
+              </Typography>
+            )}
+
+            {/* Implementação manual antiga removida - substituída por StreamingPlatformsCompact */}
+            {false && (
               <Box sx={{ width: '100%' }}>
-                {/* Categorizar plataformas */}
+                {/* Código antigo comentado para referência */}
                 {(() => {
-                  const subscriptionPlatforms = movieData.subscriptionPlatforms.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION');
-                  const rentalPurchasePlatforms = movieData.subscriptionPlatforms.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE');
                   
                   return (
                     <>
@@ -744,10 +812,6 @@ const MovieDetailsPage: React.FC = () => {
                   );
                 })()}
               </Box>
-            ) : (
-              <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: { xs: 'center', md: 'left' } }}>
-                Nenhuma plataforma disponível no momento.
-              </Typography>
             )}
 
             {/* Disclaimer */}
@@ -1038,16 +1102,26 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
           )}
 
-          {/* Premiações e Reconhecimento */}
-          {movie.oscarAwards ? (
-            // Se tem dados estruturados do Oscar, mostrar seção de Reconhecimento no Oscar
-            <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Premiações - Compacto */}
+          {movie.oscarAwards && (movie.oscarAwards.totalWins > 0 || movie.oscarAwards.totalNominations > 0) && (
+            <Box sx={{ mb: 3, width: '100%' }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 1.5, 
+                color: mode === 'light' ? '#1976d2' : '#fff',
+                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontWeight: 600
+              }}>
+                Premiações
+              </Typography>
               <OscarRecognition 
                 movieTitle={movie.title}
                 oscarAwards={movie.oscarAwards}
               />
             </Box>
-          ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
+          )}
+          
+          {/* Fallback para awardsSummary se não tiver oscarAwards */}
+          {!movie.oscarAwards && movie.awardsSummary && movie.awardsSummary.trim() !== '' && (
             // Se não tem Oscar mas tem awardsSummary, mostrar seção de Premiações
             <Box sx={{ mb: 1.2, width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Typography variant="subtitle1" sx={{ 
@@ -1087,7 +1161,116 @@ const MovieDetailsPage: React.FC = () => {
                 })()}
               </Box>
             </Box>
-          ) : null}
+          )}
+
+          {/* Filmes com Vibe Similar */}
+          {similarMovies.length > 0 && (
+            <Box sx={{ mb: 3, width: '100%' }}>
+              <Typography variant="subtitle1" sx={{ 
+                mb: 1.5, 
+                color: mode === 'light' ? '#1976d2' : '#fff',
+                fontSize: { xs: '1rem', md: '1.1rem' },
+                fontWeight: 600
+              }}>
+                {similarMovies[0]?.displayTitle || 'Filmes com Vibe Similar'}
+              </Typography>
+              <Typography variant="body2" sx={{ 
+                mb: 2, 
+                color: 'text.secondary',
+                fontSize: '0.9rem'
+              }}>
+                Baseado na análise emocional, estes filmes têm uma vibe parecida:
+              </Typography>
+              <Box sx={{ 
+                display: 'grid', 
+                gridTemplateColumns: { 
+                  xs: 'repeat(3, 1fr)', 
+                  sm: 'repeat(4, 1fr)', 
+                  md: 'repeat(6, 1fr)' 
+                }, 
+                gap: 1.5,
+                maxWidth: '100%'
+              }}>
+                {similarMovies.map((similarMovie) => (
+                  <Box
+                    key={similarMovie.id}
+                    onClick={() => navigate(`/app/onde-assistir/${similarMovie.id}`)}
+                    sx={{
+                      cursor: 'pointer',
+                      borderRadius: 1.5,
+                      overflow: 'hidden',
+                      boxShadow: 1,
+                      transition: 'all 0.3s ease',
+                      width: '100%',
+                      maxWidth: '120px',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: 3,
+                      }
+                    }}
+                  >
+                    <Box sx={{ 
+                      height: 160, 
+                      bgcolor: 'grey.300',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      borderRadius: '4px 4px 0 0'
+                    }}>
+                      {similarMovie.thumbnail ? (
+                        <img
+                          src={similarMovie.thumbnail}
+                          alt={similarMovie.title}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '4px 4px 0 0'
+                          }}
+                        />
+                      ) : (
+                        <Box sx={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          bgcolor: 'grey.300',
+                          color: 'grey.500'
+                        }}>
+                          <Typography variant="caption">Sem imagem</Typography>
+                        </Box>
+                      )}
+                    </Box>
+                    <Box sx={{ 
+                      p: 0.8, 
+                      bgcolor: 'background.paper',
+                      borderRadius: '0 0 4px 4px'
+                    }}>
+                      <Typography variant="body2" sx={{ 
+                        fontWeight: 600,
+                        fontSize: '0.75rem',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1.2,
+                        mb: 0.2
+                      }}>
+                        {similarMovie.title}
+                      </Typography>
+                      {similarMovie.year && (
+                        <Typography variant="caption" sx={{ 
+                          color: 'text.secondary',
+                          fontSize: '0.7rem'
+                        }}>
+                          {similarMovie.year}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
 
         </Box>
       </Box>
@@ -1098,7 +1281,7 @@ const MovieDetailsPage: React.FC = () => {
           <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} onClick={() => window.history.back()}>
             Filmes
           </Button>
-          <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} href="/">
+          <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} href="/app">
             Home
           </Button>
         </Stack>
