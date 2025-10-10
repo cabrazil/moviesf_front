@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { Calendar, Clock, User, ArrowLeft, Share2 } from 'lucide-react';
 import { blogApi, type BlogPost } from '../../services/blogApi';
@@ -24,6 +24,8 @@ if (typeof document !== 'undefined') {
 
 export function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,7 +128,20 @@ export function ArticlePage() {
         }
         
         if (articleResponse.success && articleResponse.data) {
-          setPost(articleResponse.data);
+          const article = articleResponse.data;
+          
+          // Validar se o tipo do artigo corresponde à rota acessada
+          const currentPath = location.pathname;
+          const expectedType = currentPath.startsWith('/lista/') ? 'lista' : 'analise';
+          
+          if (article.type && article.type !== expectedType) {
+            // Redirecionar para a rota correta baseada no tipo do artigo
+            console.log(`🔄 Redirecionando: ${currentPath} → /${article.type}/${slug} (tipo: ${article.type})`);
+            navigate(`/${article.type}/${slug}`, { replace: true });
+            return;
+          }
+          
+          setPost(article);
           
           // Buscar artigos relacionados da mesma categoria
           const relatedResponse = await blogApi.getPosts({ limit: 10 });

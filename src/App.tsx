@@ -39,6 +39,7 @@ function App() {
             <Route path="/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
+            <Route path="/lista/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             
             {/* App Routes */}
@@ -61,6 +62,7 @@ function App() {
             <Route path="/blog/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
+            <Route path="/blog/lista/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             
             {/* Legacy app routes */}

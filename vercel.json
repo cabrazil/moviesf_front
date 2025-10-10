@@ -26,6 +26,11 @@
       "permanent": true
     },
     {
+      "source": "/blog/lista/(.*)",
+      "destination": "/lista/$1",
+      "permanent": true
+    },
+    {
       "source": "/blog/artigo/oppenheimer-2023-uma-analise-da-trama-da-vibe-e-do-impacto-do-filme",
       "destination": "/analise/oppenheimer-2023",
       "permanent": true
@@ -61,6 +66,10 @@
     },
     {
       "source": "/analise/(.*)",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/lista/(.*)",
       "destination": "/index.html"
     },
     {

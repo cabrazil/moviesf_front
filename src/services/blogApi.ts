@@ -29,6 +29,7 @@ export interface BlogPost {
   createdAt: string;
   updatedAt: string;
   slug: string;
+  type?: 'analise' | 'lista';
   blogId: number;
   author_id: number;
   author_name: string;
