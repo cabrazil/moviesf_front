@@ -4,34 +4,88 @@ import { BlogArticleCard } from './BlogArticleCard';
 import { blogApi, type BlogPost, type BlogCategory } from '../../services/blogApi';
 import { mockPosts, categories } from '../../data/blog/mockPosts';
 
+// Adicionar estilos CSS para animações
+const styles = `
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+`;
+
+// Injetar estilos no head
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = styles;
+  document.head.appendChild(styleSheet);
+}
+
 export function BlogLatestPosts() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categoriesData, setCategoriesData] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Estados para carregamento progressivo
+  const [displayedPosts, setDisplayedPosts] = useState<BlogPost[]>([]);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Buscar artigos e categorias
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Calcular quantos artigos mostrar por página
+  const getArticlesPerPage = () => {
+    if (window.innerWidth < 768) return 6;   // Mobile: 2 colunas x 3 linhas
+    if (window.innerWidth < 1024) return 9;  // Tablet: 3 colunas x 3 linhas
+    return 12; // Desktop: 3 colunas x 4 linhas
+  };
+
+  // Buscar artigos e categorias iniciais
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
         
+        const articlesPerPage = getArticlesPerPage();
+        
         // Buscar artigos e categorias em paralelo
         const [postsResponse, categoriesResponse] = await Promise.all([
-          blogApi.getPosts({ limit: 20 }),
+          blogApi.getPosts({ limit: 50, page: 1 }), // Buscar mais artigos para simular paginação
           blogApi.getCategories()
         ]);
         
         if (postsResponse.success && postsResponse.data) {
           console.log('📰 Artigos recebidos da API:', postsResponse.data.articles.length);
-          setPosts(postsResponse.data.articles);
+          const allArticles = postsResponse.data.articles;
+          setAllPosts(allArticles);
+          const initialArticles = allArticles.slice(0, articlesPerPage);
+          setDisplayedPosts(initialArticles);
+          setHasMore(allArticles.length > articlesPerPage);
         } else {
           console.error('Erro ao buscar artigos, usando dados mock:', postsResponse.error);
           // Fallback para dados mock
-          setPosts(mockPosts as any);
+          const mockData = mockPosts as any;
+          setAllPosts(mockData);
+          const initialArticles = mockData.slice(0, articlesPerPage);
+          setDisplayedPosts(initialArticles);
+          setHasMore(mockData.length > articlesPerPage);
         }
         
         if (categoriesResponse.success && categoriesResponse.data) {
@@ -53,9 +107,39 @@ export function BlogLatestPosts() {
     fetchData();
   }, []);
 
+  // Função para carregar mais artigos
+  const loadMoreArticles = async () => {
+    if (loadingMore || !hasMore) return;
+    
+    try {
+      setLoadingMore(true);
+      const articlesPerPage = getArticlesPerPage();
+      const nextPage = currentPage + 1;
+      const startIndex = (nextPage - 1) * articlesPerPage;
+      const endIndex = startIndex + articlesPerPage;
+      
+      // Simular paginação com os artigos já carregados
+      const newArticles = allPosts.slice(startIndex, endIndex);
+      
+      if (newArticles.length > 0) {
+        setDisplayedPosts(prev => [...prev, ...newArticles]);
+        setCurrentPage(nextPage);
+        setHasMore(endIndex < allPosts.length);
+        console.log(`📰 Carregados mais ${newArticles.length} artigos (página ${nextPage})`);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar mais artigos:', error);
+      setHasMore(false);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
   const filteredPosts = selectedCategory === 'all' 
-    ? posts // Mostrar todos os posts
-    : posts.filter(post => post.category_slug === selectedCategory);
+    ? displayedPosts // Mostrar posts exibidos
+    : displayedPosts.filter(post => post.category_slug === selectedCategory);
 
   const handleCategoryChange = (categorySlug: string) => {
     setSelectedCategory(categorySlug);
@@ -64,7 +148,7 @@ export function BlogLatestPosts() {
   if (loading) {
     return (
       <section id="latest-posts" style={{ 
-        padding: '64px 20px',
+        padding: isMobile ? '32px 16px' : '64px 20px',
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
@@ -76,7 +160,7 @@ export function BlogLatestPosts() {
         }}>
           <Clock size={24} style={{ color: '#2EC4B6' }} />
           <h2 style={{ 
-            fontSize: '2rem', 
+            fontSize: isMobile ? '1.5rem' : '2rem', 
             fontWeight: 'bold', 
             color: '#FDFFFC',
             margin: 0
@@ -298,23 +382,100 @@ export function BlogLatestPosts() {
 
       {/* Articles Grid */}
       {filteredPosts.length > 0 ? (
-        <div style={{
-          display: 'grid',
-          gap: '32px',
-          gridTemplateColumns: viewMode === 'grid' 
-            ? 'repeat(auto-fit, minmax(300px, 1fr))' 
-            : '1fr',
-          maxWidth: viewMode === 'list' ? '800px' : 'none',
-          margin: viewMode === 'list' ? '0 auto' : '0'
-        }}>
-          {filteredPosts.map((post) => (
-            <div key={post.id} style={{
-              animation: 'fadeIn 0.6s ease-out'
-            }}>
-              <BlogArticleCard post={post} />
-            </div>
-          ))}
-        </div>
+        <>
+          <div style={{
+            display: 'grid',
+            gap: isMobile ? '24px' : '32px',
+            gridTemplateColumns: viewMode === 'grid' 
+              ? isMobile 
+                ? '1fr' 
+                : 'repeat(auto-fit, minmax(300px, 1fr))' 
+              : '1fr',
+            maxWidth: viewMode === 'list' ? '800px' : 'none',
+            margin: viewMode === 'list' ? '0 auto' : '0'
+          }}>
+            {filteredPosts.map((post) => (
+              <div key={post.id} style={{
+                animation: 'fadeIn 0.6s ease-out'
+              }}>
+                <BlogArticleCard post={post} />
+              </div>
+            ))}
+          </div>
+          
+        {/* Botão Carregar Mais Artigos */}
+        {console.log('🔍 Debug - hasMore:', hasMore, 'selectedCategory:', selectedCategory, 'displayedPosts.length:', displayedPosts.length, 'allPosts.length:', allPosts.length)}
+        {hasMore && selectedCategory === 'all' && (
+          <div style={{ 
+            textAlign: 'center', 
+            marginTop: isMobile ? '32px' : '48px',
+            padding: isMobile ? '0 16px' : '0'
+          }}>
+            <button
+              onClick={loadMoreArticles}
+              disabled={loadingMore}
+              style={{
+                backgroundColor: loadingMore ? '#022c49' : '#2EC4B6',
+                color: loadingMore ? '#E0E0E0' : '#011627',
+                padding: isMobile ? '12px 24px' : '14px 28px',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: isMobile ? '0.9rem' : '1rem',
+                fontWeight: '600',
+                cursor: loadingMore ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                margin: '0 auto',
+                opacity: loadingMore ? 0.7 : 1
+              }}
+              onMouseOver={(e) => {
+                if (!loadingMore) {
+                  e.currentTarget.style.backgroundColor = '#0A6E65';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!loadingMore) {
+                  e.currentTarget.style.backgroundColor = '#2EC4B6';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
+            >
+              {loadingMore ? (
+                <>
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #E0E0E0',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }}></div>
+                  Carregando...
+                </>
+              ) : (
+                <>
+                  <span>Carregar Mais Artigos</span>
+                  <Clock size={16} />
+                </>
+              )}
+            </button>
+            
+            {!loadingMore && (
+              <p style={{
+                color: '#B0B0B0',
+                fontSize: '0.875rem',
+                marginTop: '12px',
+                margin: '12px 0 0 0'
+              }}>
+                Mostrando {displayedPosts.length} artigos
+              </p>
+            )}
+          </div>
+          )}
+        </>
       ) : (
         <div style={{ textAlign: 'center', padding: '64px 0' }}>
           <div style={{ maxWidth: '400px', margin: '0 auto' }}>
@@ -359,33 +520,6 @@ export function BlogLatestPosts() {
         </div>
       )}
 
-      {/* Load More Button */}
-      {filteredPosts.length > 0 && (
-        <div style={{ textAlign: 'center', marginTop: '48px' }}>
-          <button style={{
-            backgroundColor: 'transparent',
-            color: '#2EC4B6',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            border: '2px solid #2EC4B6',
-            fontSize: '1rem',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#2EC4B6';
-            e.currentTarget.style.color = '#011627';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.color = '#2EC4B6';
-          }}
-          >
-            Carregar Mais Artigos
-          </button>
-        </div>
-      )}
     </section>
   );
 }

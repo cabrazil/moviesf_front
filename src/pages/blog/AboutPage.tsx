@@ -21,6 +21,18 @@ if (typeof document !== 'undefined') {
 
 export default function AboutPage() {
   const [categories, setCategories] = useState<any[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     // Scroll para o topo quando a página carregar
@@ -52,7 +64,7 @@ export default function AboutPage() {
         <div style={{ 
           maxWidth: '1024px', 
           margin: '0 auto', 
-          padding: '32px 40px 0' 
+          padding: isMobile ? '16px 16px 0' : '32px 40px 0' 
         }}>
           <Link 
             to="/" 
@@ -77,7 +89,7 @@ export default function AboutPage() {
         <header style={{ 
           maxWidth: '1024px', 
           margin: '0 auto', 
-          padding: '0 40px 24px',
+          padding: isMobile ? '0 16px 24px' : '0 40px 24px',
           fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
         }}>
           <div style={{ textAlign: 'center' }}>
@@ -98,20 +110,20 @@ export default function AboutPage() {
 
             {/* Title */}
             <h1 style={{
-              fontSize: '3rem',
+              fontSize: isMobile ? '2rem' : '3rem',
               fontWeight: 'bold',
               color: '#FDFFFC',
-              marginBottom: '16px',
+              marginBottom: isMobile ? '12px' : '16px',
               lineHeight: '1.2'
             }}>
               Vibesfilm
             </h1>
             
             <h2 style={{
-              fontSize: '1.5rem',
+              fontSize: isMobile ? '1.25rem' : '1.5rem',
               color: '#E0E0E0',
               fontWeight: '400',
-              marginBottom: '32px',
+              marginBottom: isMobile ? '24px' : '32px',
               lineHeight: '1.4'
             }}>
               Encontre o filme perfeito para sua vibe!
@@ -123,7 +135,7 @@ export default function AboutPage() {
         <main style={{ 
           maxWidth: '1024px', 
           margin: '0 auto', 
-          padding: '0 40px 48px',
+          padding: isMobile ? '0 16px 32px' : '0 40px 48px',
           fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
         }}>
           {/* Founder Section */}
@@ -131,28 +143,30 @@ export default function AboutPage() {
             background: 'rgba(255, 255, 255, 0.06)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '16px',
-            padding: '32px',
+            padding: isMobile ? '20px' : '32px',
             color: '#E0E0E0',
             boxShadow: '0 10px 30px rgba(0,0,0,0.35)',
-            marginBottom: '24px'
+            marginBottom: isMobile ? '16px' : '24px'
           }}>
             <div style={{
               display: 'flex',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap'
+              alignItems: isMobile ? 'flex-start' : 'center',
+              gap: isMobile ? '16px' : '24px',
+              flexWrap: 'wrap',
+              flexDirection: isMobile ? 'column' : 'row'
             }}>
               {/* Foto do fundador */}
               <div style={{
                 flex: '0 0 120px',
-                minWidth: '120px'
+                minWidth: '120px',
+                alignSelf: isMobile ? 'center' : 'flex-start'
               }}>
                 <img 
                   src="/images/blog/carlos_brasil_silva.jpg" 
                   alt="Carlos B Silva - Fundador do Vibesfilm"
                   style={{
-                    width: '120px',
-                    height: '120px',
+                    width: isMobile ? '100px' : '120px',
+                    height: isMobile ? '100px' : '120px',
                     borderRadius: '50%',
                     objectFit: 'cover',
                     border: '3px solid #2EC4B6',
@@ -162,20 +176,22 @@ export default function AboutPage() {
               </div>
               
               {/* Texto sobre o fundador */}
-              <div style={{ flex: 1, minWidth: '300px' }}>
+              <div style={{ flex: 1, minWidth: isMobile ? '200px' : '300px' }}>
                 <h3 style={{
                   color: '#FDFFFC',
-                  fontSize: '20px',
+                  fontSize: isMobile ? '18px' : '20px',
                   fontWeight: '600',
-                  margin: '0 0 8px 0'
+                  margin: '0 0 8px 0',
+                  textAlign: isMobile ? 'center' : 'left'
                 }}>
                   Sobre Carlos B Silva
                 </h3>
                 <p style={{
                   color: '#E0E0E0',
-                  fontSize: '16px',
+                  fontSize: isMobile ? '14px' : '16px',
                   lineHeight: '1.6',
-                  margin: 0
+                  margin: 0,
+                  textAlign: isMobile ? 'center' : 'left'
                 }}>
                   Fundador e curador do Vibesfilm. Apaixonado por cinema e pela forma como a tecnologia pode nos ajudar a entender as emoções que os filmes despertam. Carlos acredita que existe um filme perfeito para cada sentimento e dedica-se a construir as pontes entre a arte cinematográfica e a experiência humana.
                 </p>
@@ -186,14 +202,14 @@ export default function AboutPage() {
           <article style={{
             backgroundColor: 'rgba(2, 44, 73, 0.3)',
             borderRadius: '16px',
-            padding: '48px',
+            padding: isMobile ? '24px' : '48px',
             border: '1px solid rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)'
           }}>
             {/* Título da seção */}
             <h2 style={{
               color: '#FDFFFC',
-              fontSize: '24px',
+              fontSize: isMobile ? '20px' : '24px',
               fontWeight: '600',
               margin: '0 0 24px 0',
               textAlign: 'center'
@@ -202,20 +218,20 @@ export default function AboutPage() {
             </h2>
             
             <div style={{
-              fontSize: '1.125rem',
+              fontSize: isMobile ? '1rem' : '1.125rem',
               lineHeight: '1.8',
               color: '#E0E0E0',
-              marginBottom: '24px'
+              marginBottom: isMobile ? '16px' : '24px'
             }}>
               O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, 
               transformar seu humor, manter uma boa energia ou explorar novas sensações.
             </div>
 
             <div style={{
-              fontSize: '1.125rem',
+              fontSize: isMobile ? '1rem' : '1.125rem',
               lineHeight: '1.8',
               color: '#E0E0E0',
-              marginBottom: '24px'
+              marginBottom: isMobile ? '16px' : '24px'
             }}>
               Quantas vezes você já passou mais tempo procurando um filme do que assistindo? A paralisia da 
               escolha é real. Rolamos por catálogos infinitos em serviços de streaming, recebendo sugestões 
@@ -224,10 +240,10 @@ export default function AboutPage() {
             </div>
 
             <div style={{
-              fontSize: '1.125rem',
+              fontSize: isMobile ? '1rem' : '1.125rem',
               lineHeight: '1.8',
               color: '#E0E0E0',
-              marginBottom: '24px'
+              marginBottom: isMobile ? '16px' : '24px'
             }}>
               É exatamente essa a lacuna que o Vibesfilm preenche. Trata-se de uma inovadora plataforma que 
               recomenda filmes com base no seu estado emocional atual. A proposta é mais humana e precisa, 
@@ -237,10 +253,10 @@ export default function AboutPage() {
             </div>
 
             <div style={{
-              fontSize: '1.125rem',
+              fontSize: isMobile ? '1rem' : '1.125rem',
               lineHeight: '1.8',
               color: '#E0E0E0',
-              marginBottom: '32px'
+              marginBottom: isMobile ? '24px' : '32px'
             }}>
               O Vibesfilm reconhece que as pessoas gostam de assistir filmes para se emocionar, seja para rir 
               ou para chorar. É uma ferramenta que devolve o poder da escolha ao espectador, de uma forma 
@@ -250,71 +266,71 @@ export default function AboutPage() {
           </article>
 
           {/* Features */}
-          <section style={{ marginBottom: '48px' }}>
+          <section style={{ marginBottom: isMobile ? '32px' : '48px' }}>
             <h3 style={{
-              fontSize: '24px',
+              fontSize: isMobile ? '20px' : '24px',
               fontWeight: 'bold',
               color: '#FDFFFC',
               textAlign: 'center',
-              marginBottom: '16px'
+              marginBottom: isMobile ? '12px' : '16px'
             }}>
               Como Funciona
             </h3>
             <p style={{
-              fontSize: '1.125rem',
+              fontSize: isMobile ? '1rem' : '1.125rem',
               color: '#E0E0E0',
               textAlign: 'center',
-              marginBottom: '32px',
+              marginBottom: isMobile ? '24px' : '32px',
               lineHeight: '1.6'
             }}>
               O processo de busca no Vibesfilm é estruturado em uma "jornada emocional" de três etapas:
             </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
               <div style={{
                 backgroundColor: 'rgba(2, 44, 73, 0.3)',
                 borderRadius: '12px',
-                padding: '24px',
+                padding: isMobile ? '16px' : '24px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '16px'
+                gap: isMobile ? '12px' : '16px'
               }}>
                 <div style={{
                   backgroundColor: 'rgba(46, 196, 182, 0.1)',
                   borderRadius: '50%',
-                  padding: '12px',
+                  padding: isMobile ? '8px' : '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minWidth: '48px',
-                  height: '48px'
+                  minWidth: isMobile ? '40px' : '48px',
+                  height: isMobile ? '40px' : '48px'
                 }}>
-                  <Heart size={24} color="#2EC4B6" />
+                  <Heart size={isMobile ? 20 : 24} color="#2EC4B6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
-                    fontSize: '1.2rem', 
+                    fontSize: isMobile ? '1.1rem' : '1.2rem', 
                     fontWeight: '600', 
                     color: '#FDFFFC',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     1. Sentimento Base
                   </h4>
                   <p style={{ 
                     color: '#E0E0E0',
                     margin: 0,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                     lineHeight: '1.6',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     O usuário começa escolhendo seu sentimento principal atual (ex: "Estou feliz," "Estou triste," "Estou ansioso," "Calmo(a)"). O sentimento base define o estado inicial do usuário.
                   </p>
                   <p style={{ 
                     color: '#B0B0B0',
                     margin: 0,
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '0.8rem' : '0.9rem',
                     lineHeight: '1.5',
                     fontStyle: 'italic'
                   }}>
@@ -326,77 +342,85 @@ export default function AboutPage() {
               <div style={{
                 backgroundColor: 'rgba(2, 44, 73, 0.3)',
                 borderRadius: '12px',
-                padding: '24px',
+                padding: isMobile ? '16px' : '24px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '16px'
+                gap: isMobile ? '12px' : '16px'
               }}>
                 <div style={{
                   backgroundColor: 'rgba(46, 196, 182, 0.1)',
                   borderRadius: '50%',
-                  padding: '12px',
+                  padding: isMobile ? '8px' : '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minWidth: '48px',
-                  height: '48px'
+                  minWidth: isMobile ? '40px' : '48px',
+                  height: isMobile ? '40px' : '48px'
                 }}>
-                  <Users size={24} color="#2EC4B6" />
+                  <Users size={isMobile ? 20 : 24} color="#2EC4B6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
-                    fontSize: '1.2rem', 
+                    fontSize: isMobile ? '1.1rem' : '1.2rem', 
                     fontWeight: '600', 
                     color: '#FDFFFC',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     2. Intenção
                   </h4>
                   <p style={{ 
                     color: '#E0E0E0',
                     margin: 0,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                     lineHeight: '1.6',
-                    marginBottom: '12px'
+                    marginBottom: isMobile ? '8px' : '12px'
                   }}>
                     Em seguida, o usuário define o que ele quer fazer com essa emoção. Existem quatro intenções emocionais principais:
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', 
+                    gap: isMobile ? '8px' : '12px' 
+                  }}>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
-                      padding: '8px 12px', 
+                      padding: isMobile ? '6px 10px' : '8px 12px', 
                       borderRadius: '8px',
                       border: '1px solid rgba(46, 196, 182, 0.1)',
-                      color: '#E0E0E0'
+                      color: '#E0E0E0',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
                       <strong style={{ color: '#2EC4B6' }}>Explorar:</strong> Entender as causas ou nuances da emoção.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
-                      padding: '8px 12px', 
+                      padding: isMobile ? '6px 10px' : '8px 12px', 
                       borderRadius: '8px',
                       border: '1px solid rgba(46, 196, 182, 0.1)',
-                      color: '#E0E0E0'
+                      color: '#E0E0E0',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
                       <strong style={{ color: '#2EC4B6' }}>Manter:</strong> Viver essa emoção sem mudá-la.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
-                      padding: '8px 12px', 
+                      padding: isMobile ? '6px 10px' : '8px 12px', 
                       borderRadius: '8px',
                       border: '1px solid rgba(46, 196, 182, 0.1)',
-                      color: '#E0E0E0'
+                      color: '#E0E0E0',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
                       <strong style={{ color: '#2EC4B6' }}>Processar:</strong> Elaborar a emoção de forma ativa.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
-                      padding: '8px 12px', 
+                      padding: isMobile ? '6px 10px' : '8px 12px', 
                       borderRadius: '8px',
                       border: '1px solid rgba(46, 196, 182, 0.1)',
-                      color: '#E0E0E0'
+                      color: '#E0E0E0',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
                       <strong style={{ color: '#2EC4B6' }}>Transformar:</strong> Mudar para um estado emocional diferente.
                     </div>
@@ -407,47 +431,47 @@ export default function AboutPage() {
               <div style={{
                 backgroundColor: 'rgba(2, 44, 73, 0.3)',
                 borderRadius: '12px',
-                padding: '24px',
+                padding: isMobile ? '16px' : '24px',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(10px)',
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '16px'
+                gap: isMobile ? '12px' : '16px'
               }}>
                 <div style={{
                   backgroundColor: 'rgba(46, 196, 182, 0.1)',
                   borderRadius: '50%',
-                  padding: '12px',
+                  padding: isMobile ? '8px' : '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  minWidth: '48px',
-                  height: '48px'
+                  minWidth: isMobile ? '40px' : '48px',
+                  height: isMobile ? '40px' : '48px'
                 }}>
-                  <Lightbulb size={24} color="#2EC4B6" />
+                  <Lightbulb size={isMobile ? 20 : 24} color="#2EC4B6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
-                    fontSize: '1.2rem', 
+                    fontSize: isMobile ? '1.1rem' : '1.2rem', 
                     fontWeight: '600', 
                     color: '#FDFFFC',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     3. Opções de Filmes
                   </h4>
                   <p style={{ 
                     color: '#E0E0E0',
                     margin: 0,
-                    fontSize: '1rem',
+                    fontSize: isMobile ? '0.9rem' : '1rem',
                     lineHeight: '1.6',
-                    marginBottom: '8px'
+                    marginBottom: isMobile ? '6px' : '8px'
                   }}>
                     Cada intenção abre 4 caminhos ou opções específicas de filmes, que representam o destino final da jornada (o tipo de experiência que o usuário busca). É nesta etapa que os filmes são sugeridos.
                   </p>
                   <p style={{ 
                     color: '#B0B0B0',
                     margin: 0,
-                    fontSize: '0.9rem',
+                    fontSize: isMobile ? '0.8rem' : '0.9rem',
                     lineHeight: '1.5',
                     fontStyle: 'italic'
                   }}>

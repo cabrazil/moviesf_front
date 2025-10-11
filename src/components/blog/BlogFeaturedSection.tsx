@@ -8,6 +8,18 @@ export function BlogFeaturedSection() {
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     const fetchFeaturedPosts = async () => {
@@ -142,7 +154,7 @@ export function BlogFeaturedSection() {
 
   return (
     <section style={{ 
-      padding: '64px 20px',
+      padding: isMobile ? '32px 16px' : '64px 20px',
       maxWidth: '1200px',
       margin: '0 auto'
     }}>
@@ -154,7 +166,7 @@ export function BlogFeaturedSection() {
       }}>
         <Star size={24} style={{ color: '#FF9F1C', fill: 'currentColor' }} />
         <h2 style={{ 
-          fontSize: '2rem', 
+          fontSize: isMobile ? '1.5rem' : '2rem', 
           fontWeight: 'bold', 
           color: '#FDFFFC',
           margin: 0
@@ -164,8 +176,8 @@ export function BlogFeaturedSection() {
 
       <div style={{ 
         display: 'grid',
-        gridTemplateColumns: '2fr 1fr',
-        gap: '32px',
+        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr',
+        gap: isMobile ? '24px' : '32px',
         alignItems: 'start'
       }}>
         {/* Main Featured Article */}

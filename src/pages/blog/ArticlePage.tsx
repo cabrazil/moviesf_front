@@ -30,6 +30,18 @@ export function ArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar tamanho da tela
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Função para compartilhar artigo
   const handleShare = async () => {
@@ -264,7 +276,7 @@ export function ArticlePage() {
       <div style={{ 
         maxWidth: '1024px', 
         margin: '0 auto', 
-        padding: '32px 40px 0' 
+        padding: isMobile ? '16px 16px 0' : '32px 40px 0' 
       }}>
         <Link 
           to="/blog" 
@@ -289,7 +301,7 @@ export function ArticlePage() {
       <header style={{ 
         maxWidth: '1024px', 
         margin: '0 auto', 
-        padding: '0 40px 24px',
+        padding: isMobile ? '0 16px 24px' : '0 40px 24px',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
         <div style={{ textAlign: 'center' }}>
@@ -431,19 +443,24 @@ export function ArticlePage() {
 
         {/* Featured Image */}
         <div style={{ 
-          aspectRatio: '16/9', 
           borderRadius: '12px', 
           overflow: 'hidden',
-          maxHeight: '500px',
-          minHeight: '300px'
+          margin: '0 auto',
+          display: 'block'
         }}>
           <img 
             src={getFeaturedImageUrl(post.imageUrl || '')} 
             alt={post.imageAlt || post.title}
             style={{
               width: '100%',
-              height: '100%',
-              objectFit: 'cover'
+              height: 'auto',
+              maxWidth: '100%',
+              minWidth: '300px',
+              minHeight: '200px',
+              objectFit: 'cover',
+              borderRadius: '8px',
+              margin: '16px auto',
+              display: 'block'
             }}
           />
         </div>
@@ -453,11 +470,11 @@ export function ArticlePage() {
       <main style={{ 
         maxWidth: '1024px', 
         margin: '0 auto', 
-        padding: '0 40px 0',
+        padding: isMobile ? '0 16px 0' : '0 40px 0',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
         <article style={{
-          fontSize: '1.125rem',
+          fontSize: isMobile ? '1rem' : '1.125rem',
           lineHeight: '1.7',
           color: '#FDFFFC',
           fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
@@ -491,22 +508,22 @@ export function ArticlePage() {
         {/* Tags do Artigo */}
         {post.tags && post.tags.length > 0 && (
           <div style={{ 
-            marginTop: '48px', 
-            paddingTop: '32px', 
+            marginTop: isMobile ? '32px' : '48px', 
+            paddingTop: isMobile ? '24px' : '32px', 
             borderTop: '1px solid rgba(255, 255, 255, 0.1)' 
           }}>
             <h3 style={{ 
-              fontSize: '1.125rem', 
+              fontSize: isMobile ? '1rem' : '1.125rem', 
               fontWeight: '600', 
               color: '#FDFFFC', 
-              marginBottom: '16px' 
+              marginBottom: isMobile ? '12px' : '16px' 
             }}>
               Tags do Artigo
             </h3>
             <div style={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
-              gap: '12px' 
+              gap: isMobile ? '8px' : '12px' 
             }}>
               {post.tags.map((tag) => (
                 <Link 
@@ -514,8 +531,8 @@ export function ArticlePage() {
                   to={`/blog/tag/${tag.slug}`}
                   style={{
                     display: 'inline-block',
-                    padding: '6px 12px',
-                    fontSize: '0.875rem',
+                    padding: isMobile ? '4px 8px' : '6px 12px',
+                    fontSize: isMobile ? '0.75rem' : '0.875rem',
                     fontWeight: '500',
                     borderRadius: '20px',
                     backgroundColor: 'rgba(46, 196, 182, 0.1)',
@@ -590,18 +607,18 @@ export function ArticlePage() {
           fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
         }}>
           <h2 style={{ 
-            fontSize: '2rem', 
+            fontSize: isMobile ? '1.5rem' : '2rem', 
             fontWeight: 'bold', 
             color: '#FDFFFC', 
-            marginBottom: '32px', 
+            marginBottom: isMobile ? '24px' : '32px', 
             textAlign: 'center' 
           }}>
             Artigos Relacionados
           </h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '32px'
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: isMobile ? '24px' : '32px'
           }}>
             {relatedPosts.map((relatedPost) => (
               <BlogArticleCard key={relatedPost.id} post={relatedPost} />
@@ -611,30 +628,31 @@ export function ArticlePage() {
       )}
 
       {/* CTA to App */}
-      <section style={{ 
-        maxWidth: '1024px', 
-        margin: '80px auto 48px', 
-        padding: '0 40px',
-        fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
-      }}>
+        <section style={{ 
+          maxWidth: '1024px', 
+          margin: isMobile ? '40px auto 24px' : '80px auto 48px', 
+          padding: isMobile ? '0 16px' : '0 40px',
+          fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
+        }}>
         <div style={{
           background: 'linear-gradient(135deg, rgba(46, 196, 182, 0.1) 0%, rgba(255, 159, 28, 0.1) 100%)',
           border: '1px solid rgba(46, 196, 182, 0.2)',
           borderRadius: '12px',
-          padding: '32px',
+          padding: isMobile ? '24px' : '32px',
           textAlign: 'center'
         }}>
           <h3 style={{ 
-            fontSize: '1.5rem', 
+            fontSize: isMobile ? '1.25rem' : '1.5rem', 
             fontWeight: 'bold', 
             color: '#FDFFFC', 
-            marginBottom: '16px' 
+            marginBottom: isMobile ? '12px' : '16px' 
           }}>
             Pronto para encontrar seu filme ideal?
           </h3>
           <p style={{ 
             color: '#E0E0E0', 
-            marginBottom: '24px' 
+            marginBottom: isMobile ? '20px' : '24px',
+            fontSize: isMobile ? '0.9rem' : '1rem'
           }}>
             Use nosso aplicativo para descobrir filmes baseados nas suas emoções e sentimentos atuais.
           </p>
@@ -646,10 +664,11 @@ export function ArticlePage() {
               gap: '8px',
               backgroundColor: '#2EC4B6',
               color: '#011627',
-              padding: '12px 24px',
+              padding: isMobile ? '10px 20px' : '12px 24px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontWeight: '500',
+              fontSize: isMobile ? '0.9rem' : '1rem',
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}

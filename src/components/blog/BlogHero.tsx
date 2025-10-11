@@ -1,4 +1,18 @@
-                           export function BlogHero() {
+                           import { useState, useEffect } from 'react';
+
+export function BlogHero() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   const scrollToContent = () => {
     const element = document.getElementById('latest-posts');
     element?.scrollIntoView({ behavior: 'smooth' });
@@ -7,18 +21,18 @@
   return (
     <section style={{ 
       backgroundColor: 'transparent', 
-      minHeight: '60vh', 
+      minHeight: isMobile ? '50vh' : '60vh', 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center',
-      padding: '40px 20px',
+      padding: isMobile ? '20px 16px' : '40px 20px',
       textAlign: 'center'
     }}>
       <div style={{ maxWidth: '800px', width: '100%' }}>
         <h1 style={{ 
-          fontSize: '3rem', 
+          fontSize: isMobile ? '2rem' : '3rem', 
           fontWeight: 'bold', 
-          marginBottom: '24px',
+          marginBottom: isMobile ? '16px' : '24px',
           background: 'linear-gradient(135deg, #2EC4B6 0%, #FF9F1C 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
@@ -28,9 +42,9 @@
         </h1>
         
         <p style={{ 
-          fontSize: '1.25rem', 
+          fontSize: isMobile ? '1rem' : '1.25rem', 
           color: '#E0E0E0', 
-          marginBottom: '32px',
+          marginBottom: isMobile ? '24px' : '32px',
           lineHeight: '1.6'
         }}>
           Descubra artigos exclusivos sobre cinema, emoções e como encontrar 
@@ -39,9 +53,10 @@
 
         <div style={{ 
           display: 'flex', 
-          gap: '16px', 
+          gap: isMobile ? '12px' : '16px', 
           justifyContent: 'center',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          flexDirection: isMobile ? 'column' : 'row'
         }}>
           <button 
             onClick={scrollToContent}
