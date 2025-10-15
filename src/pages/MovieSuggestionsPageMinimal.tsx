@@ -312,7 +312,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   }, [filteredSuggestions, currentPage, isMobile, sortType]);
 
   const handleRestart = () => {
-    navigate('/');
+    navigate('/app');
   };
 
   const handleBack = () => {
