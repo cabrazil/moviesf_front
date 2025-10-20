@@ -39,6 +39,24 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
 
+  // Função para obter o texto da opção selecionada
+  const getSelectedOptionText = () => {
+    // Primeiro, tentar usar o selectedOptionText que vem da página de filtros
+    if (location.state?.selectedOptionText) {
+      return location.state.selectedOptionText;
+    }
+    
+    // Fallback: tentar extrair do journeyContext
+    if (journeyContext?.selectedIntention?.text) {
+      return journeyContext.selectedIntention.text;
+    }
+    if (journeyContext?.selectedIntention?.displayTitle) {
+      return journeyContext.selectedIntention.displayTitle;
+    }
+    
+    return 'sua jornada emocional';
+  };
+
   // Debug inicial do componente
   console.log('🎬 MovieSuggestionsPageMinimal carregado:', {
     movieSuggestions: movieSuggestions.length,
@@ -472,12 +490,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             alignItems: { xs: 'center', md: 'flex-start' },
             gap: 1
           }}>
-            <Typography variant="h4" sx={{ 
-              fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
-              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+            <Typography variant="h5" sx={{ 
+              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+              lineHeight: { xs: 1.3, sm: 1.4, md: 1.5 },
               textAlign: { xs: 'center', md: 'left' }
             }}>
-              Filmes cuidadosamente sugeridos para você
+              Filmes sugeridos para opção: {getSelectedOptionText()}
             </Typography>
             
             {/* Indicador de Filtros de Streaming */}
@@ -589,36 +607,21 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                   }
                 }}
               />
-              <Chip
-                label="Relevância"
-                onClick={() => setSortType('relevance')}
-                variant={sortType === 'relevance' ? "filled" : "outlined"}
-                color={sortType === 'relevance' ? "primary" : "default"}
-                size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
-              />
+              {/* Filtro "Relevância" removido - redundante com "Inteligente" que já inclui relevância (30% do peso) */}
+              {/* Mantido apenas 3 filtros para interface mais limpa e menos confusa para o usuário */}
             </Box>
 
             {/* Informações de Paginação (apenas em desktop) */}
             {!isMobile && totalPages > 1 && (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: 'center', md: 'right' } }}>
-                Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+                Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes'}
               </Typography>
             )}
             
             {/* Contador simples em mobile */}
             {isMobile && (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
-                {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes encontrados'}
+                {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes'}
               </Typography>
             )}
           </Box>

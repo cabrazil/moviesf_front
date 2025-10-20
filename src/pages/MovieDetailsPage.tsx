@@ -325,6 +325,13 @@ const MovieDetailsPage: React.FC = () => {
               width: '100%',
               mb: 2
             }}>
+              <Typography variant="body2" sx={{ 
+                mb: 0.5, 
+                color: mode === 'light' ? '#1976d2' : '#fff', 
+                fontWeight: 500,
+                textAlign: { xs: 'center', md: 'left' },
+                fontSize: { xs: '0.9rem', md: '0.95rem' }
+              }}>Notas da Crítica:</Typography>
               <Box sx={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -834,12 +841,26 @@ const MovieDetailsPage: React.FC = () => {
           (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
             <Box sx={{ 
               display: { xs: 'flex', md: 'none' },
+              flexDirection: 'column',
               alignItems: 'center', 
               gap: 1.5, 
               mb: 2,
               justifyContent: 'center'
             }}>
-              {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
+              <Typography variant="body2" sx={{ 
+                mb: 0.5, 
+                color: mode === 'light' ? '#1976d2' : '#fff', 
+                fontWeight: 500,
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}>Notas da Crítica:</Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: 1.5, 
+                justifyContent: 'center'
+              }}>
+                {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <img src={tmdbLogo} alt="TMDB" style={{ width: 16, height: 16 }} />
                   <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.vote_average).toFixed(1)}</Typography>
@@ -863,6 +884,7 @@ const MovieDetailsPage: React.FC = () => {
                   <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
                 </Box>
               )}
+              </Box>
             </Box>
           ) : null}
 
@@ -911,6 +933,37 @@ const MovieDetailsPage: React.FC = () => {
               fontSize: { xs: '1.1rem', md: '1.3rem' },
               fontWeight: 700
             }}>A Análise Emocional do Vibesfilm</Typography>
+
+            {/* Alerta de Conteúdo */}
+            {movie?.contentWarnings && 
+             movie.contentWarnings !== 'Atenção: nenhum alerta de conteúdo significativo.' && (
+              <Box sx={{ mb: 2, width: '100%' }}>
+                <Typography variant="h6" component="h3" sx={{ 
+                  mb: 1, 
+                  color: '#ff6b35', 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: { xs: '1rem', md: '1.1rem' }, 
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  justifyContent: { xs: 'center', md: 'flex-start' }
+                }}>
+                  ⚠️ Alerta de Conteúdo
+                </Typography>
+                <Paper elevation={0} sx={{ 
+                  bgcolor: 'rgba(255, 107, 53, 0.05)', 
+                  color: 'text.primary',
+                  p: 1.5, 
+                  borderRadius: 2, 
+                  border: '1px solid #ff6b3520',
+                  textAlign: { xs: 'center', md: 'left' },
+                  fontSize: { xs: '0.9rem', md: '1rem' }
+                }}>
+                  <span style={{ fontWeight: 600 }}>Atenção: </span>{movie.contentWarnings.replace('Atenção: ', '')}
+                </Paper>
+              </Box>
+            )}
 
             {/* 1. A Vibe do Filme */}
             <Box sx={{ mb: 2, width: '100%' }}>

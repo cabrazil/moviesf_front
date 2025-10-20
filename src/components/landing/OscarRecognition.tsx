@@ -141,7 +141,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
           {introText}
         </Typography>
 
-        {/* Grid das Conquistas */}
+        {/* Grid das Conquistas/Vitórias */}
         {oscarAwards.wins.length > 0 && (
           <Box sx={{ 
             display: 'grid', 
@@ -189,10 +189,137 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
             ))}
           </Box>
         )}
+
+        {/* Grid das Indicações - Quando não há vitórias, exibe as indicações aqui */}
+        {oscarAwards.wins.length === 0 && mainAwards.length > 0 && (
+          <>
+            <Box sx={{ 
+              display: 'grid', 
+              gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+              gap: 1.5,
+              mt: 1,
+              justifyContent: { xs: 'center', md: 'flex-start' }
+            }}>
+              {mainAwards.map((award, index) => (
+                <Box 
+                  key={index}
+                  sx={{
+                    p: 2,
+                    border: '1px solid #e0e0e0',
+                    borderRadius: 1,
+                    bgcolor: 'rgba(25, 118, 210, 0.05)',
+                    textAlign: 'center'
+                  }}
+                >
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontSize: { xs: '0.9rem', md: '0.95rem' },
+                      lineHeight: 1.4,
+                      fontWeight: 600,
+                      color: '#1976d2'
+                    }}
+                  >
+                    {translateOscarCategory(award.categoryName || award.category)}
+                  </Typography>
+                  {award.personName && (
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        fontSize: { xs: '0.8rem', md: '0.85rem' },
+                        color: 'text.secondary',
+                        fontStyle: 'italic',
+                        mt: 0.5
+                      }}
+                    >
+                      {award.personName}
+                    </Typography>
+                  )}
+                </Box>
+              ))}
+            </Box>
+
+            {/* Indicações restantes quando não há vitórias */}
+            {remainingAwards.length > 0 && (
+              <>
+                <Collapse in={showAllNominations}>
+                  <Box sx={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+                    gap: 1.5,
+                    mt: 2,
+                    justifyContent: { xs: 'center', md: 'flex-start' }
+                  }}>
+                    {remainingAwards.map((award, index) => (
+                      <Box 
+                        key={index}
+                        sx={{
+                          p: 2,
+                          border: '1px solid #e0e0e0',
+                          borderRadius: 1,
+                          bgcolor: 'rgba(25, 118, 210, 0.05)',
+                          textAlign: 'center'
+                        }}
+                      >
+                        <Typography 
+                          variant="body2" 
+                          sx={{ 
+                            fontSize: { xs: '0.9rem', md: '0.95rem' },
+                            lineHeight: 1.4,
+                            fontWeight: 600,
+                            color: '#1976d2'
+                          }}
+                        >
+                          {translateOscarCategory(award.categoryName || award.category)}
+                        </Typography>
+                        {award.personName && (
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              fontSize: { xs: '0.8rem', md: '0.85rem' },
+                              color: 'text.secondary',
+                              fontStyle: 'italic',
+                              mt: 0.5
+                            }}
+                          >
+                            {award.personName}
+                          </Typography>
+                        )}
+                      </Box>
+                    ))}
+                  </Box>
+                </Collapse>
+
+                <Box sx={{ mt: 2, display: 'flex', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => setShowAllNominations(!showAllNominations)}
+                    sx={{ 
+                      borderColor: '#1976d2',
+                      color: '#1976d2',
+                      textTransform: 'none',
+                      fontSize: '0.9rem',
+                      fontWeight: 500,
+                      px: 3,
+                      py: 1,
+                      '&:hover': {
+                        borderColor: '#1565c0',
+                        color: '#1565c0',
+                        bgcolor: 'rgba(25, 118, 210, 0.04)'
+                      }
+                    }}
+                  >
+                    {showAllNominations ? 'Ver menos...' : `Ver mais...`}
+                  </Button>
+                </Box>
+              </>
+            )}
+          </>
+        )}
       </Box>
 
-      {/* Card de Indicações */}
-      {mainAwards.length > 0 && (
+      {/* Card de Indicações - Só exibe se houver vitórias */}
+      {mainAwards.length > 0 && oscarAwards.wins.length > 0 && (
         <Box sx={{ 
           pt: 1,
           pb: 2,
@@ -209,7 +336,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
               fontWeight: 500
             }}
           >
-            Outras Indicações ({oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : oscarAwards.nominations[0]?.year || 2024})
+            Outras Indicações ({oscarAwards.wins[0].year})
           </Typography>
 
           {/* Grid das Indicações */}

@@ -68,7 +68,6 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   // Plataformas de aluguel/compra (logos serão carregados dinamicamente)
   const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{name: string, logo: string}>>([
     { name: 'Google Play', logo: '' },
-    { name: 'Microsoft Store', logo: '' },
     { name: 'YouTube (Gratuito)', logo: '' },
     { name: 'Prime Video', logo: '' }
   ]);
@@ -251,7 +250,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     navigate('/suggestions', { 
       state: { 
         ...location.state,
-        streamingFilters: filters 
+        streamingFilters: filters,
+        selectedOptionText: selectedOptionText // Garantir que o texto da opção seja passado
       } 
     });
   };
@@ -313,7 +313,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             sx={{ 
               color: 'text.secondary',
               fontSize: { xs: '0.9rem', sm: '1rem' },
-              fontWeight: 'normal',
+              fontWeight: 'bold',
               opacity: 0.8,
               fontStyle: 'italic'
             }}
@@ -578,12 +578,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
               <Grid container spacing={1.5}>
                 {isLoadingLogos ? (
-                  <Grid item xs={12} sm={6} md={3}>
+                  <Grid item xs={12} sm={6} md={4}>
                     <Skeleton variant="rectangular" height={60} />
                   </Grid>
                 ) : (
                   rentalPurchasePlatforms.map((platform) => (
-                    <Grid item xs={12} sm={6} md={3} key={platform.name}>
+                    <Grid item xs={12} sm={6} md={4} key={platform.name}>
                       <Chip
                         icon={
                           <img 
