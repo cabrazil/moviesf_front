@@ -4,8 +4,6 @@ import {
   Typography,
   Container,
   Grid,
-  FormControlLabel,
-  Checkbox,
   Button,
   Paper,
   Chip,
@@ -22,8 +20,7 @@ interface StreamingFiltersProps {
 
 export interface StreamingFilters {
   subscriptionPlatforms: string[];
-  rentalPurchasePlatforms: string[];
-  includeRentalPurchase: boolean;
+  // Removido: rentalPurchasePlatforms e includeRentalPurchase - simplificação
 }
 
 const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
@@ -31,10 +28,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Estados para filtros
-  const [includeRentalPurchase, setIncludeRentalPurchase] = useState(false);
+  // Estados para filtros - apenas assinaturas
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
-  const [selectedRentalPurchasePlatforms, setSelectedRentalPurchasePlatforms] = useState<string[]>([]);
   
   // Estado de loading para evitar sobreposição de logos
   const [isLoadingLogos, setIsLoadingLogos] = useState(true);
@@ -65,12 +60,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     'FilmBox+'
   ];
 
-  // Plataformas de aluguel/compra (logos serão carregados dinamicamente)
-  const [rentalPurchasePlatforms, setRentalPurchasePlatforms] = useState<Array<{name: string, logo: string}>>([
-    { name: 'Google Play', logo: '' },
-    { name: 'YouTube (Gratuito)', logo: '' },
-    { name: 'Prime Video', logo: '' }
-  ]);
+  // Removido: Seção de Aluguel/Compra - simplificação da interface
+  // Foco apenas em plataformas de assinatura para melhor experiência do usuário
 
   // Função para preload de imagens
   const preloadImage = (src: string): Promise<void> => {
@@ -126,23 +117,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     return platform;
   };
 
-  // Placeholder SVG para imagens que não carregam
-  const createPlaceholderSVG = (platformName: string) => {
-    const initials = platformName
-      .split(' ')
-      .map(word => word.charAt(0))
-      .join('')
-      .substring(0, 2)
-      .toUpperCase();
-    
-    return `data:image/svg+xml;base64,${btoa(`
-      <svg width="80" height="80" xmlns="http://www.w3.org/2000/svg">
-        <rect width="80" height="80" fill="#f0f0f0" rx="8"/>
-        <text x="40" y="45" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="#666">${initials}</text>
-        <text x="40" y="60" font-family="Arial, sans-serif" font-size="8" text-anchor="middle" fill="#999">${platformName.split(' ')[0]}</text>
-      </svg>
-    `)}`;
-  };
+  // Removido: createPlaceholderSVG - não utilizado após simplificação
 
   // Carregar logos dinâmicos do backend
   useEffect(() => {
@@ -165,27 +140,10 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         });
         setMainSubscriptionPlatforms(updatedMainPlatforms);
 
-        // Atualizar logos das plataformas de aluguel/compra
-        const updatedRentalPlatforms = rentalPurchasePlatforms.map(platform => {
-          const dbPlatform = findPlatformByName(platform.name, platformsData);
-          if (!dbPlatform || !dbPlatform.logoPath) {
-            console.warn(`⚠️ StreamingFilters - Logo não encontrado para plataforma de aluguel: ${platform.name}`);
-            // Em vez de quebrar, retorna um placeholder
-            return {
-              name: platform.name,
-              logo: createPlaceholderSVG(platform.name) // Use o placeholder SVG
-            };
-          }
-          const logoUrl = getPlatformLogoUrlMedium(dbPlatform.logoPath);
-          return {
-            name: platform.name,
-            logo: logoUrl
-          };
-        });
-        setRentalPurchasePlatforms(updatedRentalPlatforms);
+        // Removido: Carregamento de logos de Aluguel/Compra - simplificação
 
         // Preload das imagens para evitar flash
-        const preloadResult = await preloadImages([...updatedMainPlatforms, ...updatedRentalPlatforms]);
+        const preloadResult = await preloadImages([...updatedMainPlatforms]);
         if (!preloadResult) {
           console.warn('⚠️ StreamingFilters - Algumas imagens falharam no preload, mas continuando...');
         }
@@ -209,20 +167,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     );
   };
 
-  const handleRentalPurchasePlatformChange = (platformName: string) => {
-    setSelectedRentalPurchasePlatforms(prev => 
-      prev.includes(platformName)
-        ? prev.filter(p => p !== platformName)
-        : [...prev, platformName]
-    );
-  };
-
-  const handleIncludeRentalPurchaseChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIncludeRentalPurchase(event.target.checked);
-    if (!event.target.checked) {
-      setSelectedRentalPurchasePlatforms([]);
-    }
-  };
+  // Removido: Funções de Aluguel/Compra - simplificação
 
   const handleShowSuggestions = () => {
     // Processar plataformas selecionadas
@@ -241,9 +186,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
     }
 
     const filters: StreamingFilters = {
-      subscriptionPlatforms: processedSubscriptionPlatforms,
-      rentalPurchasePlatforms: selectedRentalPurchasePlatforms,
-      includeRentalPurchase: includeRentalPurchase
+      subscriptionPlatforms: processedSubscriptionPlatforms
     };
 
     // Passar filtros para a próxima tela
@@ -517,14 +460,14 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
           </Paper>
         </Grid>
 
-        {/* Checkbox para incluir aluguel/compra */}
-        <Grid item xs={12}>
+        {/* Removido: Checkbox de Aluguel/Compra - simplificação da interface */}
+        {/* <Grid item xs={12}>
           <Box sx={{ textAlign: 'center', my: 1.0 }}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={includeRentalPurchase}
-                  onChange={handleIncludeRentalPurchaseChange}
+                  checked={false}
+                  onChange={() => {}}
                   sx={{
                     color: theme.palette.text.secondary,
                     '&.Mui-checked': {
@@ -547,121 +490,9 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               }
             />
           </Box>
-        </Grid>
+        </Grid> */}
 
-        {/* Plataformas de Aluguel/Compra */}
-        {includeRentalPurchase && (
-          <Grid item xs={12}>
-            <Paper 
-              elevation={2} 
-              sx={{ 
-                p: 2.5,
-                backgroundColor: theme.palette.background.paper,
-                border: `2px solid ${theme.palette.primary.main}`,
-                borderRadius: 2
-              }}
-            >
-              <Typography 
-                variant="h6" 
-                component="h2" 
-                sx={{ 
-                  mb: 2,
-                  color: "text.secondary",
-                  fontSize: { xs: '1.0rem', sm: '1.2rem', md: '1.25rem' },
-                  lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
-                  fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' },
-                  textAlign: 'center'
-                }}
-              >
-                🛒 Lojas de Filmes (Aluguel/Compra)
-              </Typography>
-
-              <Grid container spacing={1.5}>
-                {isLoadingLogos ? (
-                  <Grid item xs={12} sm={6} md={4}>
-                    <Skeleton variant="rectangular" height={60} />
-                  </Grid>
-                ) : (
-                  rentalPurchasePlatforms.map((platform) => (
-                    <Grid item xs={12} sm={6} md={4} key={platform.name}>
-                      <Chip
-                        icon={
-                          <img 
-                            src={platform.logo} 
-                            alt={platform.name}
-                            style={{
-                              width: '80px',
-                              height: '80px',
-                              objectFit: 'contain',
-                              filter: 'none',
-                              zIndex: 1,
-                              position: 'relative'
-                            }}
-                          />
-                        }
-                        onClick={() => handleRentalPurchasePlatformChange(platform.name)}
-                        clickable
-                        sx={{
-                          width: '100%',
-                          height: 'auto',
-                          minHeight: '60px',
-                          padding: '4px',
-                          backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name) 
-                            ? `${theme.palette.primary.main}15`
-                            : 'transparent',
-                          border: selectedRentalPurchasePlatforms.includes(platform.name) 
-                            ? `3px solid ${theme.palette.primary.main}`
-                            : `2px solid ${theme.palette.primary.main}`,
-                          borderRadius: '12px',
-                          position: 'relative',
-                          transition: 'all 0.3s ease',
-                          cursor: 'pointer',
-                          '&:hover': {
-                            backgroundColor: selectedRentalPurchasePlatforms.includes(platform.name)
-                              ? `${theme.palette.primary.main}25`
-                              : `${theme.palette.primary.main}10`,
-                            transform: 'translateY(-2px)',
-                            boxShadow: selectedRentalPurchasePlatforms.includes(platform.name) 
-                              ? `0 4px 12px ${theme.palette.primary.main}40`
-                              : `0 4px 8px ${theme.palette.primary.main}20`,
-                            borderColor: theme.palette.primary.dark
-                          },
-                          '&:active': {
-                            transform: 'translateY(-1px)',
-                            boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
-                          },
-                          '& .MuiChip-icon': {
-                            margin: '0',
-                            width: '100%',
-                            height: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.3s ease'
-                          },
-                          // Indicador de seleção (canto superior direito)
-                          '&::after': selectedRentalPurchasePlatforms.includes(platform.name) ? {
-                            content: '""',
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            width: '12px',
-                            height: '12px',
-                            backgroundColor: theme.palette.primary.main,
-                            borderRadius: '50%',
-                            border: `2px solid ${theme.palette.background.paper}`,
-                            zIndex: 2,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                          } : {}
-                        }}
-                      />
-                    </Grid>
-                  ))
-                )}
-              </Grid>
-            </Paper>
-          </Grid>
-        )}
+        {/* Removido: Seção de Aluguel/Compra - simplificação da interface */}
       </Grid>
 
       {/* Botões de Navegação */}

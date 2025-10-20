@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
-import { CalendarMonth, Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
+import { Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import tmdbLogo from '../assets/themoviedb.svg';
@@ -498,14 +498,26 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               Filmes sugeridos para opção: {getSelectedOptionText()}
             </Typography>
             
-            {/* Indicador de Filtros de Streaming */}
+            {/* Indicador de Filtros de Streaming - Só exibe se há filtros ativos */}
             {streamingFilters && (
+              (() => {
+                const hasActiveFilters = streamingFilters.subscriptionPlatforms.length > 0 || 
+                  (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0);
+                
+                if (!hasActiveFilters) return null;
+                
+                const totalPlatforms = streamingFilters.subscriptionPlatforms.length + 
+                  (streamingFilters.includeRentalPurchase ? streamingFilters.rentalPurchasePlatforms.length : 0);
+                
+                return (
               <Chip
-                label={`🎬 Filtros de streaming ativos: ${streamingFilters.subscriptionPlatforms.length + streamingFilters.rentalPurchasePlatforms.length} plataforma(s)`}
+                    label={`🎬 Filtros de streaming ativos: ${totalPlatforms} plataforma(s)`}
                 color="primary"
                 variant="outlined"
                 sx={{ fontSize: '0.8rem' }}
               />
+                );
+              })()
             )}
           </Box>
 
@@ -628,7 +640,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         </Box>
 
         {/* Grid de Filmes */}
-        <Grid container spacing={3} sx={{ mb: 1 }}>
+        <Grid container spacing={2} sx={{ mb: 1 }}>
           {displaySuggestions.map((suggestion) => {
             const reason = suggestion.reason || '';
             
@@ -659,9 +671,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                     }
                   }}
                 >
-                  <CardContent sx={{ p: 2, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                  <CardContent sx={{ p: 1.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                     {/* Header com thumbnail e título */}
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5 }}>
                       {suggestion.movie.thumbnail && (
                         <Box sx={{ flexShrink: 0 }}>
                           <img 
@@ -677,18 +689,287 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                         </Box>
                       )}
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1.5, lineHeight: 1.2 }}>
+                        <Box sx={{ mb: 1 }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.75, lineHeight: 1.2, fontSize: '1rem' }}>
                           {suggestion.movie.title}
                         </Typography>
                         
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }}>
+                          {/* Plataformas de Streaming */}
+                          {(() => {
+                            const platforms = (suggestion.movie as any).platforms || [];
+                            
+                            // Se não há plataformas disponíveis, mostrar "não disponível no momento"
+                            if (platforms.length === 0) {
+                              return (
+                                <Chip
+                                  label="não disponível no momento"
+                                  size="small"
+                                  sx={{
+                                    fontSize: '0.7rem',
+                                    height: '22px',
+                                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                                    color: '#ff9800',
+                                    border: '1px solid rgba(255, 152, 0, 0.3)',
+                                    fontWeight: 500,
+                                    '& .MuiChip-label': {
+                                      px: 1.2
+                                    }
+                                  }}
+                                />
+                              );
+                            }
+                            
+                            // Se há plataformas, mostrar normalmente
+                            return (
+                            <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
+                              {(() => {
+                                // Se há filtros ativos, mostrar apenas plataformas que correspondem aos filtros
+                                if (streamingFilters && streamingFilters.subscriptionPlatforms.length > 0) {
+                                  const filteredPlatforms = (suggestion.movie as any).platforms.filter((platform: any) => {
+                                    const platformName = platform.streamingPlatform?.name || '';
+                                    const accessType = platform.accessType || '';
+                                    
+                                    console.log('🔍 Debug filtro de plataformas:', {
+                                      platformName,
+                                      accessType,
+                                      selectedPlatforms: streamingFilters.subscriptionPlatforms,
+                                      includeRentalPurchase: streamingFilters.includeRentalPurchase,
+                                      rentalPlatforms: streamingFilters.rentalPurchasePlatforms
+                                    });
+                                    
+                                    // Verificar se a plataforma corresponde aos filtros selecionados
+                                    const matchesSubscription = streamingFilters.subscriptionPlatforms.length === 0 || 
+                                      streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
+                                        if (selectedPlatform === '__OTHER_PLATFORMS__') {
+                                          const mainPlatforms = [
+                                            'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay', 
+                                            'apple tv+', 'claro video'
+                                          ];
+                                          const isMainPlatform = mainPlatforms.some(main => 
+                                            platformName.toLowerCase().includes(main)
+                                          );
+                                          return !isMainPlatform;
+                                        }
+                                        
+                                        const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
+                                        const cleanPlatformName = platformName.toLowerCase().trim();
+                                        const matches = cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+                                        
+                                        console.log('🔍 Comparação de plataformas:', {
+                                          selectedPlatform,
+                                          cleanSelectedPlatform,
+                                          platformName,
+                                          cleanPlatformName,
+                                          matches
+                                        });
+                                        
+                                        return matches;
+                                      });
+                                    
+                                    // Lógica simplificada: só permitir assinaturas que correspondem aos filtros
+                                    if (accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
+                                      return matchesSubscription;
+                                    }
+                                    
+                                    return false;
+                                  });
+                                  
+                                  console.log('🔍 Resultado do filtro:', {
+                                    originalPlatforms: (suggestion.movie as any).platforms.length,
+                                    filteredPlatforms: filteredPlatforms.length,
+                                    filteredPlatformNames: filteredPlatforms.map((p: any) => p.streamingPlatform?.name || p.name)
+                                  });
+                                  
+                                  return filteredPlatforms
+                                    .sort((a: any, b: any) => {
+                                      const aIsSubscription = a.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+                                      const bIsSubscription = b.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+                                      if (aIsSubscription && !bIsSubscription) return -1;
+                                      if (!aIsSubscription && bIsSubscription) return 1;
+                                      return 0;
+                                    })
+                                    .slice(0, 3).map((platform: any, index: number) => {
+                                      const isSubscription = platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+                                      return (
+                                        <Chip
+                                          key={index}
+                                          label={platform.streamingPlatform?.name || platform.name || 'Plataforma'}
+                                          size="small"
+                                          sx={{
+                                            fontSize: '0.7rem',
+                                            height: '22px',
+                                            backgroundColor: isSubscription 
+                                              ? 'rgba(76, 175, 80, 0.15)' 
+                                              : 'rgba(25, 118, 210, 0.1)',
+                                            color: isSubscription ? '#4caf50' : '#1976d2',
+                                            border: isSubscription 
+                                              ? '1px solid rgba(76, 175, 80, 0.4)' 
+                                              : '1px solid rgba(25, 118, 210, 0.3)',
+                                            fontWeight: isSubscription ? 600 : 500,
+                                            '& .MuiChip-label': {
+                                              px: 1.2
+                                            }
+                                          }}
+                                        />
+                                      );
+                                    });
+                                } else {
+                                  // Sem filtros ativos, mostrar até 3 plataformas de assinatura + "ver mais" se há aluguel/compra
+                                  const subscriptionPlatforms = (suggestion.movie as any).platforms.filter((platform: any) => 
+                                    platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION'
+                                  );
+                                  
+                                  // Mostrar até 3 plataformas de assinatura
+                                  const platformsToShow = subscriptionPlatforms.slice(0, 3);
+                                  
+                                  return platformsToShow.map((platform: any, index: number) => (
+                                    <Chip
+                                      key={index}
+                                      label={platform.streamingPlatform?.name || platform.name || 'Plataforma'}
+                                      size="small"
+                                      sx={{
+                                        fontSize: '0.7rem',
+                                        height: '22px',
+                                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                                        color: '#1976d2',
+                                        border: '1px solid rgba(25, 118, 210, 0.3)',
+                                        fontWeight: 500,
+                                        '& .MuiChip-label': {
+                                          px: 1.2
+                                        }
+                                      }}
+                                    />
+                                  ));
+                                }
+                              })()}
+                              {(() => {
+                                // Se há filtros ativos, usar o número de plataformas filtradas
+                                if (streamingFilters && streamingFilters.subscriptionPlatforms.length > 0) {
+                                  const filteredPlatforms = (suggestion.movie as any).platforms.filter((platform: any) => {
+                                    const platformName = platform.streamingPlatform?.name || '';
+                                    const accessType = platform.accessType || '';
+                                    
+                                    const matchesSubscription = streamingFilters.subscriptionPlatforms.length === 0 || 
+                                      streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
+                                        if (selectedPlatform === '__OTHER_PLATFORMS__') {
+                                          const mainPlatforms = [
+                                            'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay', 
+                                            'apple tv+', 'claro video'
+                                          ];
+                                          const isMainPlatform = mainPlatforms.some(main => 
+                                            platformName.toLowerCase().includes(main)
+                                          );
+                                          return !isMainPlatform;
+                                        }
+                                        
+                                        const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
+                                        const cleanPlatformName = platformName.toLowerCase().trim();
+                                        return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+                                      });
+                                    
+                                    // Lógica simplificada: só permitir assinaturas que correspondem aos filtros
+                                    if (accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
+                                      return matchesSubscription;
+                                    }
+                                    
+                                    return false;
+                                  });
+                                  
+                                  const totalFilteredPlatforms = filteredPlatforms.length;
+                                  // Contar todas as plataformas disponíveis (assinatura + aluguel/compra)
+                                  const totalAllPlatforms = (suggestion.movie as any).platforms.length;
+                                  
+                                  // Se há mais plataformas disponíveis além das filtradas, mostrar "ver mais"
+                                  if (totalAllPlatforms > totalFilteredPlatforms) {
+                                    return (
+                                      <Chip
+                                        label="ver mais"
+                                        size="small"
+                                        sx={{
+                                          fontSize: '0.7rem',
+                                          height: '22px',
+                                          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                          color: '#4caf50',
+                                          border: '1px solid rgba(76, 175, 80, 0.3)',
+                                          fontWeight: 500,
+                                          '& .MuiChip-label': {
+                                            px: 1.2
+                                          }
+                                        }}
+                                      />
+                                    );
+                                  }
+                                  
+                                  // Se há mais de 3 plataformas filtradas, mostrar contador
+                                  if (totalFilteredPlatforms > 3) {
+                                    return (
+                                      <Chip
+                                        label={`+${totalFilteredPlatforms - 3}`}
+                                        size="small"
+                                        sx={{
+                                          fontSize: '0.7rem',
+                                          height: '22px',
+                                          backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                          color: 'text.secondary',
+                                          border: '1px solid rgba(0, 0, 0, 0.2)',
+                                          '& .MuiChip-label': {
+                                            px: 1.2
+                                          }
+                                        }}
+                                      />
+                                    );
+                                  }
+                                  return null;
+                                } else {
+                                  // Sem filtros ativos, mostrar "ver mais" se há aluguel/compra ou muitas assinaturas
+                                  const subscriptionPlatforms = (suggestion.movie as any).platforms.filter((platform: any) => 
+                                    platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION'
+                                  );
+                                  
+                                  const rentalPurchasePlatforms = (suggestion.movie as any).platforms.filter((platform: any) => 
+                                    platform.accessType === 'PURCHASE' || platform.accessType === 'RENTAL'
+                                  );
+                                  
+                                  const hasRentalPurchase = rentalPurchasePlatforms.length > 0;
+                                  const hasManySubscriptions = subscriptionPlatforms.length > 3;
+                                  
+                                  // Mostrar "ver mais" se há aluguel/compra ou muitas assinaturas
+                                  if (hasRentalPurchase || hasManySubscriptions) {
+                                    return (
+                                      <Chip
+                                        label="ver mais"
+                                        size="small"
+                                        sx={{
+                                          fontSize: '0.7rem',
+                                          height: '22px',
+                                          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                          color: '#4caf50',
+                                          border: '1px solid rgba(76, 175, 80, 0.3)',
+                                          fontWeight: 500,
+                                          '& .MuiChip-label': {
+                                            px: 1.2
+                                          }
+                                        }}
+                                      />
+                                    );
+                                  }
+                                  
+                                  return null;
+                                }
+                              })()}
+                            </Stack>
+                            );
+                          })()}
+                        </Box>
+                        
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
                           {suggestion.movie.year && (
                             <Chip 
-                              icon={<CalendarMonth />} 
                               label={suggestion.movie.year} 
                               size="small"
                               color="primary"
                               variant="outlined"
+                              sx={{ fontSize: '0.7rem' }}
                             />
                           )}
                           {suggestion.movie.director && (
@@ -698,16 +979,17 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                               size="small"
                               color="secondary"
                               variant="outlined"
+                              sx={{ fontSize: '0.7rem' }}
                             />
                           )}
                         </Stack>
 
                         {/* Informações do filme: Ratings, Duração e Classificação */}
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1.5 }}>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
                           {/* TMDB */}
                           {typeof (suggestion.movie as any).vote_average !== 'undefined' && (suggestion.movie as any).vote_average !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <RatingIcon src={tmdbLogo} alt="TMDB" size={20} />
+                              <RatingIcon src={tmdbLogo} alt="TMDB" size={24} />
                               <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
                                 {Number((suggestion.movie as any).vote_average).toFixed(1)}
                               </Typography>
@@ -716,7 +998,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                           {/* IMDb */}
                           {typeof suggestion.movie.imdbRating !== 'undefined' && suggestion.movie.imdbRating !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <RatingIcon src={imdbLogo} alt="IMDb" size={16} />
+                              <RatingIcon src={imdbLogo} alt="IMDb" size={20} />
                               <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
                                 {Number(suggestion.movie.imdbRating).toFixed(1)}
                               </Typography>
@@ -725,7 +1007,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                           {/* Rotten Tomatoes */}
                           {typeof suggestion.movie.rottenTomatoesRating !== 'undefined' && suggestion.movie.rottenTomatoesRating !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <RatingIcon src={rtLogo} alt="Rotten Tomatoes" size={16} />
+                              <RatingIcon src={rtLogo} alt="Rotten Tomatoes" size={20} />
                               <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
                                 {Number(suggestion.movie.rottenTomatoesRating).toFixed(0)}%
                               </Typography>
@@ -734,7 +1016,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                           {/* Metacritic */}
                           {typeof suggestion.movie.metacriticRating !== 'undefined' && suggestion.movie.metacriticRating !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              <RatingIcon src={metacriticLogo} alt="Metacritic" size={16} />
+                              <RatingIcon src={metacriticLogo} alt="Metacritic" size={20} />
                               <Typography variant="caption" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
                                 {Number(suggestion.movie.metacriticRating).toFixed(0)}
                               </Typography>
@@ -774,7 +1056,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
                         {/* Gêneros compactos */}
                         {suggestion.movie.genres && suggestion.movie.genres.length > 0 && (
-                          <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 1 }}>
+                          <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.25 }}>
                             {suggestion.movie.genres.slice(0, 3).map((genre: string) => (
                               <Chip 
                                 key={genre} 
@@ -802,8 +1084,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                           sx={{ 
                             display: 'flex', 
                             alignItems: 'flex-start', 
-                            gap: 1,
-                            p: 1.5,
+                            gap: 0.5,
+                            p: 0.5,
                             borderRadius: 1,
                             backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
                             border: `1px solid ${getSentimentColor()}20`,
