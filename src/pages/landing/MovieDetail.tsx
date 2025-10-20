@@ -11,6 +11,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import logoBlog from '../../assets/logo_blog.png';
 // import tmdbLogo from '../../assets/themoviedb.svg';
 // import imdbLogo from '../../assets/imdb.png';
 // import rtLogo from '../../assets/rottentomatoes.png';
@@ -422,9 +423,17 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
           borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)'
       }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
-              Vibesfilm
-          </Typography>
+          <Box
+            component="img"
+            src={logoBlog}
+            alt="VibesFilm Logo"
+            sx={{
+              height: { xs: 32, sm: 40 },
+              width: 'auto',
+              maxWidth: { xs: 150, sm: 200 },
+              objectFit: 'contain'
+            }}
+          />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <IconButton 
               sx={{ 

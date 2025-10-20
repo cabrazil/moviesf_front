@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar, Drawer, List, ListItem, ListItemText, ListItemButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logo from '../assets/logo.png';
-import logoWhite from '../assets/logo_white.png';
-import logoHeader from '../assets/logo_header.png';
+import logoBlog from '../assets/logo_blog.png';
 import { useThemeManager } from '../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon icon for dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for light mode
@@ -39,7 +37,7 @@ const Home: React.FC = () => {
           {/* Logo */}
           <Box
             component="img"
-            src={logoHeader}
+            src={logoBlog}
             alt="VibesFilm Logo"
             sx={{
               height: { xs: 36, sm: 48 },
@@ -180,7 +178,7 @@ const Home: React.FC = () => {
         }}
       >
         <Typography variant="h5" component="h2" sx={{ 
-          mb: { xs: 0.5, sm: 0.5 }, 
+          mb: { xs: 1, sm: 1.5 }, 
           color: 'text.primary',
           fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' }
         }}>
@@ -188,8 +186,8 @@ const Home: React.FC = () => {
         </Typography>
         <Box
           component="img"
-          src={mode === 'dark' ? logoWhite : logo}
-          alt="Logo do projeto"
+          src={logoBlog}
+          alt="VibesFilm Logo"
           onError={(e) => {
             console.error('Erro ao carregar logo:', e);
             // Fallback para texto se a imagem falhar
@@ -199,7 +197,7 @@ const Home: React.FC = () => {
           sx={{
             width: { xs: 240, sm: 250, md: 300 },
             height: 'auto',
-            marginBottom: 0,
+            marginBottom: { xs: 1.5, sm: 2 },
             filter: mode === 'dark' 
               ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))' 
               : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
@@ -208,11 +206,10 @@ const Home: React.FC = () => {
           }}
         />
 
-
         <Typography variant="h2" component="h1" gutterBottom sx={{ 
           fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
-          mt: { xs: 0.5, sm: 1 }, 
-          mb: { xs: 0.5, sm: 1 },
+          mt: { xs: 1, sm: 1.5 }, 
+          mb: { xs: 1, sm: 1.5 },
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
         }}>
           Encontre o filme perfeito para sua vibe!
@@ -220,15 +217,15 @@ const Home: React.FC = () => {
 
         <Typography variant="h6" color="text.secondary" paragraph sx={{ 
           maxWidth: 600, 
-          mt: { xs: 0.5, sm: 1 }, 
-          mb: { xs: 1, sm: 1 },
+          mt: { xs: 1, sm: 1.5 }, 
+          mb: { xs: 2, sm: 2.5 },
           fontSize: { xs: '1rem', sm: '1rem' },
           px: { xs: 1, sm: 0 }
         }}>
           O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
         </Typography>
 
-        <Box sx={{ mt: { xs: 1, sm: 2 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
+        <Box sx={{ mt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
           <Button
             variant="contained"
             size="large"

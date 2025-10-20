@@ -3,24 +3,24 @@ import {
   Box,
   Typography,
   Container,
-  Grid,
   Button,
-  Paper,
-  Chip,
+  Grid,
   useTheme,
   Skeleton,
-  CircularProgress
+  Card,
+  CardContent,
+  Checkbox,
+  Collapse,
+  IconButton
 } from '@mui/material';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getStreamingPlatforms, getPlatformLogoUrlMedium } from '../services/streaming.service';
 
-interface StreamingFiltersProps {
-  // Removido onFiltersChange pois não está sendo usado
-}
+interface StreamingFiltersProps {}
 
 export interface StreamingFilters {
   subscriptionPlatforms: string[];
-  // Removido: rentalPurchasePlatforms e includeRentalPurchase - simplificação
 }
 
 const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
@@ -28,184 +28,108 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Estados para filtros - apenas assinaturas
   const [selectedSubscriptionPlatforms, setSelectedSubscriptionPlatforms] = useState<string[]>([]);
-  
-  // Estado de loading para evitar sobreposição de logos
   const [isLoadingLogos, setIsLoadingLogos] = useState(true);
-
-  // Mapeamento das plataformas principais (logos serão carregados dinamicamente)
+  const [showOtherPlatforms, setShowOtherPlatforms] = useState(false);
+  
+  // 9 plataformas principais (baseado na análise SQL)
   const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([
+    { name: 'Claro Video', logo: '' },
+    { name: 'HBO Max', logo: '' },
     { name: 'Prime Video', logo: '' },
     { name: 'Netflix', logo: '' },
     { name: 'Disney+', logo: '' },
-    { name: 'HBO Max', logo: '' },
+    { name: 'Telecine', logo: '' },
     { name: 'Globoplay', logo: '' },
-    { name: 'Apple TV+', logo: '' },
-    { name: 'Claro Video', logo: '' }
+    { name: 'Paramount+', logo: '' },
+    { name: 'Apple TV+', logo: '' }
   ]);
 
-  // Outras plataformas (serão agrupadas)
+  // Outras plataformas (colapsável)
   const otherSubscriptionPlatforms = [
-    'Paramount+',
-    'Telecine',
-    'Looke',
     'MUBI',
-    'Reserva Imovision',
+    'Oldflix',
+    'Looke',
     'MGM+',
-    'Claro tv+',
     'Filmelier+',
-    'Belas Artes à La Carte',
-    'GOSPEL PLAY',
-    'FilmBox+'
+    'FilmBox+',
+    'Reserva Imovision'
   ];
 
-  // Removido: Seção de Aluguel/Compra - simplificação da interface
-  // Foco apenas em plataformas de assinatura para melhor experiência do usuário
-
-  // Função para preload de imagens
-  const preloadImage = (src: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve();
-      };
-      img.onerror = () => {
-        reject(new Error(`Failed to load image: ${src}`));
-      };
-      img.src = src;
-    });
-  };
-
-  // Função para preload de múltiplas imagens
-  const preloadImages = async (platforms: Array<{name: string, logo: string}>) => {
-    const imagePromises = platforms.map(platform => preloadImage(platform.logo));
-    try {
-      await Promise.all(imagePromises);
-      return true;
-    } catch (error) {
-      console.warn('⚠️ StreamingFilters - Algumas imagens falharam ao carregar:', error);
-      return false;
-    }
-  };
-
-  // Função para buscar plataforma de forma mais flexível
-  const findPlatformByName = (platformName: string, platformsData: any[]) => {
-    // Busca exata primeiro
-    let platform = platformsData.find(p => p.name === platformName);
-    
-    if (platform) {
-      return platform;
-    }
-    
-    // Busca por nomes simplificados (removendo sufixos como "(Aluguel/Compra)")
-    const simplifiedName = platformName.replace(/\s*\([^)]*\)/g, '').trim();
-    platform = platformsData.find(p => p.name === simplifiedName);
-    
-    if (platform) {
-      return platform;
-    }
-    
-    // Busca por nomes que contenham palavras-chave
-    const keywords = simplifiedName.split(' ').filter(word => word.length > 2);
-    platform = platformsData.find(p => 
-      keywords.some(keyword => 
-        p.name.toLowerCase().includes(keyword.toLowerCase())
-      )
-    );
-    
-    return platform;
-  };
-
-  // Removido: createPlaceholderSVG - não utilizado após simplificação
-
-  // Carregar logos dinâmicos do backend
   useEffect(() => {
-    const loadPlatformLogos = async () => {
-      setIsLoadingLogos(true);
+    const loadLogos = async () => {
       try {
-        const platformsData = await getStreamingPlatforms();
-        
-        // Atualizar logos das plataformas principais
-        const updatedMainPlatforms = mainSubscriptionPlatforms.map(platform => {
-          const dbPlatform = findPlatformByName(platform.name, platformsData);
-          if (!dbPlatform || !dbPlatform.logoPath) {
-            throw new Error(`Logo não encontrado para plataforma: ${platform.name}`);
-          }
-          const logoUrl = getPlatformLogoUrlMedium(dbPlatform.logoPath);
-          return {
-            name: platform.name,
-            logo: logoUrl
-          };
-        });
-        setMainSubscriptionPlatforms(updatedMainPlatforms);
-
-        // Removido: Carregamento de logos de Aluguel/Compra - simplificação
-
-        // Preload das imagens para evitar flash
-        const preloadResult = await preloadImages([...updatedMainPlatforms]);
-        if (!preloadResult) {
-          console.warn('⚠️ StreamingFilters - Algumas imagens falharam no preload, mas continuando...');
-        }
-        
-      } catch (err) {
-        console.error('❌ StreamingFilters - Erro ao carregar logos das plataformas:', err);
-        // Em caso de erro, mantém o loading state para mostrar skeleton
+        const platforms = await getStreamingPlatforms();
+        const updatedPlatforms = await Promise.all(
+          mainSubscriptionPlatforms.map(async (platform) => {
+            try {
+              // Buscar a plataforma na lista retornada pela API
+              const foundPlatform = platforms.find(p => 
+                p.name.toLowerCase() === platform.name.toLowerCase()
+              );
+              
+              if (foundPlatform && foundPlatform.logoPath) {
+                const logoUrl = getPlatformLogoUrlMedium(foundPlatform.logoPath);
+                return { ...platform, logo: logoUrl };
+              } else {
+                // Fallback para logos locais ou placeholder
+                return { ...platform, logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png` };
+              }
+            } catch (error) {
+              console.error(`Erro ao carregar logo para ${platform.name}:`, error);
+              // Fallback para placeholder
+              return { ...platform, logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png` };
+            }
+          })
+        );
+        setMainSubscriptionPlatforms(updatedPlatforms);
+      } catch (error) {
+        console.error('Erro ao carregar logos:', error);
+        // Em caso de erro, usar logos locais como fallback
+        const fallbackPlatforms = mainSubscriptionPlatforms.map(platform => ({
+          ...platform,
+          logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`
+        }));
+        setMainSubscriptionPlatforms(fallbackPlatforms);
       } finally {
         setIsLoadingLogos(false);
       }
     };
 
-    loadPlatformLogos();
+    loadLogos();
   }, []);
 
   const handleSubscriptionPlatformChange = (platformName: string) => {
     setSelectedSubscriptionPlatforms(prev => 
-      prev.includes(platformName)
+      prev.includes(platformName) 
         ? prev.filter(p => p !== platformName)
         : [...prev, platformName]
     );
   };
 
-  // Removido: Funções de Aluguel/Compra - simplificação
-
-  const handleShowSuggestions = () => {
-    // Processar plataformas selecionadas
-    let processedSubscriptionPlatforms = [...selectedSubscriptionPlatforms];
-    
-    // Se "Outras Plataformas" estiver selecionada, usar lógica especial
-    if (selectedSubscriptionPlatforms.includes('Outras Plataformas')) {
-      // Remover "Outras Plataformas" da lista
-      processedSubscriptionPlatforms = processedSubscriptionPlatforms.filter(p => p !== 'Outras Plataformas');
-      
-      // Adicionar as outras plataformas conhecidas
-      processedSubscriptionPlatforms = [...processedSubscriptionPlatforms, ...otherSubscriptionPlatforms];
-      
-      // Marcar que "Outras Plataformas" foi selecionada para lógica especial no filtro
-      processedSubscriptionPlatforms.push('__OTHER_PLATFORMS__');
-    }
-
+  const handleContinue = () => {
     const filters: StreamingFilters = {
-      subscriptionPlatforms: processedSubscriptionPlatforms
+      subscriptionPlatforms: selectedSubscriptionPlatforms
     };
 
-    // Passar filtros para a próxima tela
+    const selectedOptionText = location.state?.selectedOptionText || 
+      (location.state?.movieSuggestions?.length > 0 && location.state.movieSuggestions[0].journeyOptionFlow 
+        ? location.state.movieSuggestions[0].journeyOptionFlow.text 
+        : null);
+
     navigate('/suggestions', { 
       state: { 
         ...location.state,
         streamingFilters: filters,
-        selectedOptionText: selectedOptionText // Garantir que o texto da opção seja passado
+        selectedOptionText: selectedOptionText
       } 
     });
   };
 
   const handleBack = () => {
-    // Verificar se viemos da tela de sugestões sem filmes (para evitar loop)
-    // Se há journeyContext, voltar para a jornada personalizada
     const journeyContext = location.state?.journeyContext;
     
     if (journeyContext) {
-      // Voltar para /intro com o contexto da jornada para restaurar o estado
       navigate('/intro', { 
         state: { 
           restoreJourney: true,
@@ -215,25 +139,19 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         } 
       });
     } else {
-      // Fallback para navegação padrão
       navigate(-1);
     }
   };
 
-  // Extrair o texto da opção selecionada na jornada anterior
-  const movieSuggestions = location.state?.movieSuggestions || [];
-  
   const selectedOptionText = location.state?.selectedOptionText || 
-    (movieSuggestions.length > 0 && movieSuggestions[0].journeyOptionFlow 
-      ? movieSuggestions[0].journeyOptionFlow.text 
+    (location.state?.movieSuggestions?.length > 0 && location.state.movieSuggestions[0].journeyOptionFlow 
+      ? location.state.movieSuggestions[0].journeyOptionFlow.text 
       : null);
-  
-
 
   return (
-    <Container maxWidth="lg" sx={{ py: 3 }}>
-      <Box sx={{ mb: 3 }}>
-        {/* Header */}
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Header */}
+      <Box sx={{ mb: 4, textAlign: 'center' }}>
         <Typography 
           variant="h3"
           component="h2" 
@@ -248,274 +166,234 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
           Ótima escolha! Agora, onde você gostaria de assistir a este tipo de filme?
         </Typography>
         
-        {/* Texto da opção selecionada */}
         {selectedOptionText && (
           <Typography 
-            variant="h6"
-            align="center"
+            variant="body1"
             sx={{ 
               color: 'text.secondary',
-              fontSize: { xs: '0.9rem', sm: '1rem' },
-              fontWeight: 'bold',
-              opacity: 0.8,
-              fontStyle: 'italic'
+              fontSize: '1.1rem',
+              maxWidth: '600px',
+              mx: 'auto',
+              lineHeight: 1.6
             }}
           >
-            "{selectedOptionText}"
+            {selectedOptionText}
           </Typography>
-        )}
-        
-        {/* Indicador de loading */}
-        {isLoadingLogos && (
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 2 }}>
-            <CircularProgress size={20} />
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: "text.secondary",
-                fontSize: { xs: '0.8rem', sm: '0.9rem' }
-              }}
-            >
-              Carregando logos das plataformas...
-            </Typography>
-          </Box>
         )}
       </Box>
 
-      <Grid container spacing={2}>
-        {/* Plataformas de Assinatura */}
-        <Grid item xs={12}>
-          <Paper 
-            elevation={3} 
-            sx={{ 
-              p: 2.5,
-              backgroundColor: theme.palette.background.paper,
-              border: `2px solid ${theme.palette.primary.main}`,
-              borderRadius: 2
-            }}
-          >
-            <Typography 
-              variant="h6" 
-              component="h2" 
-              sx={{ 
-                mb: 2,
-                color: "text.secondary",
-                fontSize: { xs: '1.0rem', sm: '1.2rem', md: '1.25rem' },
-                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
-                fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' },
-                textAlign: 'center'
-              }}
-            >
-              🎬 Plataformas de Assinatura
-            </Typography>
+      {/* Grid de Plataformas Principais */}
+      <Box sx={{ mb: 3 }}>
 
-            <Grid container spacing={1.5}>
-              {/* Plataformas principais */}
-              {isLoadingLogos ? (
-                <Grid item xs={12} sm={6} md={3}>
-                  <Skeleton variant="rectangular" height={60} />
-                </Grid>
-              ) : (
-                mainSubscriptionPlatforms.map((platform) => (
-                  <Grid item xs={12} sm={6} md={3} key={platform.name}>
-                    <Chip
-                      icon={
-                        <img 
-                          src={platform.logo} 
-                          alt={platform.name}
-                          style={{
-                            width: '70px',
-                            height: '70px',
-                            objectFit: 'contain',
-                            filter: 'none',
-                            zIndex: 1,
-                            position: 'relative'
-                          }}
-                        />
-                      }
-                      onClick={() => handleSubscriptionPlatformChange(platform.name)}
-                      clickable
-                      sx={{
-                        width: '100%',
-                        height: 'auto',
-                        minHeight: '60px',
-                        padding: '4px',
-                        backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
-                          ? `${theme.palette.primary.main}15`
-                          : 'transparent',
-                        border: selectedSubscriptionPlatforms.includes(platform.name) 
-                          ? `3px solid ${theme.palette.primary.main}`
-                          : `2px solid ${theme.palette.primary.main}`,
-                        borderRadius: '12px',
-                        position: 'relative',
-                        transition: 'all 0.3s ease',
-                        cursor: 'pointer',
-                        '&:hover': {
-                          backgroundColor: selectedSubscriptionPlatforms.includes(platform.name)
-                            ? `${theme.palette.primary.main}25`
-                            : `${theme.palette.primary.main}10`,
-                          transform: 'translateY(-2px)',
-                          boxShadow: selectedSubscriptionPlatforms.includes(platform.name) 
-                            ? `0 4px 12px ${theme.palette.primary.main}40`
-                            : `0 4px 8px ${theme.palette.primary.main}20`,
-                          borderColor: theme.palette.primary.dark
-                        },
-                        '&:active': {
-                          transform: 'translateY(-1px)',
-                          boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
-                        },
-                        '& .MuiChip-icon': {
-                          margin: '0',
-                          width: '100%',
-                          height: '100%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          transition: 'all 0.3s ease'
-                        },
-                        // Indicador de seleção (canto superior direito)
-                        '&::after': selectedSubscriptionPlatforms.includes(platform.name) ? {
-                          content: '""',
-                          position: 'absolute',
-                          top: '8px',
-                          right: '8px',
-                          width: '12px',
-                          height: '12px',
-                          backgroundColor: theme.palette.primary.main,
-                          borderRadius: '50%',
-                          border: `2px solid ${theme.palette.background.paper}`,
-                          zIndex: 2,
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                        } : {}
-                      }}
-                    />
-                  </Grid>
-                ))
-              )}
-              
-              {/* Outras plataformas */}
-              {isLoadingLogos ? (
-                <Grid item xs={12} sm={6} md={3}>
-                  <Skeleton variant="rectangular" height={60} />
-                </Grid>
-              ) : (
-                <Grid item xs={12} sm={6} md={3}>
-                  <Chip
-                    label="Outras Plataformas"
-                    onClick={() => handleSubscriptionPlatformChange('Outras Plataformas')}
-                    clickable
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      minHeight: '60px',
-                      padding: '4px',
-                      fontSize: { xs: '0.8rem', sm: '0.85rem' },
-                      fontWeight: 500,
-                      backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas') 
-                        ? `${theme.palette.primary.main}15`
-                        : 'transparent',
-                      color: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                        ? theme.palette.primary.main
-                        : theme.palette.text.secondary,
-                      border: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                        ? `3px solid ${theme.palette.primary.main}`
-                        : `2px solid ${theme.palette.primary.main}`,
-                      borderRadius: '12px',
-                      position: 'relative',
-                      transition: 'all 0.3s ease',
-                      cursor: 'pointer',
-                      '&:hover': {
-                        backgroundColor: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                          ? `${theme.palette.primary.main}25`
-                          : `${theme.palette.primary.main}10`,
-                        transform: 'translateY(-2px)',
-                        boxShadow: selectedSubscriptionPlatforms.includes('Outras Plataformas')
-                          ? `0 4px 12px ${theme.palette.primary.main}40`
-                          : `0 4px 8px ${theme.palette.primary.main}20`,
-                        borderColor: theme.palette.primary.dark
-                      },
-                      '&:active': {
-                        transform: 'translateY(-1px)',
-                        boxShadow: `0 2px 4px ${theme.palette.primary.main}30`
-                      },
-                      // Indicador de seleção (canto superior direito)
-                      '&::after': selectedSubscriptionPlatforms.includes('Outras Plataformas') ? {
-                        content: '""',
-                        position: 'absolute',
-                        top: '8px',
-                        right: '8px',
-                        width: '12px',
-                        height: '12px',
-                        backgroundColor: theme.palette.primary.main,
-                        borderRadius: '50%',
-                        border: `2px solid ${theme.palette.background.paper}`,
-                        zIndex: 2,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                      } : {}
-                    }}
-                  />
-                </Grid>
-              )}
-            </Grid>
-          </Paper>
-        </Grid>
-
-        {/* Removido: Checkbox de Aluguel/Compra - simplificação da interface */}
-        {/* <Grid item xs={12}>
-          <Box sx={{ textAlign: 'center', my: 1.0 }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={false}
-                  onChange={() => {}}
+        {isLoadingLogos ? (
+          <Grid container spacing={1.5}>
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+              <Grid item xs={4} sm={3} md={2.4} key={i}>
+                <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 2 }} />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Grid container spacing={1.5}>
+            {mainSubscriptionPlatforms.map((platform) => (
+              <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
+                <Card
+                  onClick={() => handleSubscriptionPlatformChange(platform.name)}
                   sx={{
-                    color: theme.palette.text.secondary,
-                    '&.Mui-checked': {
-                      color: theme.palette.text.secondary,
-                    },
-                  }}
-                />
-              }
-              label={
-                <Typography 
-                  variant="h6"
-                  sx={{ 
-                    color: theme.palette.text.secondary,
-                    fontWeight: 'normal',
-                    fontSize: { xs: '0.9rem', sm: '1rem' }
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    border: selectedSubscriptionPlatforms.includes(platform.name) 
+                      ? `2px solid ${theme.palette.primary.main}`
+                      : `1px solid ${theme.palette.divider}`,
+                    backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                      ? `${theme.palette.primary.main}08`
+                      : 'background.paper',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 3,
+                      borderColor: theme.palette.primary.main
+                    }
                   }}
                 >
-                  Incluir opções de aluguel e compra
-                </Typography>
-              }
-            />
+                  <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                      <img 
+                        src={platform.logo} 
+                        alt={platform.name}
+                        style={{
+                          width: '50px',
+                          height: '50px',
+                          objectFit: 'contain',
+                          borderRadius: '6px'
+                        }}
+                        onError={(e) => {
+                          // Fallback para placeholder quando a imagem falha
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const parent = target.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `
+                              <div style="
+                                width: 50px; 
+                                height: 50px; 
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                border-radius: 6px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-weight: bold;
+                                font-size: 10px;
+                                text-align: center;
+                              ">
+                                ${platform.name.substring(0, 3).toUpperCase()}
+                              </div>
+                            `;
+                          }
+                        }}
+                      />
+                    </Box>
+
+                    <Checkbox
+                      checked={selectedSubscriptionPlatforms.includes(platform.name)}
+                      sx={{
+                        position: 'absolute',
+                        top: 4,
+                        right: 4,
+                        p: 0.5,
+                        '&.Mui-checked': {
+                          color: theme.palette.primary.main
+                        }
+                      }}
+                      size="small"
+                    />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
+
+      {/* Seção Outras Plataformas (Colapsável) */}
+      <Box sx={{ mb: 3 }}>
+        <Box 
+          onClick={() => setShowOtherPlatforms(!showOtherPlatforms)}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            p: 2,
+            borderRadius: 2,
+            border: `1px solid ${theme.palette.divider}`,
+            backgroundColor: theme.palette.background.paper,
+            '&:hover': {
+              backgroundColor: theme.palette.action.hover
+            }
+          }}
+        >
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: 'text.secondary',
+              fontWeight: 500
+            }}
+          >
+            Outras plataformas ({otherSubscriptionPlatforms.length})
+          </Typography>
+          <IconButton size="small" sx={{ ml: 1 }}>
+            {showOtherPlatforms ? <ExpandLess /> : <ExpandMore />}
+          </IconButton>
+        </Box>
+
+        <Collapse in={showOtherPlatforms}>
+          <Box sx={{ mt: 2 }}>
+            <Grid container spacing={1}>
+              {otherSubscriptionPlatforms.map((platformName) => (
+                <Grid item xs={4} sm={3} md={2.4} key={platformName}>
+                  <Card
+                    onClick={() => handleSubscriptionPlatformChange(platformName)}
+                    sx={{
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      border: selectedSubscriptionPlatforms.includes(platformName) 
+                        ? `2px solid ${theme.palette.primary.main}`
+                        : `1px solid ${theme.palette.divider}`,
+                      backgroundColor: selectedSubscriptionPlatforms.includes(platformName) 
+                        ? `${theme.palette.primary.main}08`
+                        : 'background.paper',
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: 2,
+                        borderColor: theme.palette.primary.main
+                      }
+                    }}
+                  >
+                    <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: selectedSubscriptionPlatforms.includes(platformName) ? 600 : 400,
+                          color: selectedSubscriptionPlatforms.includes(platformName) 
+                            ? theme.palette.primary.main 
+                            : 'text.primary',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        {platformName}
+                      </Typography>
+
+                      <Checkbox
+                        checked={selectedSubscriptionPlatforms.includes(platformName)}
+                        sx={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 4,
+                          p: 0.5,
+                          '&.Mui-checked': {
+                            color: theme.palette.primary.main
+                          }
+                        }}
+                        size="small"
+                      />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
-        </Grid> */}
+        </Collapse>
+      </Box>
 
-        {/* Removido: Seção de Aluguel/Compra - simplificação da interface */}
-      </Grid>
-
-      {/* Botões de Navegação */}
+      {/* Botões de Ação */}
       <Box sx={{ 
-        mt: 4, 
-        display: 'flex',
-        justifyContent: 'space-between'
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        mt: 4,
+        gap: 2
       }}>
         <Button
           variant="outlined"
           onClick={handleBack}
-          sx={{ px: 4, py: 1.5 }}
+          sx={{ 
+            minWidth: '120px',
+            borderRadius: 2
+          }}
         >
           Voltar
         </Button>
-
+        
         <Button
           variant="outlined"
-          onClick={handleShowSuggestions}
-          disabled={false} // Permitir prosseguir mesmo sem filtros
-          sx={{ px: 4, py: 1.5 }}
+          onClick={handleContinue}
+          sx={{ 
+            minWidth: '120px',
+            borderRadius: 2,
+            px: 3
+          }}
         >
-          Ver Sugestões
+          Ver Sugestões ({selectedSubscriptionPlatforms.length})
         </Button>
       </Box>
     </Container>

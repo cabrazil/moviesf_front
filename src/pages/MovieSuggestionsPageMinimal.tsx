@@ -24,6 +24,25 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const [showPost1990, setShowPost1990] = useState(true);
   const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('smart');
 
+  // Lógica de rotação automática dos filtros
+  useEffect(() => {
+    const availableFilters: ('smart' | 'rating' | 'year')[] = ['smart', 'rating', 'year'];
+    
+    // Usar uma combinação de timestamp e dados da sessão para maior variabilidade
+    const timestamp = Date.now();
+    const sessionData = JSON.stringify(movieSuggestions.length + journeyContext?.selectedSentiment?.id?.length || 0);
+    const hash = sessionData.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    
+    const filterIndex = Math.abs(timestamp + hash) % availableFilters.length;
+    const selectedFilter = availableFilters[filterIndex];
+    
+    setSortType(selectedFilter);
+    console.log(`🎲 Filtro automático selecionado: ${selectedFilter} (índice: ${filterIndex})`);
+  }, []); // Executa apenas uma vez quando o componente é montado
+
   // Scroll para o topo quando o componente for carregado
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -240,6 +259,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     }
     
     return '#1976d2'; // Cor padrão se não houver sentimento
+  };
+
+  // Função auxiliar para gerar cores com transparência
+  const getSentimentColorWithOpacity = (opacity: string) => {
+    const baseColor = getSentimentColor();
+    return `${baseColor}${opacity}`;
   };
 
   // Ordenar e paginar sugestões
@@ -799,11 +824,11 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                                             fontSize: '0.7rem',
                                             height: '22px',
                                             backgroundColor: isSubscription 
-                                              ? 'rgba(76, 175, 80, 0.15)' 
+                                              ? getSentimentColorWithOpacity('15') 
                                               : 'rgba(25, 118, 210, 0.1)',
-                                            color: isSubscription ? '#4caf50' : '#1976d2',
+                                            color: isSubscription ? getSentimentColor() : '#1976d2',
                                             border: isSubscription 
-                                              ? '1px solid rgba(76, 175, 80, 0.4)' 
+                                              ? `1px solid ${getSentimentColorWithOpacity('40')}` 
                                               : '1px solid rgba(25, 118, 210, 0.3)',
                                             fontWeight: isSubscription ? 600 : 500,
                                             '& .MuiChip-label': {
@@ -830,10 +855,10 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                                       sx={{
                                         fontSize: '0.7rem',
                                         height: '22px',
-                                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                                        color: '#1976d2',
-                                        border: '1px solid rgba(25, 118, 210, 0.3)',
-                                        fontWeight: 500,
+                                        backgroundColor: getSentimentColorWithOpacity('15'),
+                                        color: getSentimentColor(),
+                                        border: `1px solid ${getSentimentColorWithOpacity('40')}`,
+                                        fontWeight: 600,
                                         '& .MuiChip-label': {
                                           px: 1.2
                                         }
@@ -1137,7 +1162,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         </Grid>
 
         {/* Footer com Paginação e Navegação */}
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 3 }}>
           {/* Botões de Navegação */}
           <Button
             variant="outlined"
