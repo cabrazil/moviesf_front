@@ -1010,7 +1010,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                         </Stack>
 
                         {/* Informações do filme: Ratings, Duração e Classificação */}
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
+                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1 }}>
                           {/* TMDB */}
                           {typeof (suggestion.movie as any).vote_average !== 'undefined' && (suggestion.movie as any).vote_average !== null && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -1081,7 +1081,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
                         {/* Gêneros compactos */}
                         {suggestion.movie.genres && suggestion.movie.genres.length > 0 && (
-                          <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.25 }}>
+                          <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.75 }}>
                             {suggestion.movie.genres.slice(0, 3).map((genre: string) => (
                               <Chip 
                                 key={genre} 
@@ -1111,6 +1111,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                             alignItems: 'flex-start', 
                             gap: 0.5,
                             p: 0.5,
+                            mt: 0.5,
                             borderRadius: 1,
                             backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
                             border: `1px solid ${getSentimentColor()}20`,
