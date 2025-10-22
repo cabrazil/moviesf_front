@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box, Typography, Chip, Divider, Stack, Paper, Button, Container, IconButton, AppBar, Toolbar, Tooltip } from '@mui/material';
+import { Box, Typography, Chip, Divider, Paper, Button, Container, IconButton, AppBar, Toolbar, Tooltip } from '@mui/material';
 import { MovieMetaTags } from '../../components/landing/MetaTags';
 import { StreamingPlatformsCompact } from '../../components/landing/StreamingPlatformsCompact';
-import OscarRecognition from '../../components/landing/OscarRecognition';
 // import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 // import StarIcon from '@mui/icons-material/Star';
 import ShareIcon from '@mui/icons-material/Share';
@@ -158,51 +157,6 @@ interface MovieDetailProps {
   slug?: string;
 }
 
-// Função para formatar premiações para exibição na LP
-const formatAwardsForDisplay = (awardsSummary: string): { firstLine: string; secondLine?: string } => {
-  if (!awardsSummary || awardsSummary.trim() === '') {
-    return { firstLine: '' };
-  }
-
-  // Remover "no no total" duplicado se existir
-  let cleaned = awardsSummary.replace(/no no total/g, 'no total');
-  
-  // Padrões para dividir em duas linhas
-  const patterns = [
-    // "Ganhou X Oscars. Y vitórias e Z indicações no total"
-    /^(Ganhou \d+ Oscars?)\.\s*(.+)$/i,
-    // "Indicado a X Oscars. Y vitórias e Z indicações no total"  
-    /^(Indicado a \d+ Oscars?)\.\s*(.+)$/i,
-    // "Ganhou X [premio]. Y vitórias e Z indicações no total"
-    /^(Ganhou \d+ [^.]+)\.\s*(.+)$/i,
-    // "Indicado a X [premio]. Y vitórias e Z indicações no total"
-    /^(Indicado a \d+ [^.]+)\.\s*(.+)$/i
-  ];
-
-  for (const pattern of patterns) {
-    const match = cleaned.match(pattern);
-    if (match) {
-      return {
-        firstLine: match[1].trim(),
-        secondLine: match[2].trim()
-      };
-    }
-  }
-
-  // Se não matched nenhum padrão, exibir em uma linha só
-  // Mas se for muito longo (>50 caracteres), tentar quebrar no ponto
-  if (cleaned.length > 50) {
-    const dotIndex = cleaned.indexOf('.');
-    if (dotIndex > 0 && dotIndex < cleaned.length - 1) {
-      return {
-        firstLine: cleaned.substring(0, dotIndex).trim(),
-        secondLine: cleaned.substring(dotIndex + 1).trim()
-      };
-    }
-  }
-
-  return { firstLine: cleaned };
-};
 
 // Função para extrair o texto do landingPageHook
 const extractHookText = (landingPageHook: string): string => {
@@ -241,11 +195,101 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
   return "Filmes que despertam a mesma emoção";
 };
 
+// Função para traduzir categorias do Oscar (versão completa da versão anterior)
+const translateOscarCategory = (category: string): string => {
+  const translations: { [key: string]: string } = {
+    'BEST PICTURE': 'Melhor Filme',
+    'BEST DIRECTOR': 'Melhor Diretor',
+    'BEST ACTOR': 'Melhor Ator',
+    'BEST ACTRESS': 'Melhor Atriz',
+    'BEST SUPPORTING ACTOR': 'Melhor Ator Coadjuvante',
+    'BEST SUPPORTING ACTRESS': 'Melhor Atriz Coadjuvante',
+    'BEST ORIGINAL SCREENPLAY': 'Melhor Roteiro Original',
+    'BEST ADAPTED SCREENPLAY': 'Melhor Roteiro Adaptado',
+    'BEST CINEMATOGRAPHY': 'Melhor Fotografia',
+    'BEST FILM EDITING': 'Melhor Edição',
+    'BEST PRODUCTION DESIGN': 'Melhor Direção de Arte',
+    'BEST COSTUME DESIGN': 'Melhor Figurino',
+    'BEST MAKEUP AND HAIRSTYLING': 'Melhor Maquiagem e Penteados',
+    'BEST SOUND': 'Melhor Som',
+    'BEST SOUND EDITING': 'Melhor Edição de Som',
+    'SOUND EFFECTS EDITING': 'Melhor Edição de Efeitos Sonoros',
+    'BEST SOUND MIXING': 'Melhor Mixagem de Som',
+    'BEST VISUAL EFFECTS': 'Melhores Efeitos Visuais',
+    'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
+    'BEST ORIGINAL SONG': 'Melhor Canção Original',
+    'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
+    'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
+    'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
+    'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
+    'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
+    'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
+    'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
+    'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
+    'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
+    'BEST ANIMATED FEATURE FILM': 'Melhor Filme de Animação',
+    'BEST ANIMATED SHORT FILM': 'Melhor Curta-Metragem de Animação',
+    'BEST LIVE ACTION SHORT FILM': 'Melhor Curta-Metragem de Ação ao Vivo',
+    'ACTOR IN A LEADING ROLE': 'Melhor Ator',
+    'ACTRESS IN A LEADING ROLE': 'Melhor Atriz',
+    'ACTOR IN A SUPPORTING ROLE': 'Melhor Ator Coadjuvante',
+    'ACTRESS IN A SUPPORTING ROLE': 'Melhor Atriz Coadjuvante',
+    'DIRECTING': 'Melhor Diretor',
+    'CINEMATOGRAPHY': 'Melhor Fotografia',
+    'FILM EDITING': 'Melhor Edição',
+    'PRODUCTION DESIGN': 'Melhor Direção de Arte',
+    'ART DIRECTION': 'Melhor Direção de Arte',
+    'COSTUME DESIGN': 'Melhor Figurino',
+    'MAKEUP AND HAIRSTYLING': 'Melhor Maquiagem e Penteados',
+    'SOUND': 'Melhor Som',
+    'SOUND MIXING': 'Melhor Mixagem de Som',
+    'SOUND EDITING': 'Melhor Edição de Som',
+    'VISUAL EFFECTS': 'Melhores Efeitos Visuais',
+    'SPECIAL VISUAL EFFECTS': 'Melhores Efeitos Visuais',
+    'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
+    'ORIGINAL SONG': 'Melhor Canção Original',
+    'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (Original Song)': 'Melhor Canção Original',
+    'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
+    'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
+    'DOCUMENTARY FEATURE': 'Melhor Documentário',
+    'ANIMATED FEATURE FILM': 'Melhor Filme de Animação',
+    // Adicionar suporte para formato com underscore (do backend)
+    'BEST_PICTURE': 'Melhor Filme',
+    'BEST_DIRECTOR': 'Melhor Diretor',
+    'BEST_ACTOR': 'Melhor Ator',
+    'BEST_ACTRESS': 'Melhor Atriz',
+    'BEST_SUPPORTING_ACTOR': 'Melhor Ator Coadjuvante',
+    'BEST_SUPPORTING_ACTRESS': 'Melhor Atriz Coadjuvante',
+    'BEST_ORIGINAL_SCREENPLAY': 'Melhor Roteiro Original',
+    'BEST_ADAPTED_SCREENPLAY': 'Melhor Roteiro Adaptado',
+    'BEST_CINEMATOGRAPHY': 'Melhor Fotografia',
+    'BEST_FILM_EDITING': 'Melhor Edição',
+    'BEST_ORIGINAL_SCORE': 'Melhor Trilha Sonora Original',
+    'BEST_ORIGINAL_SONG': 'Melhor Canção Original',
+    'BEST_PRODUCTION_DESIGN': 'Melhor Direção de Arte',
+    'BEST_COSTUME_DESIGN': 'Melhor Figurino',
+    'BEST_MAKEUP_AND_HAIRSTYLING': 'Melhor Maquiagem e Penteados',
+    'BEST_SOUND': 'Melhor Som',
+    'BEST_VISUAL_EFFECTS': 'Melhores Efeitos Visuais',
+    'BEST_ANIMATED_FEATURE': 'Melhor Filme de Animação',
+    'BEST_INTERNATIONAL_FEATURE': 'Melhor Filme Internacional',
+    'BEST_DOCUMENTARY_FEATURE': 'Melhor Documentário',
+    'BEST_SHORT_FILM': 'Melhor Curta-Metragem',
+    'BEST_ANIMATED_SHORT': 'Melhor Curta de Animação',
+    'BEST_DOCUMENTARY_SHORT': 'Melhor Documentário Curto',
+    'BEST_LIVE_ACTION_SHORT': 'Melhor Curta de Ação ao Vivo'
+  };
+
+  return translations[category] || category;
+};
+
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
 const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
   const { identifier } = useParams<{ identifier: string }>();
   const navigate = useNavigate();
   const { mode, toggleThemeMode } = useThemeManager();
+  
   const [movie, setMovie] = useState<Movie | null>(null);
   const [subscriptionPlatforms, setSubscriptionPlatforms] = useState<Array<{
     id: string;
@@ -276,30 +320,16 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
     slug?: string;
   }>>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'trailer' | 'cast' | 'reviews' | 'awards' | 'similar'>('similar');
   const [showFullCast, setShowFullCast] = useState(false);
+  const [showFullNominations, setShowFullNominations] = useState(false);
+  
 
-  // Filtrar elenco completo para remover duplicatas do elenco principal
-  // Remove atores que já estão no elenco principal
-  const filteredFullCast = useMemo(() => {
-    if (!movie?.fullCast || !movie?.mainCast) return movie?.fullCast || [];
-    
-    // Criar lista de nomes do elenco principal para comparação
-    const mainCastNames = movie.mainCast.map(actor => 
-      actor.actorName.toLowerCase().trim()
-    );
-    
-    // Filtrar elenco completo removendo atores do elenco principal
-    return movie.fullCast.filter(actor => 
-      !mainCastNames.includes(actor.actorName.toLowerCase().trim())
-    );
-  }, [movie?.fullCast, movie?.mainCast]);
 
 
   // Usar o slug da prop ou do parâmetro da URL
   const finalSlug = propSlug || identifier;
 
-
+  // Hooks devem vir ANTES de qualquer return condicional
 
   useEffect(() => {
     console.log('🎬 MovieDetail - useEffect executado, finalSlug:', finalSlug);
@@ -388,8 +418,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
       </Box>
     );
   }
-
-
 
   // const getAccessTypeColor = (accessType: string) => {
   //   switch (accessType) {
@@ -761,7 +789,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                 }}>
                   {movie?.targetAudienceForLP ? 
                     movie.targetAudienceForLP :
-                    'Este filme é ideal para quem busca uma experiência cinematográfica única e envolvente.'
+                    'Este filme pode ser perfeito para quem busca uma experiência cinematográfica única e envolvente.'
                   }
                 </Paper>
 
@@ -995,93 +1023,10 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   Mais sobre "{movie?.title}"
                 </Typography>
                 
-                {/* Tabs Navigation */}
-                <Box sx={{ 
-                  borderBottom: 1, 
-                  borderColor: mode === 'dark' ? 'divider' : 'rgba(0,0,0,0.3)', 
-                  mb: 1 
-                }}>
-                  <Stack direction="row" spacing={0}>
-                    <Button
-                      variant="text"
-                      onClick={() => setActiveTab('trailer')}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        borderRadius: 0,
-                        borderBottom: activeTab === 'trailer' ? '2px solid #1976d2' : 'none',
-                        color: activeTab === 'trailer' ? '#1976d2' : 'text.secondary',
-                        fontSize: { xs: '0.95rem', md: '1rem' },
-                        bgcolor: 'transparent'
-                      }}
-                    >
-                      Trailer
-                    </Button>
-                    <Button
-                      variant="text"
-                      onClick={() => setActiveTab('cast')}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        borderRadius: 0,
-                        borderBottom: activeTab === 'cast' ? '2px solid #1976d2' : 'none',
-                        color: activeTab === 'cast' ? '#1976d2' : 'text.secondary',
-                        fontSize: { xs: '0.95rem', md: '1rem' },
-                        bgcolor: 'transparent'
-                      }}
-                    >
-                      Elenco Principal
-                    </Button>
-                    <Button
-                      variant="text"
-                      onClick={() => setActiveTab('reviews')}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        borderRadius: 0,
-                        borderBottom: activeTab === 'reviews' ? '2px solid #1976d2' : 'none',
-                        color: activeTab === 'reviews' ? '#1976d2' : 'text.secondary',
-                        fontSize: { xs: '0.95rem', md: '1rem' },
-                        bgcolor: 'transparent'
-                      }}
-                    >
-                      O que a Crítica diz?
-                    </Button>
-                    <Button
-                      variant="text"
-                      onClick={() => setActiveTab('awards')}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        borderRadius: 0,
-                        borderBottom: activeTab === 'awards' ? '2px solid #1976d2' : 'none',
-                        color: activeTab === 'awards' ? '#1976d2' : 'text.secondary',
-                        fontSize: { xs: '0.95rem', md: '1rem' },
-                        bgcolor: 'transparent'
-                      }}
-                    >
-                      Premiações
-                    </Button>
-                    <Button
-                      variant="text"
-                      onClick={() => setActiveTab('similar')}
-                      sx={{
-                        textTransform: 'none',
-                        fontWeight: 500,
-                        borderRadius: 0,
-                        borderBottom: activeTab === 'similar' ? '2px solid #1976d2' : 'none',
-                        color: activeTab === 'similar' ? '#1976d2' : 'text.secondary',
-                        fontSize: { xs: '0.95rem', md: '1rem' },
-                        bgcolor: 'transparent'
-                      }}
-                    >
-                      Filmes Relacionados
-                    </Button>
-                  </Stack>
-                </Box>
-
-                {/* Tab Content */}
-                {activeTab === 'trailer' && (
+                {/* Layout Responsivo: Accordion */}
+                <>
+                {/* Seção 1: Trailer (sempre visível) */}
+                <Box sx={{ mb: 3 }}>
                   <Box sx={{ maxWidth: '100%' }}>
                     <Typography variant="h3" component="h3" sx={{ mb: 1, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
                       Trailer Oficial
@@ -1146,461 +1091,391 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                       </Box>
                     )}
                   </Box>
-                )}
+                </Box>
 
-                {activeTab === 'cast' && (
-                  <Box>
-                    {/* Elenco Principal */}
-                    {movie.mainCast && movie.mainCast.length > 0 && (
-                      <Box sx={{ mb: 4 }}>
-                    <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                          Elenco Principal
-                    </Typography>
-                        <Box sx={{ 
-                          display: 'grid', 
-                          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                          gap: 2 
+                {/* Seção 2: Elenco Principal (simplificado) */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h3" 
+                    component="h3" 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#1976d2', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1.1rem', md: '1.3rem' }, 
+                      fontWeight: 600 
+                    }}
+                  >
+                    Elenco Principal
+                  </Typography>
+                  {/* Lista simples do elenco */}
+                  {movie.mainCast && movie.mainCast.length > 0 && (
+                    <Box sx={{ mb: 2 }}>
+                      {/* Mostrar apenas atores com order 0-4 (elenco principal) */}
+                      {movie.mainCast?.filter(actor => actor.order <= 4).map((actor, index) => (
+                        <Box key={index} sx={{ 
+                          py: 1, 
+                          borderBottom: index < 4 ? '1px solid' : 'none',
+                          borderColor: 'divider'
                         }}>
-                          {movie.mainCast.map((actor, index) => (
+                          <Typography variant="body1" sx={{ 
+                            fontWeight: 500, 
+                            color: 'text.primary',
+                            fontSize: '1rem'
+                          }}>
+                            {actor.actorName} <span style={{ fontStyle: 'italic', color: '#666' }}>como</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{actor.characterName}</span>
+                          </Typography>
+                        </Box>
+                      ))}
+                      
+                      {/* Atores extras (order > 4) - mostrados quando showFullCast = true */}
+                      {showFullCast && movie.mainCast?.some(actor => actor.order > 4) && (
+                        <Box sx={{ mt: 2 }}>
+                          {movie.mainCast?.filter(actor => actor.order > 4).map((actor, index) => (
                             <Box key={index} sx={{ 
-                              p: 2.5, 
-                              border: mode === 'dark' ? '1px solid' : '2px solid',
-                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d2',
-                              borderRadius: mode === 'dark' ? 1 : 2,
-                              bgcolor: mode === 'dark' ? 'background.paper' : 'rgba(25, 118, 210, 0.02)'
+                              py: 1, 
+                              borderBottom: index < (movie.mainCast?.filter(actor => actor.order > 4).length || 0) - 1 ? '1px solid' : 'none',
+                              borderColor: 'divider'
                             }}>
                               <Typography variant="body1" sx={{ 
-                                fontWeight: 600, 
+                                fontWeight: 500, 
                                 color: 'text.primary',
-                                fontSize: { xs: '1rem', md: '1.05rem' }
+                                fontSize: '1rem'
                               }}>
-                                {actor.actorName}
-                              </Typography>
-                              <Typography variant="body2" sx={{ 
-                                color: 'text.secondary',
-                                fontSize: { xs: '0.85rem', md: '0.9rem' },
-                                mt: 0.5,
-                                fontStyle: 'italic'
-                              }}>
-                                como {actor.characterName}
+                                {actor.actorName} <span style={{ fontStyle: 'italic', color: '#666' }}>como</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{actor.characterName}</span>
                               </Typography>
                             </Box>
                           ))}
                         </Box>
+                      )}
 
-                        {/* Botão Ver mais... */}
-                        {filteredFullCast && filteredFullCast.length > 0 && (
-                          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-                            <Button
-                              variant="outlined"
-                              onClick={() => setShowFullCast(!showFullCast)}
-                              sx={{
-                                borderColor: '#1976d2',
-                                color: '#1976d2',
-                                textTransform: 'none',
-                                fontSize: '0.9rem',
-                                fontWeight: 500,
-                                px: 3,
-                                py: 1,
-                                '&:hover': {
-                                  borderColor: '#1565c0',
-                                  color: '#1565c0',
-                                  bgcolor: 'rgba(25, 118, 210, 0.04)'
-                                }
-                              }}
-                            >
-                              {showFullCast ? 'Ver menos...' : 'Ver mais...'}
-                            </Button>
-                          </Box>
-                        )}
-                      </Box>
-                    )}
-
-                    {/* Elenco Completo - Expandível */}
-                    {filteredFullCast && filteredFullCast.length > 0 && showFullCast && (
-                      <Box sx={{ mt: 2 }}>
-                        <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                          Elenco Completo
-                        </Typography>
-                      <Box sx={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
-                        gap: 2 
-                      }}>
-                          {filteredFullCast.map((actor, index) => (
-                          <Box key={index} sx={{ 
-                            p: 2, 
-                              border: mode === 'dark' ? '1px solid' : '1.5px solid',
-                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
-                              borderRadius: mode === 'dark' ? 1 : 2,
-                            bgcolor: 'background.paper'
-                          }}>
-                            <Typography variant="body1" sx={{ 
-                              fontWeight: 500, 
-                              color: 'text.primary',
-                              fontSize: { xs: '0.9rem', md: '0.95rem' }
-                            }}>
-                              {actor.actorName}
-                            </Typography>
-                            <Typography variant="body2" sx={{ 
-                              color: 'text.secondary',
-                              fontSize: { xs: '0.8rem', md: '0.85rem' },
-                              mt: 0.5,
-                              fontStyle: 'italic'
-                            }}>
-                              como {actor.characterName}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                      </Box>
-                    )}
-
-                    {/* Mensagem quando não há elenco completo */}
-                    {(!filteredFullCast || filteredFullCast.length === 0) && (
-                      <Box sx={{ mt: 2 }}>
-                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2, textAlign: 'center', fontStyle: 'italic' }}>
-                          Informações do elenco completo em breve...
-                      </Typography>
-                      </Box>
-                    )}
-                  </Box>
-                )}
-
-                {activeTab === 'reviews' && (
-                  <Box>
-                    <Typography variant="h3" component="h3" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                      O que a Crítica diz?
-                    </Typography>
-                    {movie.quotes && movie.quotes.length > 0 ? (
-                      <Box sx={{ 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        gap: 1.5 
-                      }}>
-                        {movie.quotes.map((quote) => (
-                          <Box 
-                            key={quote.id} 
-                            component="blockquote"
-                            sx={{ 
-                              p: 2, 
-                              border: mode === 'dark' ? '1px solid' : '1.5px solid',
-                              borderColor: mode === 'dark' ? 'grey.200' : '#1976d240',
-                              borderRadius: mode === 'dark' ? 1 : 2,
-                              bgcolor: 'background.paper',
-                              margin: 0,
-                              fontStyle: 'italic',
-                              position: 'relative'
+                      {/* Ver mais se houver atores com order > 4 */}
+                      {movie.mainCast.some(actor => actor.order > 4) && (
+                        <Box sx={{ 
+                          mt: 2, 
+                          pt: 1, 
+                          borderTop: '1px solid',
+                          borderColor: 'divider',
+                          textAlign: 'center'
+                        }}>
+                          <Button
+                            variant="text"
+                            onClick={() => setShowFullCast(!showFullCast)}
+                            sx={{
+                              textTransform: 'none',
+                              fontSize: '0.9rem',
+                              color: '#1976d2',
+                              fontWeight: 500,
+                              '&:hover': {
+                                backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                              }
                             }}
                           >
-                            <Typography variant="body2" sx={{ 
-                              fontSize: '0.9rem', 
-                              lineHeight: 1.5,
-                              color: 'text.secondary',
-                              mb: 1
-                            }}>
-                              "{quote.text}"
-                    </Typography>
-                            <Typography variant="body2" sx={{ 
-                              fontWeight: 500, 
-                              fontSize: '0.8rem', 
-                              color: 'text.primary',
-                              fontStyle: 'normal'
-                            }}>
-                              {quote.author ? `— ${quote.author}` : ''}
-                              {quote.vehicle && quote.url ? (
-                                <span>
-                                  ,{' '}
-                                  <a 
-                                    href={quote.url} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    style={{ 
-                                      color: '#1976d2', 
-                                      textDecoration: 'underline',
-                                      cursor: 'pointer'
-                                    }}
-                                  >
-                                    {quote.vehicle}
-                                  </a>
-                                </span>
-                              ) : quote.vehicle ? (
-                                `, ${quote.vehicle}`
-                              ) : ''}
-                          </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    ) : (
-                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                        Nenhuma crítica encontrada no momento.
-                      </Typography>
-                    )}
-                  </Box>
-                )}
+                            {showFullCast ? 'Ver menos' : `Ver mais... (${movie.mainCast?.filter(actor => actor.order > 4).length || 0} atores)`}
+                          </Button>
+                        </Box>
+                      )}
+                    </Box>
+                  )}
 
-                {activeTab === 'awards' && (
-                  <Box>
-                    <Typography variant="h3" component="h3" sx={{ mb: 3, fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>
-                      Premiações e Reconhecimento
-                    </Typography>
+                </Box>
+
+                {/* Seção 3: Premiações (simplificado) */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography 
+                    variant="h3" 
+                    component="h3" 
+                    sx={{ 
+                      mb: 2, 
+                      color: '#1976d2', 
+                      textAlign: { xs: 'center', md: 'left' }, 
+                      fontSize: { xs: '1.1rem', md: '1.3rem' }, 
+                      fontWeight: 600 
+                    }}
+                  >
+                    Premiações e Reconhecimento
+                  </Typography>
                     
-                    {movie.oscarAwards ? (
-                      // Se tem dados estruturados do Oscar, mostrar componente especializado
-                      <Box sx={{ mb: 3 }}>
-                        <OscarRecognition 
-                          movieTitle={movie.title}
-                          oscarAwards={movie.oscarAwards}
-                        />
-                      </Box>
-                    ) : movie.awardsSummary && movie.awardsSummary.trim() !== '' ? (
-                      // Se não tem Oscar mas tem texto de premiações gerais
-                      <Box sx={{ 
-                        display: 'grid',
-                        gridTemplateColumns: { xs: '1fr', md: '1fr' },
-                        gap: 2
-                      }}>
-                        <Box sx={{ 
-                          p: 3, 
-                          border: mode === 'dark' ? '1px solid' : '2px solid',
-                          borderColor: mode === 'dark' ? 'grey.200' : '#1976d2',
-                          borderRadius: mode === 'dark' ? 1 : 2,
-                          bgcolor: mode === 'dark' ? 'background.paper' : 'rgba(25, 118, 210, 0.02)',
-                          position: 'relative',
-                          overflow: 'hidden'
-                        }}>
-                          {/* Ícone de prêmio */}
-                          <Box sx={{
-                            position: 'absolute',
-                            top: 16,
-                            right: 16,
-                            opacity: 0.1,
-                            fontSize: '2rem'
-                          }}>
-                            🏆
-                          </Box>
-                          
-                          <Typography variant="h4" component="h4" sx={{ 
-                            mb: 2, 
-                            fontSize: '1.1rem', 
-                            fontWeight: 600, 
-                            color: '#1976d2',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1
-                          }}>
-                            <span>🏆</span>
-                            Reconhecimento e Premiações
-                          </Typography>
-                          
-                          {(() => {
-                            const { firstLine, secondLine } = formatAwardsForDisplay(movie.awardsSummary!);
-                            return (
-                              <Box>
-                                <Typography variant="body1" sx={{ 
-                                  fontSize: { xs: '1rem', md: '1.1rem' },
-                                  lineHeight: 1.6,
-                                  color: 'text.primary',
-                                  fontWeight: 500,
-                                  mb: secondLine ? 2 : 0
-                                }}>
-                                  {firstLine}
-                                </Typography>
-                                {secondLine && (
-                                  <Typography variant="body1" sx={{ 
-                                    fontSize: { xs: '0.95rem', md: '1rem' },
-                                    lineHeight: 1.6,
-                                    color: 'text.secondary',
-                                    fontStyle: 'italic'
-                                  }}>
-                                    {secondLine}
-                                  </Typography>
-                                )}
-                              </Box>
-                            );
-                          })()}
-                        </Box>
-                      </Box>
-                    ) : (
-                      <Box sx={{ 
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        py: 6,
-                        px: 3,
-                        textAlign: 'center',
-                        border: mode === 'dark' ? '1px dashed' : '2px dashed',
-                        borderColor: mode === 'dark' ? 'grey.300' : '#1976d240',
-                        borderRadius: 2,
-                        bgcolor: mode === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(25, 118, 210, 0.02)'
-                      }}>
-                        <Box sx={{ 
-                          fontSize: '3rem', 
-                          mb: 2, 
-                          opacity: 0.3 
-                        }}>
-                          🏆
-                        </Box>
-                        <Typography variant="h6" sx={{ 
-                          mb: 1, 
-                          color: 'text.secondary',
+                    {movie.oscarAwards && (movie.oscarAwards.wins.length > 0 || movie.oscarAwards.nominations.length > 0) ? (
+                      // Se tem dados estruturados do Oscar, mostrar versão simplificada
+                      <Box sx={{ mb: 2 }}>
+                        {/* Texto introdutório */}
+                        <Typography variant="body1" sx={{ 
+                          mb: 2,
+                          lineHeight: 1.6,
+                          fontSize: { xs: '1rem', md: '1.1rem' },
+                          color: 'text.primary',
                           fontWeight: 500
                         }}>
-                          Premiações não disponíveis
+                          {movie.title} foi indicado a {(movie.oscarAwards?.wins.length || 0) + (movie.oscarAwards?.nominations.length || 0)} Oscar{((movie.oscarAwards?.wins.length || 0) + (movie.oscarAwards?.nominations.length || 0)) > 1 ? 's' : ''} em {(movie.oscarAwards?.wins.length || 0) > 0 ? movie.oscarAwards?.wins[0]?.year : movie.oscarAwards?.nominations[0]?.year}{(movie.oscarAwards?.wins.length || 0) > 0 ? ', ' : ''}{(movie.oscarAwards?.wins.length || 0) > 0 ? <span style={{ fontStyle: 'italic' }}>conquistou</span> : ''}:
                         </Typography>
-                        <Typography variant="body2" sx={{ 
-                          color: 'text.secondary',
-                          maxWidth: '400px',
-                          lineHeight: 1.5
+
+                        {/* Vitórias no Oscar - sempre visíveis */}
+                        {movie.oscarAwards?.wins && movie.oscarAwards.wins.length > 0 && (
+                          <Box sx={{ mb: 2 }}>
+                            {movie.oscarAwards.wins.map((win, index) => (
+                              <Box key={index} sx={{ 
+                                py: 1, 
+                                borderBottom: index < (movie.oscarAwards?.wins.length || 0) - 1 ? '1px solid' : 'none',
+                                borderColor: 'divider'
+                              }}>
+                                <Typography variant="body1" sx={{ 
+                                  fontWeight: 500, 
+                                  color: 'text.primary',
+                                  fontSize: '1rem'
+                                }}>
+                                  {translateOscarCategory(win.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{win.personName}</span>
+                                </Typography>
+                              </Box>
+                            ))}
+                          </Box>
+                        )}
+
+                        {/* Indicações que não venceram - só aparecem no "Ver mais" */}
+                        {movie.oscarAwards?.nominations && movie.oscarAwards.nominations.length > 0 && (
+                          <>
+
+                            {/* Indicações extras - mostradas quando showFullNominations = true */}
+                            {showFullNominations && (
+                              <Box sx={{ mt: 2 }}>
+                                {movie.oscarAwards.nominations.map((nomination, index) => (
+                                  <Box key={index} sx={{ 
+                                    py: 1, 
+                                    borderBottom: index < (movie.oscarAwards?.nominations.length || 0) - 1 ? '1px solid' : 'none',
+                                    borderColor: 'divider'
+                                  }}>
+                                    <Typography variant="body1" sx={{ 
+                                      fontWeight: 500, 
+                                      color: 'text.primary',
+                                      fontSize: '1rem'
+                                    }}>
+                                      {translateOscarCategory(nomination.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{nomination.personName}</span>
+                                    </Typography>
+                                  </Box>
+                                ))}
+                              </Box>
+                            )}
+
+                            {/* Ver mais se houver indicações */}
+                            {movie.oscarAwards.nominations.length > 0 && (
+                              <Box sx={{ 
+                                mt: 2, 
+                                pt: 1, 
+                                borderTop: '1px solid',
+                                borderColor: 'divider',
+                                textAlign: 'center'
+                              }}>
+                                <Button
+                                  variant="text"
+                                  onClick={() => setShowFullNominations(!showFullNominations)}
+                                  sx={{
+                                    textTransform: 'none',
+                                    fontSize: '0.9rem',
+                                    color: '#1976d2',
+                                    fontWeight: 500,
+                                    '&:hover': {
+                                      backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                                    }
+                                  }}
+                                >
+                                  {showFullNominations ? 'Ver menos' : `Ver mais... (${movie.oscarAwards.nominations.length} ${movie.oscarAwards.nominations.length > 1 ? 'indicações' : 'indicação'})`}
+                                </Button>
+                              </Box>
+                            )}
+                          </>
+                        )}
+                      </Box>
+                    ) : (
+                      // Layout elegante sem card para premiações gerais
+                      <Box sx={{ 
+                        py: 2,
+                        textAlign: 'left'
+                      }}>
+                        <Typography variant="body1" sx={{ 
+                          color: 'text.primary',
+                          fontWeight: 500,
+                          mb: 1.5,
+                          fontSize: '1rem',
+                          lineHeight: 1.6
                         }}>
-                          Este filme pode não ter recebido grandes premiações ou os dados ainda não foram catalogados.
+                          {movie.awardsSummary && movie.awardsSummary.trim() !== '' && !movie.awardsSummary.toLowerCase().includes('oscar')
+                            ? `Este filme recebeu "${movie.awardsSummary}" em outras cerimônias de premiações.`
+                            : 'Este filme pode ter recebido outros reconhecimentos importantes em festivais e premiações especializadas.'
+                          }
                         </Typography>
                       </Box>
                     )}
                   </Box>
-                )}
 
-                {activeTab === 'similar' && (
-                  <Box>
-                    {/* Título e CTA na mesma linha */}
-                    <Box sx={{ 
-                      display: 'flex', 
-                      alignItems: 'center',
-                      justifyContent: { xs: 'center', md: 'space-between' },
-                      mb: 2,
-                      flexDirection: { xs: 'column', md: 'row' },
-                      gap: { xs: 2, md: 0 }
-                    }}>
+                  <Box sx={{ mb: 3 }}>
+                    {/* Seção 4: Filmes Relacionados (sempre visível) */}
+                    <Box>
+                      {/* Título fixo em azul */}
                       <Typography variant="h3" component="h3" sx={{ 
-                        fontSize: '1.1rem', 
-                        fontWeight: 600, 
+                        color: '#1976d2',
+                        textAlign: { xs: 'center', md: 'left' },
+                        fontSize: { xs: '1.1rem', md: '1.3rem' },
+                        fontWeight: 600,
+                        margin: 0,
+                        mb: 1
+                      }}>
+                        Filmes Relacionados
+                      </Typography>
+                      
+                      {/* Texto descritivo em branco */}
+                      <Typography variant="body1" sx={{ 
                         color: 'text.primary',
-                        margin: 0
+                        textAlign: { xs: 'center', md: 'left' },
+                        fontSize: '1rem',
+                        fontWeight: 400,
+                        mb: 1,
+                        lineHeight: 1.5
                       }}>
                         {getDynamicTitle(movie, similarMovies)}
                       </Typography>
                       
-                      <Button
-                        variant="contained"
-                        size="small"
-                        onClick={() => navigate('/')}
-                        sx={{
-                          bgcolor: '#ff6b35',
-                          color: 'white',
-                          fontSize: { xs: '0.8rem', md: '0.9rem' },
-                          fontWeight: 600,
-                          py: 1,
-                          px: 2,
-                          borderRadius: 2,
-                          textTransform: 'none',
-                          boxShadow: 2,
-                          '&:hover': {
-                            bgcolor: '#e55a2b',
-                            boxShadow: 3,
-                          },
-                          minWidth: 'auto'
-                        }}
-                      >
-                        Quer mais recomendações como esta?
-                      </Button>
-                    </Box>
-                    {similarMovies.length > 0 ? (
-                      <Box sx={{ 
-                        display: 'grid', 
-                        gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' },
-                        gap: 1.5,
-                        maxWidth: '100%'
+                      {/* Frase explicativa elegante */}
+                      <Typography variant="body2" sx={{ 
+                        color: 'text.secondary',
+                        textAlign: { xs: 'center', md: 'left' },
+                        fontSize: '0.9rem',
+                        fontWeight: 400,
+                        fontStyle: 'italic',
+                        mb: 2,
+                        lineHeight: 1.4
                       }}>
-                        {similarMovies.map((similarMovie) => (
-                          <Box 
-                            key={similarMovie.id} 
-                            sx={{ 
-                              cursor: 'pointer',
-                              borderRadius: 1.5,
-                              overflow: 'hidden',
-                              boxShadow: 1,
-                              transition: 'all 0.3s ease',
-                              width: '100%',
-                              maxWidth: '120px',
-                              '&:hover': {
-                                transform: 'translateY(-2px)',
-                                boxShadow: 3,
-                              }
-                            }}
-                            onClick={() => similarMovie.slug && navigate(`/onde-assistir/${similarMovie.slug}`)}
-                          >
-                            <Box sx={{ 
-                              height: 160, 
-                              bgcolor: 'grey.300',
-                              position: 'relative',
-                              overflow: 'hidden',
-                              borderRadius: '4px 4px 0 0'
-                            }}>
-                              {similarMovie.thumbnail ? (
-                                <img
-                                  src={similarMovie.thumbnail}
-                                  alt={similarMovie.title}
-                                  style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    objectFit: 'cover',
-                                    borderRadius: '4px 4px 0 0'
-                                  }}
-                                />
-                              ) : (
-                                <Box sx={{ 
-                                  width: '100%', 
-                                  height: '100%', 
-                                  display: 'flex', 
-                                  alignItems: 'center', 
-                                  justifyContent: 'center',
-                                  bgcolor: 'grey.200',
-                                  borderRadius: '4px 4px 0 0'
-                                }}>
-                                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
-                                    Sem imagem
-                                  </Typography>
-                                </Box>
-                              )}
-                            </Box>
-                            <Box sx={{ p: 1 }}>
-                              <Typography 
-                                variant="body2" 
-                                sx={{ 
-                                  fontWeight: 500, 
-                                  fontSize: '0.75rem',
-                                  lineHeight: 1.2,
-                                  mb: 0.25,
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  display: '-webkit-box',
-                                  WebkitLineClamp: 2,
-                                  WebkitBoxOrient: 'vertical'
-                                }}
-                              >
-                                {similarMovie.title}
-                              </Typography>
-                              {similarMovie.year && (
-                                <Typography 
-                                  variant="caption" 
-                                  color="text.secondary"
-                                  sx={{ fontSize: '0.7rem' }}
-                                >
-                                  {similarMovie.year}
-                                </Typography>
-                              )}
-                            </Box>
-                          </Box>
-                        ))}
-                      </Box>
-                    ) : (
-                      <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                        Nenhum filme similar encontrado no momento.
+                        *os filmes abaixo podem despertar sentimentos semelhantes.
                       </Typography>
-                    )}
+                      
+                      {/* CTA na mesma linha */}
+                      <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center',
+                        justifyContent: { xs: 'center', md: 'flex-end' },
+                        mb: 2
+                      }}>
+                        
+                        <Button
+                          variant="contained"
+                          size="small"
+                          onClick={() => navigate('/')}
+                          sx={{
+                            bgcolor: '#ff6b35',
+                            color: 'white',
+                            fontSize: { xs: '0.8rem', md: '0.9rem' },
+                            fontWeight: 600,
+                            py: 1,
+                            px: 2,
+                            borderRadius: 2,
+                            textTransform: 'none',
+                            boxShadow: 2,
+                            '&:hover': {
+                              bgcolor: '#e55a2b',
+                              boxShadow: 3,
+                            },
+                            minWidth: 'auto'
+                          }}
+                        >
+                          Quer mais recomendações como esta?
+                        </Button>
+                      </Box>
+                      {similarMovies.length > 0 ? (
+                        <Box sx={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(6, 1fr)' },
+                          gap: 1.5,
+                          maxWidth: '100%'
+                        }}>
+                          {similarMovies.map((similarMovie) => (
+                            <Box 
+                              key={similarMovie.id} 
+                              sx={{ 
+                                cursor: 'pointer',
+                                borderRadius: 1.5,
+                                overflow: 'hidden',
+                                boxShadow: 1,
+                                transition: 'all 0.3s ease',
+                                width: '100%',
+                                maxWidth: '120px',
+                                '&:hover': {
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: 3,
+                                }
+                              }}
+                              onClick={() => similarMovie.slug && navigate(`/onde-assistir/${similarMovie.slug}`)}
+                            >
+                              <Box sx={{ 
+                                height: 160, 
+                                bgcolor: 'grey.300',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                borderRadius: '4px 4px 0 0'
+                              }}>
+                                {similarMovie.thumbnail ? (
+                                  <img
+                                    src={similarMovie.thumbnail}
+                                    alt={similarMovie.title}
+                                    style={{
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover',
+                                      borderRadius: '4px 4px 0 0'
+                                    }}
+                                  />
+                                ) : (
+                                  <Box sx={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    bgcolor: 'grey.200',
+                                    borderRadius: '4px 4px 0 0'
+                                  }}>
+                                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                      Sem imagem
+                                    </Typography>
+                                  </Box>
+                                )}
+                              </Box>
+                              <Box sx={{ p: 1 }}>
+                                <Typography 
+                                  variant="body2" 
+                                  sx={{ 
+                                    fontWeight: 500, 
+                                    fontSize: '0.75rem',
+                                    lineHeight: 1.2,
+                                    mb: 0.25,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: 'vertical'
+                                  }}
+                                >
+                                  {similarMovie.title}
+                                </Typography>
+                                {similarMovie.year && (
+                                  <Typography 
+                                    variant="caption" 
+                                    color="text.secondary"
+                                    sx={{ fontSize: '0.7rem' }}
+                                  >
+                                    {similarMovie.year}
+                                  </Typography>
+                                )}
+                              </Box>
+                            </Box>
+                          ))}
+                        </Box>
+                      ) : (
+                        <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                          Nenhum filme similar encontrado no momento.
+                        </Typography>
+                      )}
+                    </Box>
                   </Box>
-                )}
+                </>
               </Box>
             </Box>
           </Box>

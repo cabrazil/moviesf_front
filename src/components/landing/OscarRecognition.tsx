@@ -38,6 +38,7 @@ const translateOscarCategory = (category: string): string => {
     'BEST MAKEUP AND HAIRSTYLING': 'Melhor Maquiagem e Penteados',
     'BEST SOUND': 'Melhor Som',
     'BEST SOUND EDITING': 'Melhor Edição de Som',
+    'SOUND EFFECTS EDITING': 'Melhor Edição de Efeitos Sonoros',
     'BEST SOUND MIXING': 'Melhor Mixagem de Som',
     'BEST VISUAL EFFECTS': 'Melhores Efeitos Visuais',
     'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
