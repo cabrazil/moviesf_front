@@ -11,7 +11,7 @@ import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import logoBlog from '../../assets/logo_blog.png';
-import tmdbLogo from '../../assets/themoviedb.svg';
+import tmdbLogo from '../../assets/themoviedb.png';
 import imdbLogo from '../../assets/imdb.png';
 import rtLogo from '../../assets/rottentomatoes.png';
 import metacriticLogo from '../../assets/metascore.svg';
@@ -910,7 +910,16 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     }}>
                       {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
+                          <img 
+                            src={tmdbLogo} 
+                            alt="TMDB" 
+                            style={{ 
+                              width: 20, 
+                              height: 20,
+                              objectFit: 'contain',
+                              display: 'block'
+                            }} 
+                          />
                           <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
                         </Box>
                       )}

@@ -7,7 +7,7 @@ import OscarRecognition from '../../components/landing/OscarRecognition';
 import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import tmdbLogo from '../../assets/themoviedb.svg';
+import tmdbLogo from '../../assets/themoviedb.png';
 import imdbLogo from '../../assets/imdb.png';
 import rtLogo from '../../assets/rottentomatoes.png';
 import metacriticLogo from '../../assets/metascore.svg';

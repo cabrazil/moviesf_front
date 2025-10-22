@@ -5,7 +5,7 @@ import { MovieSuggestionFlow } from '../services/api';
 import { Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
-import tmdbLogo from '../assets/themoviedb.svg';
+import tmdbLogo from '../assets/themoviedb.png';
 import imdbLogo from '../assets/imdb.png';
 import rtLogo from '../assets/rottentomatoes.png';
 import metacriticLogo from '../assets/metascore.svg';
