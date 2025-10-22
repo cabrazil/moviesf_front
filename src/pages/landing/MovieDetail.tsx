@@ -11,10 +11,10 @@ import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import logoBlog from '../../assets/logo_blog.png';
-// import tmdbLogo from '../../assets/themoviedb.svg';
-// import imdbLogo from '../../assets/imdb.png';
-// import rtLogo from '../../assets/rottentomatoes.png';
-// import metacriticLogo from '../../assets/metascore.svg';
+import tmdbLogo from '../../assets/themoviedb.svg';
+import imdbLogo from '../../assets/imdb.png';
+import rtLogo from '../../assets/rottentomatoes.png';
+import metacriticLogo from '../../assets/metascore.svg';
 
 
 
@@ -904,73 +904,33 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     </Typography>
                     <Box sx={{ 
                       display: 'flex', 
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      gap: { xs: 0.5, sm: 1 },
-                      alignItems: { xs: 'center', md: 'flex-start' },
-                      flexWrap: 'wrap'
+                      alignItems: 'center', 
+                      gap: 1.5, 
+                      justifyContent: { xs: 'center', md: 'flex-start' }
                     }}>
                       {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
-                        <Typography variant="body1" sx={{ 
-                          fontSize: { xs: '0.9rem', md: '1rem' },
-                          color: 'text.primary',
-                          fontWeight: 500
-                        }}>
-                          TMDB {Number(movie.vote_average).toFixed(1)}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
+                          <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
+                        </Box>
                       )}
                       {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
-                        <>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.disabled',
-                            display: { xs: 'none', sm: 'block' }
-                          }}>
-                            |
-                          </Typography>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.primary',
-                            fontWeight: 500
-                          }}>
-                            IMDb {Number(movie.imdbRating).toFixed(1)}
-                          </Typography>
-                        </>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <img src={imdbLogo} alt="IMDB" style={{ width: 20, height: 20 }} />
+                          <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
+                        </Box>
                       )}
                       {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
-                        <>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.disabled',
-                            display: { xs: 'none', sm: 'block' }
-                          }}>
-                            |
-                          </Typography>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.primary',
-                            fontWeight: 500
-                          }}>
-                            Rotten Tomatoes {Number(movie.rottenTomatoesRating).toFixed(0)}%
-                          </Typography>
-                        </>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 20, height: 20 }} />
+                          <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
+                        </Box>
                       )}
                       {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
-                        <>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.disabled',
-                            display: { xs: 'none', sm: 'block' }
-                          }}>
-                            |
-                          </Typography>
-                          <Typography variant="body1" sx={{ 
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.primary',
-                            fontWeight: 500
-                          }}>
-                            Metacritic {Number(movie.metacriticRating).toFixed(0)}
-                          </Typography>
-                        </>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                          <img src={metacriticLogo} alt="Metacritic" style={{ width: 20, height: 20 }} />
+                          <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
+                        </Box>
                       )}
                     </Box>
                   </Box>

@@ -88,6 +88,7 @@ const MovieDetailsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [trailerModalOpen, setTrailerModalOpen] = useState(false);
   const [showFullNominations, setShowFullNominations] = useState(false);
+  const [showFullCast, setShowFullCast] = useState(false);
   
   // Extrair valores do state uma vez para evitar recriação
   const sentimentId = state?.sentimentId;
@@ -854,36 +855,31 @@ const MovieDetailsPage: React.FC = () => {
                   fontSize: { xs: '1rem', md: '1.1rem' },
                   fontWeight: 600
                 }}>Tags Emocionais Chave:</Typography>
-                <Box sx={{ 
-                  display: 'flex', 
+                <Stack direction="row" spacing={{ xs: 1, md: 0.5 }} sx={{ 
                   flexWrap: 'wrap', 
-                  gap: 1, 
-                  justifyContent: { xs: 'center', md: 'flex-start' },
-                  maxWidth: 700
+                  justifyContent: { xs: 'center', md: 'flex-start' }, 
+                  maxWidth: 700,
+                  gap: { xs: '8px', md: '4px' }
                 }}>
                   {movie.emotionalTags
                     .sort((a: any, b: any) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
                     .slice(0, 4) // Pegar apenas as 4 mais relevantes
                     .map((tag: any, index: number) => (
-                    <Box
-                      key={index}
-                      component="li"
-                      sx={{
-                        listStyle: 'none',
-                        bgcolor: mode === 'light' ? 'rgba(25, 118, 210, 0.1)' : `${themeColor}15`,
-                        color: mode === 'light' ? '#1976d2' : themeColor,
-                        border: `1px solid ${mode === 'light' ? 'rgba(25, 118, 210, 0.3)' : `${themeColor}30`}`,
-                        borderRadius: 1,
-                        px: 1.5,
-                        py: 0.5,
-                        fontSize: '0.9rem',
-                        fontWeight: 500
-                      }}
-                    >
-                      {tag.subSentiment}
-                    </Box>
+                    <Chip 
+                      key={index} 
+                      label={tag.subSentiment} 
+                      size="small" 
+                      sx={{ 
+                        fontSize: '0.8rem', 
+                        height: 24,
+                        bgcolor: 'transparent',
+                        color: themeColor,
+                        border: `1px solid ${themeColor}`,
+                        '& .MuiChip-label': { px: 1 }
+                      }} 
+                    />
                   ))}
-                </Box>
+                </Stack>
               </Box>
             )}
           </Box>
@@ -951,31 +947,30 @@ const MovieDetailsPage: React.FC = () => {
                   display: 'flex', 
                   alignItems: 'center', 
                   gap: 1.5, 
-                  mt: 1,
                   justifyContent: 'flex-start'
                 }}>
                   {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={tmdbLogo} alt="TMDB" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem' }}>{Number(movie.vote_average).toFixed(1)}</Typography>
+                      <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
                     </Box>
                   )}
                   {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={imdbLogo} alt="IMDB" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem' }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
+                      <img src={imdbLogo} alt="IMDB" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
                     </Box>
                   )}
                   {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem' }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
+                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
                     </Box>
                   )}
                   {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem' }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
+                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
                     </Box>
                   )}
                 </Box>
@@ -1067,26 +1062,26 @@ const MovieDetailsPage: React.FC = () => {
                 }}>
                   {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={tmdbLogo} alt="TMDB" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.vote_average).toFixed(1)}</Typography>
+                      <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
                     </Box>
                   )}
                   {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={imdbLogo} alt="IMDB" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
+                      <img src={imdbLogo} alt="IMDB" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
                     </Box>
                   )}
                   {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
+                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
                     </Box>
                   )}
                   {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 16, height: 16 }} />
-                      <Typography variant="body2" sx={{ fontSize: '0.95rem' }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
+                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 20, height: 20 }} />
+                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
                     </Box>
                   )}
                 </Box>
@@ -1152,25 +1147,25 @@ const MovieDetailsPage: React.FC = () => {
                 gap: 0.5,
                 width: '100%'
               }}>
-                {movie.mainCast.slice(0, 5).map((actor: any, index: number) => (
-                  <Typography 
-                    key={index} 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary',
-                      fontSize: '0.97rem',
-                      lineHeight: 1.5,
+                {/* Mostrar apenas os primeiros 5 atores inicialmente */}
+                {movie.mainCast.slice(0, showFullCast ? movie.mainCast.length : 5).map((actor: any, index: number) => (
+                  <Box key={index} sx={{ 
+                    py: 0.5
+                  }}>
+                    <Typography variant="body1" sx={{ 
+                      fontWeight: 500, 
+                      color: 'text.primary',
+                      fontSize: '1rem',
                       textAlign: { xs: 'center', md: 'left' }
-                    }}
-                  >
-                    <span style={{ color: 'text.secondary', fontWeight: 500 }}>{actor.actorName}</span>
-                    {actor.characterName && (
-                      <span style={{ color: 'text.secondary', fontStyle: 'italic', fontSize: '0.85rem' }}> como {actor.characterName}</span>
-                    )}
-                  </Typography>
+                    }}>
+                      {actor.actorName} {actor.characterName && (
+                        <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}> <span style={{ fontStyle: 'italic', color: '#666' }}>como</span> {actor.characterName}</span>
+                      )}
+                    </Typography>
+                  </Box>
                 ))}
                 
-                {/* Ver mais - se houver mais de 5 atores */}
+                {/* Ver mais/Ver menos - se houver mais de 5 atores */}
                 {movie.mainCast.length > 5 && (
                   <Box sx={{ 
                     mt: 1, 
@@ -1186,12 +1181,9 @@ const MovieDetailsPage: React.FC = () => {
                         cursor: 'pointer',
                         '&:hover': { textDecoration: 'underline' }
                       }}
-                      onClick={() => {
-                        // Implementar lógica de "Ver mais" se necessário
-                        console.log('Ver mais atores');
-                      }}
+                      onClick={() => setShowFullCast(!showFullCast)}
                     >
-                      Ver mais... ({movie.mainCast.length - 5} atores)
+                      {showFullCast ? 'Ver menos...' : `Ver mais... (${movie.mainCast.length - 5} atores)`}
                     </Typography>
                   </Box>
                 )}
@@ -1234,9 +1226,7 @@ const MovieDetailsPage: React.FC = () => {
                   <Box sx={{ mb: 2 }}>
                     {movie.oscarAwards.wins.map((win: any, index: number) => (
                       <Box key={index} sx={{ 
-                        py: 1, 
-                        borderBottom: index < movie.oscarAwards.wins.length - 1 ? '1px solid' : 'none',
-                        borderColor: 'divider'
+                        py: 0.5
                       }}>
                         <Typography variant="body1" sx={{ 
                           fontWeight: 500, 
@@ -1258,9 +1248,7 @@ const MovieDetailsPage: React.FC = () => {
                       <Box sx={{ mt: 2 }}>
                         {movie.oscarAwards.nominations.map((nomination: any, index: number) => (
                           <Box key={index} sx={{ 
-                            py: 1, 
-                            borderBottom: index < movie.oscarAwards.nominations.length - 1 ? '1px solid' : 'none',
-                            borderColor: 'divider'
+                            py: 0.5
                           }}>
                             <Typography variant="body1" sx={{ 
                               fontWeight: 500, 
