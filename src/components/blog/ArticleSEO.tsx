@@ -75,7 +75,7 @@ export function ArticleSEO({
       
       {/* Meta tags para performance */}
       <meta name="format-detection" content="telephone=no" />
-      <meta name="theme-color" content="#2EC4B6" />
+      <meta name="theme-color" content="#3B82F6" />
     </Helmet>
   );
 }

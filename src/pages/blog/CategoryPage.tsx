@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Tag as TagIcon, Calendar, Clock } from 'lucide-react';
 import { blogApi, type BlogPost, type BlogCategory } from '../../services/blogApi';
+import { getFeaturedImageUrl } from '../../utils/blogImages';
 
 export function CategoryPage() {
   const { categorySlug } = useParams<{ categorySlug: string }>();
@@ -104,7 +105,7 @@ export function CategoryPage() {
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -142,7 +143,7 @@ export function CategoryPage() {
           <Link 
             to="/blog/categorias" 
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -151,7 +152,7 @@ export function CategoryPage() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Ver todas as categorias
           </Link>
@@ -184,7 +185,7 @@ export function CategoryPage() {
             marginBottom: '32px',
             transition: 'color 0.3s ease'
           }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+          onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
           onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
         >
           <ArrowLeft size={16} />
@@ -210,11 +211,11 @@ export function CategoryPage() {
             borderRadius: '9999px',
             marginBottom: '24px'
           }}>
-            <TagIcon size={16} color="#2EC4B6" />
+            <TagIcon size={16} color="#3B82F6" />
             <span style={{
               fontSize: isMobile ? '0.9rem' : '1.0rem',
               fontWeight: '600',
-              color: '#2EC4B6'
+              color: '#3B82F6'
             }}>
               {category.title}
             </span>
@@ -299,7 +300,7 @@ export function CategoryPage() {
                         borderRadius: '8px' 
                       }}>
                         <img 
-                          src={post.imageUrl} 
+                          src={getFeaturedImageUrl(post.imageUrl || '')} 
                           alt={post.imageAlt || post.title}
                           style={{
                             width: '100%',
@@ -336,7 +337,7 @@ export function CategoryPage() {
                             fontWeight: '500',
                             borderRadius: '6px',
                             backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                            color: '#2EC4B6',
+                            color: '#3B82F6',
                             border: '1px solid rgba(46, 196, 182, 0.2)'
                           }}>
                             {post.category_title}
@@ -347,7 +348,7 @@ export function CategoryPage() {
                             color: '#E0E0E0', 
                             fontSize: '0.75rem' 
                           }}>
-                            <Clock size={12} style={{ marginRight: '4px' }} />
+                            <Clock size={12} style={{ marginRight: '4px', color: '#FF6B35' }} />
                             {post.readingTime || calculateReadingTime(post.content)} min
                           </div>
                         </div>
@@ -420,7 +421,7 @@ export function CategoryPage() {
                         </div>
                         
                         <span style={{
-                          color: '#2EC4B6',
+                          color: '#3B82F6',
                           fontSize: isMobile ? '0.9rem' : '0.875rem',
                           fontWeight: '500',
                           transition: 'color 0.3s ease'
@@ -449,13 +450,13 @@ export function CategoryPage() {
             <Link 
               to="/blog/categorias" 
               style={{
-                color: '#2EC4B6',
+                color: '#3B82F6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 transition: 'color 0.3s ease'
               }}
               onMouseOver={(e) => e.currentTarget.style.color = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#2EC4B6'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#3B82F6'}
             >
               Ver todas as categorias
             </Link>

@@ -65,20 +65,20 @@ export function BlogFeaturedSection() {
           gap: '12px', 
           marginBottom: '32px' 
         }}>
-          <Star size={24} style={{ color: '#FF9F1C', fill: 'currentColor' }} />
+          <Star size={24} style={{ color: '#FF6B35', fill: 'currentColor' }} />
           <h2 style={{ 
             fontSize: '2rem', 
             fontWeight: 'bold', 
             color: '#FDFFFC',
             margin: 0
           }}>Artigos em Destaque</h2>
-          <TrendingUp size={20} style={{ color: '#2EC4B6' }} />
+          <TrendingUp size={20} style={{ color: '#3B82F6' }} />
         </div>
         <div style={{ textAlign: 'center', padding: '64px 0' }}>
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -103,14 +103,14 @@ export function BlogFeaturedSection() {
           gap: '12px', 
           marginBottom: '32px' 
         }}>
-          <Star size={24} style={{ color: '#FF9F1C', fill: 'currentColor' }} />
+          <Star size={24} style={{ color: '#FF6B35', fill: 'currentColor' }} />
           <h2 style={{ 
             fontSize: '2rem', 
             fontWeight: 'bold', 
             color: '#FDFFFC',
             margin: 0
           }}>Artigos em Destaque</h2>
-          <TrendingUp size={20} style={{ color: '#2EC4B6' }} />
+          <TrendingUp size={20} style={{ color: '#3B82F6' }} />
         </div>
         <div style={{ textAlign: 'center', padding: '64px 0' }}>
           <div style={{ fontSize: '4rem', color: '#E0E0E0', marginBottom: '16px' }}>⚠️</div>
@@ -127,7 +127,7 @@ export function BlogFeaturedSection() {
           <button 
             onClick={() => window.location.reload()}
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -138,7 +138,7 @@ export function BlogFeaturedSection() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Tentar Novamente
           </button>
@@ -164,14 +164,14 @@ export function BlogFeaturedSection() {
         gap: '12px', 
         marginBottom: '32px' 
       }}>
-        <Star size={24} style={{ color: '#FF9F1C', fill: 'currentColor' }} />
+        <Star size={24} style={{ color: '#FF6B35', fill: 'currentColor' }} />
         <h2 style={{ 
           fontSize: isMobile ? '1.5rem' : '2rem', 
           fontWeight: 'bold', 
           color: '#FDFFFC',
           margin: 0
         }}>Artigos em Destaque</h2>
-        <TrendingUp size={20} style={{ color: '#2EC4B6' }} />
+        <TrendingUp size={20} style={{ color: '#3B82F6' }} />
       </div>
 
       <div style={{ 
@@ -233,7 +233,7 @@ export function BlogFeaturedSection() {
                 }}
               />
               <button style={{
-                backgroundColor: '#2EC4B6',
+                backgroundColor: '#FF6B35',
                 color: '#011627',
                 padding: '12px 24px',
                 borderRadius: '8px',
@@ -244,8 +244,8 @@ export function BlogFeaturedSection() {
                 transition: 'all 0.3s ease',
                 width: '100%'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
               >
                 Quero Receber!
               </button>

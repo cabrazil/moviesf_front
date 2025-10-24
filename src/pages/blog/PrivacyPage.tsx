@@ -106,8 +106,8 @@ export default function PrivacyPage() {
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
                 Você pode desativar a publicidade personalizada acessando as 
-                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#2EC4B6' }}> Configurações de anúncios do Google </a> 
-                ou visitando <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#2EC4B6' }}>www.aboutads.info </a> 
+                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}> Configurações de anúncios do Google </a> 
+                ou visitando <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>www.aboutads.info </a> 
                 para desativar cookies de publicidade de terceiros.
               </p>
               <p style={{ margin: 0 }}>
@@ -136,7 +136,7 @@ export default function PrivacyPage() {
               </p>
               <p style={{ margin: 0 }}>
                 Para mais informações sobre como o Google gerencia dados em seus produtos de anúncios, 
-                acesse <a href="https://www.google.com/policies/technologies/partner-sites/" target="_blank" rel="noopener noreferrer" style={{ color: '#2EC4B6' }}>este link</a>.
+                acesse <a href="https://www.google.com/policies/technologies/partner-sites/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>este link</a>.
               </p>
             </section>
 
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
                 <li>Portabilidade de dados</li>
               </ul>
               <p style={{ margin: '8px 0 0 0' }}>
-                Para exercer esses direitos, contate-nos em <a href="mailto:contato@vibesfilm.com" style={{ color: '#2EC4B6' }}>contato@vibesfilm.com</a>.
+                Para exercer esses direitos, contate-nos em <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a>.
               </p>
             </section>
 

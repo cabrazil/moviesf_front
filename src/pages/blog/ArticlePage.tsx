@@ -199,7 +199,7 @@ export function ArticlePage() {
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -235,7 +235,7 @@ export function ArticlePage() {
           <Link 
             to="/" 
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -244,7 +244,7 @@ export function ArticlePage() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Voltar ao Blog
           </Link>
@@ -289,7 +289,7 @@ export function ArticlePage() {
             marginBottom: '32px',
             transition: 'color 0.3s ease'
           }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+          onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
           onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
         >
           <ArrowLeft size={16} />
@@ -313,7 +313,7 @@ export function ArticlePage() {
             fontWeight: '500',
             borderRadius: '9999px',
             backgroundColor: 'rgba(46, 196, 182, 0.1)',
-            color: '#2EC4B6',
+            color: '#3B82F6',
             border: '1px solid rgba(46, 196, 182, 0.2)',
             marginBottom: '16px'
           }}>
@@ -341,7 +341,7 @@ export function ArticlePage() {
               <span>{formatDate(post.date)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Clock size={16} />
+              <Clock size={16} color="#FF6B35" />
               <span>5 min de leitura</span>
             </div>
           </div>
@@ -371,8 +371,8 @@ export function ArticlePage() {
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-              e.currentTarget.style.borderColor = '#2EC4B6';
-              e.currentTarget.style.color = '#2EC4B6';
+              e.currentTarget.style.borderColor = '#3B82F6';
+              e.currentTarget.style.color = '#3B82F6';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = '#022c49';
@@ -397,8 +397,8 @@ export function ArticlePage() {
             }}
             onMouseOver={(e) => {
               e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-              e.currentTarget.style.borderColor = '#2EC4B6';
-              e.currentTarget.style.color = '#2EC4B6';
+              e.currentTarget.style.borderColor = '#3B82F6';
+              e.currentTarget.style.color = '#3B82F6';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = '#022c49';
@@ -426,8 +426,8 @@ export function ArticlePage() {
               }}
               onMouseOver={(e) => {
                 e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-                e.currentTarget.style.borderColor = '#2EC4B6';
-                e.currentTarget.style.color = '#2EC4B6';
+                e.currentTarget.style.borderColor = '#3B82F6';
+                e.currentTarget.style.color = '#3B82F6';
               }}
               onMouseOut={(e) => {
                 e.currentTarget.style.backgroundColor = '#022c49';
@@ -499,7 +499,7 @@ export function ArticlePage() {
                 )
                 .replace(
                   /<a([^>]*)>/gi, 
-                  '<a$1 style="color: #2EC4B6; text-decoration: underline; transition: color 0.3s ease;">'
+                  '<a$1 style="color: #3B82F6; text-decoration: underline; transition: color 0.3s ease;">'
                 )
             }}
           />
@@ -535,21 +535,21 @@ export function ArticlePage() {
                     fontSize: isMobile ? '0.75rem' : '0.875rem',
                     fontWeight: '500',
                     borderRadius: '20px',
-                    backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                    color: '#2EC4B6',
-                    border: '1px solid rgba(46, 196, 182, 0.2)',
+                    backgroundColor: 'transparent',
+                    color: '#FF6B35',
+                    border: '1px solid #FF6B35',
                     textDecoration: 'none',
                     transition: 'all 0.3s ease'
                   }}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#2EC4B6';
+                    e.currentTarget.style.backgroundColor = '#FF6B35';
                     e.currentTarget.style.color = '#011627';
-                    e.currentTarget.style.borderColor = '#2EC4B6';
+                    e.currentTarget.style.borderColor = '#FF6B35';
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-                    e.currentTarget.style.color = '#2EC4B6';
-                    e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.2)';
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#FF6B35';
+                    e.currentTarget.style.borderColor = '#FF6B35';
                   }}
                 >
                   #{tag.name}
@@ -662,7 +662,7 @@ export function ArticlePage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '8px',
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: isMobile ? '10px 20px' : '12px 24px',
               borderRadius: '8px',
@@ -672,7 +672,7 @@ export function ArticlePage() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             <span>Descobrir Meu Filme</span>
             <ArrowLeft size={16} style={{ transform: 'rotate(180deg)' }} />

@@ -87,9 +87,9 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
                 fontSize: '0.75rem',
                 fontWeight: '500',
                 borderRadius: '6px',
-                backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                color: '#2EC4B6',
-                border: '1px solid rgba(46, 196, 182, 0.2)'
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                color: '#3B82F6',
+                border: '1px solid rgba(59, 130, 246, 0.3)'
               }}>
                 {post.category_title}
               </span>
@@ -99,7 +99,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
                 color: '#E0E0E0', 
                 fontSize: '0.875rem' 
               }}>
-                <Clock size={16} style={{ marginRight: '4px' }} />
+                <Clock size={16} style={{ marginRight: '4px', color: '#FF6B35' }} />
                 {post.readingTime || calculateReadingTime(post.content)} min
               </div>
             </div>
@@ -167,19 +167,19 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
                 </div>
               </div>
               
-              <ArrowRight size={20} style={{ color: '#2EC4B6' }} />
+              <ArrowRight size={20} style={{ color: '#3B82F6' }} />
             </div>
 
             <div style={{ marginTop: '16px' }}>
               <span style={{
-                color: '#2EC4B6',
+                color: '#3B82F6',
                 fontWeight: '500',
                 fontSize: '1rem',
                 transition: 'color 0.2s ease',
                 cursor: 'pointer'
               }}
-              onMouseOver={(e) => e.currentTarget.style.color = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#2EC4B6'}
+              onMouseOver={(e) => e.currentTarget.style.color = '#FF6B35'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#3B82F6'}
               >
                 Ver Mais...
               </span>
@@ -241,9 +241,9 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
               fontSize: '0.75rem',
               fontWeight: '500',
               borderRadius: '6px',
-              backgroundColor: 'rgba(46, 196, 182, 0.1)',
-              color: '#2EC4B6',
-              border: '1px solid rgba(46, 196, 182, 0.2)'
+              backgroundColor: 'rgba(59, 130, 246, 0.1)',
+              color: '#3B82F6',
+              border: '1px solid rgba(59, 130, 246, 0.3)'
             }}>
               {post.category_title}
             </span>
@@ -253,7 +253,7 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
               color: '#E0E0E0', 
               fontSize: '0.75rem' 
             }}>
-              <Clock size={12} style={{ marginRight: '4px' }} />
+              <Clock size={12} style={{ marginRight: '4px', color: '#FF6B35' }} />
               {post.readingTime || calculateReadingTime(post.content)} min
             </div>
           </div>
@@ -323,14 +323,14 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
 
           <div style={{ marginTop: '12px' }}>
             <span style={{
-              color: '#2EC4B6',
+              color: '#3B82F6',
               fontWeight: '500',
               fontSize: '0.875rem',
               transition: 'color 0.2s ease',
               cursor: 'pointer'
             }}
-            onMouseOver={(e) => e.currentTarget.style.color = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.color = '#2EC4B6'}
+            onMouseOver={(e) => e.currentTarget.style.color = '#FF6B35'}
+            onMouseOut={(e) => e.currentTarget.style.color = '#3B82F6'}
             >
               Ver Mais...
             </span>

@@ -33,7 +33,7 @@ export function BlogHero() {
           fontSize: isMobile ? '2rem' : '3rem', 
           fontWeight: 'bold', 
           marginBottom: isMobile ? '16px' : '24px',
-          background: 'linear-gradient(135deg, #2EC4B6 0%, #FF9F1C 100%)',
+          background: 'linear-gradient(135deg, #3B82F6 0%, #FF6B35 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text'
@@ -61,7 +61,7 @@ export function BlogHero() {
           <button 
             onClick={scrollToContent}
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -72,7 +72,7 @@ export function BlogHero() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Explorar Artigos
           </button>
@@ -81,10 +81,10 @@ export function BlogHero() {
             href="/app" 
             style={{
               backgroundColor: 'transparent',
-              color: '#2EC4B6',
+              color: '#3B82F6',
               padding: '12px 24px',
               borderRadius: '8px',
-              border: '2px solid #2EC4B6',
+              border: '2px solid #3B82F6',
               fontSize: '1rem',
               fontWeight: '500',
               textDecoration: 'none',
@@ -93,12 +93,12 @@ export function BlogHero() {
               display: 'inline-block'
             }}
             onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#2EC4B6';
+              e.currentTarget.style.backgroundColor = '#3B82F6';
               e.currentTarget.style.color = '#011627';
             }}
             onMouseOut={(e) => {
               e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.color = '#2EC4B6';
+              e.currentTarget.style.color = '#3B82F6';
             }}
           >
             Encontrar Meu Filme
@@ -114,15 +114,15 @@ export function BlogHero() {
           gap: '32px'
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2EC4B6' }}>500+</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3B82F6' }}>500+</div>
             <div style={{ color: '#E0E0E0' }}>Filmes Analisados</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#FF9F1C' }}>50+</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#FF6B35' }}>50+</div>
             <div style={{ color: '#E0E0E0' }}>Artigos Publicados</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#2EC4B6' }}>10k+</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#3B82F6' }}>10k+</div>
             <div style={{ color: '#E0E0E0' }}>Leitores Mensais</div>
           </div>
         </div>

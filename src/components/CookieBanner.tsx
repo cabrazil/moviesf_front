@@ -55,7 +55,7 @@ export const CookieBanner = () => {
               margin: 0
             }}>
               Utilizamos cookies para melhorar sua experiência, analisar o tráfego e personalizar conteúdo. 
-              <a href="/blog/privacidade" style={{ color: '#2EC4B6', textDecoration: 'none' }}>
+              <a href="/blog/privacidade" style={{ color: '#3B82F6', textDecoration: 'none' }}>
                 {' '}Saiba mais
               </a>
             </p>
@@ -96,8 +96,8 @@ export const CookieBanner = () => {
               onClick={() => setShowSettings(true)}
               style={{
                 backgroundColor: 'transparent',
-                color: '#2EC4B6',
-                border: '1px solid #2EC4B6',
+                color: '#3B82F6',
+                border: '1px solid #3B82F6',
                 padding: '8px 16px',
                 borderRadius: '8px',
                 fontSize: '14px',
@@ -121,7 +121,7 @@ export const CookieBanner = () => {
             <button
               onClick={handleAcceptAll}
               style={{
-                backgroundColor: '#2EC4B6',
+                backgroundColor: '#3B82F6',
                 color: '#011627',
                 border: 'none',
                 padding: '8px 16px',
@@ -135,7 +135,7 @@ export const CookieBanner = () => {
                 e.currentTarget.style.backgroundColor = '#0A6E65';
               }}
               onMouseOut={(e) => {
-                e.currentTarget.style.backgroundColor = '#2EC4B6';
+                e.currentTarget.style.backgroundColor = '#3B82F6';
               }}
             >
               Aceitar Todos
@@ -231,7 +231,7 @@ export const CookieBanner = () => {
                     Cookies Essenciais
                   </h4>
                   <div style={{
-                    color: '#2EC4B6',
+                    color: '#3B82F6',
                     fontSize: '12px',
                     display: 'flex',
                     alignItems: 'center',
@@ -293,7 +293,7 @@ export const CookieBanner = () => {
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      backgroundColor: '#2EC4B6',
+                      backgroundColor: '#3B82F6',
                       borderRadius: '20px',
                       transition: '0.3s'
                     }}>
@@ -413,7 +413,7 @@ export const CookieBanner = () => {
               <button
                 onClick={handleSaveSettings}
                 style={{
-                  backgroundColor: '#2EC4B6',
+                  backgroundColor: '#3B82F6',
                   color: '#011627',
                   border: 'none',
                   padding: '8px 16px',

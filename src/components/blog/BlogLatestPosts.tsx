@@ -158,7 +158,7 @@ export function BlogLatestPosts() {
           gap: '12px', 
           marginBottom: '32px' 
         }}>
-          <Clock size={24} style={{ color: '#2EC4B6' }} />
+          <Clock size={24} style={{ color: '#3B82F6' }} />
           <h2 style={{ 
             fontSize: isMobile ? '1.5rem' : '2rem', 
             fontWeight: 'bold', 
@@ -170,7 +170,7 @@ export function BlogLatestPosts() {
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -224,7 +224,7 @@ export function BlogLatestPosts() {
           alignItems: 'center', 
           gap: '12px'
         }}>
-          <Clock size={24} style={{ color: '#2EC4B6' }} />
+          <Clock size={24} style={{ color: '#3B82F6' }} />
           <h2 style={{ 
             fontSize: '2rem', 
             fontWeight: 'bold', 
@@ -253,7 +253,7 @@ export function BlogLatestPosts() {
                 padding: '8px',
                 borderRadius: '6px',
                 border: 'none',
-                backgroundColor: viewMode === 'grid' ? '#2EC4B6' : 'transparent',
+                backgroundColor: viewMode === 'grid' ? '#3B82F6' : 'transparent',
                 color: viewMode === 'grid' ? '#011627' : '#E0E0E0',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease'
@@ -267,7 +267,7 @@ export function BlogLatestPosts() {
                 padding: '8px',
                 borderRadius: '6px',
                 border: 'none',
-                backgroundColor: viewMode === 'list' ? '#2EC4B6' : 'transparent',
+                backgroundColor: viewMode === 'list' ? '#3B82F6' : 'transparent',
                 color: viewMode === 'list' ? '#011627' : '#E0E0E0',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease'
@@ -327,7 +327,7 @@ export function BlogLatestPosts() {
             fontSize: '14px',
             fontWeight: '500',
             transition: 'all 0.3s ease',
-            backgroundColor: selectedCategory === 'all' ? '#2EC4B6' : '#022c49',
+            backgroundColor: selectedCategory === 'all' ? '#3B82F6' : '#022c49',
             color: selectedCategory === 'all' ? '#011627' : '#E0E0E0',
             border: 'none',
             cursor: 'pointer'
@@ -335,7 +335,7 @@ export function BlogLatestPosts() {
           onMouseOver={(e) => {
             if (selectedCategory !== 'all') {
               e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-              e.currentTarget.style.color = '#2EC4B6';
+              e.currentTarget.style.color = '#3B82F6';
             }
           }}
           onMouseOut={(e) => {
@@ -357,15 +357,15 @@ export function BlogLatestPosts() {
               fontSize: '14px',
               fontWeight: '500',
               transition: 'all 0.3s ease',
-              backgroundColor: selectedCategory === category.slug ? '#2EC4B6' : '#022c49',
+              backgroundColor: selectedCategory === category.slug ? '#3B82F6' : '#022c49',
               color: selectedCategory === category.slug ? '#011627' : '#E0E0E0',
-              border: selectedCategory === category.slug ? '1px solid #2EC4B6' : '1px solid transparent',
+              border: selectedCategory === category.slug ? '1px solid #3B82F6' : '1px solid transparent',
               cursor: 'pointer'
             }}
             onMouseOver={(e) => {
               if (selectedCategory !== category.slug) {
                 e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-                e.currentTarget.style.color = '#2EC4B6';
+                e.currentTarget.style.color = '#3B82F6';
               }
             }}
             onMouseOut={(e) => {
@@ -415,7 +415,7 @@ export function BlogLatestPosts() {
               onClick={loadMoreArticles}
               disabled={loadingMore}
               style={{
-                backgroundColor: loadingMore ? '#022c49' : '#2EC4B6',
+                backgroundColor: loadingMore ? '#022c49' : '#3B82F6',
                 color: loadingMore ? '#E0E0E0' : '#011627',
                 padding: isMobile ? '12px 24px' : '14px 28px',
                 borderRadius: '8px',
@@ -438,7 +438,7 @@ export function BlogLatestPosts() {
               }}
               onMouseOut={(e) => {
                 if (!loadingMore) {
-                  e.currentTarget.style.backgroundColor = '#2EC4B6';
+                  e.currentTarget.style.backgroundColor = '#3B82F6';
                   e.currentTarget.style.transform = 'translateY(0)';
                 }
               }}
@@ -499,7 +499,7 @@ export function BlogLatestPosts() {
               <button 
                 onClick={() => handleCategoryChange('all')}
                 style={{
-                  backgroundColor: '#2EC4B6',
+                  backgroundColor: '#3B82F6',
                   color: '#011627',
                   padding: '12px 24px',
                   borderRadius: '8px',
@@ -511,7 +511,7 @@ export function BlogLatestPosts() {
                   marginTop: '16px'
                 }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
               >
                 Ver Todos os Artigos
               </button>

@@ -91,7 +91,7 @@ export function BlogHeader() {
                   padding: '8px 12px',
                   borderRadius: '8px',
                   textDecoration: 'none',
-                  color: isActive(item.href) ? '#2EC4B6' : '#E0E0E0',
+                  color: isActive(item.href) ? '#3B82F6' : '#E0E0E0',
                   backgroundColor: isActive(item.href) ? 'rgba(46, 196, 182, 0.1)' : 'transparent',
                   transition: 'all 0.3s ease'
                 }}
@@ -136,7 +136,7 @@ export function BlogHeader() {
           <a 
             href="/app" 
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '8px 16px',
               borderRadius: '8px',
@@ -145,7 +145,7 @@ export function BlogHeader() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Usar App
           </a>
@@ -201,7 +201,7 @@ export function BlogHeader() {
                     padding: '12px 16px',
                     borderRadius: '8px',
                     textDecoration: 'none',
-                    color: isActive(item.href) ? '#2EC4B6' : '#E0E0E0',
+                    color: isActive(item.href) ? '#3B82F6' : '#E0E0E0',
                     backgroundColor: isActive(item.href) ? 'rgba(46, 196, 182, 0.1)' : 'transparent',
                     transition: 'all 0.3s ease',
                     fontSize: '16px',
@@ -247,7 +247,7 @@ export function BlogHeader() {
                 href="/app" 
                 style={{
                   display: 'block',
-                  backgroundColor: '#2EC4B6',
+                  backgroundColor: '#3B82F6',
                   color: '#011627',
                   padding: '14px 16px',
                   borderRadius: '8px',
@@ -259,7 +259,7 @@ export function BlogHeader() {
                 }}
                 onClick={() => setIsMenuOpen(false)}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
               >
                 Usar App VibesFilm
               </a>

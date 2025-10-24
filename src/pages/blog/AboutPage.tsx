@@ -77,7 +77,7 @@ export default function AboutPage() {
               marginBottom: '32px',
               transition: 'color 0.3s ease'
             }}
-            onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+            onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
             onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
           >
             <ArrowLeft size={16} />
@@ -101,7 +101,7 @@ export default function AboutPage() {
               fontWeight: '500',
               borderRadius: '9999px',
               backgroundColor: 'rgba(46, 196, 182, 0.1)',
-              color: '#2EC4B6',
+              color: '#3B82F6',
               border: '1px solid rgba(46, 196, 182, 0.2)',
               marginBottom: '16px'
             }}>
@@ -169,7 +169,7 @@ export default function AboutPage() {
                     height: isMobile ? '100px' : '120px',
                     borderRadius: '50%',
                     objectFit: 'cover',
-                    border: '3px solid #2EC4B6',
+                    border: '3px solid #3B82F6',
                     boxShadow: '0 4px 12px rgba(46, 196, 182, 0.3)'
                   }}
                 />
@@ -307,7 +307,7 @@ export default function AboutPage() {
                   minWidth: isMobile ? '40px' : '48px',
                   height: isMobile ? '40px' : '48px'
                 }}>
-                  <Heart size={isMobile ? 20 : 24} color="#2EC4B6" />
+                  <Heart size={isMobile ? 20 : 24} color="#3B82F6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
@@ -359,7 +359,7 @@ export default function AboutPage() {
                   minWidth: isMobile ? '40px' : '48px',
                   height: isMobile ? '40px' : '48px'
                 }}>
-                  <Users size={isMobile ? 20 : 24} color="#2EC4B6" />
+                  <Users size={isMobile ? 20 : 24} color="#3B82F6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
@@ -392,7 +392,7 @@ export default function AboutPage() {
                       color: '#E0E0E0',
                       fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
-                      <strong style={{ color: '#2EC4B6' }}>Explorar:</strong> Entender as causas ou nuances da emoção.
+                      <strong style={{ color: '#3B82F6' }}>Explorar:</strong> Entender as causas ou nuances da emoção.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
@@ -402,7 +402,7 @@ export default function AboutPage() {
                       color: '#E0E0E0',
                       fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
-                      <strong style={{ color: '#2EC4B6' }}>Manter:</strong> Viver essa emoção sem mudá-la.
+                      <strong style={{ color: '#3B82F6' }}>Manter:</strong> Viver essa emoção sem mudá-la.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
@@ -412,7 +412,7 @@ export default function AboutPage() {
                       color: '#E0E0E0',
                       fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
-                      <strong style={{ color: '#2EC4B6' }}>Processar:</strong> Elaborar a emoção de forma ativa.
+                      <strong style={{ color: '#3B82F6' }}>Processar:</strong> Elaborar a emoção de forma ativa.
                     </div>
                     <div style={{ 
                       backgroundColor: 'rgba(46, 196, 182, 0.05)', 
@@ -422,7 +422,7 @@ export default function AboutPage() {
                       color: '#E0E0E0',
                       fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
-                      <strong style={{ color: '#2EC4B6' }}>Transformar:</strong> Mudar para um estado emocional diferente.
+                      <strong style={{ color: '#3B82F6' }}>Transformar:</strong> Mudar para um estado emocional diferente.
                     </div>
                   </div>
                 </div>
@@ -448,7 +448,7 @@ export default function AboutPage() {
                   minWidth: isMobile ? '40px' : '48px',
                   height: isMobile ? '40px' : '48px'
                 }}>
-                  <Lightbulb size={isMobile ? 20 : 24} color="#2EC4B6" />
+                  <Lightbulb size={isMobile ? 20 : 24} color="#3B82F6" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <h4 style={{ 
@@ -520,7 +520,7 @@ export default function AboutPage() {
                       style={{
                         padding: '6px 12px',
                         backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                        color: '#2EC4B6',
+                        color: '#3B82F6',
                         border: '1px solid rgba(46, 196, 182, 0.2)',
                         borderRadius: '20px',
                         fontSize: '0.875rem',
@@ -531,7 +531,7 @@ export default function AboutPage() {
                       }}
                       onMouseOver={(e) => {
                         e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.2)';
-                        e.currentTarget.style.borderColor = '#2EC4B6';
+                        e.currentTarget.style.borderColor = '#3B82F6';
                       }}
                       onMouseOut={(e) => {
                         e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
@@ -546,7 +546,7 @@ export default function AboutPage() {
                     <span style={{
                       padding: '6px 12px',
                       backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#2EC4B6',
+                      color: '#3B82F6',
                       border: '1px solid rgba(46, 196, 182, 0.2)',
                       borderRadius: '20px',
                       fontSize: '0.875rem',
@@ -557,7 +557,7 @@ export default function AboutPage() {
                     <span style={{
                       padding: '6px 12px',
                       backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#2EC4B6',
+                      color: '#3B82F6',
                       border: '1px solid rgba(46, 196, 182, 0.2)',
                       borderRadius: '20px',
                       fontSize: '0.875rem',
@@ -568,7 +568,7 @@ export default function AboutPage() {
                     <span style={{
                       padding: '6px 12px',
                       backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#2EC4B6',
+                      color: '#3B82F6',
                       border: '1px solid rgba(46, 196, 182, 0.2)',
                       borderRadius: '20px',
                       fontSize: '0.875rem',
@@ -579,7 +579,7 @@ export default function AboutPage() {
                     <span style={{
                       padding: '6px 12px',
                       backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#2EC4B6',
+                      color: '#3B82F6',
                       border: '1px solid rgba(46, 196, 182, 0.2)',
                       borderRadius: '20px',
                       fontSize: '0.875rem',

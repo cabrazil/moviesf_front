@@ -95,7 +95,7 @@ export function BlogFooter() {
                       cursor: 'pointer'
                     }}
                     onMouseOver={(e) => {
-                      e.currentTarget.style.color = '#2EC4B6';
+                      e.currentTarget.style.color = '#3B82F6';
                       e.currentTarget.style.transform = 'scale(1.1)';
                     }}
                     onMouseOut={(e) => {
@@ -130,7 +130,7 @@ export function BlogFooter() {
                       textDecoration: 'none',
                       transition: 'color 0.3s ease'
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+                    onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
                     onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
                   >
                     {link.name}
@@ -164,7 +164,7 @@ export function BlogFooter() {
                         alignItems: 'center',
                         gap: '4px'
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+                      onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
                       onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
                     >
                       <span>{link.name}</span>
@@ -179,7 +179,7 @@ export function BlogFooter() {
                         textDecoration: 'none',
                         transition: 'color 0.3s ease'
                       }}
-                      onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+                      onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
                       onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
                     >
                       {link.name}
@@ -219,7 +219,7 @@ export function BlogFooter() {
                 }}
               />
               <button style={{
-                backgroundColor: '#2EC4B6',
+                backgroundColor: '#FF6B35',
                 color: '#011627',
                 padding: '8px 16px',
                 borderRadius: '8px',
@@ -230,8 +230,8 @@ export function BlogFooter() {
                 transition: 'all 0.3s ease',
                 width: '100%'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
               >
                 Inscrever-se
               </button>
@@ -273,7 +273,7 @@ export function BlogFooter() {
                     textDecoration: 'none',
                     transition: 'color 0.3s ease'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
                   onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
                 >
                   {link.name}

@@ -41,7 +41,7 @@ body.blog-active {
 }
 
 .blog-container ::-webkit-scrollbar-thumb {
-  background: #2EC4B6;
+  background: #3B82F6;
   border-radius: 4px;
 }
 
@@ -78,7 +78,7 @@ body.blog-active {
 }
 
 .article-card:hover .article-title {
-  color: #2EC4B6;
+  color: #3B82F6;
 }
 
 .article-excerpt {
@@ -99,7 +99,7 @@ body.blog-active {
   border-radius: 9999px;
   transition: all 0.2s ease;
   background-color: rgba(46, 196, 182, 0.1);
-  color: #2EC4B6;
+  color: #3B82F6;
   border: 1px solid rgba(46, 196, 182, 0.2);
 }
 
@@ -116,7 +116,7 @@ body.blog-active {
   font-weight: 500;
   border-radius: 6px;
   background-color: rgba(255, 159, 28, 0.1);
-  color: #FF9F1C;
+  color: #FF6B35;
   border: 1px solid rgba(255, 159, 28, 0.2);
 }
 
@@ -137,7 +137,7 @@ body.blog-active {
 
 /* Hero gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #2EC4B6 0%, #FF9F1C 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #FF6B35 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -145,7 +145,7 @@ body.blog-active {
 
 /* Button styles */
 .btn-primary {
-  background: #2EC4B6;
+  background: #3B82F6;
   color: #011627;
   font-weight: 500;
   padding: 12px 24px;
@@ -169,13 +169,13 @@ body.blog-active {
   padding: 12px 24px;
   border-radius: 8px;
   transition: all 0.3s ease;
-  border: 2px solid #2EC4B6;
-  color: #2EC4B6;
+  border: 2px solid #3B82F6;
+  color: #3B82F6;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background-color: #2EC4B6;
+  background-color: #3B82F6;
   color: #011627;
 }
 
@@ -187,11 +187,11 @@ body.blog-active {
 }
 
 .nav-link:hover {
-  color: #2EC4B6;
+  color: #3B82F6;
 }
 
 .nav-link.active {
-  color: #2EC4B6;
+  color: #3B82F6;
 }
 
 /* Article content styles */
@@ -247,7 +247,7 @@ body.blog-active {
 }
 
 .article-html-content a {
-  color: #2EC4B6;
+  color: #3B82F6;
   text-decoration: none;
   transition: color 0.3s ease;
   border-bottom: 1px solid rgba(46, 196, 182, 0.3);
@@ -255,7 +255,7 @@ body.blog-active {
 
 .article-html-content a:hover {
   color: #0A6E65;
-  border-bottom-color: #2EC4B6;
+  border-bottom-color: #3B82F6;
 }
 
 .article-html-content ul,
@@ -274,7 +274,7 @@ body.blog-active {
 }
 
 .article-html-content blockquote {
-  border-left: 4px solid #2EC4B6;
+  border-left: 4px solid #3B82F6;
   padding-left: 1rem;
   font-style: italic;
   color: #666;
@@ -324,7 +324,7 @@ body.blog-active {
 .tag-article-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  border-color: #2EC4B6;
+  border-color: #3B82F6;
 }
 
 /* Override Material-UI styles for blog */
@@ -370,7 +370,7 @@ body.blog-active {
 /* Article links styling */
 .article-content a,
 .article-html-content a {
-  color: #2EC4B6 !important;
+  color: #3B82F6 !important;
   text-decoration: underline;
   transition: color 0.3s ease;
 }

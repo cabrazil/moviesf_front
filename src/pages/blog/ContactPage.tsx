@@ -78,7 +78,7 @@ export default function ContactPage() {
               marginBottom: '32px',
               transition: 'color 0.3s ease'
             }}
-            onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+            onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
             onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
           >
             <ArrowLeft size={16} />
@@ -102,7 +102,7 @@ export default function ContactPage() {
               fontWeight: '500',
               borderRadius: '9999px',
               backgroundColor: 'rgba(46, 196, 182, 0.1)',
-              color: '#2EC4B6',
+              color: '#3B82F6',
               border: '1px solid rgba(46, 196, 182, 0.2)',
               marginBottom: '16px'
             }}>
@@ -162,7 +162,7 @@ export default function ContactPage() {
                 alignItems: 'center',
                 gap: '12px'
               }}>
-                <MessageCircle size={24} color="#2EC4B6" />
+                <MessageCircle size={24} color="#3B82F6" />
                 Envie sua Mensagem
               </h3>
 
@@ -173,7 +173,7 @@ export default function ContactPage() {
                   borderRadius: '8px',
                   padding: '16px',
                   marginBottom: '24px',
-                  color: '#2EC4B6'
+                  color: '#3B82F6'
                 }}>
                   ✅ Mensagem enviada com sucesso! Responderemos em breve.
                 </div>
@@ -208,7 +208,7 @@ export default function ContactPage() {
                       transition: 'all 0.3s ease'
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#2EC4B6';
+                      e.target.style.borderColor = '#3B82F6';
                       e.target.style.backgroundColor = 'rgba(46, 196, 182, 0.05)';
                     }}
                     onBlur={(e) => {
@@ -246,7 +246,7 @@ export default function ContactPage() {
                       transition: 'all 0.3s ease'
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#2EC4B6';
+                      e.target.style.borderColor = '#3B82F6';
                       e.target.style.backgroundColor = 'rgba(46, 196, 182, 0.05)';
                     }}
                     onBlur={(e) => {
@@ -284,7 +284,7 @@ export default function ContactPage() {
                       transition: 'all 0.3s ease'
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#2EC4B6';
+                      e.target.style.borderColor = '#3B82F6';
                       e.target.style.backgroundColor = 'rgba(46, 196, 182, 0.05)';
                     }}
                     onBlur={(e) => {
@@ -323,7 +323,7 @@ export default function ContactPage() {
                       transition: 'all 0.3s ease'
                     }}
                     onFocus={(e) => {
-                      e.target.style.borderColor = '#2EC4B6';
+                      e.target.style.borderColor = '#3B82F6';
                       e.target.style.backgroundColor = 'rgba(46, 196, 182, 0.05)';
                     }}
                     onBlur={(e) => {
@@ -339,7 +339,7 @@ export default function ContactPage() {
                   style={{
                     width: '100%',
                     padding: '12px 24px',
-                    backgroundColor: isSubmitting ? 'rgba(46, 196, 182, 0.3)' : '#2EC4B6',
+                    backgroundColor: isSubmitting ? 'rgba(46, 196, 182, 0.3)' : '#3B82F6',
                     color: '#FDFFFC',
                     border: 'none',
                     borderRadius: '8px',
@@ -355,7 +355,7 @@ export default function ContactPage() {
                   }}
                   onMouseOut={(e) => {
                     if (!isSubmitting) {
-                      e.currentTarget.style.backgroundColor = '#2EC4B6';
+                      e.currentTarget.style.backgroundColor = '#3B82F6';
                     }
                   }}
                 >
@@ -381,7 +381,7 @@ export default function ContactPage() {
                 alignItems: 'center',
                 gap: '12px'
               }}>
-                <Mail size={24} color="#2EC4B6" />
+                <Mail size={24} color="#3B82F6" />
                 Informações de Contato
               </h3>
 
@@ -395,7 +395,7 @@ export default function ContactPage() {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <Mail size={20} color="#2EC4B6" />
+                    <Mail size={20} color="#3B82F6" />
                   </div>
                   <div>
                     <h4 style={{ color: '#FDFFFC', margin: '0 0 4px 0', fontSize: '1rem' }}>Email</h4>
@@ -412,7 +412,7 @@ export default function ContactPage() {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <Clock size={20} color="#2EC4B6" />
+                    <Clock size={20} color="#3B82F6" />
                   </div>
                   <div>
                     <h4 style={{ color: '#FDFFFC', margin: '0 0 4px 0', fontSize: '1rem' }}>Horário</h4>
@@ -429,7 +429,7 @@ export default function ContactPage() {
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}>
-                    <MessageCircle size={20} color="#2EC4B6" />
+                    <MessageCircle size={20} color="#3B82F6" />
                   </div>
                   <div>
                     <h4 style={{ color: '#FDFFFC', margin: '0 0 4px 0', fontSize: '1rem' }}>Resposta</h4>
@@ -455,7 +455,7 @@ export default function ContactPage() {
                     borderRadius: '8px',
                     border: '1px solid rgba(46, 196, 182, 0.1)'
                   }}>
-                    <strong style={{ color: '#2EC4B6', fontSize: '0.9rem' }}>Como funciona o Vibesfilm?</strong>
+                    <strong style={{ color: '#3B82F6', fontSize: '0.9rem' }}>Como funciona o Vibesfilm?</strong>
                     <p style={{ color: '#E0E0E0', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
                       Recomendamos filmes baseados no seu estado emocional atual.
                     </p>
@@ -466,7 +466,7 @@ export default function ContactPage() {
                     borderRadius: '8px',
                     border: '1px solid rgba(46, 196, 182, 0.1)'
                   }}>
-                    <strong style={{ color: '#2EC4B6', fontSize: '0.9rem' }}>É gratuito?</strong>
+                    <strong style={{ color: '#3B82F6', fontSize: '0.9rem' }}>É gratuito?</strong>
                     <p style={{ color: '#E0E0E0', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
                       Sim, o Vibesfilm é completamente gratuito.
                     </p>
@@ -477,7 +477,7 @@ export default function ContactPage() {
                     borderRadius: '8px',
                     border: '1px solid rgba(46, 196, 182, 0.1)'
                   }}>
-                    <strong style={{ color: '#2EC4B6', fontSize: '0.9rem' }}>Posso sugerir filmes?</strong>
+                    <strong style={{ color: '#3B82F6', fontSize: '0.9rem' }}>Posso sugerir filmes?</strong>
                     <p style={{ color: '#E0E0E0', margin: '4px 0 0 0', fontSize: '0.85rem' }}>
                       Claro! Use o formulário acima para enviar sugestões.
                     </p>

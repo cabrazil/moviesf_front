@@ -105,7 +105,7 @@ export function ImageUpload({
         onDrop={handleDrop}
         onClick={handleClick}
         style={{
-          border: '2px dashed #2EC4B6',
+          border: '2px dashed #3B82F6',
           borderRadius: '8px',
           padding: '20px',
           textAlign: 'center',
@@ -174,7 +174,7 @@ export function ImageUpload({
               display: 'inline-block',
               width: '20px',
               height: '20px',
-              border: '2px solid #2EC4B6',
+              border: '2px solid #3B82F6',
               borderTop: '2px solid transparent',
               borderRadius: '50%',
               animation: 'spin 1s linear infinite'

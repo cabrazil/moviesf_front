@@ -6,14 +6,14 @@ export const categories: BlogCategory[] = [
     name: 'Análises Emocionais',
     slug: 'analises-emocionais',
     description: 'Análises profundas sobre como os filmes despertam emoções',
-    color: '#2EC4B6'
+    color: '#3B82F6'
   },
   {
     id: '2',
     name: 'Curadoria por Sentimentos',
     slug: 'curadoria-sentimentos',
     description: 'Listas e recomendações baseadas em estados emocionais',
-    color: '#FF9F1C'
+    color: '#FF6B35'
   },
   {
     id: '3',

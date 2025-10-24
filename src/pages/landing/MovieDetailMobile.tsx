@@ -458,7 +458,7 @@ export const MovieDetailMobile: React.FC<MovieDetailMobileProps> = ({ slug: prop
             size="large"
             onClick={() => navigate('/')}
             sx={{
-              bgcolor: '#FF9F1C',
+              bgcolor: '#FF6B35',
               color: 'white',
               fontSize: '0.9rem',
               fontWeight: 600,
@@ -740,7 +740,7 @@ export const MovieDetailMobile: React.FC<MovieDetailMobileProps> = ({ slug: prop
             size="large"
             onClick={() => navigate('/')}
             sx={{
-              bgcolor: '#FF9F1C',
+              bgcolor: '#FF6B35',
               color: 'white',
               fontSize: '0.9rem',
               fontWeight: 600,
@@ -1093,7 +1093,7 @@ export const MovieDetailMobile: React.FC<MovieDetailMobileProps> = ({ slug: prop
             size="large"
             onClick={() => navigate('/')}
             sx={{
-              bgcolor: '#FF9F1C',
+              bgcolor: '#FF6B35',
               color: 'white',
               fontSize: '0.9rem',
               fontWeight: 600,

@@ -4,12 +4,12 @@ export const theme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      main: '#2EC4B6',
-      dark: '#0A6E65',
+      main: '#3B82F6', // Azul VibesFilm (era #3B82F6 verde-turquesa)
+      dark: '#2563EB', // Azul escuro VibesFilm (era #0A6E65)
     },
     secondary: {
-      main: '#FF9F1C',
-      dark: '#B36F13',
+      main: '#FF6B35', // Laranja/Coral VibesFilm (era #FF6B35)
+      dark: '#E55A2B', // Laranja escuro VibesFilm (era #B36F13)
     },
     background: {
       default: '#011627',

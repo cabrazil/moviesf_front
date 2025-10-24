@@ -57,7 +57,7 @@ export const lightSentimentColors = {
 };
 
 export const darkSentimentColors = {
-  13: '#FF9F1C', 14: '#4dabf5', 15: '#4CAF50', 16: '#F44336', 17: '#BA68C8', 18: '#9E9E9E',
+  13: '#FF6B35', 14: '#4dabf5', 15: '#4CAF50', 16: '#F44336', 17: '#BA68C8', 18: '#9E9E9E',
 };
 
 // --- THEME CREATION ---

@@ -86,7 +86,7 @@ export function TagPage() {
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -122,7 +122,7 @@ export function TagPage() {
           <Link 
             to="/" 
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -131,7 +131,7 @@ export function TagPage() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Voltar ao Blog
           </Link>
@@ -164,7 +164,7 @@ export function TagPage() {
             marginBottom: '32px',
             transition: 'color 0.3s ease'
           }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+          onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
           onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
         >
           <ArrowLeft size={16} />
@@ -190,11 +190,11 @@ export function TagPage() {
             borderRadius: '9999px',
             marginBottom: '24px'
           }}>
-            <TagIcon size={16} color="#2EC4B6" />
+            <TagIcon size={16} color="#3B82F6" />
             <span style={{
               fontSize: isMobile ? '0.9rem' : '1.0rem',
               fontWeight: '600',
-              color: '#2EC4B6'
+              color: '#3B82F6'
             }}>
               #{tagName}
             </span>
@@ -304,7 +304,7 @@ export function TagPage() {
                             fontWeight: '500',
                             borderRadius: '6px',
                             backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                            color: '#2EC4B6',
+                            color: '#3B82F6',
                             border: '1px solid rgba(46, 196, 182, 0.2)'
                           }}>
                             {post.category_title}
@@ -388,7 +388,7 @@ export function TagPage() {
                         </div>
                         
                         <span style={{
-                          color: '#2EC4B6',
+                          color: '#3B82F6',
                           fontSize: isMobile ? '0.9rem' : '0.875rem',
                           fontWeight: '500',
                           transition: 'color 0.3s ease'
@@ -417,13 +417,13 @@ export function TagPage() {
             <Link 
               to="/" 
               style={{
-                color: '#2EC4B6',
+                color: '#3B82F6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 transition: 'color 0.3s ease'
               }}
               onMouseOver={(e) => e.currentTarget.style.color = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#2EC4B6'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#3B82F6'}
             >
               Ver todos os artigos
             </Link>

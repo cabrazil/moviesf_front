@@ -64,7 +64,7 @@ export function CategoriesPage() {
           <div style={{
             width: '48px',
             height: '48px',
-            border: '2px solid #2EC4B6',
+            border: '2px solid #3B82F6',
             borderTop: '2px solid transparent',
             borderRadius: '50%',
             animation: 'spin 1s linear infinite',
@@ -102,7 +102,7 @@ export function CategoriesPage() {
           <Link 
             to="/" 
             style={{
-              backgroundColor: '#2EC4B6',
+              backgroundColor: '#3B82F6',
               color: '#011627',
               padding: '12px 24px',
               borderRadius: '8px',
@@ -111,7 +111,7 @@ export function CategoriesPage() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
           >
             Voltar ao Blog
           </Link>
@@ -144,7 +144,7 @@ export function CategoriesPage() {
             marginBottom: '32px',
             transition: 'color 0.3s ease'
           }}
-          onMouseOver={(e) => e.currentTarget.style.color = '#2EC4B6'}
+          onMouseOver={(e) => e.currentTarget.style.color = '#3B82F6'}
           onMouseOut={(e) => e.currentTarget.style.color = '#E0E0E0'}
         >
           <ArrowLeft size={16} />
@@ -170,11 +170,11 @@ export function CategoriesPage() {
             borderRadius: '9999px',
             marginBottom: '24px'
           }}>
-            <Tag size={16} color="#2EC4B6" />
+            <Tag size={16} color="#3B82F6" />
             <span style={{
               fontSize: '1.0rem',
               fontWeight: '600',
-              color: '#2EC4B6'
+              color: '#3B82F6'
             }}>
               Categorias
             </span>
@@ -251,7 +251,7 @@ export function CategoriesPage() {
                       justifyContent: 'center',
                       border: '1px solid rgba(46, 196, 182, 0.2)'
                     }}>
-                      <Tag size={20} color="#2EC4B6" />
+                      <Tag size={20} color="#3B82F6" />
                     </div>
                     <div>
                       <h3 style={{
@@ -297,13 +297,13 @@ export function CategoriesPage() {
                   border: '1px solid rgba(46, 196, 182, 0.1)'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Eye size={14} color="#2EC4B6" />
+                    <Eye size={14} color="#FF6B35" />
                     <span style={{ color: '#E0E0E0', fontSize: '0.75rem' }}>
                       {category.articleCount || 0} artigos
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Heart size={14} color="#2EC4B6" />
+                    <Heart size={14} color="#FF6B35" />
                     <span style={{ color: '#E0E0E0', fontSize: '0.75rem' }}>
                       Categoria
                     </span>
@@ -315,7 +315,7 @@ export function CategoriesPage() {
                   to={`/blog/categoria/${category.slug}`}
                   style={{
                     display: 'block',
-                    backgroundColor: '#2EC4B6',
+                    backgroundColor: '#3B82F6',
                     color: '#011627',
                     padding: '12px 16px',
                     borderRadius: '8px',
@@ -326,7 +326,7 @@ export function CategoriesPage() {
                     fontSize: '0.875rem'
                   }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#2EC4B6'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
                 >
                   Ver todos os artigos
                 </Link>
@@ -348,13 +348,13 @@ export function CategoriesPage() {
             <Link 
               to="/" 
               style={{
-                color: '#2EC4B6',
+                color: '#3B82F6',
                 textDecoration: 'none',
                 fontWeight: '500',
                 transition: 'color 0.3s ease'
               }}
               onMouseOver={(e) => e.currentTarget.style.color = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#2EC4B6'}
+              onMouseOut={(e) => e.currentTarget.style.color = '#3B82F6'}
             >
               Voltar ao Blog
             </Link>

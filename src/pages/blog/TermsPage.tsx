@@ -140,7 +140,7 @@ export default function TermsPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>8. Privacidade e Proteção de Dados</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                A sua privacidade é importante para nós. Consulte nossa <a href="/privacidade" style={{ color: '#2EC4B6' }}>Política de Privacidade</a> para obter informações sobre como coletamos, usamos e protegemos seus dados pessoais.
+                A sua privacidade é importante para nós. Consulte nossa <a href="/privacidade" style={{ color: '#3B82F6' }}>Política de Privacidade</a> para obter informações sobre como coletamos, usamos e protegemos seus dados pessoais.
               </p>
               <p style={{ margin: 0 }}>
                 Ao utilizar nosso site, você consente com o uso das informações conforme descrito em nossa Política de Privacidade.
@@ -194,7 +194,7 @@ export default function TermsPage() {
             <section>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>14. Contato</h2>
               <p style={{ margin: '0 0 16px 0' }}>
-                Se tiver dúvidas ou precisar de mais informações, entre em contato conosco pelo e-mail: <a href="mailto:contato@vibesfilm.com" style={{ color: '#2EC4B6' }}>contato@vibesfilm.com</a>.
+                Se tiver dúvidas ou precisar de mais informações, entre em contato conosco pelo e-mail: <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a>.
               </p>
               
               <p style={{ 
