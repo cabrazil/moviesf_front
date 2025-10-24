@@ -39,7 +39,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           setLogosLoaded(prev => new Set(prev).add(platform.id)); // Marcar como carregado mesmo com erro
           resolve();
         };
-        img.src = getPlatformLogoUrlMedium(platform.logoPath);
+        img.src = getPlatformLogoUrlMedium(platform.logoPath, platform.name);
       });
     });
 
@@ -133,7 +133,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           ) : (
             <Box
               component="img"
-              src={getPlatformLogoUrlMedium(platform.logoPath)}
+              src={getPlatformLogoUrlMedium(platform.logoPath, platform.name)}
               alt={platform.name}
               sx={{
                 width: 50,

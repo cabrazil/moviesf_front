@@ -10,7 +10,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { useThemeManager } from '../../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import logoBlog from '../../assets/logo_blog.png';
+import logoBlog from '../../assets/logo_header.png';
 import tmdbLogo from '../../assets/themoviedb.png';
 import imdbLogo from '../../assets/imdb.png';
 import rtLogo from '../../assets/rottentomatoes.png';
@@ -455,11 +455,17 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
             component="img"
             src={logoBlog}
             alt="VibesFilm Logo"
+            onClick={() => navigate('/')}
             sx={{
               height: { xs: 32, sm: 40 },
               width: 'auto',
               maxWidth: { xs: 150, sm: 200 },
-              objectFit: 'contain'
+              objectFit: 'contain',
+              cursor: 'pointer',
+              transition: 'opacity 0.2s',
+              '&:hover': {
+                opacity: 0.8
+              }
             }}
           />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -813,7 +819,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   <Button
                     variant="contained"
                     size="large"
-                    onClick={() => navigate('/')}
+                    onClick={() => navigate('/app')}
                     sx={{
                       bgcolor: '#ff6b35',
                       color: 'white',
@@ -1327,7 +1333,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         <Button
                           variant="contained"
                           size="small"
-                          onClick={() => navigate('/')}
+                          onClick={() => navigate('/app')}
                           sx={{
                             bgcolor: '#ff6b35',
                             color: 'white',

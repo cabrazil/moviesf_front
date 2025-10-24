@@ -256,7 +256,7 @@ const JourneyIntro: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Button
             variant="outlined"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/app')}
             sx={{ px: 4, py: 1.5 }}
           >
             Voltar para Home

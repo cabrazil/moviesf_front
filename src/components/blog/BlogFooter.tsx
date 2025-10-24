@@ -1,6 +1,6 @@
 import { Heart, Mail, Instagram, Twitter, Youtube, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logoBlog from '../../assets/logo_blog.png';
+import logoBlog from '../../assets/logo_header.png';
 
 export function BlogFooter() {
   const currentYear = new Date().getFullYear();

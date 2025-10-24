@@ -32,71 +32,78 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [isLoadingLogos, setIsLoadingLogos] = useState(true);
   const [showOtherPlatforms, setShowOtherPlatforms] = useState(false);
   
-  // 9 plataformas principais (baseado na análise SQL)
-  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([
-    { name: 'Claro Video', logo: '' },
-    { name: 'HBO Max', logo: '' },
-    { name: 'Prime Video', logo: '' },
-    { name: 'Netflix', logo: '' },
-    { name: 'Disney+', logo: '' },
-    { name: 'Telecine', logo: '' },
-    { name: 'Globoplay', logo: '' },
-    { name: 'Paramount+', logo: '' },
-    { name: 'Apple TV+', logo: '' }
-  ]);
-
-  // Outras plataformas (colapsável)
-  const otherSubscriptionPlatforms = [
-    'MUBI',
-    'Oldflix',
-    'Looke',
-    'MGM+',
-    'Filmelier+',
-    'FilmBox+',
-    'Reserva Imovision'
-  ];
+  // Plataformas dinâmicas (carregadas da API)
+  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([]);
+  const [otherSubscriptionPlatforms, setOtherSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([]);
 
   useEffect(() => {
-    const loadLogos = async () => {
+    const loadPlatforms = async () => {
       try {
+        console.log('🔄 Carregando plataformas da API...');
         const platforms = await getStreamingPlatforms();
-        const updatedPlatforms = await Promise.all(
-          mainSubscriptionPlatforms.map(async (platform) => {
-            try {
-              // Buscar a plataforma na lista retornada pela API
-              const foundPlatform = platforms.find(p => 
-                p.name.toLowerCase() === platform.name.toLowerCase()
-              );
-              
-              if (foundPlatform && foundPlatform.logoPath) {
-                const logoUrl = getPlatformLogoUrlMedium(foundPlatform.logoPath);
-                return { ...platform, logo: logoUrl };
-              } else {
-                // Fallback para logos locais ou placeholder
-                return { ...platform, logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png` };
-              }
-            } catch (error) {
-              console.error(`Erro ao carregar logo para ${platform.name}:`, error);
-              // Fallback para placeholder
-              return { ...platform, logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png` };
-            }
-          })
+        console.log(`✅ ${platforms.length} plataformas carregadas`);
+        
+        // Filtrar apenas plataformas de assinatura (SUBSCRIPTION_PRIMARY e HYBRID)
+        const subscriptionPlatforms = platforms.filter(p => 
+          p.category === 'SUBSCRIPTION_PRIMARY' || p.category === 'HYBRID'
         );
-        setMainSubscriptionPlatforms(updatedPlatforms);
+        
+        // Separar por showFilter
+        const priorityPlatforms = subscriptionPlatforms.filter(p => p.showFilter === 'PRIORITY');
+        const secondaryPlatforms = subscriptionPlatforms.filter(p => p.showFilter === 'SECONDARY');
+        
+        console.log(`📊 PRIORITY: ${priorityPlatforms.length}, SECONDARY: ${secondaryPlatforms.length}`);
+        
+        // Mapear plataformas principais com logos
+        const mainPlatforms = priorityPlatforms.map(platform => {
+          let logo = '';
+          try {
+            if (platform.logoPath) {
+              logo = getPlatformLogoUrlMedium(platform.logoPath, platform.name);
+            } else {
+              // Fallback para logo local
+              logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
+            }
+          } catch (error) {
+            console.error(`Erro ao processar logo de ${platform.name}:`, error);
+            logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
+          }
+          return { name: platform.name, logo };
+        });
+        
+        // Mapear plataformas secundárias com logos
+        const otherPlatforms = secondaryPlatforms.map(platform => {
+          let logo = '';
+          try {
+            if (platform.logoPath) {
+              logo = getPlatformLogoUrlMedium(platform.logoPath, platform.name);
+            } else {
+              logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
+            }
+          } catch (error) {
+            console.error(`Erro ao processar logo de ${platform.name}:`, error);
+            logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
+          }
+          return { name: platform.name, logo };
+        });
+        
+        setMainSubscriptionPlatforms(mainPlatforms);
+        setOtherSubscriptionPlatforms(otherPlatforms);
+        
+        console.log('✅ Plataformas principais:', mainPlatforms.map(p => p.name).join(', '));
+        console.log('✅ Outras plataformas:', otherPlatforms.map(p => p.name).join(', '));
+        
       } catch (error) {
-        console.error('Erro ao carregar logos:', error);
-        // Em caso de erro, usar logos locais como fallback
-        const fallbackPlatforms = mainSubscriptionPlatforms.map(platform => ({
-          ...platform,
-          logo: `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`
-        }));
-        setMainSubscriptionPlatforms(fallbackPlatforms);
+        console.error('❌ Erro ao carregar plataformas:', error);
+        // Em caso de erro, deixar arrays vazios
+        setMainSubscriptionPlatforms([]);
+        setOtherSubscriptionPlatforms([]);
       } finally {
         setIsLoadingLogos(false);
       }
     };
 
-    loadLogos();
+    loadPlatforms();
   }, []);
 
   const handleSubscriptionPlatformChange = (platformName: string) => {
@@ -310,17 +317,17 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         <Collapse in={showOtherPlatforms}>
           <Box sx={{ mt: 2 }}>
             <Grid container spacing={1}>
-              {otherSubscriptionPlatforms.map((platformName) => (
-                <Grid item xs={4} sm={3} md={2.4} key={platformName}>
+              {otherSubscriptionPlatforms.map((platform) => (
+                <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
                   <Card
-                    onClick={() => handleSubscriptionPlatformChange(platformName)}
+                    onClick={() => handleSubscriptionPlatformChange(platform.name)}
                     sx={{
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      border: selectedSubscriptionPlatforms.includes(platformName) 
+                      border: selectedSubscriptionPlatforms.includes(platform.name) 
                         ? `2px solid ${theme.palette.primary.main}`
                         : `1px solid ${theme.palette.divider}`,
-                      backgroundColor: selectedSubscriptionPlatforms.includes(platformName) 
+                      backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
                         ? `${theme.palette.primary.main}08`
                         : 'background.paper',
                       '&:hover': {
@@ -330,22 +337,38 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                       }
                     }}
                   >
-                    <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <Box
+                        component="img"
+                        src={platform.logo}
+                        alt={platform.name}
+                        sx={{
+                          maxWidth: '100%',
+                          maxHeight: '40px',
+                          objectFit: 'contain',
+                          mb: 0.5
+                        }}
+                        onError={(e: any) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'block';
+                        }}
+                      />
                       <Typography 
                         variant="body2" 
                         sx={{ 
-                          fontWeight: selectedSubscriptionPlatforms.includes(platformName) ? 600 : 400,
-                          color: selectedSubscriptionPlatforms.includes(platformName) 
+                          fontWeight: selectedSubscriptionPlatforms.includes(platform.name) ? 600 : 400,
+                          color: selectedSubscriptionPlatforms.includes(platform.name) 
                             ? theme.palette.primary.main 
                             : 'text.primary',
-                          fontSize: '0.9rem'
+                          fontSize: '0.75rem',
+                          display: 'none'
                         }}
                       >
-                        {platformName}
+                        {platform.name}
                       </Typography>
 
                       <Checkbox
-                        checked={selectedSubscriptionPlatforms.includes(platformName)}
+                        checked={selectedSubscriptionPlatforms.includes(platform.name)}
                         sx={{
                           position: 'absolute',
                           top: 4,
@@ -393,7 +416,10 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             px: 3
           }}
         >
-          Ver Sugestões ({selectedSubscriptionPlatforms.length})
+          {selectedSubscriptionPlatforms.length === 0 
+            ? 'Ver Sugestões' 
+            : `Ver Sugestões (${selectedSubscriptionPlatforms.length} ${selectedSubscriptionPlatforms.length === 1 ? 'filtro' : 'filtros'})`
+          }
         </Button>
       </Box>
     </Container>

@@ -5,6 +5,7 @@ export interface StreamingPlatform {
   id: number;
   name: string;
   category: 'SUBSCRIPTION_PRIMARY' | 'HYBRID' | 'RENTAL_PURCHASE_PRIMARY' | 'FREE_PRIMARY';
+  showFilter: 'PRIORITY' | 'SECONDARY' | 'HIDDEN';
   logoPath: string | null;
   baseUrl: string | null;
   hasFreeTrial: boolean;
@@ -21,9 +22,14 @@ export const getStreamingPlatforms = async (): Promise<StreamingPlatform[]> => {
   }
 };
 
-export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize = TMDB_CONFIG.IMAGE_SIZE as TMDBImageSize): string => {
+export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize = TMDB_CONFIG.IMAGE_SIZE as TMDBImageSize, platformName?: string): string => {
   if (!logoPath) {
     throw new Error('Logo path não pode ser null ou vazio');
+  }
+  
+  // Fallback: Se for YouTube, sempre usar logo local
+  if (platformName && platformName.toLowerCase().includes('youtube')) {
+    return '/platforms/youtube.png';
   }
   
   // Se já é uma URL completa, retorna como está
@@ -47,23 +53,23 @@ export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize 
 };
 
 // Função auxiliar para diferentes tamanhos usando constantes
-export const getPlatformLogoUrlWithSize = (logoPath: string | null, size: TMDBLogoSizes = TMDB_CONFIG.LOGO_SIZES.MEDIUM): string => {
-  return getPlatformLogoUrl(logoPath, size);
+export const getPlatformLogoUrlWithSize = (logoPath: string | null, size: TMDBLogoSizes = TMDB_CONFIG.LOGO_SIZES.MEDIUM, platformName?: string): string => {
+  return getPlatformLogoUrl(logoPath, size, platformName);
 };
 
 // Funções específicas para diferentes tamanhos
-export const getPlatformLogoUrlSmall = (logoPath: string | null): string => {
-  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.SMALL);
+export const getPlatformLogoUrlSmall = (logoPath: string | null, platformName?: string): string => {
+  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.SMALL, platformName);
 };
 
-export const getPlatformLogoUrlMedium = (logoPath: string | null): string => {
-  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.MEDIUM);
+export const getPlatformLogoUrlMedium = (logoPath: string | null, platformName?: string): string => {
+  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.MEDIUM, platformName);
 };
 
-export const getPlatformLogoUrlLarge = (logoPath: string | null): string => {
-  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.LARGE);
+export const getPlatformLogoUrlLarge = (logoPath: string | null, platformName?: string): string => {
+  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.LARGE, platformName);
 };
 
-export const getPlatformLogoUrlOriginal = (logoPath: string | null): string => {
-  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.ORIGINAL);
+export const getPlatformLogoUrlOriginal = (logoPath: string | null, platformName?: string): string => {
+  return getPlatformLogoUrl(logoPath, TMDB_CONFIG.LOGO_SIZES.ORIGINAL, platformName);
 };

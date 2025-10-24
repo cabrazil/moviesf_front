@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, User, Tag, Search } from 'lucide-react';
-import logoBlog from '../../assets/logo_blog.png';
+import logoBlog from '../../assets/logo_header.png';
 
 export function BlogHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

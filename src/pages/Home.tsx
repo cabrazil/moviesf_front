@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Typography, Container, IconButton, AppBar, Toolbar, Drawer, List, ListItem, ListItemText, ListItemButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import logoBlog from '../assets/logo_blog.png';
+import logoBlog from '../assets/logo_header.png';
 import { useThemeManager } from '../contexts/ThemeContext';
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Moon icon for dark mode
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Sun icon for light mode
@@ -235,7 +235,12 @@ const Home: React.FC = () => {
               py: { xs: 1.2, sm: 1.5 },
               fontSize: { xs: '1.1rem', sm: '1.2rem' },
               borderRadius: 2,
-              width: { xs: '100%', sm: 'auto' }
+              width: { xs: '100%', sm: 'auto' },
+              backgroundColor: '#1976d2', // Azul fixo (Material-UI primary blue)
+              color: '#ffffff',
+              '&:hover': {
+                backgroundColor: '#1565c0', // Azul mais escuro no hover
+              }
             }}
           >
             Vamos começar
