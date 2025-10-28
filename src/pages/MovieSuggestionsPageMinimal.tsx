@@ -20,8 +20,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const journeyContext = location.state?.journeyContext;
   const streamingFilters = location.state?.streamingFilters;
   const [currentPage, setCurrentPage] = useState(0);
-  const [showPre1990, setShowPre1990] = useState(true);
-  const [showPost1990, setShowPost1990] = useState(true);
+  // Filtros por ano desativados temporariamente (manter para uso futuro)
+  // const [showPre1990, setShowPre1990] = useState(true);
+  // const [showPost1990, setShowPost1990] = useState(true);
   const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('smart');
 
   // Lógica de rotação automática dos filtros
@@ -53,7 +54,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     if (!isMobile) {
       setCurrentPage(0);
     }
-  }, [showPre1990, showPost1990, sortType, isMobile]);
+  }, [/* showPre1990, showPost1990, */ sortType, isMobile]);
   
   const { mode } = useThemeManager();
   const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
@@ -111,23 +112,23 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
   const MOVIES_PER_PAGE = 4;
 
-  // Filtrar filmes baseado no ano e plataformas de streaming
+  // Filtrar filmes baseado em plataformas de streaming (filtros por ano desativados)
   const filteredSuggestions = useMemo((): MovieSuggestionFlow[] => {
     console.log('🔍 Filtros aplicados:', {
       isMobile,
       streamingFilters,
       movieSuggestionsCount: movieSuggestions.length,
-      showPre1990,
-      showPost1990
+      // showPre1990,
+      // showPost1990
     });
     
     const result = movieSuggestions.filter(suggestion => {
-      // Filtro por ano
-      const year = suggestion.movie.year;
-      if (year) {
-        if (year < 1990 && !showPre1990) return false;
-        if (year >= 1990 && !showPost1990) return false;
-      }
+      // Filtro por ano desativado
+      // const year = suggestion.movie.year;
+      // if (year) {
+      //   if (year < 1990 && !showPre1990) return false;
+      //   if (year >= 1990 && !showPost1990) return false;
+      // }
       
             // Filtro por plataformas de streaming (se aplicável)
       if (streamingFilters) {
@@ -219,7 +220,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     });
     
     return result;
-  }, [movieSuggestions, showPre1990, showPost1990, streamingFilters]);
+  }, [movieSuggestions, /* showPre1990, showPost1990, */ streamingFilters]);
 
   // Função para obter a cor do sentimento atual
   const getSentimentColor = () => {
@@ -459,7 +460,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   if (!displaySuggestions.length) {
     // Verificar se é porque não há filmes originais ou porque os filtros estão desmarcados
     const hasOriginalMovies = movieSuggestions.length > 0;
-    const hasActiveFilters = showPre1990 || showPost1990;
+    // Filtros por ano desativados
+    // const hasActiveFilters = showPre1990 || showPost1990;
     const hasStreamingFilters = streamingFilters && (
       streamingFilters.subscriptionPlatforms.length > 0 || 
       (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
@@ -469,18 +471,15 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       <Container maxWidth="lg">
         <Box sx={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <Typography variant="h5" gutterBottom>
-            {hasOriginalMovies && (!hasActiveFilters || !hasStreamingFilters)
+            {hasOriginalMovies && (!hasStreamingFilters)
               ? 'Nenhum filme encontrado com os filtros atuais.' 
               : 'Nenhuma sugestão de filme encontrada.'
             }
           </Typography>
           
-          {hasOriginalMovies && (!hasActiveFilters || !hasStreamingFilters) ? (
+          {hasOriginalMovies && (!hasStreamingFilters) ? (
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-              {!hasActiveFilters 
-                ? 'Tente marcar pelo menos um dos filtros de ano para ver os filmes.'
-                : 'Tente ajustar os filtros de plataformas de streaming para ver mais filmes.'
-              }
+              {'Tente ajustar os filtros de plataformas de streaming para ver mais filmes.'}
             </Typography>
           ) : null}
           
@@ -546,14 +545,14 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             )}
           </Box>
 
-          {/* Lado Direito: Filtros + Paginação */}
+          {/* Lado Direito: Ordenação + Paginação (filtros de ano desativados) */}
           <Box sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: { xs: 'center', md: 'flex-end' },
             gap: 1
           }}>
-            {/* Filtro de Ano */}
+            {/* Filtro de Ano (desativado temporariamente)
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Chip
                 label="Filmes Pré-1990"
@@ -561,16 +560,6 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 variant={showPre1990 ? "filled" : "outlined"}
                 color={showPre1990 ? "primary" : "default"}
                 size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
               />
               <Chip
                 label="Filmes Pós-1990"
@@ -578,18 +567,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 variant={showPost1990 ? "filled" : "outlined"}
                 color={showPost1990 ? "primary" : "default"}
                 size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
               />
             </Box>
+            */}
 
             {/* Seletor de Ordenação */}
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-end' } }}>
