@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, Button, Container, Stack, Chip, Grid, Card, CardContent, useMediaQuery, useTheme, Tooltip } from '@mui/material';
 import { MovieSuggestionFlow } from '../services/api';
 import { Person, ChevronRight, AccessTime, Favorite } from '@mui/icons-material';
 import { useThemeManager } from '../contexts/ThemeContext';
@@ -512,12 +512,17 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: { xs: 'center', md: 'flex-start' },
-            gap: 1
+            gap: 1,
+            flex: 1,
+            minWidth: 0, // Permite que o texto seja truncado se necessário
+            mr: { md: 2 } // Margem direita para separar do lado direito
           }}>
             <Typography variant="h5" sx={{ 
-              fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem' },
+              fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
               lineHeight: { xs: 1.3, sm: 1.4, md: 1.5 },
-              textAlign: { xs: 'center', md: 'left' }
+              textAlign: { xs: 'center', md: 'left' },
+              wordBreak: 'break-word', // Quebra palavras longas se necessário
+              overflow: 'hidden' // Evita overflow
             }}>
               Filmes sugeridos para opção: {getSelectedOptionText()}
             </Typography>
@@ -550,7 +555,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: { xs: 'center', md: 'flex-end' },
-            gap: 1
+            gap: 1,
+            flexShrink: 0, // Não permite que este lado encolha
+            minWidth: { md: '280px' } // Largura mínima para acomodar os badges
           }}>
             {/* Filtro de Ano (desativado temporariamente)
             <Box sx={{ display: 'flex', gap: 1 }}>
@@ -572,60 +579,81 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             */}
 
             {/* Seletor de Ordenação */}
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', md: 'flex-end' } }}>
-              <Chip
-                label="Inteligente"
-                onClick={() => setSortType('smart')}
-                variant={sortType === 'smart' ? "filled" : "outlined"}
-                color={sortType === 'smart' ? "primary" : "default"}
-                size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
-              />
-              <Chip
-                label="Rating"
-                onClick={() => setSortType('rating')}
-                variant={sortType === 'rating' ? "filled" : "outlined"}
-                color={sortType === 'rating' ? "primary" : "default"}
-                size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
-              />
-              <Chip
-                label="Ano"
-                onClick={() => setSortType('year')}
-                variant={sortType === 'year' ? "filled" : "outlined"}
-                color={sortType === 'year' ? "primary" : "default"}
-                size="small"
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  height: 28,
-                  transition: 'all 0.2s ease',
-                  '&:hover': {
-                    transform: 'translateY(-1px)',
-                    boxShadow: 2
-                  }
-                }}
-              />
-              {/* Filtro "Relevância" removido - redundante com "Inteligente" que já inclui relevância (30% do peso) */}
-              {/* Mantido apenas 3 filtros para interface mais limpa e menos confusa para o usuário */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: { xs: 'center', md: 'flex-end' } }}>
+              <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1, fontSize: '0.7rem' }}>
+                Ordenar por
+              </Typography>
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 1, 
+                flexWrap: 'nowrap', // Não permite quebra de linha
+                justifyContent: { xs: 'center', md: 'flex-end' },
+                minWidth: 'fit-content' // Garante que todos os badges caibam
+              }}>
+                <Tooltip title="Ordenação inteligente que combina rating, relevância e ano" arrow>
+                  <Chip
+                    label="Inteligente"
+                    onClick={() => setSortType('smart')}
+                    variant={sortType === 'smart' ? "filled" : "outlined"}
+                    color={sortType === 'smart' ? "primary" : "default"}
+                    size="small"
+                    icon={<span style={{ fontSize: 14, lineHeight: 0 }}>✨</span>}
+                    sx={{
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      height: 28,
+                      transition: 'all 0.2s ease',
+                      '& .MuiChip-icon': { fontSize: 16 },
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: 2
+                      }
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title="Ordena do maior para o menor rating (IMDb + TMDB)" arrow>
+                  <Chip
+                    label="Rating"
+                    onClick={() => setSortType('rating')}
+                    variant={sortType === 'rating' ? "filled" : "outlined"}
+                    color={sortType === 'rating' ? "primary" : "default"}
+                    size="small"
+                    icon={<span style={{ fontSize: 14, lineHeight: 0, color: '#F5C518' }}>★</span>}
+                    sx={{
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      height: 28,
+                      transition: 'all 0.2s ease',
+                      '& .MuiChip-icon': { fontSize: 16 },
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: 2
+                      }
+                    }}
+                  />
+                </Tooltip>
+                <Tooltip title="Mais recentes primeiro" arrow>
+                  <Chip
+                    label="Ano"
+                    onClick={() => setSortType('year')}
+                    variant={sortType === 'year' ? "filled" : "outlined"}
+                    color={sortType === 'year' ? "primary" : "default"}
+                    size="small"
+                    icon={<span style={{ fontSize: 14, lineHeight: 0 }}>📅</span>}
+                    sx={{
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      height: 28,
+                      transition: 'all 0.2s ease',
+                      '& .MuiChip-icon': { fontSize: 16 },
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        boxShadow: 2
+                      }
+                    }}
+                  />
+                </Tooltip>
+              </Box>
             </Box>
 
             {/* Informações de Paginação (apenas em desktop) */}

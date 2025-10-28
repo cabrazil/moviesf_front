@@ -4,7 +4,6 @@ import { ThemeProviderWrapper } from './contexts/ThemeContext';
 import { CookieBanner } from './components/CookieBanner';
 import Home from './pages/Home';
 import JourneyIntro from './pages/JourneyIntro';
-import MovieSuggestionsPage from './pages/MovieSuggestionsPage';
 import MovieSuggestionsPageMinimal from './pages/MovieSuggestionsPageMinimal';
 import StreamingFilters from './pages/StreamingFilters';
 import MovieDetailWrapper from './pages/MovieDetailWrapper';
@@ -46,7 +45,6 @@ function App() {
             <Route path="/app" element={<Home />} />
             <Route path="/app/intro" element={<JourneyIntro />} />
             <Route path="/app/filters" element={<StreamingFilters />} />
-            <Route path="/app/sugestoes" element={<MovieSuggestionsPage />} />
             <Route path="/app/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/app/suggestions" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/app/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
@@ -68,7 +66,6 @@ function App() {
             {/* Legacy app routes */}
             <Route path="/intro" element={<JourneyIntro />} />
             <Route path="/filters" element={<StreamingFilters />} />
-            <Route path="/sugestoes" element={<MovieSuggestionsPage />} />
             <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
