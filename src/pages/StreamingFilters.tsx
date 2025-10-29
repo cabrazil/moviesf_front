@@ -33,8 +33,11 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [showOtherPlatforms, setShowOtherPlatforms] = useState(false);
   
   // Plataformas dinâmicas (carregadas da API)
-  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([]);
-  const [otherSubscriptionPlatforms, setOtherSubscriptionPlatforms] = useState<Array<{name: string, logo: string}>>([]);
+  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{name: string, logo: string, id: number}>>([]);
+  const [otherSubscriptionPlatforms, setOtherSubscriptionPlatforms] = useState<Array<{name: string, logo: string, id: number}>>([]);
+  
+  // Contagem de filmes por plataforma
+  const [platformMovieCounts, setPlatformMovieCounts] = useState<Record<number, number>>({});
 
   useEffect(() => {
     const loadPlatforms = async () => {
@@ -68,7 +71,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             console.error(`Erro ao processar logo de ${platform.name}:`, error);
             logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
           }
-          return { name: platform.name, logo };
+          return { name: platform.name, logo, id: platform.id };
         });
         
         // Mapear plataformas secundárias com logos
@@ -84,7 +87,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             console.error(`Erro ao processar logo de ${platform.name}:`, error);
             logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
           }
-          return { name: platform.name, logo };
+          return { name: platform.name, logo, id: platform.id };
         });
         
         setMainSubscriptionPlatforms(mainPlatforms);
@@ -105,6 +108,57 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
     loadPlatforms();
   }, []);
+
+  // Função para contar filmes por plataforma
+  const fetchMovieCountsByPlatform = async (platforms: Array<{name: string, logo: string, id: number}>) => {
+    try {
+      console.log('🔍 Contando filmes por plataforma...');
+      
+      // Buscar filmes da opção escolhida (se disponível)
+      const movieSuggestions = location.state?.movieSuggestions;
+      
+      if (!movieSuggestions || movieSuggestions.length === 0) {
+        console.log('❌ Nenhuma sugestão de filme disponível para contagem');
+        return;
+      }
+      
+      const counts: Record<number, number> = {};
+      
+      // Contar filmes por plataforma
+      platforms.forEach(platform => {
+        let count = 0;
+        
+        movieSuggestions.forEach((suggestion: any) => {
+          if (suggestion.movie?.platforms && suggestion.movie.platforms.length > 0) {
+            const hasPlatform = suggestion.movie.platforms.some((moviePlatform: any) => {
+              const platformName = moviePlatform.streamingPlatform?.name;
+              return platformName === platform.name && 
+                     moviePlatform.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+            });
+            
+            if (hasPlatform) count++;
+          }
+        });
+        
+        counts[platform.id] = count;
+        console.log(`📊 ${platform.name}: ${count} filmes`);
+      });
+      
+      setPlatformMovieCounts(counts);
+      console.log('✅ Contagem de filmes concluída:', counts);
+      
+    } catch (error) {
+      console.error('❌ Erro ao contar filmes por plataforma:', error);
+    }
+  };
+
+  // Carregar contagem de filmes quando as plataformas estiverem carregadas
+  useEffect(() => {
+    if (mainSubscriptionPlatforms.length > 0 || otherSubscriptionPlatforms.length > 0) {
+      const allPlatforms = [...mainSubscriptionPlatforms, ...otherSubscriptionPlatforms];
+      fetchMovieCountsByPlatform(allPlatforms);
+    }
+  }, [mainSubscriptionPlatforms, otherSubscriptionPlatforms, location.state]);
 
   const handleSubscriptionPlatformChange = (platformName: string) => {
     setSelectedSubscriptionPlatforms(prev => 
@@ -202,27 +256,56 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
           </Grid>
         ) : (
           <Grid container spacing={1.5}>
-            {mainSubscriptionPlatforms.map((platform) => (
-              <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
-                <Card
-                  onClick={() => handleSubscriptionPlatformChange(platform.name)}
-                  sx={{
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    border: selectedSubscriptionPlatforms.includes(platform.name) 
-                      ? `2px solid ${theme.palette.primary.main}`
-                      : `1px solid ${theme.palette.divider}`,
-                    backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
-                      ? `${theme.palette.primary.main}08`
-                      : 'background.paper',
-                    '&:hover': {
-                      transform: 'translateY(-2px)',
-                      boxShadow: 3,
-                      borderColor: theme.palette.primary.main
-                    }
-                  }}
-                >
+            {mainSubscriptionPlatforms.map((platform) => {
+              const movieCount = platformMovieCounts[platform.id] || 0;
+              const hasMovies = movieCount > 0;
+              
+              return (
+                <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
+                  <Card
+                    onClick={() => hasMovies && handleSubscriptionPlatformChange(platform.name)}
+                    sx={{
+                      cursor: hasMovies ? 'pointer' : 'not-allowed',
+                      transition: 'all 0.2s ease',
+                      border: selectedSubscriptionPlatforms.includes(platform.name) 
+                        ? `2px solid ${theme.palette.primary.main}`
+                        : `1px solid ${theme.palette.divider}`,
+                      backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                        ? `${theme.palette.primary.main}08`
+                        : hasMovies ? 'background.paper' : 'action.disabled',
+                      opacity: hasMovies ? 1 : 0.5,
+                      '&:hover': hasMovies ? {
+                        transform: 'translateY(-2px)',
+                        boxShadow: 3,
+                        borderColor: theme.palette.primary.main
+                      } : {}
+                    }}
+                  >
                   <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {/* Badge de contagem de filmes */}
+                    {hasMovies && (
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 4,
+                          left: 4,
+                          backgroundColor: theme.palette.primary.main,
+                          color: 'white',
+                          borderRadius: '50%',
+                          width: 24,
+                          height: 24,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.75rem',
+                          fontWeight: 'bold',
+                          zIndex: 1
+                        }}
+                      >
+                        {movieCount}
+                      </Box>
+                    )}
+                    
                     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                       <img 
                         src={platform.logo} 
@@ -277,7 +360,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                   </CardContent>
                 </Card>
               </Grid>
-            ))}
+              );
+            })}
           </Grid>
         )}
       </Box>
@@ -317,27 +401,56 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         <Collapse in={showOtherPlatforms}>
           <Box sx={{ mt: 2 }}>
             <Grid container spacing={1}>
-              {otherSubscriptionPlatforms.map((platform) => (
-                <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
-                  <Card
-                    onClick={() => handleSubscriptionPlatformChange(platform.name)}
-                    sx={{
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      border: selectedSubscriptionPlatforms.includes(platform.name) 
-                        ? `2px solid ${theme.palette.primary.main}`
-                        : `1px solid ${theme.palette.divider}`,
-                      backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
-                        ? `${theme.palette.primary.main}08`
-                        : 'background.paper',
-                      '&:hover': {
-                        transform: 'translateY(-1px)',
-                        boxShadow: 2,
-                        borderColor: theme.palette.primary.main
-                      }
-                    }}
-                  >
+              {otherSubscriptionPlatforms.map((platform) => {
+                const movieCount = platformMovieCounts[platform.id] || 0;
+                const hasMovies = movieCount > 0;
+                
+                return (
+                  <Grid item xs={4} sm={3} md={2.4} key={platform.name}>
+                    <Card
+                      onClick={() => hasMovies && handleSubscriptionPlatformChange(platform.name)}
+                      sx={{
+                        cursor: hasMovies ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.2s ease',
+                        border: selectedSubscriptionPlatforms.includes(platform.name) 
+                          ? `2px solid ${theme.palette.primary.main}`
+                          : `1px solid ${theme.palette.divider}`,
+                        backgroundColor: selectedSubscriptionPlatforms.includes(platform.name) 
+                          ? `${theme.palette.primary.main}08`
+                          : hasMovies ? 'background.paper' : 'action.disabled',
+                        opacity: hasMovies ? 1 : 0.5,
+                        '&:hover': hasMovies ? {
+                          transform: 'translateY(-1px)',
+                          boxShadow: 2,
+                          borderColor: theme.palette.primary.main
+                        } : {}
+                      }}
+                    >
                     <CardContent sx={{ p: 1, textAlign: 'center', position: 'relative', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      {/* Badge de contagem de filmes */}
+                      {hasMovies && (
+                        <Box
+                          sx={{
+                            position: 'absolute',
+                            top: 4,
+                            left: 4,
+                            backgroundColor: theme.palette.primary.main,
+                            color: 'white',
+                            borderRadius: '50%',
+                            width: 20,
+                            height: 20,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                            zIndex: 1
+                          }}
+                        >
+                          {movieCount}
+                        </Box>
+                      )}
+                      
                       <Box
                         component="img"
                         src={platform.logo}
@@ -383,7 +496,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
                     </CardContent>
                   </Card>
                 </Grid>
-              ))}
+                );
+              })}
             </Grid>
           </Box>
         </Collapse>

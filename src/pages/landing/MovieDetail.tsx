@@ -79,11 +79,13 @@ interface Movie {
   oscarAwards?: {
     wins: Array<{
       category: string;
+      categoryName?: string;
       year: number;
       personName?: string;
     }>;
     nominations: Array<{
       category: string;
+      categoryName?: string;
       year: number;
       personName?: string;
     }>;
@@ -197,6 +199,11 @@ const getDynamicTitle = (movie: Movie, similarMovies: any[]): string => {
 
 // Função para traduzir categorias do Oscar (versão completa da versão anterior)
 const translateOscarCategory = (category: string): string => {
+  if (!category) return '';
+  
+  // Normalizar a categoria (remover espaços extras, converter para maiúscula)
+  const normalizedCategory = category.trim().toUpperCase();
+  
   const translations: { [key: string]: string } = {
     'BEST PICTURE': 'Melhor Filme',
     'BEST DIRECTOR': 'Melhor Diretor',
@@ -218,9 +225,9 @@ const translateOscarCategory = (category: string): string => {
     'BEST VISUAL EFFECTS': 'Melhores Efeitos Visuais',
     'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'BEST ORIGINAL SONG': 'Melhor Canção Original',
-    'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
+    'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
     'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
     'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
@@ -249,7 +256,10 @@ const translateOscarCategory = (category: string): string => {
     'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Song)': 'Melhor Canção Original',
+    'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
@@ -281,7 +291,7 @@ const translateOscarCategory = (category: string): string => {
     'BEST_LIVE_ACTION_SHORT': 'Melhor Curta de Ação ao Vivo'
   };
 
-  return translations[category] || category;
+  return translations[normalizedCategory] || category;
 };
 
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
@@ -363,6 +373,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         setRentalPurchasePlatforms(data.rentalPurchasePlatforms || []);
         setSimilarMovies(data.similarMovies || []);
         setLoading(false);
+        
       } catch (error) {
         console.error('❌ MovieDetail - Erro ao buscar dados reais:', error);
         setMovie(null);
@@ -372,6 +383,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
 
     fetchMovieData();
   }, [finalSlug]);
+
 
   if (loading) {
     return (
@@ -1199,7 +1211,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                                   color: 'text.primary',
                                   fontSize: '1rem'
                                 }}>
-                                  {translateOscarCategory(win.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{win.personName}</span>
+                                  {translateOscarCategory(win.categoryName || win.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{win.personName}</span>
                                 </Typography>
                               </Box>
                             ))}
@@ -1224,7 +1236,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                                       color: 'text.primary',
                                       fontSize: '1rem'
                                     }}>
-                                      {translateOscarCategory(nomination.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{nomination.personName}</span>
+                                      {translateOscarCategory(nomination.categoryName || nomination.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{nomination.personName}</span>
                                     </Typography>
                                   </Box>
                                 ))}

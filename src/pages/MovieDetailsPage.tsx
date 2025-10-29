@@ -14,6 +14,11 @@ import { StreamingPlatformsCompact } from '../components/landing/StreamingPlatfo
 
 // Função para traduzir categorias do Oscar (versão completa da versão anterior)
 const translateOscarCategory = (category: string): string => {
+  if (!category) return '';
+  
+  // Normalizar a categoria (remover espaços extras, converter para maiúscula)
+  const normalizedCategory = category.trim().toUpperCase();
+  
   const translations: { [key: string]: string } = {
     'BEST PICTURE': 'Melhor Filme',
     'BEST DIRECTOR': 'Melhor Diretor',
@@ -36,8 +41,10 @@ const translateOscarCategory = (category: string): string => {
     'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'BEST ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
+    'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
     'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
     'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
@@ -67,13 +74,16 @@ const translateOscarCategory = (category: string): string => {
     'ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Song)': 'Melhor Canção Original',
+    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
     'ANIMATED FEATURE FILM': 'Melhor Filme de Animação'
   };
 
-  return translations[category] || category;
+  const result = translations[normalizedCategory] || category;
+  console.log(`🏆 translateOscarCategory: "${category}" -> normalized: "${normalizedCategory}" -> result: "${result}"`);
+  return result;
 };
 
 
@@ -255,6 +265,18 @@ const MovieDetailsPage: React.FC = () => {
   
   // Debug: Verificar dados de premiações
   console.log('🏆 MovieDetailsPage - oscarAwards:', movie?.oscarAwards);
+  if (movie?.oscarAwards?.wins) {
+    console.log('🏆 MovieDetailsPage - wins:', movie.oscarAwards.wins);
+    movie.oscarAwards.wins.forEach((win: any, index: number) => {
+      console.log(`🏆 Win ${index}:`, {
+        category: win.category,
+        categoryName: win.categoryName,
+        personName: win.personName,
+        year: win.year,
+        translated: translateOscarCategory(win.categoryName || win.category)
+      });
+    });
+  }
 
   // Preparar dados das plataformas para StreamingPlatformsCompact
   const subscriptionPlatforms = movieData?.subscriptionPlatforms
@@ -1210,6 +1232,8 @@ const MovieDetailsPage: React.FC = () => {
             {movie.oscarAwards && (movie.oscarAwards.wins.length > 0 || movie.oscarAwards.nominations.length > 0) ? (
               // Se tem dados estruturados do Oscar, mostrar versão simplificada
               <Box sx={{ mb: 2 }}>
+                {/* Debug: Verificar se está entrando na condição */}
+                {console.log('🏆 Entrando na condição do Oscar - wins:', movie.oscarAwards.wins, 'nominations:', movie.oscarAwards.nominations)}
                 {/* Texto introdutório */}
                 <Typography variant="body1" sx={{ 
                   mb: 2,
