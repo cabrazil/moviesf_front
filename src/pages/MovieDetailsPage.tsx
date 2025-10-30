@@ -43,6 +43,7 @@ const translateOscarCategory = (category: string): string => {
     'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
     'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
+    'WRITING (ORIGINAL SCREENPLAY)': 'Melhor Roteiro Original',
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
     'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
