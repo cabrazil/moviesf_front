@@ -1,6 +1,7 @@
 import { Heart, Mail, Instagram, Twitter, Youtube, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoBlog from '../../assets/logo_header.png';
+import { NewsletterForm } from '../newsletter/NewsletterForm';
 
 export function BlogFooter() {
   const currentYear = new Date().getFullYear();
@@ -192,50 +193,7 @@ export function BlogFooter() {
 
           {/* Newsletter Signup */}
           <div>
-            <h4 style={{ 
-              color: '#FDFFFC', 
-              fontWeight: '600', 
-              marginBottom: '14px'
-            }}>Newsletter</h4>
-            <p style={{ 
-              color: '#E0E0E0', 
-              fontSize: '14px', 
-              marginBottom: '14px'
-            }}>
-              Receba conteúdo exclusivo sobre cinema e emoções.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <input 
-                type="email" 
-                placeholder="Seu email"
-                style={{
-                  width: '100%',
-                  padding: '8px 12px',
-                  backgroundColor: '#011627',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  color: '#FDFFFC',
-                  fontSize: '14px'
-                }}
-              />
-              <button style={{
-                backgroundColor: '#FF6B35',
-                color: '#011627',
-                padding: '8px 16px',
-                borderRadius: '8px',
-                border: 'none',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                width: '100%'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
-              >
-                Inscrever-se
-              </button>
-            </div>
+            <NewsletterForm source="footer" />
           </div>
         </div>
 

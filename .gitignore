@@ -33,6 +33,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.csv
 
 # Landing Page - Comentar/descomentar conforme necessário
 # Para deploy sem LP na Vercel, descomente as linhas abaixo:

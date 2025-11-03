@@ -296,3 +296,21 @@ model ThemeSettings {
 
   @@index([blogId])
 }
+
+// Newsletter - Assinantes
+model NewsletterSubscription {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(255)
+  subscribedAt  DateTime  @default(now())
+  isActive      Boolean   @default(true)
+  ipAddress     String?   @db.VarChar(45) // IPv6 pode ter até 45 caracteres
+  userAgent     String?   @db.Text
+  source        String?   @db.VarChar(50) // "blog_home", "footer", "article"
+  emailSent     Boolean   @default(false) // Flag para quando começar a enviar
+  unsubscribedAt DateTime? // Para futuro descadastro
+
+  @@map("NewsletterSubscription")
+  @@index([email]) // ESSENCIAL: busca por email
+  @@index([isActive]) // ESSENCIAL: filtrar assinantes ativos
+  @@index([subscribedAt]) // ESSENCIAL: ordenação e estatísticas
+}

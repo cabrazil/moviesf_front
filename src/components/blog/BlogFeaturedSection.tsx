@@ -3,6 +3,7 @@ import { Star, TrendingUp } from 'lucide-react';
 import { BlogArticleCard } from './BlogArticleCard';
 import { blogApi, type BlogPost } from '../../services/blogApi';
 import { mockPosts } from '../../data/blog/mockPosts';
+import { NewsletterForm } from '../newsletter/NewsletterForm';
 
 export function BlogFeaturedSection() {
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
@@ -194,71 +195,7 @@ export function BlogFeaturedSection() {
           ))}
           
           {/* Newsletter Signup Card */}
-          <div style={{
-            background: 'linear-gradient(135deg, rgba(46, 196, 182, 0.1) 0%, rgba(255, 159, 28, 0.1) 100%)',
-            border: '1px solid rgba(46, 196, 182, 0.2)',
-            borderRadius: '12px',
-            padding: '24px',
-            textAlign: 'center'
-          }}>
-            <h3 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: '600', 
-              color: '#FDFFFC', 
-              marginBottom: '16px',
-              marginTop: 0
-            }}>
-              📧 Newsletter VibesFilm
-            </h3>
-            <p style={{ 
-              color: '#E0E0E0', 
-              fontSize: '0.875rem', 
-              marginBottom: '20px',
-              marginTop: 0
-            }}>
-              Receba semanalmente artigos exclusivos sobre cinema e emoções direto no seu email.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <input 
-                type="email" 
-                placeholder="Seu melhor email"
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  backgroundColor: '#011627',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  borderRadius: '8px',
-                  color: '#FDFFFC',
-                  fontSize: '1rem'
-                }}
-              />
-              <button style={{
-                backgroundColor: '#FF6B35',
-                color: '#011627',
-                padding: '12px 24px',
-                borderRadius: '8px',
-                border: 'none',
-                fontSize: '1rem',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                width: '100%'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
-              >
-                Quero Receber!
-              </button>
-            </div>
-            <p style={{ 
-              fontSize: '0.75rem', 
-              color: '#E0E0E0', 
-              marginTop: '12px',
-              marginBottom: 0
-            }}>
-              Sem spam, apenas conteúdo de qualidade 🎬
-            </p>
-          </div>
+          <NewsletterForm source="blog_home" />
         </div>
       </div>
     </section>

@@ -152,6 +152,32 @@ export default function PrivacyPage() {
             </section>
 
             <section style={{ marginBottom: '18px' }}>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Newsletter</h2>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Quando você se inscreve em nossa newsletter, coletamos e armazenamos seu endereço de email 
+                para enviar comunicações relacionadas ao conteúdo do VibesFilm.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                <strong>Finalidade do armazenamento:</strong> Utilizamos seu email exclusivamente para enviar 
+                artigos, análises e conteúdo sobre cinema e emoções. Os envios iniciarão em breve, assim que 
+                tivermos conteúdo suficiente para compartilhar.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                <strong>Prazo de retenção:</strong> Mantemos seu email em nossa base enquanto você permanecer 
+                inscrito. Você pode solicitar a exclusão a qualquer momento.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                <strong>Seus direitos:</strong> Você pode descadastrar-se da newsletter a qualquer momento 
+                entrando em contato conosco em <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a> 
+                ou através do link de descadastro que será incluído em cada email enviado.
+              </p>
+              <p style={{ margin: 0 }}>
+                <strong>Dados adicionais:</strong> Podemos armazenar informações técnicas como endereço IP e 
+                navegador utilizado no momento da inscrição para fins de segurança e conformidade com a LGPD.
+              </p>
+            </section>
+
+            <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Compartilhamento de Dados</h2>
               <p style={{ margin: '0 0 8px 0' }}>
                 Não vendemos seus dados pessoais. Compartilhamos apenas com:
