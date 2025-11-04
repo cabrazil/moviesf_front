@@ -152,7 +152,8 @@ export function generateArticleStructuredData(
     },
     author: {
       '@type': 'Person',
-      name: article.author
+      name: article.author,
+      url: 'https://vibesfilm.com/blog'
     },
     publisher: {
       '@type': 'Organization',

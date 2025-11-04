@@ -38,7 +38,8 @@ export const SeoHead: React.FC<SeoHeadProps> = ({
       "description": description,
       "author": {
         "@type": "Person",
-        "name": authorName || "VibesFilm Blog"
+        "name": authorName || "VibesFilm Blog",
+        "url": "https://vibesfilm.com/blog"
       },
       "publisher": {
         "@type": "Organization",
