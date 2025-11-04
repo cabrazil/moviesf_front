@@ -9,12 +9,16 @@ import imagemBlog6filmes2 from '/src/assets/blog/articles/2025/outubro/imagem_bl
 import imagemBlog6filmes3 from '/src/assets/blog/articles/2025/outubro/imagem_blog_6filmes_3.jpg';
 import imagemFilmesDomingoChuva from '/src/assets/blog/articles/2025/outubro/imagem_filmes_domingo_chuva.jpg';
 
+// Imagens de novembro 2025
+import imagemInspiradora from '/src/assets/blog/articles/2025/novembro/imagem-inspiradora.jpg';
+
 // Mapeamento de caminhos para imports
 export const blogImages = {
   'blog/articles/2025/outubro/imagem_blog_6filmes_1.jpg': imagemBlog6filmes1,
   'blog/articles/2025/outubro/imagem_blog_6filmes_2.jpg': imagemBlog6filmes2,
   'blog/articles/2025/outubro/imagem_blog_6filmes_3.jpg': imagemBlog6filmes3,
   'blog/articles/2025/outubro/imagem_filmes_domingo_chuva.jpg': imagemFilmesDomingoChuva,
+  'blog/articles/2025/novembro/imagem-inspiradora.jpg': imagemInspiradora,
 } as const;
 
 /**
