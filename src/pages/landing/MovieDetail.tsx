@@ -595,7 +595,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   lineHeight: 1.2,
                   color: 'text.primary'
                 }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | Vibesfilm
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir e Análise Emocional | Vibesfilm
                 </Typography>
               </Box>
 
