@@ -567,11 +567,10 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   wordBreak: 'break-word',
                   hyphens: 'auto'
                           }}>
-                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir, Guia Emocional e Curadoria Personalizada | Vibesfilm
+                  {movie.title} {movie.year && `(${movie.year})`}: Onde assistir e Análise Emocional | Vibesfilm
                           </Typography>
                   </Box>
             </Box>
-
             {/* Informações do filme - Lado direito */}
             <Box sx={{ 
               flex: 1, 
