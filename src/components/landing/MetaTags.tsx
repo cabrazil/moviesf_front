@@ -7,6 +7,7 @@ interface MovieMetaTagsProps {
     description?: string;
     director?: string;
     vote_average?: number;
+    vote_count?: number;
     genres?: string[];
     thumbnail?: string;
     targetAudienceForLP?: string;
@@ -96,7 +97,38 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       "description": `Assistir ${title} no ${platform.name}`
     }));
 
-    return {
+    // Validar vote_count antes de incluir AggregateRating
+    // Google Rich Results REQUER ratingCount quando aggregateRating existe
+    let voteCount: number | null = null;
+    
+    if (movie.vote_count != null && movie.vote_count !== undefined) {
+      let parsed: number;
+      
+      if (typeof movie.vote_count === 'string') {
+        parsed = parseInt(movie.vote_count, 10);
+      } else if (typeof movie.vote_count === 'number') {
+        parsed = movie.vote_count;
+      } else {
+        parsed = Number(movie.vote_count);
+      }
+      
+      // Validar se é um número válido e > 0
+      if (!isNaN(parsed) && Number.isFinite(parsed) && parsed > 0) {
+        voteCount = parsed;
+      }
+    }
+
+    // Só incluir AggregateRating se tiver vote_average E vote_count válido
+    const aggregateRating = (rating && voteCount && voteCount > 0 && !isNaN(voteCount)) ? {
+      "@type": "AggregateRating",
+      "ratingValue": rating,
+      "bestRating": 10,
+      "worstRating": 0,
+      "ratingCount": voteCount
+    } : undefined;
+
+    // Remover campos undefined antes de serializar
+    const schema: any = {
       "@context": "https://schema.org",
       "@type": "Movie",
       "name": title,
@@ -108,14 +140,26 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
         "name": director
       } : undefined,
       "genre": genres,
-      "aggregateRating": rating ? {
-        "@type": "AggregateRating",
-        "ratingValue": rating,
-        "bestRating": 10,
-        "worstRating": 0
-      } : undefined,
-      "offers": offers
+      "aggregateRating": aggregateRating,
+      "offers": offers.length > 0 ? offers : undefined
     };
+
+    // Remover campos undefined recursivamente
+    const removeUndefined = (obj: any): any => {
+      if (obj === null || obj === undefined) return undefined;
+      if (Array.isArray(obj)) return obj.map(removeUndefined).filter(item => item !== undefined);
+      if (typeof obj !== 'object') return obj;
+      
+      const cleaned: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+          cleaned[key] = removeUndefined(value);
+        }
+      }
+      return cleaned;
+    };
+
+    return removeUndefined(schema);
   };
 
   return (
