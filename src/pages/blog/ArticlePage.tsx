@@ -13,6 +13,9 @@ const styles = `
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
+  .tags-description-text {
+    color: #FDFFFC !important;
+  }
 `;
 
 // Injetar estilos no head
@@ -521,15 +524,18 @@ export function ArticlePage() {
             }}>
               Tags Emocionais Relacionadas
             </h3>
-            <p style={{
-              fontSize: isMobile ? '1rem' : '1.125rem',
-              lineHeight: '1.7',
-              color: '#FDFFFC',
-              fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-              marginBottom: isMobile ? '16px' : '20px',
-              marginTop: 0,
-              padding: 0
-            }}>
+            <p 
+              className="tags-description-text"
+              style={{
+                fontSize: isMobile ? '1rem' : '1.125rem',
+                lineHeight: '1.7',
+                color: '#FDFFFC',
+                fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+                marginBottom: isMobile ? '16px' : '20px',
+                marginTop: 0,
+                padding: 0
+              }}
+            >
               Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:
             </p>
             <div style={{ 
