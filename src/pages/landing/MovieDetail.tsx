@@ -733,21 +733,39 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     }}>
                       Tags Emocionais Chave:
                     </Typography>
-                    <Box component="ul" sx={{ 
-                      pl: 2, 
-                      m: 0,
-                      textAlign: { xs: 'center', md: 'left' }
-                    }}>
+                    {/* Lista vertical para mobile, inline para desktop */}
+                    <Box 
+                      component="ul" 
+                      sx={{ 
+                        pl: { xs: 2, md: 0 }, 
+                        m: 0,
+                        textAlign: { xs: 'center', md: 'left' },
+                        display: { xs: 'block', md: 'flex' },
+                        flexWrap: { md: 'wrap' },
+                        gap: { md: 0.5 },
+                        listStyle: { xs: 'disc', md: 'none' }
+                      }}
+                    >
                       {movie.emotionalTags
                         .sort((a, b) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
                         .slice(0, 4) // Pegar apenas as 4 mais relevantes
-                        .map((tag, index) => (
-                        <Box component="li" key={index} sx={{ 
-                          mb: 0.5,
-                          fontSize: { xs: '0.9rem', md: '1rem' },
-                          color: 'text.primary'
-                        }}>
+                        .map((tag, index, array) => (
+                        <Box 
+                          component="li" 
+                          key={index} 
+                          sx={{ 
+                            mb: { xs: 0.5, md: 0 },
+                            fontSize: { xs: '0.9rem', md: '1rem' },
+                            color: 'text.primary',
+                            display: { xs: 'list-item', md: 'inline' }
+                          }}
+                        >
                           {tag.subSentiment}
+                          {index < array.length - 1 && (
+                            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' }, mx: 0.5 }}>
+                              ,
+                            </Box>
+                          )}
                         </Box>
                       ))}
                     </Box>
