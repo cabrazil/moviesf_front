@@ -510,7 +510,8 @@ export function ArticlePage() {
           <div style={{ 
             marginTop: isMobile ? '32px' : '48px', 
             paddingTop: isMobile ? '24px' : '32px', 
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)' 
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            color: '#FDFFFC'
           }}>
             <h3 style={{ 
               fontSize: isMobile ? '1rem' : '1.125rem', 
@@ -525,7 +526,9 @@ export function ArticlePage() {
               lineHeight: '1.7',
               color: '#FDFFFC',
               fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-              marginBottom: isMobile ? '16px' : '20px'
+              marginBottom: isMobile ? '16px' : '20px',
+              marginTop: 0,
+              padding: 0
             }}>
               Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:
             </p>
