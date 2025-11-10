@@ -518,8 +518,9 @@ export function ArticlePage() {
               color: '#FDFFFC', 
               marginBottom: isMobile ? '12px' : '16px' 
             }}>
-              Tags do Artigo
+              Tags Emocionais Relacionadas
             </h3>
+            <p>Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:</p>
             <div style={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
