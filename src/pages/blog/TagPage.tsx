@@ -23,6 +23,9 @@ export function TagPage() {
   }, []);
 
   useEffect(() => {
+    // Scroll para o topo quando a página carrega ou quando o tagSlug muda
+    window.scrollTo(0, 0);
+    
     const fetchPostsByTag = async () => {
       if (!tagSlug) return;
       

@@ -520,7 +520,15 @@ export function ArticlePage() {
             }}>
               Tags Emocionais Relacionadas
             </h3>
-            <p>Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:</p>
+            <p style={{
+              fontSize: isMobile ? '1rem' : '1.125rem',
+              lineHeight: '1.7',
+              color: '#FDFFFC',
+              fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+              marginBottom: isMobile ? '16px' : '20px'
+            }}>
+              Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:
+            </p>
             <div style={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
@@ -530,6 +538,10 @@ export function ArticlePage() {
                 <Link 
                   key={tag.id} 
                   to={`/blog/tag/${tag.slug}`}
+                  onClick={() => {
+                    // Scroll imediato para o topo antes de navegar
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                  }}
                   style={{
                     display: 'inline-block',
                     padding: isMobile ? '4px 8px' : '6px 12px',
