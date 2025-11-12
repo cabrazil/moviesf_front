@@ -333,6 +333,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
   const [loading, setLoading] = useState(true);
   const [showFullCast, setShowFullCast] = useState(false);
   const [showFullNominations, setShowFullNominations] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   
 
 
@@ -898,13 +899,47 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   }}>
                     Sinopse
                   </Typography>
-                  <Typography variant="body1" sx={{ 
-                    lineHeight: 1.6,
-                    textAlign: { xs: 'center', md: 'left' },
-                    fontSize: { xs: '0.95rem', md: '1rem' }
-                  }}>
+                  <Typography 
+                    variant="body1" 
+                    sx={{ 
+                      lineHeight: 1.6,
+                      textAlign: { xs: 'center', md: 'left' },
+                      fontSize: { xs: '0.95rem', md: '1rem' },
+                      ...(showFullDescription ? {} : {
+                        display: { xs: '-webkit-box', md: 'block' },
+                        WebkitLineClamp: { xs: 4, md: 'none' },
+                        WebkitBoxOrient: 'vertical',
+                        overflow: { xs: 'hidden', md: 'visible' },
+                        textOverflow: { xs: 'ellipsis', md: 'clip' }
+                      })
+                    }}
+                  >
                     {movie.description}
                   </Typography>
+                  {/* Botão "Ver mais..." apenas em telas menores */}
+                  {movie.description.length > 200 && (
+                    <Box sx={{ 
+                      mt: 1, 
+                      textAlign: { xs: 'center', md: 'left' },
+                      display: { xs: 'block', md: 'none' }
+                    }}>
+                      <Button
+                        variant="text"
+                        onClick={() => setShowFullDescription(!showFullDescription)}
+                        sx={{
+                          textTransform: 'none',
+                          fontSize: '0.9rem',
+                          color: '#1976d2',
+                          fontWeight: 500,
+                          '&:hover': {
+                            backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                          }
+                        }}
+                      >
+                        {showFullDescription ? 'Ver menos' : 'Ver mais...'}
+                      </Button>
+                    </Box>
+                  )}
                 </Box>
               )}
 

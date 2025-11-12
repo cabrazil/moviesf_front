@@ -100,6 +100,7 @@ const MovieDetailsPage: React.FC = () => {
   const [trailerModalOpen, setTrailerModalOpen] = useState(false);
   const [showFullNominations, setShowFullNominations] = useState(false);
   const [showFullCast, setShowFullCast] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
   
   // Extrair valores do state uma vez para evitar recriação
   const sentimentId = state?.sentimentId;
@@ -919,9 +920,49 @@ const MovieDetailsPage: React.FC = () => {
               fontSize: { xs: '1rem', md: '1.1rem' },
               fontWeight: 600
             }}>Sinopse</Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', maxWidth: 700, textAlign: { xs: 'center', md: 'left' }, fontSize: '0.97rem', lineHeight: 1.5 }}>
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                color: 'text.secondary', 
+                maxWidth: 700, 
+                textAlign: { xs: 'center', md: 'left' }, 
+                fontSize: '0.97rem', 
+                lineHeight: 1.5,
+                ...(showFullDescription ? {} : {
+                  display: { xs: '-webkit-box', md: 'block' },
+                  WebkitLineClamp: { xs: 4, md: 'none' },
+                  WebkitBoxOrient: 'vertical',
+                  overflow: { xs: 'hidden', md: 'visible' },
+                  textOverflow: { xs: 'ellipsis', md: 'clip' }
+                })
+              }}
+            >
               {movie.description || 'Sinopse não disponível.'}
             </Typography>
+            {/* Botão "Ver mais..." apenas em telas menores */}
+            {movie.description && movie.description.length > 200 && (
+              <Box sx={{ 
+                mt: 1, 
+                textAlign: { xs: 'center', md: 'left' },
+                display: { xs: 'block', md: 'none' }
+              }}>
+                <Button
+                  variant="text"
+                  onClick={() => setShowFullDescription(!showFullDescription)}
+                  sx={{
+                    textTransform: 'none',
+                    fontSize: '0.9rem',
+                    color: '#1976d2',
+                    fontWeight: 500,
+                    '&:hover': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.04)'
+                    }
+                  }}
+                >
+                  {showFullDescription ? 'Ver menos' : 'Ver mais...'}
+                </Button>
+              </Box>
+            )}
           </Box>
 
           {/* Linha horizontal na cor do sentimento */}
