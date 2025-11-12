@@ -7,7 +7,6 @@ import JourneyIntro from './pages/JourneyIntro';
 import MovieSuggestionsPageMinimal from './pages/MovieSuggestionsPageMinimal';
 import StreamingFilters from './pages/StreamingFilters';
 import MovieDetailWrapper from './pages/MovieDetailWrapper';
-import { MovieDetailMobile } from './pages/landing/MovieDetailMobile';
 // Blog imports
 import { BlogLayout } from './components/blog/BlogLayout';
 import { BlogHome } from './pages/blog/BlogHome';
@@ -48,7 +47,7 @@ function App() {
             <Route path="/app/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/app/suggestions" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/app/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
-            <Route path="/app/onde-assistir-mobile/:identifier" element={<MovieDetailMobile />} />
+            <Route path="/app/onde-assistir-mobile/:identifier" element={<MovieDetailWrapper />} />
             
             {/* Legacy redirects for old routes */}
             <Route path="/blog" element={<BlogLayout><BlogHome /></BlogLayout>} />
@@ -69,7 +68,7 @@ function App() {
             <Route path="/sugestoes/minimal" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/suggestions" element={<MovieSuggestionsPageMinimal />} />
             <Route path="/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
-            <Route path="/onde-assistir-mobile/:identifier" element={<MovieDetailMobile />} />
+            <Route path="/onde-assistir-mobile/:identifier" element={<MovieDetailWrapper />} />
           </Routes>
         </Router>
       </ThemeProviderWrapper>

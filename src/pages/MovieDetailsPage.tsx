@@ -1,98 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
-import { Box, Typography, Chip, Divider, Stack, Paper, Button, Modal, IconButton } from '@mui/material';
+import { Box, Typography, Chip, Divider, Stack, Paper, Button, Modal, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CloseIcon from '@mui/icons-material/Close';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
-import tmdbLogo from '../assets/themoviedb.png';
-import imdbLogo from '../assets/imdb.png';
-import rtLogo from '../assets/rottentomatoes.png';
-import metacriticLogo from '../assets/metascore.svg';
 import { getPlatformLogoUrlMedium } from '../services/streaming.service';
 import { StreamingPlatformsCompact } from '../components/landing/StreamingPlatformsCompact';
-
-// Função para traduzir categorias do Oscar (versão completa da versão anterior)
-const translateOscarCategory = (category: string): string => {
-  if (!category) return '';
-  
-  // Normalizar a categoria (remover espaços extras, converter para maiúscula)
-  const normalizedCategory = category.trim().toUpperCase();
-  
-  const translations: { [key: string]: string } = {
-    'BEST PICTURE': 'Melhor Filme',
-    'BEST DIRECTOR': 'Melhor Diretor',
-    'BEST ACTOR': 'Melhor Ator',
-    'BEST ACTRESS': 'Melhor Atriz',
-    'BEST SUPPORTING ACTOR': 'Melhor Ator Coadjuvante',
-    'BEST SUPPORTING ACTRESS': 'Melhor Atriz Coadjuvante',
-    'BEST ORIGINAL SCREENPLAY': 'Melhor Roteiro Original',
-    'BEST ADAPTED SCREENPLAY': 'Melhor Roteiro Adaptado',
-    'BEST CINEMATOGRAPHY': 'Melhor Fotografia',
-    'BEST FILM EDITING': 'Melhor Edição',
-    'BEST PRODUCTION DESIGN': 'Melhor Direção de Arte',
-    'BEST COSTUME DESIGN': 'Melhor Figurino',
-    'BEST MAKEUP AND HAIRSTYLING': 'Melhor Maquiagem e Penteados',
-    'BEST SOUND': 'Melhor Som',
-    'BEST SOUND EDITING': 'Melhor Edição de Som',
-    'SOUND EFFECTS EDITING': 'Melhor Edição de Efeitos Sonoros',
-    'BEST SOUND MIXING': 'Melhor Mixagem de Som',
-    'BEST VISUAL EFFECTS': 'Melhores Efeitos Visuais',
-    'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
-    'BEST ORIGINAL SONG': 'Melhor Canção Original',
-    'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
-    'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
-    'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
-    'WRITING (ORIGINAL SCREENPLAY)': 'Melhor Roteiro Original',
-    'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
-    'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
-    'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
-    'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
-    'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
-    'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
-    'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
-    'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
-    'BEST ANIMATED FEATURE FILM': 'Melhor Filme de Animação',
-    'BEST ANIMATED SHORT FILM': 'Melhor Curta-Metragem de Animação',
-    'BEST LIVE ACTION SHORT FILM': 'Melhor Curta-Metragem de Ação ao Vivo',
-    'ACTOR IN A LEADING ROLE': 'Melhor Ator',
-    'ACTRESS IN A LEADING ROLE': 'Melhor Atriz',
-    'ACTOR IN A SUPPORTING ROLE': 'Melhor Ator Coadjuvante',
-    'ACTRESS IN A SUPPORTING ROLE': 'Melhor Atriz Coadjuvante',
-    'DIRECTING': 'Melhor Diretor',
-    'CINEMATOGRAPHY': 'Melhor Fotografia',
-    'FILM EDITING': 'Melhor Edição',
-    'PRODUCTION DESIGN': 'Melhor Direção de Arte',
-    'ART DIRECTION': 'Melhor Direção de Arte',
-    'COSTUME DESIGN': 'Melhor Figurino',
-    'MAKEUP AND HAIRSTYLING': 'Melhor Maquiagem e Penteados',
-    'SOUND': 'Melhor Som',
-    'SOUND MIXING': 'Melhor Mixagem de Som',
-    'SOUND EDITING': 'Melhor Edição de Som',
-    'VISUAL EFFECTS': 'Melhores Efeitos Visuais',
-    'SPECIAL VISUAL EFFECTS': 'Melhores Efeitos Visuais',
-    'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
-    'ORIGINAL SONG': 'Melhor Canção Original',
-    'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
-    'MUSIC (Original Song)': 'Melhor Canção Original',
-    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
-    'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
-    'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
-    'DOCUMENTARY FEATURE': 'Melhor Documentário',
-    'ANIMATED FEATURE FILM': 'Melhor Filme de Animação'
-  };
-
-  const result = translations[normalizedCategory] || category;
-  console.log(`🏆 translateOscarCategory: "${category}" -> normalized: "${normalizedCategory}" -> result: "${result}"`);
-  return result;
-};
+import MoviePoster from '../components/movie-details/MoviePoster';
+import MovieRatings from '../components/movie-details/MovieRatings';
+import MovieCast from '../components/movie-details/MovieCast';
+import MovieAwards from '../components/movie-details/MovieAwards';
+import { getPersonalizedContent } from '../components/movie-details/movieDetailsHelpers';
 
 
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { identifier } = useParams();
-  const movieId = identifier; // Usar o novo parâmetro unificado
+  const movieId = identifier;
   const state = location.state || {};
   const [movieData, setMovieData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -107,8 +35,16 @@ const MovieDetailsPage: React.FC = () => {
   const intentionType = state?.intentionType;
   const reason = state?.reason;
   
-  const currentSentimentColors = mode === 'dark' ? darkSentimentColors : lightSentimentColors;
-  const themeColor = currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2';
+  // Memoizar cores do sentimento
+  const currentSentimentColors = useMemo(() => 
+    mode === 'dark' ? darkSentimentColors : lightSentimentColors,
+    [mode]
+  );
+  
+  const themeColor = useMemo(() => 
+    currentSentimentColors[(sentimentId as keyof typeof currentSentimentColors)] || '#1976d2',
+    [currentSentimentColors, sentimentId]
+  );
 
   useEffect(() => {
     const fetchMovieDetails = async () => {
@@ -171,6 +107,55 @@ const MovieDetailsPage: React.FC = () => {
     fetchSimilarMovies();
   }, [movieData?.movie?.id]);
 
+  // Memoizar dados das plataformas para StreamingPlatformsCompact (antes dos early returns)
+  const subscriptionPlatforms = useMemo(() => 
+    movieData?.subscriptionPlatforms
+      ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION')
+      .map((p: any) => ({
+        id: p.id || `${p.name}-${p.accessType}`,
+        name: p.name,
+        category: p.category || 'streaming',
+        logoPath: p.logoPath,
+        hasFreeTrial: p.hasFreeTrial || false,
+        freeTrialDuration: p.freeTrialDuration || null,
+        baseUrl: p.baseUrl || null,
+        accessType: p.accessType
+      })) || [],
+    [movieData?.subscriptionPlatforms]
+  );
+
+  const rentalPurchasePlatforms = useMemo(() => 
+    movieData?.subscriptionPlatforms
+      ?.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE')
+      .map((p: any) => ({
+        id: p.id || `${p.name}-${p.accessType}`,
+        name: p.name,
+        category: p.category || 'rental',
+        logoPath: p.logoPath,
+        hasFreeTrial: false,
+        freeTrialDuration: null,
+        baseUrl: p.baseUrl || null,
+        accessType: p.accessType
+      })) || [],
+    [movieData?.subscriptionPlatforms]
+  );
+
+  // Memoizar conteúdo personalizado (antes dos early returns)
+  const personalizedContent = useMemo(() => {
+    const movie = movieData?.movie;
+    return getPersonalizedContent(sentimentId, intentionType, reason, movie?.landingPageHook);
+  }, [sentimentId, intentionType, reason, movieData?.movie?.landingPageHook]);
+
+  // Callbacks memoizados (antes dos early returns)
+  const handleToggleFullCast = useCallback(() => {
+    setShowFullCast(prev => !prev);
+  }, []);
+
+  const handleToggleFullNominations = useCallback(() => {
+    setShowFullNominations(prev => !prev);
+  }, []);
+
+  // Early returns após todos os hooks
   if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -193,123 +178,12 @@ const MovieDetailsPage: React.FC = () => {
 
   const movie = movieData?.movie;
 
-  // Função para gerar conteúdo personalizado baseado na jornada emocional
-  const getPersonalizedContent = (): { title: string; content: React.ReactNode } => {
-    if (!sentimentId || !intentionType || !reason) {
-      // Se não temos dados da jornada, usar conteúdo padrão
-      return {
-        title: "Por que assistir a este filme?",
-        content: movie.landingPageHook ? 
-          movie.landingPageHook.replace(/<[^>]*>/g, '') : 
-          "Este filme oferece uma experiência cinematográfica única que vale a pena assistir."
-      };
-    }
-
-    // Mapear sentimentos para nomes amigáveis (IDs corretos do banco)
-    const sentimentNames: { [key: number]: string } = {
-      13: "Feliz / Alegre",
-      14: "Triste", 
-      15: "Calmo(a)",
-      16: "Ansioso(a)",
-      17: "Animado(a)",
-      18: "Cansado(a)"
-    };
-
-    // Mapear intenções para nomes amigáveis
-    const intentionNames: { [key: string]: string } = {
-      "PROCESS": "Processar",
-      "MAINTAIN": "Manter",
-      "TRANSFORM": "Transformar",
-      "REPLACE": "Substituir",
-      "EXPLORE": "Explorar"
-    };
-
-    const sentimentName = sentimentNames[sentimentId] || "emocional";
-    const intentionName = intentionNames[intentionType] || "emocional";
-
-    // Função para gerar conectores naturais baseados na intenção
-    const getConnector = (intention: string) => {
-      const connectors: { [key: string]: string } = {
-        "PROCESS": "este filme traz",
-        "MAINTAIN": "este filme oferece",
-        "TRANSFORM": "este filme pode te ajudar através de",
-        "REPLACE": "este filme é ideal com",
-        "EXPLORE": "este filme oferece"
-      };
-      return connectors[intention] || "este filme oferece";
-    };
-
-    const connector = getConnector(intentionType);
-
-    // Garantir que o reason comece com minúscula para fluidez
-    const formattedReason = reason.charAt(0).toLowerCase() + reason.slice(1);
-
-    return {
-      title: "Por que assistir a este filme?",
-      content: (
-        <>
-          Para quem está <strong className="text-blue-600 font-semibold">{sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{intentionName}</strong>, {connector} {formattedReason}
-        </>
-      )
-    };
-  };
-
-  const personalizedContent = getPersonalizedContent();
-
-  // Debug: Verificar dados do elenco e streaming
-  console.log('🎬 MovieDetailsPage - movie:', movie);
-  console.log('🎬 MovieDetailsPage - mainCast:', movie?.mainCast);
-  console.log('🎬 MovieDetailsPage - mainCast length:', movie?.mainCast?.length);
-  console.log('🎬 MovieDetailsPage - movieData:', movieData);
-  console.log('🎬 MovieDetailsPage - subscriptionPlatforms:', movieData?.subscriptionPlatforms);
-  console.log('🎬 MovieDetailsPage - journey data:', { sentimentId, intentionType, reason });
-  console.log('🎬 MovieDetailsPage - personalized content:', personalizedContent);
-  
-  // Debug: Verificar dados de premiações
-  console.log('🏆 MovieDetailsPage - oscarAwards:', movie?.oscarAwards);
-  if (movie?.oscarAwards?.wins) {
-    console.log('🏆 MovieDetailsPage - wins:', movie.oscarAwards.wins);
-    movie.oscarAwards.wins.forEach((win: any, index: number) => {
-      console.log(`🏆 Win ${index}:`, {
-        category: win.category,
-        categoryName: win.categoryName,
-        personName: win.personName,
-        year: win.year,
-        translated: translateOscarCategory(win.categoryName || win.category)
-      });
-    });
+  // Debug apenas em desenvolvimento
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🎬 MovieDetailsPage - movie:', movie);
+    console.log('🎬 MovieDetailsPage - mainCast:', movie?.mainCast);
+    console.log('🎬 MovieDetailsPage - journey data:', { sentimentId, intentionType, reason });
   }
-
-  // Preparar dados das plataformas para StreamingPlatformsCompact
-  const subscriptionPlatforms = movieData?.subscriptionPlatforms
-    ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION')
-    .map((p: any) => ({
-      id: p.id || `${p.name}-${p.accessType}`,
-      name: p.name,
-      category: p.category || 'streaming',
-      logoPath: p.logoPath,
-      hasFreeTrial: p.hasFreeTrial || false,
-      freeTrialDuration: p.freeTrialDuration || null,
-      baseUrl: p.baseUrl || null,
-      accessType: p.accessType
-    })) || [];
-
-  const rentalPurchasePlatforms = movieData?.subscriptionPlatforms
-    ?.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE')
-    .map((p: any) => ({
-      id: p.id || `${p.name}-${p.accessType}`,
-      name: p.name,
-      category: p.category || 'rental',
-      logoPath: p.logoPath,
-      hasFreeTrial: false,
-      freeTrialDuration: null,
-      baseUrl: p.baseUrl || null,
-      accessType: p.accessType
-    })) || [];
-  console.log('🏆 MovieDetailsPage - awardsSummary:', movie?.awardsSummary);
-  console.log('🏆 MovieDetailsPage - has oscarAwards:', !!movie?.oscarAwards);
-  console.log('🏆 MovieDetailsPage - has awardsSummary:', !!movie?.awardsSummary);
-  console.log('🏆 MovieDetailsPage - awardsSummary length:', movie?.awardsSummary?.length);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', pb: 8 }}>
@@ -335,25 +209,11 @@ const MovieDetailsPage: React.FC = () => {
           order: { xs: 1, md: 1 } // Primeiro em mobile, primeiro em desktop
         }}>
           {/* Pôster do filme */}
-          <Box sx={{ 
-            position: 'relative', 
-            mb: 2,
-            borderRadius: 2,
-            overflow: 'hidden',
-            boxShadow: 3,
-            width: '100%',
-            maxWidth: 280
-          }}>
-            <img 
-              src={movie.thumbnail}
-              alt={movie.title}
-              style={{ 
-                width: '100%', 
-                height: 'auto', 
-                display: 'block' 
-              }}
-            />
-          </Box>
+          <MoviePoster 
+            thumbnail={movie.thumbnail}
+            title={movie.title}
+            themeColor={themeColor}
+          />
 
 
 
@@ -842,7 +702,7 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
 
             {/* 3. Por que recomendamos para você? (só aparece se veio de uma jornada) */}
-            {sentimentId && intentionType && reason && (
+            {personalizedContent.hasPersonalizedContent ? (
               <Box sx={{ mb: 2, width: '100%' }}>
                 <Typography variant="subtitle1" sx={{ 
                   mb: 1, 
@@ -864,7 +724,32 @@ const MovieDetailsPage: React.FC = () => {
                   textAlign: { xs: 'center', md: 'left' }, 
                   fontSize: '0.97rem' 
                 }}>
-                  {personalizedContent.content}
+                  Para quem está <strong className="text-blue-600 font-semibold">{personalizedContent.sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{personalizedContent.intentionName}</strong>, {personalizedContent.connector} {personalizedContent.formattedReason}
+                </Paper>
+              </Box>
+            ) : personalizedContent.defaultContent && (
+              <Box sx={{ mb: 2, width: '100%' }}>
+                <Typography variant="subtitle1" sx={{ 
+                  mb: 1, 
+                  color: '#1976d2', 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  fontWeight: 600
+                }}>
+                  {personalizedContent.title}
+                </Typography>
+                <Paper elevation={0} sx={{ 
+                  bgcolor: 'transparent', 
+                  color: 'text.secondary', 
+                  p: 1.5, 
+                  borderRadius: 2, 
+                  border: `1.5px solid ${themeColor}40`, 
+                  fontStyle: 'italic', 
+                  maxWidth: 700, 
+                  textAlign: { xs: 'center', md: 'left' }, 
+                  fontSize: '0.97rem' 
+                }}>
+                  {personalizedContent.defaultContent}
                 </Paper>
               </Box>
             )}
@@ -990,56 +875,7 @@ const MovieDetailsPage: React.FC = () => {
               width: '100%'
             }}>
             {/* Notas da Crítica */}
-            {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
-            (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
-            (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
-            (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
-              <Box sx={{ 
-                display: 'flex',
-                flexDirection: 'column', 
-                alignItems: 'flex-start',
-                flex: 1
-              }}>
-                <Typography variant="body2" sx={{ 
-                  mb: 0.5, 
-                  color: '#1976d2', 
-                  fontWeight: 500,
-                  textAlign: 'left',
-                  fontSize: '0.95rem'
-                }}>Notas da Crítica:</Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 1.5, 
-                  justifyContent: 'flex-start'
-                }}>
-                  {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={imdbLogo} alt="IMDB" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            ) : null}
+            <MovieRatings movie={movie} isMobile={false} />
 
             {/* Gêneros */}
             {movie.genres && movie.genres.length > 0 && (
@@ -1101,56 +937,7 @@ const MovieDetailsPage: React.FC = () => {
               width: '100%'
             }}>
             {/* Notas da Crítica */}
-            {(typeof movie.vote_average !== 'undefined' && movie.vote_average !== null) ||
-            (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
-            (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
-            (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null) ? (
-              <Box sx={{ 
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center', 
-                width: '100%'
-              }}>
-                <Typography variant="body2" sx={{ 
-                  mb: 0.5, 
-                  color: '#1976d2', 
-                  fontWeight: 500,
-                  textAlign: 'center',
-                  fontSize: '0.9rem'
-                }}>Notas da Crítica:</Typography>
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: 1.5, 
-                  justifyContent: 'center'
-                }}>
-                  {typeof movie.vote_average !== 'undefined' && movie.vote_average !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={tmdbLogo} alt="TMDB" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.vote_average).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={imdbLogo} alt="IMDB" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.imdbRating).toFixed(1)}</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.rottenTomatoesRating).toFixed(0)}%</Typography>
-                    </Box>
-                  )}
-                  {typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                      <img src={metacriticLogo} alt="Metacritic" style={{ width: 20, height: 20 }} />
-                      <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 500 }}>{Number(movie.metacriticRating).toFixed(0)}</Typography>
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-            ) : null}
+            <MovieRatings movie={movie} isMobile={true} />
 
             {/* Gêneros */}
             {movie.genres && movie.genres.length > 0 && (
@@ -1192,8 +979,31 @@ const MovieDetailsPage: React.FC = () => {
           {/* Linha horizontal na cor do sentimento */}
           <Divider sx={{ borderColor: themeColor, opacity: 0.7, mb: 1.2, width: '100%' }} />
 
-          {/* Elenco Principal - Mesmo padrão da LP */}
+          {/* Elenco Principal */}
           {movie.mainCast && movie.mainCast.length > 0 && (
+            <MovieCast
+              mainCast={movie.mainCast}
+              showFullCast={showFullCast}
+              onToggleFullCast={handleToggleFullCast}
+              isMobile={isMobile}
+            />
+          )}
+
+          {/* Linha horizontal na cor do sentimento */}
+          <Divider sx={{ borderColor: themeColor, opacity: 0.7, mb: 1.2, width: '100%' }} />
+
+
+          {/* Premiações e Reconhecimento */}
+          {movie.oscarAwards && (movie.oscarAwards.wins.length > 0 || movie.oscarAwards.nominations.length > 0) ? (
+            <MovieAwards
+              oscarAwards={movie.oscarAwards}
+              movieTitle={movie.title}
+              showFullNominations={showFullNominations}
+              onToggleFullNominations={handleToggleFullNominations}
+              isMobile={isMobile}
+            />
+          ) : (
+            // Layout elegante sem card para premiações gerais
             <Box sx={{ mb: 3, width: '100%' }}>
               <Typography variant="h3" component="h3" sx={{ 
                 color: '#1976d2',
@@ -1202,163 +1012,8 @@ const MovieDetailsPage: React.FC = () => {
                 fontWeight: 600,
                 mb: 2
               }}>
-                Elenco Principal
+                Premiações e Reconhecimento
               </Typography>
-              
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: 0.5,
-                width: '100%'
-              }}>
-                {/* Mostrar apenas os primeiros 5 atores inicialmente */}
-                {movie.mainCast.slice(0, showFullCast ? movie.mainCast.length : 5).map((actor: any, index: number) => (
-                  <Box key={index} sx={{ 
-                    py: 0.5
-                  }}>
-                    <Typography variant="body1" sx={{ 
-                      fontWeight: 500, 
-                      color: 'text.primary',
-                      fontSize: '1rem',
-                      textAlign: { xs: 'center', md: 'left' }
-                    }}>
-                      {actor.actorName} {actor.characterName && (
-                        <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}> <span style={{ fontStyle: 'italic', color: '#666' }}>como</span> {actor.characterName}</span>
-                      )}
-                    </Typography>
-                  </Box>
-                ))}
-                
-                {/* Ver mais/Ver menos - se houver mais de 5 atores */}
-                {movie.mainCast.length > 5 && (
-                  <Box sx={{ 
-                    mt: 1, 
-                    pt: 1, 
-                    borderTop: '1px solid #e0e0e0',
-                    textAlign: 'center'
-                  }}>
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        color: '#1976d2',
-                        fontSize: '0.9rem',
-                        cursor: 'pointer',
-                        '&:hover': { textDecoration: 'underline' }
-                      }}
-                      onClick={() => setShowFullCast(!showFullCast)}
-                    >
-                      {showFullCast ? 'Ver menos...' : `Ver mais... (${movie.mainCast.length - 5} atores)`}
-                    </Typography>
-                  </Box>
-                )}
-              </Box>
-            </Box>
-          )}
-
-          {/* Linha horizontal na cor do sentimento */}
-          <Divider sx={{ borderColor: themeColor, opacity: 0.7, mb: 1.2, width: '100%' }} />
-
-
-          {/* Premiações e Reconhecimento - Mesmo layout da LP */}
-          <Box sx={{ mb: 3, width: '100%' }}>
-            <Typography variant="h3" component="h3" sx={{ 
-              color: '#1976d2',
-              textAlign: { xs: 'center', md: 'left' },
-              fontSize: { xs: '1.1rem', md: '1.3rem' },
-              fontWeight: 600,
-              mb: 2
-            }}>
-              Premiações e Reconhecimento
-            </Typography>
-            
-            {movie.oscarAwards && (movie.oscarAwards.wins.length > 0 || movie.oscarAwards.nominations.length > 0) ? (
-              // Se tem dados estruturados do Oscar, mostrar versão simplificada
-              <Box sx={{ mb: 2 }}>
-                {/* Debug: Verificar se está entrando na condição */}
-                {console.log('🏆 Entrando na condição do Oscar - wins:', movie.oscarAwards.wins, 'nominations:', movie.oscarAwards.nominations)}
-                {/* Texto introdutório */}
-                <Typography variant="body1" sx={{ 
-                  mb: 2,
-                  lineHeight: 1.6,
-                  fontSize: '1rem',
-                  color: 'text.primary',
-                  fontWeight: 500
-                }}>
-                  {movie.title} foi indicado a {movie.oscarAwards.wins.length + movie.oscarAwards.nominations.length} Oscar{(movie.oscarAwards.wins.length + movie.oscarAwards.nominations.length) > 1 ? 's' : ''} em {movie.oscarAwards.wins.length > 0 ? movie.oscarAwards.wins[0].year : movie.oscarAwards.nominations[0]?.year}{movie.oscarAwards.wins.length > 0 ? ', ' : ''}{movie.oscarAwards.wins.length > 0 ? <span style={{ fontStyle: 'italic' }}>conquistou</span> : ''}:
-                </Typography>
-
-                {/* Vitórias no Oscar - sempre visíveis */}
-                {movie.oscarAwards.wins && movie.oscarAwards.wins.length > 0 && (
-                  <Box sx={{ mb: 2 }}>
-                    {movie.oscarAwards.wins.map((win: any, index: number) => (
-                      <Box key={index} sx={{ 
-                        py: 0.5
-                      }}>
-                        <Typography variant="body1" sx={{ 
-                          fontWeight: 500, 
-                          color: 'text.primary',
-                          fontSize: '1rem'
-                        }}>
-                          {translateOscarCategory(win.categoryName || win.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{win.personName}</span>
-                        </Typography>
-                      </Box>
-                    ))}
-                  </Box>
-                )}
-
-                {/* Indicações que não venceram - só aparecem no "Ver mais" */}
-                {movie.oscarAwards.nominations && movie.oscarAwards.nominations.length > 0 && (
-                  <>
-                    {/* Indicações extras - mostradas quando showFullNominations = true */}
-                    {showFullNominations && (
-                      <Box sx={{ mt: 2 }}>
-                        {movie.oscarAwards.nominations.map((nomination: any, index: number) => (
-                          <Box key={index} sx={{ 
-                            py: 0.5
-                          }}>
-                            <Typography variant="body1" sx={{ 
-                              fontWeight: 500, 
-                              color: 'text.primary',
-                              fontSize: '1rem'
-                            }}>
-                              {translateOscarCategory(nomination.categoryName || nomination.category)} <span style={{ fontStyle: 'italic', color: '#666' }}>para</span> <span style={{ fontSize: '0.9rem', color: 'text.secondary' }}>{nomination.personName}</span>
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-
-                    {/* Ver mais se houver indicações */}
-                    {movie.oscarAwards.nominations.length > 0 && (
-                      <Box sx={{ 
-                        mt: 2, 
-                        pt: 1, 
-                        borderTop: '1px solid',
-                        borderColor: 'divider',
-                        textAlign: 'center'
-                      }}>
-                        <Button
-                          variant="text"
-                          onClick={() => setShowFullNominations(!showFullNominations)}
-                          sx={{
-                            textTransform: 'none',
-                            color: '#1976d2',
-                            fontSize: '0.9rem',
-                            fontWeight: 500,
-                            '&:hover': {
-                              backgroundColor: 'rgba(25, 118, 210, 0.04)'
-                            }
-                          }}
-                        >
-                          {showFullNominations ? 'Ver menos...' : `Ver mais... (${movie.oscarAwards.nominations.length} ${movie.oscarAwards.nominations.length > 1 ? 'indicações' : 'indicação'})`}
-                        </Button>
-                      </Box>
-                    )}
-                  </>
-                )}
-              </Box>
-            ) : (
-              // Layout elegante sem card para premiações gerais
               <Box sx={{ 
                 py: 2,
                 textAlign: 'left'
@@ -1376,8 +1031,8 @@ const MovieDetailsPage: React.FC = () => {
                   }
                 </Typography>
               </Box>
-            )}
-          </Box>
+            </Box>
+          )}
 
           {/* Filmes com Vibe Similar - COMENTADO TEMPORARIAMENTE */}
           {/* TODO: Implementar ajustes similares aos da LP */}
