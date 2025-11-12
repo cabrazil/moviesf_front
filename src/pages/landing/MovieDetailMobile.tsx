@@ -111,12 +111,12 @@ interface Movie {
       };
     };
   }>;
-  quotes: Array<{
+  quotes?: Array<{
     id: number;
     text: string;
-    author: string;
-    vehicle: string;
-    url?: string;
+    author: string | null;
+    vehicle: string | null;
+    url?: string | null;
   }>;
 }
 
@@ -973,7 +973,9 @@ export const MovieDetailMobile: React.FC<MovieDetailMobileProps> = ({ slug: prop
                           color: 'text.secondary',
                           fontSize: '0.8rem'
                         }}>
-                          — {quote.author}, {quote.url ? (
+                          {quote.author && `— ${quote.author}`}
+                          {quote.author && quote.vehicle && ', '}
+                          {quote.url && quote.vehicle ? (
                             <a 
                               href={quote.url} 
                               target="_blank" 
