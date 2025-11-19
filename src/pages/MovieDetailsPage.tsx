@@ -771,6 +771,18 @@ const MovieDetailsPage: React.FC = () => {
                   gap: { xs: '8px', md: '4px' }
                 }}>
                   {movie.emotionalTags
+                    // Remover duplicatas baseado no subSentiment (manter a primeira ocorrência com maior relevância)
+                    .reduce((acc: any[], tag: any) => {
+                      const existing = acc.find(t => t.subSentiment === tag.subSentiment);
+                      if (!existing) {
+                        acc.push(tag);
+                      } else if (tag.relevance > existing.relevance) {
+                        // Se encontrar duplicata com maior relevância, substituir
+                        const index = acc.indexOf(existing);
+                        acc[index] = tag;
+                      }
+                      return acc;
+                    }, [])
                     .sort((a: any, b: any) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
                     .slice(0, 4) // Pegar apenas as 4 mais relevantes
                     .map((tag: any, index: number) => (
