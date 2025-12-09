@@ -230,8 +230,11 @@ const translateOscarCategory = (category: string): string => {
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
     'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
+    'WRITING (STORY AND SCREENPLAY--WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
+    'WRITING (SCREENPLAY BASED ON MATERIAL FROM ANOTHER MEDIUM)': 'Melhor Roteiro Adaptado',
     'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
+    'WRITING (SCREENPLAY BASED ON MATERIAL PREVIOUSLY PRODUCED OR PUBLISHED)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
     'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
     'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
@@ -257,11 +260,13 @@ const translateOscarCategory = (category: string): string => {
     'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL DRAMATIC SCORE)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Song)': 'Melhor Canção Original',
     'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
     'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
+    'WRITING (SCREENPLAY WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
     'ANIMATED FEATURE FILM': 'Melhor Filme de Animação',
@@ -292,7 +297,22 @@ const translateOscarCategory = (category: string): string => {
     'BEST_LIVE_ACTION_SHORT': 'Melhor Curta de Ação ao Vivo'
   };
 
-  return translations[normalizedCategory] || category;
+  // Buscar tradução exata primeiro
+  if (translations[normalizedCategory]) {
+    return translations[normalizedCategory];
+  }
+  
+  // Se não encontrou, tentar match parcial para categorias de WRITING
+  if (normalizedCategory.includes('WRITING') && normalizedCategory.includes('SCREENPLAY')) {
+    if (normalizedCategory.includes('WRITTEN DIRECTLY') || normalizedCategory.includes('ORIGINAL')) {
+      return 'Melhor Roteiro Original';
+    }
+    if (normalizedCategory.includes('ADAPTED') || normalizedCategory.includes('BASED ON')) {
+      return 'Melhor Roteiro Adaptado';
+    }
+  }
+  
+  return category;
 };
 
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
@@ -356,9 +376,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         setLoading(true);
         console.log('🔄 MovieDetail - Buscando dados reais para slug:', finalSlug);
         
-        const baseURL = process.env.NODE_ENV === 'production' 
-          ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3333';
+        const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333';
         
         // Usar a API específica para landing page
         const response = await fetch(`${baseURL}/api/movie/${finalSlug}/hero`);
@@ -734,19 +752,12 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     }}>
                       Tags Emocionais Chave:
                     </Typography>
-                    {/* Lista vertical para mobile, inline para desktop */}
-                    <Box 
-                      component="ul" 
-                      sx={{ 
-                        pl: { xs: 2, md: 0 }, 
-                        m: 0,
-                        textAlign: { xs: 'center', md: 'left' },
-                        display: { xs: 'block', md: 'flex' },
-                        flexWrap: { md: 'wrap' },
-                        gap: { md: 0.5 },
-                        listStyle: { xs: 'disc', md: 'none' }
-                      }}
-                    >
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap',
+                      gap: 0.5,
+                      justifyContent: { xs: 'center', md: 'flex-start' }
+                    }}>
                       {movie.emotionalTags
                         // Remover duplicatas baseado no subSentiment (manter a primeira ocorrência com maior relevância)
                         .reduce((acc: typeof movie.emotionalTags, tag) => {
@@ -762,25 +773,18 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                         }, [])
                         .sort((a, b) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
                         .slice(0, 4) // Pegar apenas as 4 mais relevantes
-                        .map((tag, index, array) => (
-                        <Box 
-                          component="li" 
-                          key={index} 
-                          sx={{ 
-                            mb: { xs: 0.5, md: 0 },
-                            fontSize: { xs: '0.9rem', md: '1rem' },
-                            color: 'text.primary',
-                            display: { xs: 'list-item', md: 'inline' }
-                          }}
-                        >
-                          {tag.subSentiment}
-                          {index < array.length - 1 && (
-                            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' }, mx: 0.5 }}>
-                              ,
-                            </Box>
-                          )}
-                        </Box>
-                      ))}
+                        .map((tag, index) => (
+                          <Chip 
+                            key={index} 
+                            label={tag.subSentiment} 
+                            size="small" 
+                            sx={{ 
+                              fontSize: { xs: '0.8rem', md: '0.9rem' }, 
+                              height: 28,
+                              '& .MuiChip-label': { px: 1.5 }
+                            }} 
+                          />
+                        ))}
                     </Box>
                   </Box>
                 )}
@@ -1290,6 +1294,22 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                             {/* Indicações extras - mostradas quando showFullNominations = true */}
                             {showFullNominations && (
                               <Box sx={{ mt: 2 }}>
+                                {/* Título "Indicações" para separar das vitórias */}
+                                {movie.oscarAwards?.wins && movie.oscarAwards.wins.length > 0 && (
+                                  <Typography 
+                                    variant="h4" 
+                                    component="h4" 
+                                    sx={{ 
+                                      mb: 1.5, 
+                                      color: '#1976d2', 
+                                      textAlign: { xs: 'center', md: 'left' }, 
+                                      fontSize: { xs: '1rem', md: '1.1rem' }, 
+                                      fontWeight: 600 
+                                    }}
+                                  >
+                                    Indicações
+                                  </Typography>
+                                )}
                                 {movie.oscarAwards.nominations.map((nomination, index) => (
                                   <Box key={index} sx={{ 
                                     py: 1, 

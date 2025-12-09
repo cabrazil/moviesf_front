@@ -6,7 +6,8 @@
 const ALLOWED_DOMAINS = [
   'emofilms.com',
   'www.emofilms.com',
-  'moviesf-back.vercel.app',
+  'vibesfilm.com',
+  'www.vibesfilm.com',
   'image.tmdb.org',
   'api.themoviedb.org',
   'www.youtube.com',

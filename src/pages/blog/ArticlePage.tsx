@@ -465,6 +465,12 @@ export function ArticlePage() {
               margin: '16px auto',
               display: 'block'
             }}
+            onError={(e) => {
+              // Fallback para imagem quebrada
+              const target = e.currentTarget;
+              target.src = 'https://via.placeholder.com/1200x675/011627/3B82F6?text=Imagem+não+disponível';
+              target.style.opacity = '0.7';
+            }}
           />
         </div>
       </header>
@@ -509,77 +515,105 @@ export function ArticlePage() {
         </article>
 
         {/* Tags do Artigo */}
-        {post.tags && post.tags.length > 0 && (
-          <div style={{ 
-            marginTop: isMobile ? '32px' : '48px', 
-            paddingTop: isMobile ? '24px' : '32px', 
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            color: '#FDFFFC'
-          }}>
-            <h3 style={{ 
-              fontSize: isMobile ? '1rem' : '1.125rem', 
-              fontWeight: '600', 
-              color: '#FDFFFC', 
-              marginBottom: isMobile ? '12px' : '16px' 
+        <div style={{ 
+          marginTop: isMobile ? '32px' : '48px', 
+          paddingTop: isMobile ? '24px' : '32px', 
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          color: '#FDFFFC'
+        }}>
+          {post.tags && post.tags.length > 0 ? (
+            <>
+              <h3 style={{ 
+                fontSize: isMobile ? '1rem' : '1.125rem', 
+                fontWeight: '600', 
+                color: '#FDFFFC', 
+                marginBottom: isMobile ? '12px' : '16px' 
+              }}>
+                Tags Emocionais Relacionadas
+              </h3>
+              <p 
+                className="tags-description-text"
+                style={{
+                  fontSize: isMobile ? '1rem' : '1.125rem',
+                  lineHeight: '1.7',
+                  color: '#FDFFFC',
+                  fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
+                  marginBottom: isMobile ? '16px' : '20px',
+                  marginTop: 0,
+                  padding: 0
+                }}
+              >
+                Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:
+              </p>
+              <div style={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: isMobile ? '8px' : '12px' 
+              }}>
+                {post.tags.map((tag) => (
+                  <Link 
+                    key={tag.id} 
+                    to={`/blog/tag/${tag.slug}`}
+                    onClick={() => {
+                      // Scroll imediato para o topo antes de navegar
+                      window.scrollTo({ top: 0, behavior: 'instant' });
+                    }}
+                    style={{
+                      display: 'inline-block',
+                      padding: isMobile ? '4px 8px' : '6px 12px',
+                      fontSize: isMobile ? '0.75rem' : '0.875rem',
+                      fontWeight: '500',
+                      borderRadius: '20px',
+                      backgroundColor: 'transparent',
+                      color: '#FF6B35',
+                      border: '1px solid #FF6B35',
+                      textDecoration: 'none',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = '#FF6B35';
+                      e.currentTarget.style.color = '#011627';
+                      e.currentTarget.style.borderColor = '#FF6B35';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#FF6B35';
+                      e.currentTarget.style.borderColor = '#FF6B35';
+                    }}
+                  >
+                    #{tag.name}
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div style={{
+              textAlign: 'center',
+              padding: isMobile ? '24px 16px' : '32px',
+              backgroundColor: 'rgba(2, 44, 73, 0.3)',
+              borderRadius: '12px',
+              border: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
-              Tags Emocionais Relacionadas
-            </h3>
-            <p 
-              className="tags-description-text"
-              style={{
-                fontSize: isMobile ? '1rem' : '1.125rem',
-                lineHeight: '1.7',
-                color: '#FDFFFC',
-                fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
-                marginBottom: isMobile ? '16px' : '20px',
-                marginTop: 0,
-                padding: 0
-              }}
-            >
-              Toque nas Tags Emocionais abaixo e explore mais filmes com sentimentos semelhantes:
-            </p>
-            <div style={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              gap: isMobile ? '8px' : '12px' 
-            }}>
-              {post.tags.map((tag) => (
-                <Link 
-                  key={tag.id} 
-                  to={`/blog/tag/${tag.slug}`}
-                  onClick={() => {
-                    // Scroll imediato para o topo antes de navegar
-                    window.scrollTo({ top: 0, behavior: 'instant' });
-                  }}
-                  style={{
-                    display: 'inline-block',
-                    padding: isMobile ? '4px 8px' : '6px 12px',
-                    fontSize: isMobile ? '0.75rem' : '0.875rem',
-                    fontWeight: '500',
-                    borderRadius: '20px',
-                    backgroundColor: 'transparent',
-                    color: '#FF6B35',
-                    border: '1px solid #FF6B35',
-                    textDecoration: 'none',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.backgroundColor = '#FF6B35';
-                    e.currentTarget.style.color = '#011627';
-                    e.currentTarget.style.borderColor = '#FF6B35';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#FF6B35';
-                    e.currentTarget.style.borderColor = '#FF6B35';
-                  }}
-                >
-                  #{tag.name}
-                </Link>
-              ))}
+              <p style={{
+                fontSize: isMobile ? '0.9rem' : '1rem',
+                color: '#E0E0E0',
+                lineHeight: '1.6',
+                margin: 0
+              }}>
+                Este artigo ainda não possui tags emocionais associadas.
+              </p>
+              <p style={{
+                fontSize: isMobile ? '0.85rem' : '0.9rem',
+                color: '#A0A0A0',
+                lineHeight: '1.6',
+                marginTop: '8px',
+                marginBottom: 0
+              }}>
+                Explore outros artigos com tags emocionais para descobrir filmes relacionados.
+              </p>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Author Bio */}
         <div style={{ 
@@ -635,7 +669,7 @@ export function ArticlePage() {
             marginBottom: isMobile ? '24px' : '32px', 
             textAlign: 'center' 
           }}>
-            Artigos Relacionados
+            {post.category_title ? `Mais em ${post.category_title}` : 'Outros Artigos da Categoria'}
           </h2>
           <div style={{
             display: 'grid',

@@ -22,6 +22,11 @@ interface OscarRecognitionProps {
 
 // Função para traduzir categorias do Oscar
 const translateOscarCategory = (category: string): string => {
+  if (!category) return '';
+  
+  // Normalizar a categoria (remover espaços extras, converter para maiúscula)
+  const normalizedCategory = category.trim().toUpperCase();
+  
   const translations: { [key: string]: string } = {
     'BEST PICTURE': 'Melhor Filme',
     'BEST DIRECTOR': 'Melhor Diretor',
@@ -44,11 +49,24 @@ const translateOscarCategory = (category: string): string => {
     'BEST ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'BEST ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL SCORE)': 'Melhor Trilha Sonora Original',
+    'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL DRAMATIC SCORE)': 'Melhor Trilha Sonora Original',
+    'MUSIC (Original Song)': 'Melhor Canção Original',
+    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
+    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
+    'WRITING (ORIGINAL SCREENPLAY)': 'Melhor Roteiro Original',
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
+    'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
+    'WRITING (STORY AND SCREENPLAY--WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
+    'WRITING (SCREENPLAY BASED ON MATERIAL FROM ANOTHER MEDIUM)': 'Melhor Roteiro Adaptado',
     'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
+    'WRITING (SCREENPLAY BASED ON MATERIAL PREVIOUSLY PRODUCED OR PUBLISHED)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
+    'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
+    'WRITING (SCREENPLAY WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
     'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
@@ -73,15 +91,36 @@ const translateOscarCategory = (category: string): string => {
     'SPECIAL VISUAL EFFECTS': 'Melhores Efeitos Visuais',
     'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'ORIGINAL SONG': 'Melhor Canção Original',
-    'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
-    'MUSIC (Original Song)': 'Melhor Canção Original',
-    'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
-    'ANIMATED FEATURE FILM': 'Melhor Filme de Animação'
+    'ANIMATED FEATURE FILM': 'Melhor Filme de Animação',
+    // Adicionar suporte para formato com underscore (do backend)
+    'BEST_PICTURE': 'Melhor Filme',
+    'BEST_DIRECTOR': 'Melhor Diretor',
+    'BEST_ACTOR': 'Melhor Ator',
+    'BEST_ACTRESS': 'Melhor Atriz',
+    'BEST_SUPPORTING_ACTOR': 'Melhor Ator Coadjuvante',
+    'BEST_SUPPORTING_ACTRESS': 'Melhor Atriz Coadjuvante',
+    'BEST_ORIGINAL_SCREENPLAY': 'Melhor Roteiro Original',
+    'BEST_ADAPTED_SCREENPLAY': 'Melhor Roteiro Adaptado'
   };
 
-  return translations[category] || category;
+  // Buscar tradução exata primeiro
+  if (translations[normalizedCategory]) {
+    return translations[normalizedCategory];
+  }
+  
+  // Se não encontrou, tentar match parcial para categorias de WRITING
+  if (normalizedCategory.includes('WRITING') && normalizedCategory.includes('SCREENPLAY')) {
+    if (normalizedCategory.includes('WRITTEN DIRECTLY') || normalizedCategory.includes('ORIGINAL')) {
+      return 'Melhor Roteiro Original';
+    }
+    if (normalizedCategory.includes('ADAPTED') || normalizedCategory.includes('BASED ON')) {
+      return 'Melhor Roteiro Adaptado';
+    }
+  }
+  
+  return category;
 };
 
 // Função para formatar o texto de introdução

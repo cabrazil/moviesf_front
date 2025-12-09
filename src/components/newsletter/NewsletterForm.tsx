@@ -10,9 +10,9 @@ interface NewsletterResponse {
   error?: string;
 }
 
-const API_BASE_URL = import.meta.env.PROD
-  ? 'https://moviesf-back.vercel.app/api/newsletter'
-  : 'http://localhost:3333/api/newsletter';
+import { getNewsletterApiUrl } from '../../config/api.config';
+
+const API_BASE_URL = getNewsletterApiUrl();
 
 export function NewsletterForm({ source = 'blog_home' }: NewsletterFormProps) {
   const [email, setEmail] = useState('');

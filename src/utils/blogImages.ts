@@ -54,8 +54,13 @@ export function getBlogImageUrl(
   imagePath: string, 
   config: BlogImageConfig = BLOG_IMAGE_CONFIGS.CONTENT
 ): string {
-  // Se for uma URL externa, retorna como está
-  if (imagePath.startsWith('http')) {
+  // Se vazio ou inválido, retorna placeholder
+  if (!imagePath || imagePath.trim() === '') {
+    return 'https://via.placeholder.com/800x450/011627/3B82F6?text=Imagem+não+disponível';
+  }
+  
+  // Se for uma URL externa (http/https), retorna como está
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
     return imagePath;
   }
   
@@ -79,7 +84,7 @@ export function getBlogImageUrl(
     return `/${imagePath}`;
   }
   
-  // Para imagens do blog, adiciona prefixo /images/
+  // Para imagens do blog (caminhos relativos como "blog/articles/..."), adiciona prefixo /images/
   if (imagePath.startsWith('blog/')) {
     return `/images/${imagePath}`;
   }

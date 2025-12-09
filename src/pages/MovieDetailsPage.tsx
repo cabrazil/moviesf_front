@@ -56,9 +56,7 @@ const MovieDetailsPage: React.FC = () => {
       
       try {
         setLoading(true);
-        const baseURL = process.env.NODE_ENV === 'production' 
-          ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3333'
+        const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333'
         
         // Para MovieDetailsPage, usar o endpoint details com UUID
         const response = await fetch(`${baseURL}/api/movie/${movieId}/details`);
@@ -87,9 +85,7 @@ const MovieDetailsPage: React.FC = () => {
       }
       
       try {
-        const baseURL = process.env.NODE_ENV === 'production' 
-          ? 'https://moviesf-back.vercel.app' 
-          : 'http://localhost:3333';
+        const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333';
         
         const response = await fetch(`${baseURL}/api/movies/${movieData.movie.id}/similar`);
         
@@ -904,7 +900,21 @@ const MovieDetailsPage: React.FC = () => {
                   textAlign: 'left',
                   fontSize: '0.95rem'
                 }}>Gêneros:</Typography>
-                <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: 'flex-start', mt: 1 }}>
+                <Box sx={{ 
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'nowrap',
+                  gap: 0.5,
+                  mt: 1,
+                  width: '100%',
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  },
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}>
                   {movie.genres && movie.genres.map((genre: string) => (
                     <Chip 
                       key={genre} 
@@ -916,11 +926,14 @@ const MovieDetailsPage: React.FC = () => {
                         bgcolor: 'transparent',
                         color: themeColor,
                         border: `1px solid ${themeColor}`,
-                        '& .MuiChip-label': { px: 1 }
+                        '& .MuiChip-label': { px: 1 },
+                        flexShrink: 0,
+                        whiteSpace: 'nowrap',
+                        minWidth: 'fit-content'
                       }} 
                     />
                   ))}
-                </Stack>
+                </Box>
               </Box>
             )}
             </Box>
@@ -966,7 +979,21 @@ const MovieDetailsPage: React.FC = () => {
                   textAlign: 'center',
                   fontSize: '0.9rem'
                 }}>Gêneros:</Typography>
-                <Stack direction="row" spacing={0.5} sx={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+                <Box sx={{ 
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'nowrap',
+                  gap: 0.5,
+                  width: '100%',
+                  justifyContent: 'center',
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  },
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
+                }}>
                   {movie.genres && movie.genres.map((genre: string) => (
                     <Chip 
                       key={genre} 
@@ -978,11 +1005,14 @@ const MovieDetailsPage: React.FC = () => {
                         bgcolor: 'transparent',
                         color: themeColor,
                         border: `1px solid ${themeColor}`,
-                        '& .MuiChip-label': { px: 1 }
+                        '& .MuiChip-label': { px: 1 },
+                        flexShrink: 0,
+                        whiteSpace: 'nowrap',
+                        minWidth: 'fit-content'
                       }} 
                     />
                   ))}
-                </Stack>
+                </Box>
               </Box>
             )}
             </Box>

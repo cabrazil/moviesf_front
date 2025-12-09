@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Tag as TagIcon, Calendar, Clock } from 'lucide-react';
 import { blogApi, type BlogPost } from '../../services/blogApi';
+import { getThumbnailImageUrl } from '../../utils/blogImages';
 
 export function TagPage() {
   const { tagSlug } = useParams<{ tagSlug: string }>();
@@ -270,7 +271,7 @@ export function TagPage() {
                         borderRadius: '8px' 
                       }}>
                         <img 
-                          src={post.imageUrl} 
+                          src={getThumbnailImageUrl(post.imageUrl || '')} 
                           alt={post.imageAlt || post.title}
                           style={{
                             width: '100%',
@@ -280,6 +281,12 @@ export function TagPage() {
                           }}
                           onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                           onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                          onError={(e) => {
+                            // Fallback para imagem quebrada
+                            const target = e.currentTarget;
+                            target.src = 'https://via.placeholder.com/300x200/011627/3B82F6?text=Imagem+não+disponível';
+                            target.style.opacity = '0.7';
+                          }}
                         />
                       </div>
                     </div>

@@ -2,30 +2,13 @@ import axios from 'axios';
 import { Movie } from '../types';
 import { isValidUrl, logSecurityEvent, rateLimiter, generateCSRFToken } from '../utils/security';
 
-// Configuração base do axios
-const getApiBaseUrl = () => {
-  // Prioridade: variável de ambiente > detecção automática > fallback
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
-  
-  // Detecção automática baseada na URL atual
-  if (typeof window !== 'undefined') {
-    const isLocalhost = window.location.hostname === 'localhost' || 
-                       window.location.hostname === '127.0.0.1' ||
-                       window.location.hostname === '0.0.0.0';
-    
-    if (isLocalhost) {
-      return 'http://localhost:3333';
-    }
-  }
-  
-  // Fallback para produção
-  return 'https://moviesf-back.vercel.app';
-};
+import { getApiBaseUrl } from '../config/api.config';
+
+// Configuração base do axios - usa função centralizada
+const apiBaseUrl = getApiBaseUrl();
 
 const api = axios.create({
-  baseURL: getApiBaseUrl(),
+  baseURL: apiBaseUrl,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

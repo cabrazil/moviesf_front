@@ -192,10 +192,13 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
         <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ maxWidth: '1000px', px: { xs: 1, sm: 0 } }}>
           {intentions
             .sort((a, b) => {
-              // Definir ordem específica para as intenções
-              const order = ['PROCESS', 'TRANSFORM', 'MAINTAIN', 'EXPLORE'];
+              // Definir ordem específica para as intenções: Manter, Processar, Transformar, Explorar
+              const order = ['MAINTAIN', 'PROCESS', 'TRANSFORM', 'EXPLORE'];
               const indexA = order.indexOf(a.type);
               const indexB = order.indexOf(b.type);
+              // Se não encontrar na ordem, colocar no final
+              if (indexA === -1) return 1;
+              if (indexB === -1) return -1;
               return indexA - indexB;
             })
             .map((intention) => (

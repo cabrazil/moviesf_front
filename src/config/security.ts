@@ -7,7 +7,11 @@ export const SECURITY_CONFIG = {
   ALLOWED_DOMAINS: [
     'emofilms.com',
     'www.emofilms.com',
-    'moviesf-back.vercel.app',
+    'vibesfilm.com',
+    'www.vibesfilm.com',
+    'localhost',
+    'localhost',
+    '127.0.0.1',
     'image.tmdb.org',
     'api.themoviedb.org',
     'www.youtube.com',
@@ -58,7 +62,7 @@ export const SECURITY_CONFIG = {
     ],
     CONNECT_SRC: [
       "'self'",
-      "https://moviesf-back.vercel.app",
+      "http://localhost:3333",
       "https://image.tmdb.org",
       "https://api.themoviedb.org"
     ],

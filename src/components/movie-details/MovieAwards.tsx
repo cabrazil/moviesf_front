@@ -96,6 +96,22 @@ const MovieAwards: React.FC<MovieAwardsProps> = React.memo(({
         <>
           {showFullNominations && (
             <Box sx={{ mt: 2 }}>
+              {/* Título "Indicações" para separar das vitórias */}
+              {oscarAwards.wins.length > 0 && (
+                <Typography 
+                  variant="h4" 
+                  component="h4" 
+                  sx={{ 
+                    mb: 1.5, 
+                    color: '#1976d2', 
+                    textAlign: isMobile ? 'center' : 'left', 
+                    fontSize: isMobile ? '1rem' : '1.1rem', 
+                    fontWeight: 600 
+                  }}
+                >
+                  Indicações
+                </Typography>
+              )}
               {oscarAwards.nominations.map((nomination, index) => (
                 <Box key={index} sx={{ py: 0.5 }}>
                   <Typography variant="body1" sx={{ 

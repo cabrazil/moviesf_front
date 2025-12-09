@@ -1,8 +1,7 @@
 import axios from 'axios'
+import { getApiUrl } from '../config/api.config'
 
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://moviesf-back.vercel.app/api'
-  : 'http://localhost:3333/api'
+const API_URL = getApiUrl('/api')
 
 export interface SubSentiment {
   id: number

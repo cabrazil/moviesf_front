@@ -152,7 +152,23 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
 
             {/* Gêneros compactos */}
             {movie.genres && movie.genres.length > 0 && (
-              <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.75 }}>
+              <Box 
+                sx={{ 
+                  display: 'flex',
+                  flexDirection: 'row',
+                  flexWrap: 'nowrap',
+                  gap: 0.5,
+                  mb: 0.75,
+                  overflowX: 'auto',
+                  overflowY: 'hidden',
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  },
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  width: '100%'
+                }}
+              >
                 {limitedGenres.map((genre: string) => (
                   <Chip 
                     key={genre} 
@@ -160,7 +176,13 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                     size="small"
                     color="default"
                     variant="outlined"
-                    sx={{ fontSize: '0.7rem', height: '20px' }}
+                    sx={{ 
+                      fontSize: '0.7rem', 
+                      height: '20px',
+                      flexShrink: 0,
+                      whiteSpace: 'nowrap',
+                      minWidth: 'fit-content'
+                    }}
                   />
                 ))}
                 {movie.genres.length > 3 && (
@@ -169,10 +191,16 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                     size="small"
                     color="default"
                     variant="outlined"
-                    sx={{ fontSize: '0.7rem', height: '20px' }}
+                    sx={{ 
+                      fontSize: '0.7rem', 
+                      height: '20px',
+                      flexShrink: 0,
+                      whiteSpace: 'nowrap',
+                      minWidth: 'fit-content'
+                    }}
                   />
                 )}
-              </Stack>
+              </Box>
             )}
 
             {/* Reason - Campo Principal com coração e seta */}

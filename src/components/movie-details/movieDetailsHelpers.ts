@@ -37,8 +37,11 @@ export const translateOscarCategory = (category: string): string => {
     'WRITING (Adapted Screenplay)': 'Melhor Roteiro Adaptado',
     'WRITING (ADAPTED SCREENPLAY)': 'Melhor Roteiro Adaptado',
     'WRITING (Story and Screenplay--written directly for the screen)': 'Melhor Roteiro Original',
+    'WRITING (STORY AND SCREENPLAY--WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'WRITING (Screenplay Based on Material from Another Medium)': 'Melhor Roteiro Adaptado',
+    'WRITING (SCREENPLAY BASED ON MATERIAL FROM ANOTHER MEDIUM)': 'Melhor Roteiro Adaptado',
     'WRITING (Screenplay Based on Material Previously Produced or Published)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
+    'WRITING (SCREENPLAY BASED ON MATERIAL PREVIOUSLY PRODUCED OR PUBLISHED)': 'Melhor Roteiro baseado em material produzido ou publicado anteriormente',
     'BEST INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'BEST DOCUMENTARY FEATURE': 'Melhor Documentário',
     'BEST DOCUMENTARY SHORT SUBJECT': 'Melhor Documentário em Curta-Metragem',
@@ -64,15 +67,32 @@ export const translateOscarCategory = (category: string): string => {
     'ORIGINAL SCORE': 'Melhor Trilha Sonora Original',
     'ORIGINAL SONG': 'Melhor Canção Original',
     'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
+    'MUSIC (ORIGINAL DRAMATIC SCORE)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Song)': 'Melhor Canção Original',
     'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Screenplay Written Directly for the Screen)': 'Melhor Roteiro Original',
+    'WRITING (SCREENPLAY WRITTEN DIRECTLY FOR THE SCREEN)': 'Melhor Roteiro Original',
     'INTERNATIONAL FEATURE FILM': 'Melhor Filme Internacional',
     'DOCUMENTARY FEATURE': 'Melhor Documentário',
     'ANIMATED FEATURE FILM': 'Melhor Filme de Animação'
   };
 
-  return translations[normalizedCategory] || category;
+  // Buscar tradução exata primeiro
+  if (translations[normalizedCategory]) {
+    return translations[normalizedCategory];
+  }
+  
+  // Se não encontrou, tentar match parcial para categorias de WRITING
+  if (normalizedCategory.includes('WRITING') && normalizedCategory.includes('SCREENPLAY')) {
+    if (normalizedCategory.includes('WRITTEN DIRECTLY') || normalizedCategory.includes('ORIGINAL')) {
+      return 'Melhor Roteiro Original';
+    }
+    if (normalizedCategory.includes('ADAPTED') || normalizedCategory.includes('BASED ON')) {
+      return 'Melhor Roteiro Adaptado';
+    }
+  }
+  
+  return category;
 };
 
 // Mapeamentos estáticos (não recriados)

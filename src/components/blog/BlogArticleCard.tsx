@@ -60,13 +60,19 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
         >
           <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
             <img 
-              src={getFeaturedImageUrl(post.imageUrl || '')} 
+              src={getFeaturedImageUrl(post.imageUrl || '')}
               alt={post.imageAlt || post.title}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
                 transition: 'transform 0.7s ease'
+              }}
+              onError={(e) => {
+                // Fallback para imagem quebrada
+                const target = e.currentTarget;
+                target.src = 'https://via.placeholder.com/800x450/011627/3B82F6?text=Imagem+não+disponível';
+                target.style.opacity = '0.7';
               }}
               onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
@@ -214,7 +220,13 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
       >
         <div style={{ aspectRatio: '16/9', overflow: 'hidden' }}>
           <img 
-            src={getFeaturedImageUrl(post.imageUrl || '')} 
+            src={getFeaturedImageUrl(post.imageUrl || '')}
+            onError={(e) => {
+              // Fallback para imagem quebrada
+              const target = e.currentTarget;
+              target.src = 'https://via.placeholder.com/800x450/011627/3B82F6?text=Imagem+não+disponível';
+              target.style.opacity = '0.7';
+            }} 
             alt={post.imageAlt || post.title}
             style={{
               width: '100%',
