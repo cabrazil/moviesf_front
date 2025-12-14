@@ -15,7 +15,10 @@ const ALLOWED_DOMAINS = [
   'fonts.googleapis.com',
   'fonts.gstatic.com',
   'localhost',
-  '127.0.0.1'
+  '127.0.0.1',
+  'cbrazil.com',
+  'www.cbrazil.com',
+  'api-vibes.cbrazil.com'
 ];
 
 // Lista de protocolos permitidos
@@ -27,24 +30,24 @@ const ALLOWED_PROTOCOLS = ['https:', 'http:'];
 export const isValidUrl = (url: string): boolean => {
   try {
     const urlObj = new URL(url);
-    
+
     // Verificar protocolo
     if (!ALLOWED_PROTOCOLS.includes(urlObj.protocol)) {
       console.warn('Protocolo não permitido:', urlObj.protocol);
       return false;
     }
-    
+
     // Verificar domínio
     const domain = urlObj.hostname.toLowerCase();
-    const isAllowed = ALLOWED_DOMAINS.some(allowed => 
+    const isAllowed = ALLOWED_DOMAINS.some(allowed =>
       domain === allowed || domain.endsWith('.' + allowed)
     );
-    
+
     if (!isAllowed) {
       console.warn('Domínio não permitido:', domain);
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.warn('URL inválida:', url);
@@ -59,7 +62,7 @@ export const sanitizeText = (text: string): string => {
   if (typeof text !== 'string') {
     return '';
   }
-  
+
   return text
     .replace(/[<>]/g, '') // Remove < e >
     .replace(/javascript:/gi, '') // Remove javascript:
@@ -74,7 +77,7 @@ export const sanitizeHtml = (html: string): string => {
   if (typeof html !== 'string') {
     return '';
   }
-  
+
   // Remove scripts e tags perigosas
   let sanitized = html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
@@ -83,10 +86,10 @@ export const sanitizeHtml = (html: string): string => {
     .replace(/<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi, '')
     .replace(/javascript:/gi, '')
     .replace(/on\w+=/gi, '');
-  
+
   // Remove atributos perigosos
   sanitized = sanitized.replace(/\s+(on\w+|javascript:)/gi, '');
-  
+
   return sanitized;
 };
 
@@ -97,24 +100,24 @@ export const validateInput = (input: any, type: 'text' | 'email' | 'url' | 'numb
   if (input === null || input === undefined) {
     return '';
   }
-  
+
   const stringInput = String(input).trim();
-  
+
   switch (type) {
     case 'text':
       return sanitizeText(stringInput);
-    
+
     case 'email':
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(stringInput) ? stringInput.toLowerCase() : '';
-    
+
     case 'url':
       return isValidUrl(stringInput) ? stringInput : '';
-    
+
     case 'number':
       const num = parseFloat(stringInput);
       return isNaN(num) ? 0 : num;
-    
+
     default:
       return sanitizeText(stringInput);
   }
@@ -131,7 +134,7 @@ export const detectPhishingAttempt = (url: string): boolean => {
     /(login|signin|account|secure|verify|confirm)/, // Suspicious keywords
     /[a-zA-Z0-9-]+\.(xyz|top|club|site|online)/ // Suspicious TLDs
   ];
-  
+
   return suspiciousPatterns.some(pattern => pattern.test(url.toLowerCase()));
 };
 
@@ -142,29 +145,29 @@ class RateLimiter {
   private requests: Map<string, number[]> = new Map();
   private maxRequests: number;
   private windowMs: number;
-  
+
   constructor(maxRequests: number = 10, windowMs: number = 60000) {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
   }
-  
+
   isAllowed(identifier: string): boolean {
     const now = Date.now();
     const userRequests = this.requests.get(identifier) || [];
-    
+
     // Remove requests antigas
     const recentRequests = userRequests.filter(time => now - time < this.windowMs);
-    
+
     if (recentRequests.length >= this.maxRequests) {
       return false;
     }
-    
+
     recentRequests.push(now);
     this.requests.set(identifier, recentRequests);
-    
+
     return true;
   }
-  
+
   clear(identifier: string): void {
     this.requests.delete(identifier);
   }
@@ -180,8 +183,8 @@ export const rateLimiter = new RateLimiter(
  * Gera um token CSRF simples
  */
 export const generateCSRFToken = (): string => {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15);
+  return Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15);
 };
 
 /**
@@ -196,7 +199,7 @@ export const validateCSRFToken = (token: string, storedToken: string): boolean =
  */
 export const logSecurityEvent = (event: string, details: any): void => {
   console.warn(`🔒 Security Event: ${event}`, details);
-  
+
   // Em produção, você pode enviar para um serviço de logging
   if (process.env.NODE_ENV === 'production') {
     // Implementar envio para serviço de logging
