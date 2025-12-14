@@ -23,10 +23,10 @@ interface OscarRecognitionProps {
 // Função para traduzir categorias do Oscar
 const translateOscarCategory = (category: string): string => {
   if (!category) return '';
-  
+
   // Normalizar a categoria (remover espaços extras, converter para maiúscula)
   const normalizedCategory = category.trim().toUpperCase();
-  
+
   const translations: { [key: string]: string } = {
     'BEST PICTURE': 'Melhor Filme',
     'BEST DIRECTOR': 'Melhor Diretor',
@@ -53,7 +53,6 @@ const translateOscarCategory = (category: string): string => {
     'MUSIC (Original Dramatic Score)': 'Melhor Trilha Sonora Original',
     'MUSIC (ORIGINAL DRAMATIC SCORE)': 'Melhor Trilha Sonora Original',
     'MUSIC (Original Song)': 'Melhor Canção Original',
-    'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'MUSIC (ORIGINAL SONG)': 'Melhor Canção Original',
     'WRITING (Original Screenplay)': 'Melhor Roteiro Original',
     'WRITING (ORIGINAL SCREENPLAY)': 'Melhor Roteiro Original',
@@ -109,7 +108,7 @@ const translateOscarCategory = (category: string): string => {
   if (translations[normalizedCategory]) {
     return translations[normalizedCategory];
   }
-  
+
   // Se não encontrou, tentar match parcial para categorias de WRITING
   if (normalizedCategory.includes('WRITING') && normalizedCategory.includes('SCREENPLAY')) {
     if (normalizedCategory.includes('WRITTEN DIRECTLY') || normalizedCategory.includes('ORIGINAL')) {
@@ -119,15 +118,15 @@ const translateOscarCategory = (category: string): string => {
       return 'Melhor Roteiro Adaptado';
     }
   }
-  
+
   return category;
 };
 
 // Função para formatar o texto de introdução
 const formatIntroText = (movieTitle: string, oscarAwards: OscarAwards): string => {
   const totalNominations = oscarAwards.totalWins + oscarAwards.totalNominations;
-  const year = oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year : 
-               oscarAwards.nominations.length > 0 ? oscarAwards.nominations[0].year : 2024;
+  const year = oscarAwards.wins.length > 0 ? oscarAwards.wins[0].year :
+    oscarAwards.nominations.length > 0 ? oscarAwards.nominations[0].year : 2024;
 
   if (oscarAwards.totalWins === 0) {
     return `${movieTitle} foi indicado a ${totalNominations} Oscar${totalNominations > 1 ? 's' : ''} em ${year}.`;
@@ -153,24 +152,24 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
   const introText = formatIntroText(movieTitle, oscarAwards);
 
   return (
-    <Box sx={{ 
+    <Box sx={{
       display: 'grid',
       gridTemplateColumns: { xs: '1fr', md: '1fr' },
       gap: 2
     }}>
       {/* Card Principal - Reconhecimento no Oscar */}
-      <Box sx={{ 
+      <Box sx={{
         pt: 1,
         pb: 2,
-        px: 0, 
+        px: 0,
         position: 'relative',
         overflow: 'hidden',
         textAlign: { xs: 'center', md: 'left' }
       }}>
 
-        <Typography 
-          variant="body1" 
-          sx={{ 
+        <Typography
+          variant="body1"
+          sx={{
             mb: 2,
             lineHeight: 1.6,
             fontSize: { xs: '1rem', md: '1.1rem' },
@@ -183,15 +182,15 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
 
         {/* Grid das Conquistas/Vitórias */}
         {oscarAwards.wins.length > 0 && (
-          <Box sx={{ 
-            display: 'grid', 
+          <Box sx={{
+            display: 'grid',
             gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
             gap: 1.5,
             mt: 1,
             justifyContent: { xs: 'center', md: 'flex-start' }
           }}>
             {oscarAwards.wins.map((win, index) => (
-              <Box 
+              <Box
                 key={index}
                 sx={{
                   p: 2,
@@ -201,9 +200,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                   textAlign: 'center'
                 }}
               >
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     fontSize: { xs: '0.9rem', md: '0.95rem' },
                     lineHeight: 1.4,
                     fontWeight: 600,
@@ -213,9 +212,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                   {translateOscarCategory(win.categoryName || win.category)}
                 </Typography>
                 {win.personName && (
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    sx={{
                       fontSize: { xs: '0.8rem', md: '0.85rem' },
                       color: 'text.secondary',
                       fontStyle: 'italic',
@@ -233,15 +232,15 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
         {/* Grid das Indicações - Quando não há vitórias, exibe as indicações aqui */}
         {oscarAwards.wins.length === 0 && mainAwards.length > 0 && (
           <>
-            <Box sx={{ 
-              display: 'grid', 
+            <Box sx={{
+              display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
               gap: 1.5,
               mt: 1,
               justifyContent: { xs: 'center', md: 'flex-start' }
             }}>
               {mainAwards.map((award, index) => (
-                <Box 
+                <Box
                   key={index}
                   sx={{
                     p: 2,
@@ -251,9 +250,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                     textAlign: 'center'
                   }}
                 >
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    sx={{
                       fontSize: { xs: '0.9rem', md: '0.95rem' },
                       lineHeight: 1.4,
                       fontWeight: 600,
@@ -263,9 +262,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                     {translateOscarCategory(award.categoryName || award.category)}
                   </Typography>
                   {award.personName && (
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
+                    <Typography
+                      variant="body2"
+                      sx={{
                         fontSize: { xs: '0.8rem', md: '0.85rem' },
                         color: 'text.secondary',
                         fontStyle: 'italic',
@@ -283,15 +282,15 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
             {remainingAwards.length > 0 && (
               <>
                 <Collapse in={showAllNominations}>
-                  <Box sx={{ 
-                    display: 'grid', 
+                  <Box sx={{
+                    display: 'grid',
                     gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
                     gap: 1.5,
                     mt: 2,
                     justifyContent: { xs: 'center', md: 'flex-start' }
                   }}>
                     {remainingAwards.map((award, index) => (
-                      <Box 
+                      <Box
                         key={index}
                         sx={{
                           p: 2,
@@ -301,9 +300,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                           textAlign: 'center'
                         }}
                       >
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
+                        <Typography
+                          variant="body2"
+                          sx={{
                             fontSize: { xs: '0.9rem', md: '0.95rem' },
                             lineHeight: 1.4,
                             fontWeight: 600,
@@ -313,9 +312,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                           {translateOscarCategory(award.categoryName || award.category)}
                         </Typography>
                         {award.personName && (
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
+                          <Typography
+                            variant="body2"
+                            sx={{
                               fontSize: { xs: '0.8rem', md: '0.85rem' },
                               color: 'text.secondary',
                               fontStyle: 'italic',
@@ -334,7 +333,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                   <Button
                     variant="outlined"
                     onClick={() => setShowAllNominations(!showAllNominations)}
-                    sx={{ 
+                    sx={{
                       borderColor: '#1976d2',
                       color: '#1976d2',
                       textTransform: 'none',
@@ -360,15 +359,15 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
 
       {/* Card de Indicações - Só exibe se houver vitórias */}
       {mainAwards.length > 0 && oscarAwards.wins.length > 0 && (
-        <Box sx={{ 
+        <Box sx={{
           pt: 1,
           pb: 2,
           px: 0,
           textAlign: { xs: 'center', md: 'left' }
         }}>
-          <Typography 
-            variant="body1" 
-            sx={{ 
+          <Typography
+            variant="body1"
+            sx={{
               mb: 2,
               lineHeight: 1.6,
               fontSize: { xs: '1rem', md: '1.1rem' },
@@ -380,14 +379,14 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
           </Typography>
 
           {/* Grid das Indicações */}
-          <Box sx={{ 
-            display: 'grid', 
+          <Box sx={{
+            display: 'grid',
             gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
             gap: 1.5,
             justifyContent: { xs: 'center', md: 'flex-start' }
           }}>
             {mainAwards.map((award, index) => (
-              <Box 
+              <Box
                 key={index}
                 sx={{
                   p: 2,
@@ -397,9 +396,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                   textAlign: 'center'
                 }}
               >
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+                <Typography
+                  variant="body2"
+                  sx={{
                     fontSize: { xs: '0.9rem', md: '0.95rem' },
                     lineHeight: 1.4,
                     fontWeight: 600,
@@ -409,9 +408,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                   {translateOscarCategory(award.categoryName || award.category)}
                 </Typography>
                 {award.personName && (
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    sx={{
                       fontSize: { xs: '0.8rem', md: '0.85rem' },
                       color: 'text.secondary',
                       fontStyle: 'italic',
@@ -428,15 +427,15 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
           {remainingAwards.length > 0 && (
             <>
               <Collapse in={showAllNominations}>
-                <Box sx={{ 
-                  display: 'grid', 
+                <Box sx={{
+                  display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
                   gap: 1.5,
                   mt: 2,
                   justifyContent: { xs: 'center', md: 'flex-start' }
                 }}>
                   {remainingAwards.map((award, index) => (
-                    <Box 
+                    <Box
                       key={index}
                       sx={{
                         p: 2,
@@ -446,9 +445,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                         textAlign: 'center'
                       }}
                     >
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
+                      <Typography
+                        variant="body2"
+                        sx={{
                           fontSize: { xs: '0.9rem', md: '0.95rem' },
                           lineHeight: 1.4,
                           fontWeight: 600,
@@ -458,9 +457,9 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                         {translateOscarCategory(award.categoryName || award.category)}
                       </Typography>
                       {award.personName && (
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
+                        <Typography
+                          variant="body2"
+                          sx={{
                             fontSize: { xs: '0.8rem', md: '0.85rem' },
                             color: 'text.secondary',
                             fontStyle: 'italic',
@@ -479,7 +478,7 @@ const OscarRecognition: React.FC<OscarRecognitionProps> = ({ movieTitle, oscarAw
                 <Button
                   variant="outlined"
                   onClick={() => setShowAllNominations(!showAllNominations)}
-                  sx={{ 
+                  sx={{
                     borderColor: '#1976d2',
                     color: '#1976d2',
                     textTransform: 'none',
