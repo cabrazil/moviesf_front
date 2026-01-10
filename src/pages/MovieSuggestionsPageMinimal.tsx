@@ -5,10 +5,10 @@ import { MovieSuggestionFlow } from '../services/api';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
 import MovieCard from '../components/movie-suggestions/MovieCard';
-import { 
-  getDiversityScore, 
-  getSentimentColor, 
-  getSelectedOptionText 
+import {
+  getDiversityScore,
+  getSentimentColor,
+  getSelectedOptionText
 } from '../components/movie-suggestions/movieHelpers';
 
 const MovieSuggestionsPageMinimal: React.FC = () => {
@@ -16,27 +16,27 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const movieSuggestions: MovieSuggestionFlow[] = location.state?.movieSuggestions || [];
   const journeyContext = location.state?.journeyContext;
   const streamingFilters = location.state?.streamingFilters;
   const [currentPage, setCurrentPage] = useState(0);
-  const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('smart');
+  const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('relevance');
 
   const { mode } = useThemeManager();
-  const currentSentimentColors = useMemo(() => 
+  const currentSentimentColors = useMemo(() =>
     mode === 'dark' ? darkSentimentColors : lightSentimentColors,
     [mode]
   );
 
   // Memoizar cor do sentimento
-  const sentimentColor = useMemo(() => 
+  const sentimentColor = useMemo(() =>
     getSentimentColor(journeyContext, location.state, currentSentimentColors),
     [journeyContext, location.state, currentSentimentColors]
   );
 
   // Memoizar texto da opção selecionada
-  const selectedOptionText = useMemo(() => 
+  const selectedOptionText = useMemo(() =>
     getSelectedOptionText(location.state, journeyContext),
     [location.state, journeyContext]
   );
@@ -44,17 +44,17 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   // Lógica de rotação automática dos filtros
   useEffect(() => {
     const availableFilters: ('smart' | 'rating' | 'year')[] = ['smart', 'rating', 'year'];
-    
+
     const timestamp = Date.now();
     const sessionData = JSON.stringify(movieSuggestions.length + journeyContext?.selectedSentiment?.id?.length || 0);
     const hash = sessionData.split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
       return a & a;
     }, 0);
-    
+
     const filterIndex = Math.abs(timestamp + hash) % availableFilters.length;
     const selectedFilter = availableFilters[filterIndex];
-    
+
     setSortType(selectedFilter);
     if (process.env.NODE_ENV === 'development') {
       console.log(`🎲 Filtro automático selecionado: ${selectedFilter} (índice: ${filterIndex})`);
@@ -94,50 +94,50 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         movieSuggestionsCount: movieSuggestions.length,
       });
     }
-    
+
     const result = movieSuggestions.filter(suggestion => {
       // Filtro por plataformas de streaming (se aplicável)
       if (streamingFilters) {
-        const hasNoFilters = streamingFilters.subscriptionPlatforms.length === 0 && 
+        const hasNoFilters = streamingFilters.subscriptionPlatforms.length === 0 &&
           (!streamingFilters.includeRentalPurchase || streamingFilters.rentalPurchasePlatforms.length === 0);
-        
+
         if (hasNoFilters) {
           return true;
         }
 
         const movieStreamingPlatforms = (suggestion.movie as any).platforms || [];
-        
+
         if (movieStreamingPlatforms.length === 0) return false;
-        
+
         const hasSelectedPlatform = movieStreamingPlatforms.some((platform: any) => {
           const platformName = platform.streamingPlatform?.name || '';
           const accessType = platform.accessType || '';
-          
+
           // Verificar plataformas de assinatura
           if (streamingFilters.subscriptionPlatforms.length > 0) {
             const isSubscriptionPlatform = streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
               if (selectedPlatform === '__OTHER_PLATFORMS__') {
                 const mainPlatforms = [
-                  'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay', 
+                  'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay',
                   'apple tv+', 'claro video'
                 ];
-                const isMainPlatform = mainPlatforms.some(main => 
+                const isMainPlatform = mainPlatforms.some(main =>
                   platformName.toLowerCase().includes(main)
                 );
                 return !isMainPlatform;
               }
-              
+
               const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
               const cleanPlatformName = platformName.toLowerCase().trim();
-              
+
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
             });
-            
+
             if (isSubscriptionPlatform && accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
               return true;
             }
           }
-          
+
           // Verificar plataformas de aluguel/compra
           if (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0) {
             const isRentalPurchasePlatform = streamingFilters.rentalPurchasePlatforms.some((selectedPlatform: string) => {
@@ -147,24 +147,24 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 .toLowerCase()
                 .trim();
               const cleanPlatformName = platformName.toLowerCase().trim();
-              
+
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
             });
-            
+
             if (isRentalPurchasePlatform && (accessType === 'PURCHASE' || accessType === 'RENTAL')) {
               return true;
             }
           }
-          
+
           return false;
         });
-        
+
         return hasSelectedPlatform;
       }
-      
+
       return true;
     });
-    
+
     if (process.env.NODE_ENV === 'development') {
       console.log('🔍 Resultado dos filtros:', {
         isMobile,
@@ -173,7 +173,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         streamingFiltersApplied: !!streamingFilters
       });
     }
-    
+
     return result;
   }, [movieSuggestions, streamingFilters, isMobile]);
 
@@ -186,46 +186,65 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           const scoreB = getDiversityScore(b);
           if (scoreB !== scoreA) return scoreB - scoreA;
           break;
-          
+
         case 'rating':
           const aRating = a.movie.imdbRating !== null && a.movie.imdbRating !== undefined ? Number(a.movie.imdbRating) : -Infinity;
           const bRating = b.movie.imdbRating !== null && b.movie.imdbRating !== undefined ? Number(b.movie.imdbRating) : -Infinity;
-          
+
           if (bRating !== aRating) return bRating - aRating;
-          
+
           const aVoteAverage = (a.movie as any).vote_average !== null && (a.movie as any).vote_average !== undefined ? Number((a.movie as any).vote_average) : -Infinity;
           const bVoteAverage = (b.movie as any).vote_average !== null && (b.movie as any).vote_average !== undefined ? Number((b.movie as any).vote_average) : -Infinity;
           if (bVoteAverage !== aVoteAverage) return bVoteAverage - aVoteAverage;
           break;
-          
+
         case 'year':
           const aYear = a.movie.year || 0;
           const bYear = b.movie.year || 0;
           if (bYear !== aYear) return bYear - aYear;
           break;
-          
+
         case 'relevance':
           const aRelevance = (a as any).relevanceScore ? Number((a as any).relevanceScore) : 0;
           const bRelevance = (b as any).relevanceScore ? Number((b as any).relevanceScore) : 0;
           if (bRelevance !== aRelevance) return bRelevance - aRelevance;
           break;
       }
-      
+
       return a.movie.title.localeCompare(b.movie.title, 'pt-BR');
     });
-    
+
+    // Rotação inteligente dos top filmes (apenas para relevance/smart)
+    let finalSorted = sorted;
+    if ((sortType === 'relevance' || sortType === 'smart') && sorted.length >= 16) {
+      const TOP_POOL_SIZE = 16;
+      const DISPLAY_SIZE = 8;
+
+      const topMovies = sorted.slice(0, TOP_POOL_SIZE);
+      const remaining = sorted.slice(TOP_POOL_SIZE);
+
+      const dayOfYear = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+      const rotationIndex = dayOfYear % 2;
+      const offset = rotationIndex * DISPLAY_SIZE;
+
+      const rotatedTop = topMovies.slice(offset, offset + DISPLAY_SIZE);
+      finalSorted = [...rotatedTop, ...remaining];
+
+      console.log(`🔄 Rotação ativa (dia ${dayOfYear}, índice ${rotationIndex}): Mostrando filmes ${offset + 1}-${offset + DISPLAY_SIZE} do top ${TOP_POOL_SIZE}`);
+    }
+
     if (isMobile) {
       return {
         totalPages: 1,
-        displaySuggestions: sorted
+        displaySuggestions: finalSorted
       };
     }
-    
-    const total = Math.ceil(sorted.length / MOVIES_PER_PAGE);
+
+    const total = Math.ceil(finalSorted.length / MOVIES_PER_PAGE);
     const start = currentPage * MOVIES_PER_PAGE;
     const end = start + MOVIES_PER_PAGE;
-    const display = sorted.slice(start, end);
-    
+    const display = finalSorted.slice(start, end);
+
     return {
       totalPages: total,
       displaySuggestions: display
@@ -239,42 +258,42 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
   const handleBack = useCallback(() => {
     const hasOriginalMovies = movieSuggestions.length > 0;
-    
+
     if (!hasOriginalMovies) {
       navigate('/');
       return;
     }
-    
+
     const hasStreamingFilters = streamingFilters && (
-      streamingFilters.subscriptionPlatforms.length > 0 || 
+      streamingFilters.subscriptionPlatforms.length > 0 ||
       (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
     );
-    
+
     if (hasStreamingFilters) {
-      navigate('/filters', { 
-        state: { 
+      navigate('/filters', {
+        state: {
           ...location.state,
           journeyContext: journeyContext || location.state?.journeyContext
-        } 
+        }
       });
       return;
     }
-    
+
     let contextToPass = journeyContext || location.state?.journeyContext;
-    
+
     if (!contextToPass) {
       try {
         const savedContext = localStorage.getItem('journeyContext');
         if (savedContext) {
           const parsedContext = JSON.parse(savedContext);
-          const isValidContext = parsedContext && 
-            parsedContext.selectedSentiment && 
+          const isValidContext = parsedContext &&
+            parsedContext.selectedSentiment &&
             parsedContext.selectedSentiment.id &&
             parsedContext.selectedIntention &&
             parsedContext.selectedIntention.id &&
             typeof parsedContext.selectedSentiment.id === 'number' &&
             typeof parsedContext.selectedIntention.id === 'number';
-          
+
           if (isValidContext) {
             contextToPass = parsedContext;
           }
@@ -285,15 +304,15 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         }
       }
     }
-    
+
     if (contextToPass) {
-      navigate('/intro', { 
-        state: { 
+      navigate('/intro', {
+        state: {
           restoreJourney: true,
           selectedSentiment: contextToPass.selectedSentiment,
           selectedIntention: contextToPass.selectedIntention,
           journeyType: contextToPass.journeyType
-        } 
+        }
       });
     } else {
       navigate('/intro');
@@ -316,29 +335,29 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   if (!displaySuggestions.length) {
     const hasOriginalMovies = movieSuggestions.length > 0;
     const hasStreamingFilters = streamingFilters && (
-      streamingFilters.subscriptionPlatforms.length > 0 || 
+      streamingFilters.subscriptionPlatforms.length > 0 ||
       (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
     );
-    
+
     return (
       <Container maxWidth="lg">
         <Box sx={{ minHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
           <Typography variant="h5" gutterBottom>
             {hasOriginalMovies && (!hasStreamingFilters)
-              ? 'Nenhum filme encontrado com os filtros atuais.' 
+              ? 'Nenhum filme encontrado com os filtros atuais.'
               : 'Nenhuma sugestão de filme encontrada.'
             }
           </Typography>
-          
+
           {hasOriginalMovies && (!hasStreamingFilters) ? (
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
               {'Tente ajustar os filtros de plataformas de streaming para ver mais filmes.'}
             </Typography>
           ) : null}
-          
-          <Button 
-            variant="contained" 
-            onClick={hasOriginalMovies ? handleBack : handleRestart} 
+
+          <Button
+            variant="contained"
+            onClick={hasOriginalMovies ? handleBack : handleRestart}
             sx={{ mt: 4 }}
           >
             {hasOriginalMovies ? 'Voltar' : 'Voltar ao Início'}
@@ -349,12 +368,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   }
 
   const hasActiveFilters = streamingFilters && (
-    streamingFilters.subscriptionPlatforms.length > 0 || 
+    streamingFilters.subscriptionPlatforms.length > 0 ||
     (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0)
   );
 
   const totalPlatforms = hasActiveFilters ? (
-    streamingFilters.subscriptionPlatforms.length + 
+    streamingFilters.subscriptionPlatforms.length +
     (streamingFilters.includeRentalPurchase ? streamingFilters.rentalPurchasePlatforms.length : 0)
   ) : 0;
 
@@ -362,25 +381,25 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     <Container maxWidth="lg">
       <Box sx={{ minHeight: '80vh', py: 2 }}>
         {/* Header Reorganizado */}
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'flex-start',
           mb: 2,
           flexDirection: { xs: 'column', md: 'row' },
           gap: { xs: 2, md: 0 }
         }}>
           {/* Lado Esquerdo: Título + Badge */}
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: { xs: 'center', md: 'flex-start' },
             gap: 1,
             flex: 1,
             minWidth: 0,
             mr: { md: 2 }
           }}>
-            <Typography variant="h5" sx={{ 
+            <Typography variant="h5" sx={{
               fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
               lineHeight: { xs: 1.3, sm: 1.4, md: 1.5 },
               textAlign: { xs: 'center', md: 'left' },
@@ -389,7 +408,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             }}>
               Filmes sugeridos para opção: {selectedOptionText}
             </Typography>
-            
+
             {hasActiveFilters && (
               <Chip
                 label={`🎬 Filtros de streaming ativos: ${totalPlatforms} plataforma(s)`}
@@ -401,9 +420,9 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           </Box>
 
           {/* Lado Direito: Ordenação + Paginação */}
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: { xs: 'center', md: 'flex-end' },
             gap: 1,
             flexShrink: 0,
@@ -414,21 +433,21 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1, fontSize: '0.7rem' }}>
                 Ordenar por
               </Typography>
-              <Box sx={{ 
-                display: 'flex', 
-                gap: 1, 
+              <Box sx={{
+                display: 'flex',
+                gap: 1,
                 flexWrap: 'nowrap',
                 justifyContent: { xs: 'center', md: 'flex-end' },
                 minWidth: 'fit-content'
               }}>
-                <Tooltip title="Ordenação inteligente que combina rating, relevância e ano" arrow>
+                <Tooltip title="Curadoria emocional do Vibesfilm com rotação diária dos top filmes" arrow>
                   <Chip
-                    label="Inteligente"
-                    onClick={() => handleSortChange('smart')}
-                    variant={sortType === 'smart' ? "filled" : "outlined"}
-                    color={sortType === 'smart' ? "primary" : "default"}
+                    label="Recomendado"
+                    onClick={() => handleSortChange('relevance')}
+                    variant={sortType === 'relevance' || sortType === 'smart' ? "filled" : "outlined"}
+                    color={sortType === 'relevance' || sortType === 'smart' ? "primary" : "default"}
                     size="small"
-                    icon={<span style={{ fontSize: 14, lineHeight: 0 }}>✨</span>}
+                    icon={<span style={{ fontSize: 14, lineHeight: 0 }}>🎯</span>}
                     sx={{
                       cursor: 'pointer',
                       fontSize: '0.8rem',
@@ -493,7 +512,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
                 Página {currentPage + 1} de {totalPages} • {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes'}
               </Typography>
             )}
-            
+
             {isMobile && (
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
                 {filteredSuggestions.length} {filteredSuggestions.length === 1 ? 'filme encontrado' : 'filmes'}
@@ -526,13 +545,13 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           >
             Voltar
           </Button>
-          
+
           <Button
             variant="outlined"
             onClick={handleRestart}
-            sx={{ 
-              px: 3, 
-              py: 1, 
+            sx={{
+              px: 3,
+              py: 1,
               whiteSpace: { xs: 'normal', sm: 'nowrap' },
               textAlign: 'center'
             }}
@@ -551,11 +570,11 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               >
                 Anterior
               </Button>
-              
+
               <Typography variant="body2" color="text.secondary" sx={{ mx: 1, whiteSpace: 'nowrap' }}>
                 {currentPage + 1} de {totalPages}
               </Typography>
-              
+
               <Button
                 variant="outlined"
                 onClick={goToNextPage}
