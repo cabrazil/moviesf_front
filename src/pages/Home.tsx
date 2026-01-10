@@ -46,21 +46,26 @@ const Home: React.FC = () => {
               objectFit: 'contain'
             }}
           />
-          
+
           {/* Desktop Navigation */}
-          <Box sx={{ 
-            display: { xs: 'none', sm: 'flex' }, 
-            alignItems: 'center', 
-            gap: 2 
+          <Box sx={{
+            display: { xs: 'none', sm: 'flex' },
+            alignItems: 'center',
+            gap: 2
           }}>
             <Button
-              color="inherit"
+              variant="contained"
               onClick={() => navigate('/blog')}
               sx={{
-                color: 'text.primary',
-                typography: 'h6',
+                backgroundColor: '#1976d2',
+                color: '#ffffff',
                 textTransform: 'none',
-                fontWeight: 'normal'
+                fontWeight: '500',
+                px: 2,
+                py: 0.75,
+                '&:hover': {
+                  backgroundColor: '#1565c0',
+                }
               }}
             >
               Blog
@@ -80,10 +85,10 @@ const Home: React.FC = () => {
           </Box>
 
           {/* Mobile Navigation */}
-          <Box sx={{ 
-            display: { xs: 'flex', sm: 'none' }, 
-            alignItems: 'center', 
-            gap: 1 
+          <Box sx={{
+            display: { xs: 'flex', sm: 'none' },
+            alignItems: 'center',
+            gap: 1
           }}>
             <IconButton
               sx={{
@@ -165,89 +170,89 @@ const Home: React.FC = () => {
       </Drawer>
 
       <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: { xs: 'calc(100vh - 80px)', sm: 'calc(100vh - 100px)' },
-          textAlign: 'center',
-          pt: { xs: 1, sm: 2, md: 3 },
-          pb: { xs: 2, sm: 2, md: 3 },
-        }}
-      >
-        <Typography variant="h5" component="h2" sx={{ 
-          mb: { xs: 1, sm: 1.5 }, 
-          color: 'text.primary',
-          fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' }
-        }}>
-          Bem-vindo(a) ao
-        </Typography>
         <Box
-          component="img"
-          src={logoBlog}
-          alt="VibesFilm Logo"
-          onError={(e) => {
-            console.error('Erro ao carregar logo:', e);
-            // Fallback para texto se a imagem falhar
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
           sx={{
-            width: { xs: 240, sm: 250, md: 300 },
-            height: 'auto',
-            marginBottom: { xs: 1.5, sm: 2 },
-            filter: mode === 'dark' 
-              ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))' 
-              : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
-            maxWidth: '100%',
-            objectFit: 'contain'
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: { xs: 'calc(100vh - 80px)', sm: 'calc(100vh - 100px)' },
+            textAlign: 'center',
+            pt: { xs: 1, sm: 2, md: 3 },
+            pb: { xs: 2, sm: 2, md: 3 },
           }}
-        />
-
-        <Typography variant="h2" component="h1" gutterBottom sx={{ 
-          fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' }, 
-          mt: { xs: 1, sm: 1.5 }, 
-          mb: { xs: 1, sm: 1.5 },
-          lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
-        }}>
-          Encontre o filme perfeito para sua vibe!
-        </Typography>
-
-        <Typography variant="h6" color="text.secondary" paragraph sx={{ 
-          maxWidth: 600, 
-          mt: { xs: 1, sm: 1.5 }, 
-          mb: { xs: 2, sm: 2.5 },
-          fontSize: { xs: '1rem', sm: '1rem' },
-          px: { xs: 1, sm: 0 }
-        }}>
-          O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
-        </Typography>
-
-        <Box sx={{ mt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
-          <Button
-            variant="contained"
-            size="large"
-            onClick={handleStart}
-            sx={{
-              px: { xs: 4, sm: 5 },
-              py: { xs: 1.2, sm: 1.5 },
-              fontSize: { xs: '1.1rem', sm: '1.2rem' },
-              borderRadius: 2,
-              width: { xs: '100%', sm: 'auto' },
-              backgroundColor: '#1976d2', // Azul fixo (Material-UI primary blue)
-              color: '#ffffff',
-              '&:hover': {
-                backgroundColor: '#1565c0', // Azul mais escuro no hover
-              }
+        >
+          <Typography variant="h5" component="h2" sx={{
+            mb: { xs: 1, sm: 1.5 },
+            color: 'text.primary',
+            fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' }
+          }}>
+            Bem-vindo(a) ao
+          </Typography>
+          <Box
+            component="img"
+            src={logoBlog}
+            alt="VibesFilm Logo"
+            onError={(e) => {
+              console.error('Erro ao carregar logo:', e);
+              // Fallback para texto se a imagem falhar
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
             }}
-          >
-            Vamos começar
-          </Button>
+            sx={{
+              width: { xs: 240, sm: 250, md: 300 },
+              height: 'auto',
+              marginBottom: { xs: 1.5, sm: 2 },
+              filter: mode === 'dark'
+                ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))'
+                : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
+              maxWidth: '100%',
+              objectFit: 'contain'
+            }}
+          />
+
+          <Typography variant="h2" component="h1" gutterBottom sx={{
+            fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' },
+            mt: { xs: 1, sm: 1.5 },
+            mb: { xs: 1, sm: 1.5 },
+            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+          }}>
+            Encontre o filme perfeito para sua vibe!
+          </Typography>
+
+          <Typography variant="h6" color="text.secondary" paragraph sx={{
+            maxWidth: 600,
+            mt: { xs: 1, sm: 1.5 },
+            mb: { xs: 2, sm: 2.5 },
+            fontSize: { xs: '1rem', sm: '1rem' },
+            px: { xs: 1, sm: 0 }
+          }}>
+            O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
+          </Typography>
+
+          <Box sx={{ mt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={handleStart}
+              sx={{
+                px: { xs: 4, sm: 5 },
+                py: { xs: 1.2, sm: 1.5 },
+                fontSize: { xs: '1.1rem', sm: '1.2rem' },
+                borderRadius: 2,
+                width: { xs: '100%', sm: 'auto' },
+                backgroundColor: '#1976d2', // Azul fixo (Material-UI primary blue)
+                color: '#ffffff',
+                '&:hover': {
+                  backgroundColor: '#1565c0', // Azul mais escuro no hover
+                }
+              }}
+            >
+              Vamos começar
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </Container>
     </div>
   );
 };

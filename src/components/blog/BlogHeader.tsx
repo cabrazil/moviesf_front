@@ -43,16 +43,16 @@ export function BlogHeader() {
   }, [isMenuOpen, isMobile]);
 
   return (
-    <header style={{ 
-      backgroundColor: 'rgba(1, 22, 39, 0.95)', 
+    <header style={{
+      backgroundColor: 'rgba(1, 22, 39, 0.95)',
       borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
       position: 'sticky',
       top: 0,
       zIndex: 50,
       padding: '0 20px'
     }}>
-      <div style={{ 
-        maxWidth: '1200px', 
+      <div style={{
+        maxWidth: '1200px',
         margin: '0 auto',
         display: 'flex',
         justifyContent: 'space-between',
@@ -61,8 +61,8 @@ export function BlogHeader() {
       }}>
         {/* Logo */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-          <img 
-            src={logoBlog} 
+          <img
+            src={logoBlog}
             alt="VibesFilm Logo"
             style={{
               height: isMobile ? 40 : 48,
@@ -74,9 +74,9 @@ export function BlogHeader() {
         </Link>
 
         {/* Desktop Navigation - Hidden on Mobile */}
-        <nav style={{ 
-          display: isMobile ? 'none' : 'flex', 
-          gap: '32px' 
+        <nav style={{
+          display: isMobile ? 'none' : 'flex',
+          gap: '32px'
         }}>
           {navigation.map((item) => {
             const Icon = item.icon;
@@ -114,10 +114,10 @@ export function BlogHeader() {
         </nav>
 
         {/* Desktop Search & App Link - Hidden on Mobile */}
-        <div style={{ 
-          display: isMobile ? 'none' : 'flex', 
-          alignItems: 'center', 
-          gap: '16px' 
+        <div style={{
+          display: isMobile ? 'none' : 'flex',
+          alignItems: 'center',
+          gap: '16px'
         }}>
           <button style={{
             padding: '8px',
@@ -128,24 +128,24 @@ export function BlogHeader() {
             cursor: 'pointer',
             transition: 'all 0.3s ease'
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <Search size={20} />
           </button>
-          <a 
-            href="/app" 
+          <a
+            href="/app"
             style={{
-              backgroundColor: '#3B82F6',
-              color: '#011627',
+              backgroundColor: '#FF6B35',
+              color: '#FFFFFF',
               padding: '8px 16px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontWeight: '500',
               transition: 'all 0.3s ease'
             }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
           >
             Usar App
           </a>
@@ -172,9 +172,9 @@ export function BlogHeader() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && isMobile && (
-        <div 
+        <div
           className="mobile-menu-container"
-          style={{ 
+          style={{
             position: 'absolute',
             top: '100%',
             left: 0,
@@ -223,11 +223,11 @@ export function BlogHeader() {
                 </Link>
               );
             })}
-            
+
             {/* Mobile Search */}
-            <div style={{ 
-              padding: '12px 16px', 
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)', 
+            <div style={{
+              padding: '12px 16px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
               marginTop: '8px',
               display: 'flex',
               alignItems: 'center',
@@ -236,19 +236,19 @@ export function BlogHeader() {
               <Search size={20} color="#E0E0E0" />
               <span style={{ color: '#E0E0E0', fontSize: '16px' }}>Buscar</span>
             </div>
-            
+
             {/* Mobile App Button */}
-            <div style={{ 
-              paddingTop: '8px', 
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)', 
-              marginTop: '8px' 
+            <div style={{
+              paddingTop: '8px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              marginTop: '8px'
             }}>
-              <a 
-                href="/app" 
+              <a
+                href="/app"
                 style={{
                   display: 'block',
-                  backgroundColor: '#3B82F6',
-                  color: '#011627',
+                  backgroundColor: '#FF6B35',
+                  color: '#FFFFFF',
                   padding: '14px 16px',
                   borderRadius: '8px',
                   textDecoration: 'none',
@@ -258,8 +258,8 @@ export function BlogHeader() {
                   fontSize: '16px'
                 }}
                 onClick={() => setIsMenuOpen(false)}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
               >
                 Usar App VibesFilm
               </a>

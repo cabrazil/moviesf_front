@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Clock, Filter, Grid, List } from 'lucide-react';
 import { BlogArticleCard } from './BlogArticleCard';
+import { BlogCTACard } from './BlogCTACard';
 import { blogApi, type BlogPost, type BlogCategory } from '../../services/blogApi';
 import { mockPosts, categories } from '../../data/blog/mockPosts';
 
@@ -30,7 +31,7 @@ export function BlogLatestPosts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Estados para carregamento progressivo
   const [displayedPosts, setDisplayedPosts] = useState<BlogPost[]>([]);
   const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
@@ -62,15 +63,15 @@ export function BlogLatestPosts() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const articlesPerPage = getArticlesPerPage();
-        
+
         // Buscar artigos e categorias em paralelo
         const [postsResponse, categoriesResponse] = await Promise.all([
           blogApi.getPosts({ limit: 50, page: 1 }), // Buscar mais artigos para simular paginação
           blogApi.getCategories()
         ]);
-        
+
         if (postsResponse.success && postsResponse.data) {
           console.log('📰 Artigos recebidos da API:', postsResponse.data.articles.length);
           const allArticles = postsResponse.data.articles;
@@ -87,7 +88,7 @@ export function BlogLatestPosts() {
           setDisplayedPosts(initialArticles);
           setHasMore(mockData.length > articlesPerPage);
         }
-        
+
         if (categoriesResponse.success && categoriesResponse.data) {
           console.log('🏷️ Categorias recebidas da API:', categoriesResponse.data.length);
           setCategoriesData(categoriesResponse.data);
@@ -110,17 +111,17 @@ export function BlogLatestPosts() {
   // Função para carregar mais artigos
   const loadMoreArticles = async () => {
     if (loadingMore || !hasMore) return;
-    
+
     try {
       setLoadingMore(true);
       const articlesPerPage = getArticlesPerPage();
       const nextPage = currentPage + 1;
       const startIndex = (nextPage - 1) * articlesPerPage;
       const endIndex = startIndex + articlesPerPage;
-      
+
       // Simular paginação com os artigos já carregados
       const newArticles = allPosts.slice(startIndex, endIndex);
-      
+
       if (newArticles.length > 0) {
         setDisplayedPosts(prev => [...prev, ...newArticles]);
         setCurrentPage(nextPage);
@@ -137,7 +138,7 @@ export function BlogLatestPosts() {
     }
   };
 
-  const filteredPosts = selectedCategory === 'all' 
+  const filteredPosts = selectedCategory === 'all'
     ? displayedPosts // Mostrar posts exibidos
     : displayedPosts.filter(post => post.category_slug === selectedCategory);
 
@@ -147,21 +148,21 @@ export function BlogLatestPosts() {
 
   if (loading) {
     return (
-      <section id="latest-posts" style={{ 
+      <section id="latest-posts" style={{
         padding: isMobile ? '32px 16px' : '64px 20px',
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px', 
-          marginBottom: '32px' 
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          marginBottom: '32px'
         }}>
           <Clock size={24} style={{ color: '#3B82F6' }} />
-          <h2 style={{ 
-            fontSize: isMobile ? '1.5rem' : '2rem', 
-            fontWeight: 'bold', 
+          <h2 style={{
+            fontSize: isMobile ? '1.5rem' : '2rem',
+            fontWeight: 'bold',
             color: '#FDFFFC',
             margin: 0
           }}>Últimos Artigos</h2>
@@ -195,7 +196,7 @@ export function BlogLatestPosts() {
             Erro ao carregar artigos
           </h3>
           <p className="text-text-secondary mb-4">{error}</p>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="blog-btn-primary"
           >
@@ -207,44 +208,44 @@ export function BlogLatestPosts() {
   }
 
   return (
-    <section id="latest-posts" style={{ 
+    <section id="latest-posts" style={{
       padding: '64px 20px',
       maxWidth: '1200px',
       margin: '0 auto'
     }}>
       {/* Section Header */}
-      <div style={{ 
-        display: 'flex', 
+      <div style={{
+        display: 'flex',
         flexDirection: 'column',
         gap: '16px',
         marginBottom: '32px'
       }}>
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
           gap: '12px'
         }}>
           <Clock size={24} style={{ color: '#3B82F6' }} />
-          <h2 style={{ 
-            fontSize: '2rem', 
-            fontWeight: 'bold', 
+          <h2 style={{
+            fontSize: '2rem',
+            fontWeight: 'bold',
             color: '#FDFFFC',
             margin: 0
           }}>Últimos Artigos</h2>
         </div>
 
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '16px'
         }}>
           {/* View Mode Toggle */}
-          <div style={{ 
-            display: 'flex', 
-            backgroundColor: '#022c49', 
-            borderRadius: '8px', 
+          <div style={{
+            display: 'flex',
+            backgroundColor: '#022c49',
+            borderRadius: '8px',
             padding: '4px'
           }}>
             <button
@@ -279,7 +280,7 @@ export function BlogLatestPosts() {
 
           {/* Filter Dropdown */}
           <div style={{ position: 'relative' }}>
-            <select 
+            <select
               value={selectedCategory}
               onChange={(e) => handleCategoryChange(e.target.value)}
               style={{
@@ -300,24 +301,24 @@ export function BlogLatestPosts() {
                 </option>
               ))}
             </select>
-            <Filter size={16} style={{ 
-              position: 'absolute', 
-              right: '12px', 
-              top: '50%', 
-              transform: 'translateY(-50%)', 
-              color: '#E0E0E0', 
-              pointerEvents: 'none' 
+            <Filter size={16} style={{
+              position: 'absolute',
+              right: '12px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#E0E0E0',
+              pointerEvents: 'none'
             }} />
           </div>
         </div>
       </div>
 
       {/* Category Pills */}
-      <div style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '12px', 
-        marginBottom: '32px' 
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '12px',
+        marginBottom: '32px'
       }}>
         <button
           onClick={() => handleCategoryChange('all')}
@@ -386,117 +387,132 @@ export function BlogLatestPosts() {
           <div style={{
             display: 'grid',
             gap: isMobile ? '24px' : '32px',
-            gridTemplateColumns: viewMode === 'grid' 
-              ? isMobile 
-                ? '1fr' 
-                : 'repeat(auto-fit, minmax(300px, 1fr))' 
+            gridTemplateColumns: viewMode === 'grid'
+              ? isMobile
+                ? '1fr'
+                : 'repeat(auto-fit, minmax(300px, 1fr))'
               : '1fr',
             maxWidth: viewMode === 'list' ? '800px' : 'none',
             margin: viewMode === 'list' ? '0 auto' : '0'
           }}>
-            {filteredPosts.map((post) => (
-              <div key={post.id} style={{
-                animation: 'fadeIn 0.6s ease-out'
-              }}>
-                <BlogArticleCard post={post} />
-              </div>
-            ))}
+            {filteredPosts.flatMap((post, index) => {
+              const items = [
+                <div key={post.id} style={{
+                  animation: 'fadeIn 0.6s ease-out'
+                }}>
+                  <BlogArticleCard post={post} />
+                </div>
+              ];
+
+              // Inserir CTA a cada 6 artigos
+              if ((index + 1) % 6 === 0 && index < filteredPosts.length - 1) {
+                items.push(
+                  <div key={`cta-${index}`} style={{
+                    animation: 'fadeIn 0.6s ease-out'
+                  }}>
+                    <BlogCTACard />
+                  </div>
+                );
+              }
+
+              return items;
+            })}
           </div>
-          
-        {/* Botão Carregar Mais Artigos */}
-        {console.log('🔍 Debug - hasMore:', hasMore, 'selectedCategory:', selectedCategory, 'displayedPosts.length:', displayedPosts.length, 'allPosts.length:', allPosts.length)}
-        {hasMore && selectedCategory === 'all' && (
-          <div style={{ 
-            textAlign: 'center', 
-            marginTop: isMobile ? '32px' : '48px',
-            padding: isMobile ? '0 16px' : '0'
-          }}>
-            <button
-              onClick={loadMoreArticles}
-              disabled={loadingMore}
-              style={{
-                backgroundColor: loadingMore ? '#022c49' : '#3B82F6',
-                color: loadingMore ? '#E0E0E0' : '#011627',
-                padding: isMobile ? '12px 24px' : '14px 28px',
-                borderRadius: '8px',
-                border: 'none',
-                fontSize: isMobile ? '0.9rem' : '1rem',
-                fontWeight: '600',
-                cursor: loadingMore ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                margin: '0 auto',
-                opacity: loadingMore ? 0.7 : 1
-              }}
-              onMouseOver={(e) => {
-                if (!loadingMore) {
-                  e.currentTarget.style.backgroundColor = '#0A6E65';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                }
-              }}
-              onMouseOut={(e) => {
-                if (!loadingMore) {
-                  e.currentTarget.style.backgroundColor = '#3B82F6';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }
-              }}
-            >
-              {loadingMore ? (
-                <>
-                  <div style={{
-                    width: '16px',
-                    height: '16px',
-                    border: '2px solid #E0E0E0',
-                    borderTop: '2px solid transparent',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite'
-                  }}></div>
-                  Carregando...
-                </>
-              ) : (
-                <>
-                  <span>Carregar Mais Artigos</span>
-                  <Clock size={16} />
-                </>
+
+          {/* Botão Carregar Mais Artigos */}
+          {console.log('🔍 Debug - hasMore:', hasMore, 'selectedCategory:', selectedCategory, 'displayedPosts.length:', displayedPosts.length, 'allPosts.length:', allPosts.length)}
+          {hasMore && selectedCategory === 'all' && (
+            <div style={{
+              textAlign: 'center',
+              marginTop: isMobile ? '32px' : '48px',
+              padding: isMobile ? '0 16px' : '0'
+            }}>
+              <button
+                onClick={loadMoreArticles}
+                disabled={loadingMore}
+                style={{
+                  backgroundColor: loadingMore ? '#022c49' : '#3B82F6',
+                  color: loadingMore ? '#E0E0E0' : '#011627',
+                  padding: isMobile ? '12px 24px' : '14px 28px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontSize: isMobile ? '0.9rem' : '1rem',
+                  fontWeight: '600',
+                  cursor: loadingMore ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  margin: '0 auto',
+                  opacity: loadingMore ? 0.7 : 1
+                }}
+                onMouseOver={(e) => {
+                  if (!loadingMore) {
+                    e.currentTarget.style.backgroundColor = '#0A6E65';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!loadingMore) {
+                    e.currentTarget.style.backgroundColor = '#3B82F6';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }
+                }}
+              >
+                {loadingMore ? (
+                  <>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid #E0E0E0',
+                      borderTop: '2px solid transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite'
+                    }}></div>
+                    Carregando...
+                  </>
+                ) : (
+                  <>
+                    <span>Carregar Mais Artigos</span>
+                    <Clock size={16} />
+                  </>
+                )}
+              </button>
+
+              {!loadingMore && (
+                <p style={{
+                  color: '#B0B0B0',
+                  fontSize: '0.875rem',
+                  marginTop: '12px',
+                  margin: '12px 0 0 0'
+                }}>
+                  Mostrando {displayedPosts.length} artigos
+                </p>
               )}
-            </button>
-            
-            {!loadingMore && (
-              <p style={{
-                color: '#B0B0B0',
-                fontSize: '0.875rem',
-                marginTop: '12px',
-                margin: '12px 0 0 0'
-              }}>
-                Mostrando {displayedPosts.length} artigos
-              </p>
-            )}
-          </div>
+            </div>
           )}
         </>
       ) : (
         <div style={{ textAlign: 'center', padding: '64px 0' }}>
           <div style={{ maxWidth: '400px', margin: '0 auto' }}>
             <div style={{ fontSize: '4rem', color: '#E0E0E0', marginBottom: '16px' }}>🎬</div>
-            <h3 style={{ 
-              fontSize: '1.25rem', 
-              fontWeight: '600', 
-              color: '#FDFFFC', 
+            <h3 style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#FDFFFC',
               marginBottom: '8px',
               margin: 0
             }}>
               Nenhum artigo encontrado
             </h3>
             <p style={{ color: '#E0E0E0', marginBottom: '16px', margin: 0 }}>
-              {selectedCategory === 'all' 
+              {selectedCategory === 'all'
                 ? 'Ainda não há artigos publicados. Volte em breve!'
                 : 'Não encontramos artigos nesta categoria. Que tal explorar outras seções?'
               }
             </p>
             {selectedCategory !== 'all' && (
-              <button 
+              <button
                 onClick={() => handleCategoryChange('all')}
                 style={{
                   backgroundColor: '#3B82F6',
