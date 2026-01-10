@@ -41,26 +41,6 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     [location.state, journeyContext]
   );
 
-  // Lógica de rotação automática dos filtros
-  useEffect(() => {
-    const availableFilters: ('smart' | 'rating' | 'year')[] = ['smart', 'rating', 'year'];
-
-    const timestamp = Date.now();
-    const sessionData = JSON.stringify(movieSuggestions.length + journeyContext?.selectedSentiment?.id?.length || 0);
-    const hash = sessionData.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-
-    const filterIndex = Math.abs(timestamp + hash) % availableFilters.length;
-    const selectedFilter = availableFilters[filterIndex];
-
-    setSortType(selectedFilter);
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`🎲 Filtro automático selecionado: ${selectedFilter} (índice: ${filterIndex})`);
-    }
-  }, []); // Executa apenas uma vez quando o componente é montado
-
   // Scroll para o topo quando o componente for carregado
   useEffect(() => {
     window.scrollTo(0, 0);
