@@ -15,7 +15,8 @@ export function processArticleContent(htmlContent: string): string {
 
   // Regex para encontrar a seção "Alertas e Cuidados"
   // Suporta variações: com/sem emoji, com/sem dois pontos, h2 ou h3
-  const alertasRegex = /<(h2|h3)([^>]*)>[\s]*⚠️?[\s]*Alertas e Cuidados:?[\s]*<\/(h2|h3)>/gi;
+  // Captura qualquer texto adicional dentro da tag (ex: nome do filme)
+  const alertasRegex = /<(h2|h3)([^>]*)>[\s]*⚠️?[\s]*Alertas e Cuidados:?[^<]*<\/(h2|h3)>/gi;
 
   // Substitui pelo novo formato com ícone SVG inline
   processedContent = processedContent.replace(
