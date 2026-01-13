@@ -39,29 +39,41 @@ export function processArticleContent(htmlContent: string): string {
     }
   );
 
-  // Fecha a div antes do próximo heading (h2, h3, h4) ou no final do conteúdo
-  // Isso garante que o conteúdo da nota seja capturado corretamente
-  const headingRegex = /(<h[234][^>]*>)/gi;
+  // Fecha a div após o primeiro parágrafo completo ou antes do próximo heading
   const inNotaCuradoria = processedContent.includes('nota-curadoria-content">');
 
   if (inNotaCuradoria) {
-    // Encontra o próximo heading após a abertura da nota de curadoria
     const parts = processedContent.split('nota-curadoria-content">');
     if (parts.length > 1) {
       const afterNote = parts[1];
-      const nextHeadingMatch = afterNote.match(headingRegex);
 
-      if (nextHeadingMatch) {
-        const nextHeadingIndex = afterNote.indexOf(nextHeadingMatch[0]);
-        const beforeHeading = afterNote.substring(0, nextHeadingIndex);
-        const afterHeading = afterNote.substring(nextHeadingIndex);
+      // Procura pelo fim do primeiro parágrafo (</p>) ou próximo heading
+      const firstParagraphEnd = afterNote.indexOf('</p>');
+      const headingRegex = /<h[234][^>]*>/i;
+      const nextHeadingMatch = afterNote.match(headingRegex);
+      const nextHeadingIndex = nextHeadingMatch ? afterNote.indexOf(nextHeadingMatch[0]) : -1;
+
+      let closeIndex = -1;
+
+      // Se encontrou </p> e ele vem antes de qualquer heading (ou não há heading)
+      if (firstParagraphEnd !== -1 && (nextHeadingIndex === -1 || firstParagraphEnd < nextHeadingIndex)) {
+        closeIndex = firstParagraphEnd + 4; // +4 para incluir o </p>
+      }
+      // Se encontrou heading e ele vem antes do </p> (ou não há </p>)
+      else if (nextHeadingIndex !== -1) {
+        closeIndex = nextHeadingIndex;
+      }
+
+      if (closeIndex !== -1) {
+        const beforeClose = afterNote.substring(0, closeIndex);
+        const afterClose = afterNote.substring(closeIndex);
 
         processedContent = parts[0] + 'nota-curadoria-content">' +
-          beforeHeading +
+          beforeClose +
           '</div></div>' +
-          afterHeading;
+          afterClose;
       } else {
-        // Se não houver próximo heading, fecha no final
+        // Se não encontrou nem </p> nem heading, fecha no final
         processedContent += '</div></div>';
       }
     }
