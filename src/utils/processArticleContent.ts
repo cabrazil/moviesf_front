@@ -18,10 +18,15 @@ export function processArticleContent(htmlContent: string): string {
   // Captura qualquer texto adicional dentro da tag (ex: nome do filme)
   const alertasRegex = /<(h2|h3)([^>]*)>[\s]*⚠️?[\s]*Alertas e Cuidados:?[^<]*<\/(h2|h3)>/gi;
 
+  console.log('🔍 Processando conteúdo do artigo...');
+  console.log('📝 Conteúdo original contém "Alertas"?', htmlContent.includes('Alertas'));
+
   // Substitui pelo novo formato com ícone SVG inline
   processedContent = processedContent.replace(
     alertasRegex,
-    `<div class="nota-curadoria">
+    (match) => {
+      console.log('✅ Match encontrado:', match);
+      return `<div class="nota-curadoria">
       <div class="nota-curadoria-header">
         <svg class="nota-curadoria-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
@@ -30,13 +35,16 @@ export function processArticleContent(htmlContent: string): string {
         </svg>
         <span>Nota de Curadoria:</span>
       </div>
-      <div class="nota-curadoria-content">`
+      <div class="nota-curadoria-content">`;
+    }
   );
 
   // Fecha a div antes do próximo heading (h2, h3, h4) ou no final do conteúdo
   // Isso garante que o conteúdo da nota seja capturado corretamente
   const headingRegex = /(<h[234][^>]*>)/gi;
   const inNotaCuradoria = processedContent.includes('nota-curadoria-content">');
+
+  console.log('📦 Nota de curadoria criada?', inNotaCuradoria);
 
   if (inNotaCuradoria) {
     // Encontra o próximo heading após a abertura da nota de curadoria
@@ -54,9 +62,11 @@ export function processArticleContent(htmlContent: string): string {
           beforeHeading +
           '</div></div>' +
           afterHeading;
+        console.log('✅ Div fechada antes do próximo heading');
       } else {
         // Se não houver próximo heading, fecha no final
         processedContent += '</div></div>';
+        console.log('✅ Div fechada no final do conteúdo');
       }
     }
   }
