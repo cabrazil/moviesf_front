@@ -15,22 +15,28 @@ export function processArticleContent(htmlContent: string): string {
 
   // Regex para encontrar a seção "Alertas e Cuidados"
   // Suporta variações: com/sem emoji, com/sem dois pontos, h2 ou h3
-  // Captura qualquer texto adicional dentro da tag (ex: nome do filme)
-  const alertasRegex = /<(h2|h3)([^>]*)>[\s]*⚠️?[\s]*Alertas e Cuidados:?[^<]*<\/(h2|h3)>/gi;
+  // Captura qualquer texto adicional dentro da tag (ex: nome do filme ou contexto)
+  const alertasRegex = /<(h2|h3)([^>]*)>[\s]*⚠️?[\s]*Alertas e Cuidados:?\s*([^<]*)<\/(h2|h3)>/gi;
 
   // Substitui pelo novo formato com ícone SVG inline
   processedContent = processedContent.replace(
     alertasRegex,
-    `<div class="nota-curadoria">
+    (match, tag, attrs, additionalText) => {
+      // Remove espaços extras do texto adicional
+      const cleanText = additionalText ? additionalText.trim() : '';
+      const titleText = cleanText ? `Nota de Curadoria: ${cleanText}` : 'Nota de Curadoria:';
+
+      return `<div class="nota-curadoria">
       <div class="nota-curadoria-header">
         <svg class="nota-curadoria-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <path d="M12 16v-4"></path>
           <path d="M12 8h.01"></path>
         </svg>
-        <span>Nota de Curadoria:</span>
+        <span>${titleText}</span>
       </div>
-      <div class="nota-curadoria-content">`
+      <div class="nota-curadoria-content">`;
+    }
   );
 
   // Fecha a div antes do próximo heading (h2, h3, h4) ou no final do conteúdo
