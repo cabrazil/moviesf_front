@@ -21,7 +21,7 @@ export function processArticleContent(htmlContent: string): string {
   // Substitui pelo novo formato com ícone SVG inline
   processedContent = processedContent.replace(
     alertasRegex,
-    (match, tag, attrs, additionalText) => {
+    (_match, _tag, _attrs, additionalText) => {
       // Remove espaços extras do texto adicional
       const cleanText = additionalText ? additionalText.trim() : '';
       const titleText = cleanText ? `Nota de Curadoria: ${cleanText}` : 'Nota de Curadoria:';
