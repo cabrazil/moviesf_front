@@ -5,6 +5,7 @@ import { blogApi, type BlogPost } from '../../services/blogApi';
 import { BlogArticleCard } from '../../components/blog/BlogArticleCard';
 import { SeoHead } from '../../components/blog/SeoHead';
 import { processContentImages, getFeaturedImageUrl } from '../../utils/blogImages';
+import { processArticleContent } from '../../utils/processArticleContent';
 
 // Adicionar estilos CSS para a animação
 const styles = `
@@ -77,6 +78,11 @@ export function ArticlePage() {
   };
 
   useEffect(() => {
+    // Prevenir restauração automática de scroll do navegador
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
     // Scroll para o topo quando a página carrega
     window.scrollTo(0, 0);
 
@@ -535,7 +541,7 @@ export function ArticlePage() {
                 fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
               }}
               dangerouslySetInnerHTML={{
-                __html: processContentImages(post.content)
+                __html: processArticleContent(processContentImages(post.content)
                   .replace(
                     /<img([^>]*)>/gi,
                     '<img$1 style="max-width: 100%; width: 100%; min-width: 300px; min-height: 200px; height: auto; border-radius: 8px; margin: 16px auto; display: block; object-fit: cover;">'
@@ -552,6 +558,7 @@ export function ArticlePage() {
                     /<a([^>]*)>/gi,
                     '<a$1 style="color: #3B82F6; text-decoration: underline; transition: color 0.3s ease;">'
                   )
+                )
               }}
             />
           </article>

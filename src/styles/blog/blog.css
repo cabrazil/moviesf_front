@@ -380,3 +380,94 @@ body.blog-active {
   color: #0A6E65 !important;
   text-decoration: underline;
 }
+
+/* ============================================
+   Nota de Curadoria - Estilização
+   ============================================ */
+
+.nota-curadoria {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.08) 0%, rgba(212, 165, 116, 0.12) 100%);
+  border-left: 4px solid #d4a574;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(212, 165, 116, 0.1);
+  transition: all 0.3s ease;
+}
+
+.nota-curadoria:hover {
+  box-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
+  transform: translateY(-2px);
+}
+
+.nota-curadoria-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #d4a574;
+  letter-spacing: 0.3px;
+}
+
+.nota-curadoria-icon {
+  width: 24px;
+  height: 24px;
+  color: #d4a574;
+  flex-shrink: 0;
+}
+
+.nota-curadoria-content {
+  color: #E0E0E0;
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+.nota-curadoria-content p {
+  margin: 0.75rem 0;
+  color: #E0E0E0;
+}
+
+.nota-curadoria-content p:first-child {
+  margin-top: 0;
+}
+
+.nota-curadoria-content p:last-child {
+  margin-bottom: 0;
+}
+
+.nota-curadoria-content ul,
+.nota-curadoria-content ol {
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #E0E0E0;
+}
+
+.nota-curadoria-content li {
+  margin: 0.5rem 0;
+  color: #E0E0E0;
+}
+
+.nota-curadoria-content strong {
+  color: #FDFFFC;
+  font-weight: 600;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .nota-curadoria {
+    padding: 1.25rem;
+    margin: 1.5rem 0;
+  }
+  
+  .nota-curadoria-header {
+    font-size: 1rem;
+  }
+  
+  .nota-curadoria-icon {
+    width: 20px;
+    height: 20px;
+  }
+}

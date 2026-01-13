@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo - Nota de Curadoria</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #2a2a2a;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #3a3a3a;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #4a4a4a;
+        }
+
+        /* Estilos da Nota de Curadoria */
+        .nota-curadoria {
+            background: linear-gradient(135deg, #fef9f3 0%, #fdf4e8 100%);
+            border-left: 4px solid #d4a574;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(212, 165, 116, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nota-curadoria:hover {
+            box-shadow: 0 4px 16px rgba(212, 165, 116, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .nota-curadoria-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #8b6f47;
+            letter-spacing: 0.3px;
+        }
+
+        .nota-curadoria-icon {
+            width: 24px;
+            height: 24px;
+            color: #d4a574;
+            flex-shrink: 0;
+        }
+
+        .nota-curadoria-content {
+            color: #5a4a3a;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .nota-curadoria-content p {
+            margin: 0.75rem 0;
+        }
+
+        .nota-curadoria-content p:first-child {
+            margin-top: 0;
+        }
+
+        .nota-curadoria-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .nota-curadoria-content ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .nota-curadoria-content li {
+            margin: 0.5rem 0;
+        }
+
+        .nota-curadoria-content strong {
+            color: #6b5540;
+            font-weight: 600;
+        }
+
+        /* Comparação lado a lado */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .old-style {
+            background: #fff5f5;
+            border-left: 4px solid #e53e3e;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .nota-curadoria {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Exemplo: Nota de Curadoria</h1>
+        <p style="color: #666; font-style: italic;">Demonstração visual da nova seção "Nota de Curadoria" para artigos do VibesFilm</p>
+
+        <hr style="margin: 2rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
+        <!-- Exemplo de artigo com a nova Nota de Curadoria -->
+        <h2>🎥 Ilha do Medo (2010)</h2>
+        <p>
+            "Ilha do Medo" é um thriller psicológico dirigido por Martin Scorsese que nos leva a uma jornada 
+            perturbadora através da mente humana. O filme acompanha o investigador federal Teddy Daniels 
+            (Leonardo DiCaprio) em sua investigação sobre o desaparecimento de uma paciente em um hospital 
+            psiquiátrico localizado em uma ilha isolada.
+        </p>
+
+        <h3>🎭 A Experiência Emocional</h3>
+        <p>
+            Este filme é uma experiência cinematográfica que desafia nossas percepções e nos mantém em 
+            constante tensão. A atmosfera claustrofóbica e a narrativa não-linear criam uma sensação de 
+            desconforto que persiste muito depois dos créditos finais.
+        </p>
+
+        <!-- NOVA SEÇÃO: Nota de Curadoria -->
+        <div class="nota-curadoria">
+            <div class="nota-curadoria-header">
+                <svg class="nota-curadoria-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                </svg>
+                <span>Nota de Curadoria:</span>
+            </div>
+            <div class="nota-curadoria-content">
+                <p>
+                    <strong>Este filme pode ser intenso para algumas pessoas.</strong> Contém cenas de violência 
+                    psicológica, temas relacionados a trauma e saúde mental, e uma atmosfera constantemente 
+                    perturbadora.
+                </p>
+                <p>
+                    Recomendamos este filme para quem busca uma experiência cinematográfica desafiadora e está 
+                    preparado para lidar com temas complexos sobre a mente humana. Se você está em um momento 
+                    de vulnerabilidade emocional, talvez seja melhor escolher outro filme.
+                </p>
+                <ul>
+                    <li>Classificação indicativa: 16 anos</li>
+                    <li>Temas sensíveis: trauma, luto, saúde mental</li>
+                    <li>Intensidade emocional: Alta</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>🎬 Por Que Assistir?</h3>
+        <p>
+            "Ilha do Medo" é uma obra-prima do cinema que combina suspense, drama psicológico e uma reviravolta 
+            magistral. A direção de Scorsese e a atuação de DiCaprio criam uma experiência inesquecível que 
+            nos faz questionar a natureza da realidade e da memória.
+        </p>
+
+        <hr style="margin: 3rem 0; border: none; border-top: 2px solid #e0e0e0;">
+
+        <!-- Comparação: Antes vs Depois -->
+        <h2 style="text-align: center; margin-bottom: 2rem;">📊 Comparação: Antes vs Depois</h2>
+        
+        <div class="comparison">
+            <!-- ANTES -->
+            <div class="comparison-item">
+                <div class="comparison-title">❌ Estilo Antigo</div>
+                <div class="old-style">
+                    <h3 style="margin: 0 0 1rem 0; color: #c53030;">⚠️ Alertas e Cuidados:</h3>
+                    <p style="margin: 0; color: #4a4a4a;">
+                        Este filme pode ser intenso para algumas pessoas. Contém cenas de violência 
+                        psicológica e temas relacionados a trauma.
+                    </p>
+                </div>
+                <p style="font-size: 0.875rem; color: #666; margin-top: 1rem;">
+                    ⚠️ Tom de alerta/aviso<br>
+                    ⚠️ Pode causar ansiedade<br>
+                    ⚠️ Menos convidativo
+                </p>
+            </div>
+
+            <!-- DEPOIS -->
+            <div class="comparison-item">
+                <div class="comparison-title">✅ Novo Estilo</div>
+                <div class="nota-curadoria">
+                    <div class="nota-curadoria-header">
+                        <svg class="nota-curadoria-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4"></path>
+                            <path d="M12 8h.01"></path>
+                        </svg>
+                        <span>Nota de Curadoria:</span>
+                    </div>
+                    <div class="nota-curadoria-content">
+                        <p>
+                            Este filme pode ser intenso para algumas pessoas. Contém cenas de violência 
+                            psicológica e temas relacionados a trauma.
+                        </p>
+                    </div>
+                </div>
+                <p style="font-size: 0.875rem; color: #666; margin-top: 1rem;">
+                    ✅ Tom profissional e cuidadoso<br>
+                    ✅ Design elegante e convidativo<br>
+                    ✅ Reforça autoridade curatorial
+                </p>
+            </div>
+        </div>
+
+        <hr style="margin: 3rem 0; border: none; border-top: 1px solid #e0e0e0;">
+
+        <!-- Variações de Ícones -->
+        <h2 style="text-align: center; margin-bottom: 2rem;">🎨 Opções de Ícones</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <!-- Ícone 1: Info Circle -->
+            <div style="text-align: center; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+                <svg style="width: 48px; height: 48px; color: #d4a574; margin-bottom: 0.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                </svg>
+                <p style="font-size: 0.875rem; margin: 0;">Info Circle<br>(Atual)</p>
+            </div>
+
+            <!-- Ícone 2: Pena -->
+            <div style="text-align: center; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+                <svg style="width: 48px; height: 48px; color: #d4a574; margin-bottom: 0.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                </svg>
+                <p style="font-size: 0.875rem; margin: 0;">Pena de<br>Escrita</p>
+            </div>
+
+            <!-- Ícone 3: Livro -->
+            <div style="text-align: center; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+                <svg style="width: 48px; height: 48px; color: #d4a574; margin-bottom: 0.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+                <p style="font-size: 0.875rem; margin: 0;">Livro<br>Aberto</p>
+            </div>
+
+            <!-- Ícone 4: Moldura -->
+            <div style="text-align: center; padding: 1rem; background: #f9f9f9; border-radius: 8px;">
+                <svg style="width: 48px; height: 48px; color: #d4a574; margin-bottom: 0.5rem;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                    <path d="M7 7h10"></path>
+                    <path d="M7 12h10"></path>
+                    <path d="M7 17h10"></path>
+                </svg>
+                <p style="font-size: 0.875rem; margin: 0;">Moldura/<br>Frame</p>
+            </div>
+        </div>
+
+        <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #3b82f6; margin-top: 2rem;">
+            <p style="margin: 0; color: #1e40af;">
+                <strong>💡 Dica:</strong> Para trocar o ícone, basta substituir o código SVG no arquivo 
+                <code>processArticleContent.ts</code>. Todos os exemplos de ícones estão incluídos na documentação.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
