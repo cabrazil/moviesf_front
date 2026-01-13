@@ -47,8 +47,8 @@ export function BlogHero() {
           marginBottom: isMobile ? '24px' : '32px',
           lineHeight: '1.6'
         }}>
-          Descubra artigos exclusivos sobre cinema, emoções e como encontrar
-          filmes que conectam com seu estado de espírito atual.
+          Muito além de sinopses, mergulhamos na alma de cada obra. Descubra análises sobre o poder emocional dos filmes e
+          como cada história pode ser uma bússola cinematográfica para o seu momento.
         </p>
 
         <div style={{
