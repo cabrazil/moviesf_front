@@ -482,7 +482,7 @@ export function ArticlePage() {
               onError={(e) => {
                 // Fallback para imagem quebrada
                 const target = e.currentTarget;
-                target.src = 'data:image/svg+xml,%3Csvg width='1200' height='675' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23011627'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%233B82F6'%3EImagem não disponível%3C/text%3E%3C/svg%3E';
+                target.src = `data:image/svg+xml,%3Csvg width='1200' height='675' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='%23011627'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%233B82F6'%3EImagem não disponível%3C/text%3E%3C/svg%3E`;
                 target.style.opacity = '0.7';
               }}
             />
