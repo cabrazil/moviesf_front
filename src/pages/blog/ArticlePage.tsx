@@ -119,46 +119,12 @@ export function ArticlePage() {
         };
 
         // Mapeamento específico para casos especiais
+        // ⚠️ IMPORTANTE: Este objeto deve estar VAZIO!
+        // Para novos artigos, use SEMPRE o slug EXATO do banco de dados nos links internos.
+        // Exemplo: Se o slug no banco é "manchester-a-beira-mar-luto-nao-resolvido",
+        // use esse slug completo no link: <a href="/blog/artigo/manchester-a-beira-mar-luto-nao-resolvido">
         const specialMappings: { [key: string]: string } = {
-          // Artigos com ano
-          'manchester-a-beira-mar-2016': 'manchester-a-beira-mar-a-arte-do-luto-nao-resolvido',
-          'oppenheimer-2023': 'oppenheimer-a-trama-tensao-e-reflexao-profunda',
-          'nada-de-novo-no-front-2022': 'nada-de-novo-no-front-a-vibe-a-trama-e-o-horror-da-guerra',
-          'estrelas-alem-do-tempo-2016': 'estrelas-alem-do-tempo-superacao-empoderamento',
-          'ford-vs-ferrari-2019': 'ford-vs-ferrari-o-ronco-da-paixao-inesgotavel',
-          'a-lista-de-schindler-1993': 'a-lista-de-schindler-1993',
-
-          // Artigos sem ano (slug simplificado -> slug real)
-          'aftersun': 'aftersun-a-melancolia-silenciosa-entre-um-pai-e-uma-filha',
-          'corra': 'corra-terror-social-e-paranoia-contemporanea',
-          'ela': 'ela-a-solidao-que-se-torna-companhia-e-autodescoberta',
-          'wall-e': 'wall-e-um-amor-que-renasce-entre-as-estrelas',
-          'up': 'up-altas-aventuras-uma-viagem-emocional-pelas-alturas',
-          'demolicao': 'demolicao-o-processo-de-reconstrucao-atraves-do-vazio',
-          'a-chegada': 'a-chegada-uma-odisseia-emocional-atraves-do-tempo-e-da-linguagem',
-          'danca-com-lobos': 'danca-com-lobos-um-epico-de-autodescoberta-e-conexao-sua-vibe-e-de-reflexao-e-inspiracao',
-          'feitico-do-tempo': 'feitico-do-tempo-quando-a-rotina-se-torna-um-espelho-da-alma',
-          'amelie-poulain': 'o-fabuloso-destino-de-amelie-poulain-a-magia-dos-pequenos-gestos',
-          'o-fabuloso-destino-de-amelie-poulain': 'o-fabuloso-destino-de-amelie-poulain-a-magia-dos-pequenos-gestos',
-          'robo-selvagem': 'robo-selvagem-quando-a-maquina-aprende-a-sentir',
-          'ainda-estou-aqui': 'ainda-estou-aqui-memoria-e-resiliencia',
-          'o-brutalista': 'o-brutalista-a-vibe-a-trama-e-a-arte-do-trauma',
-          'planeta-dos-macacos': 'planeta-dos-macacos-o-reinado-aventura-legado-e-poder',
-          '12-anos-de-escravidao': '12-anos-de-escravidao-historia-conflito-e-sobrevivencia',
-          '1917': '1917-tensao-no-campo-de-batalha-na-tela',
-          'os-12-macacos': 'os-12-macacos-caos-desintegracao-psicologica',
-          'a-arvore-da-vida': 'a-arvore-da-vida-uma-jornada-poetica-sobre-memoria-e-perda',
-          'o-quarto-do-filho': 'o-quarto-do-filho-quando-a-vida-vira-de-ponta-cabeca-em-um-segundo',
-          'comer-rezar-amar': 'comer-rezar-amar-a-coragem-de-recomecar',
-
-          // Artigos pilar (listas)
-          '6-filmes-sobre-luto-e-cura-para-processar-a-dor': 'filmes-processar-o-luto-cinema-e-acolhimento',
-          'filmes-sobre-luto': 'filmes-processar-o-luto-cinema-e-acolhimento',
-          'filme-perfeito-ansiedade': 'filme-perfeito-ansiedade-vf',
-          'psicologia-filmes-que-fazem-chorar': 'psicologia-filmes-que-fazem-chorar-vf',
-          '6-filmes-que-reinventam-sua-realidade': '6-filmes-que-reinventam-sua-realidade',
-          '6-filmes-que-te-inspiram-com-superacao': '6-filmes-que-te-inspiram-com-superacao-de-grandes-desafios',
-          'filmes-reconfortantes-domingo-chuvoso': 'filmes-reconfortantes-para-um-domingo-chuvoso'
+          // Vazio - use slugs exatos do banco de dados
         };
 
         // Verificar mapeamentos ANTES de fazer a chamada à API
