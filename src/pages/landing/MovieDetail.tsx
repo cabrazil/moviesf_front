@@ -15,6 +15,7 @@ import tmdbLogo from '../../assets/themoviedb.png';
 import imdbLogo from '../../assets/imdb.png';
 import rtLogo from '../../assets/rottentomatoes.png';
 import metacriticLogo from '../../assets/metascore.svg';
+import PillarArticleBadge from '../../components/movie-details/PillarArticleBadge';
 
 
 
@@ -135,6 +136,14 @@ interface Movie {
     journeyOptionFlowId: number;
     displayTitle: string | null;
   } | null;
+  pillarArticles?: Array<{
+    id: number;
+    blogArticleId: string;
+    title: string;
+    slug: string;
+  }>;
+  journeyOptionFlowId: number;
+  displayTitle: string | null;
 }
 
 // interface SimilarMovie {
@@ -810,6 +819,14 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   })()}
                 </Paper>
 
+                {/* Selo de Curadoria - Artigos Pilares */}
+                {movie.pillarArticles && movie.pillarArticles.length > 0 && (
+                  <PillarArticleBadge
+                    articles={movie.pillarArticles}
+                    themeColor="#1976d2"
+                  />
+                )}
+
                 {/* CTA "Encontre o Filme Perfeito para Sua Vibe" */}
                 <Box sx={{
                   display: 'flex',
@@ -879,23 +896,26 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   }}>
                     Sinopse
                   </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      lineHeight: 1.6,
-                      textAlign: { xs: 'center', md: 'left' },
-                      fontSize: { xs: '0.95rem', md: '1rem' },
-                      ...(showFullDescription ? {} : {
-                        display: { xs: '-webkit-box', md: 'block' },
-                        WebkitLineClamp: { xs: 4, md: 'none' },
-                        WebkitBoxOrient: 'vertical',
-                        overflow: { xs: 'hidden', md: 'visible' },
-                        textOverflow: { xs: 'ellipsis', md: 'clip' }
-                      })
-                    }}
-                  >
+                  <Paper elevation={0} sx={{
+                    bgcolor: 'transparent',
+                    color: 'text.secondary',
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: '1.5px solid #1976d240',
+                    fontStyle: 'italic',
+                    textAlign: { xs: 'center', md: 'left' },
+                    fontSize: '0.97rem',
+                    lineHeight: 1.6,
+                    ...(showFullDescription ? {} : {
+                      display: { xs: '-webkit-box', md: 'block' },
+                      WebkitLineClamp: { xs: 4, md: 'none' },
+                      WebkitBoxOrient: 'vertical',
+                      overflow: { xs: 'hidden', md: 'visible' },
+                      textOverflow: { xs: 'ellipsis', md: 'clip' }
+                    })
+                  }}>
                     {movie.description}
-                  </Typography>
+                  </Paper>
                   {/* Botão "Ver mais..." apenas em telas menores */}
                   {movie.description.length > 200 && (
                     <Box sx={{
