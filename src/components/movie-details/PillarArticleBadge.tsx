@@ -16,7 +16,7 @@ interface PillarArticleBadgeProps {
 
 const PillarArticleBadge: React.FC<PillarArticleBadgeProps> = ({
   articles,
-  themeColor = '#1976d2'
+  themeColor = '#ff9800'
 }) => {
   if (!articles || articles.length === 0) {
     return null;
@@ -24,7 +24,7 @@ const PillarArticleBadge: React.FC<PillarArticleBadgeProps> = ({
 
   const handleArticleClick = (slug: string) => {
     const blogUrl = window.location.origin;
-    window.open(`${blogUrl}/blog/${slug}`, '_blank');
+    window.open(`${blogUrl}/blog/artigo/${slug}`, '_blank');
   };
 
   return (
