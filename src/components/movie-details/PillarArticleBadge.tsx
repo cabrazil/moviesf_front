@@ -16,7 +16,7 @@ interface PillarArticleBadgeProps {
 
 const PillarArticleBadge: React.FC<PillarArticleBadgeProps> = ({
   articles,
-  themeColor = '#ff9800'
+  themeColor = '#1976d2'
 }) => {
   if (!articles || articles.length === 0) {
     return null;
@@ -48,7 +48,7 @@ const PillarArticleBadge: React.FC<PillarArticleBadgeProps> = ({
             variant="subtitle1"
             sx={{
               mb: 0.5,
-              color: themeColor,
+              color: '#ff9800',
               textAlign: { xs: 'center', md: 'left' },
               fontSize: { xs: '1rem', md: '1.1rem' },
               fontWeight: 600,
