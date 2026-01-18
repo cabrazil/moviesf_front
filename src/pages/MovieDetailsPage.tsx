@@ -720,7 +720,7 @@ const MovieDetailsPage: React.FC = () => {
                   textAlign: { xs: 'center', md: 'left' },
                   fontSize: '0.97rem'
                 }}>
-                  Para quem está <strong className="text-blue-600 font-semibold">{personalizedContent.sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{personalizedContent.intentionName}</strong>, {personalizedContent.connector} {personalizedContent.formattedReason}
+                  Para quem está <strong className="text-blue-600 font-semibold">{personalizedContent.sentimentName}</strong> e quer <strong className="text-purple-600 font-semibold">{personalizedContent.intentionName}</strong>{personalizedContent.connector} {personalizedContent.formattedReason}
                 </Paper>
               </Box>
             ) : personalizedContent.defaultContent && (
