@@ -6,9 +6,9 @@
 // Tradução de categorias do Oscar (movida para fora do componente)
 export const translateOscarCategory = (category: string): string => {
   if (!category) return '';
-  
+
   const normalizedCategory = category.trim().toUpperCase();
-  
+
   const translations: { [key: string]: string } = {
     'BEST PICTURE': 'Melhor Filme',
     'BEST DIRECTOR': 'Melhor Diretor',
@@ -81,7 +81,7 @@ export const translateOscarCategory = (category: string): string => {
   if (translations[normalizedCategory]) {
     return translations[normalizedCategory];
   }
-  
+
   // Se não encontrou, tentar match parcial para categorias de WRITING
   if (normalizedCategory.includes('WRITING') && normalizedCategory.includes('SCREENPLAY')) {
     if (normalizedCategory.includes('WRITTEN DIRECTLY') || normalizedCategory.includes('ORIGINAL')) {
@@ -91,14 +91,14 @@ export const translateOscarCategory = (category: string): string => {
       return 'Melhor Roteiro Adaptado';
     }
   }
-  
+
   return category;
 };
 
 // Mapeamentos estáticos (não recriados)
 export const SENTIMENT_NAMES: { [key: number]: string } = {
   13: "Feliz / Alegre",
-  14: "Triste", 
+  14: "Triste",
   15: "Calmo(a)",
   16: "Ansioso(a)",
   17: "Animado(a)",
@@ -114,11 +114,12 @@ export const INTENTION_NAMES: { [key: string]: string } = {
 };
 
 export const INTENTION_CONNECTORS: { [key: string]: string } = {
-  "PROCESS": "este filme traz",
-  "MAINTAIN": "este filme oferece",
-  "TRANSFORM": "este filme pode te ajudar através de",
-  "REPLACE": "este filme é ideal com",
-  "EXPLORE": "este filme oferece"
+  // Conectores simplificados para evitar problemas gramaticais
+  "PROCESS": ":",
+  "MAINTAIN": ":",
+  "TRANSFORM": ":",
+  "REPLACE": ":",
+  "EXPLORE": ":"
 };
 
 // Função para gerar dados do conteúdo personalizado (retorna dados, não JSX)
@@ -146,16 +147,19 @@ export const getPersonalizedContent = (
       connector: "",
       formattedReason: "",
       hasPersonalizedContent: false,
-      defaultContent: landingPageHook ? 
-        landingPageHook.replace(/<[^>]*>/g, '') : 
+      defaultContent: landingPageHook ?
+        landingPageHook.replace(/<[^>]*>/g, '') :
         "Este filme oferece uma experiência cinematográfica única que vale a pena assistir."
     };
   }
 
   const sentimentName = SENTIMENT_NAMES[sentimentId] || "emocional";
   const intentionName = INTENTION_NAMES[intentionType] || "emocional";
-  const connector = INTENTION_CONNECTORS[intentionType] || "este filme oferece";
-  const formattedReason = reason.charAt(0).toLowerCase() + reason.slice(1);
+  // O conector passa a ser apenas dois pontos, ou string vazia se preferir ajustar no componente
+  const connector = ":";
+  // Manter a primeira letra maiúscula (ou original), pois agora é uma nova sentença após os dois pontos
+  // Se o texto original já vier com minúscula, forçamos maiúscula.
+  const formattedReason = reason.charAt(0).toUpperCase() + reason.slice(1);
 
   return {
     title: "Por que assistir a este filme?",
