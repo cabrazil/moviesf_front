@@ -42,26 +42,26 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
   const platforms = useMemo(() => (movie as any).platforms || [], [movie]);
 
   // Memoizar gêneros limitados
-  const limitedGenres = useMemo(() => 
+  const limitedGenres = useMemo(() =>
     movie.genres?.slice(0, 3) || [],
     [movie.genres]
   );
 
-  const sentimentColorWithOpacity = useMemo(() => 
+  const sentimentColorWithOpacity = useMemo(() =>
     getSentimentColorWithOpacity(sentimentColor, '15'),
     [sentimentColor]
   );
 
-  const sentimentColorBorder = useMemo(() => 
+  const sentimentColorBorder = useMemo(() =>
     getSentimentColorWithOpacity(sentimentColor, '40'),
     [sentimentColor]
   );
 
   return (
-    <Card 
+    <Card
       elevation={3}
       onClick={handleClick}
-      sx={{ 
+      sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -76,7 +76,7 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
     >
       <CardContent sx={{ p: 1.5, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Header com thumbnail e título */}
-        <Box sx={{ display: 'flex', gap: 1.5, mb: 1.5 }}>
+        <Box sx={{ display: 'flex', gap: 1.5, mb: 0.5 }}>
           {movie.thumbnail && (
             <Box sx={{ flexShrink: 0 }}>
               <LazyLoadImage
@@ -114,7 +114,7 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
               <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 0.75, lineHeight: 1.2, fontSize: '1rem' }}>
                 {movie.title}
               </Typography>
-              
+
               {/* Plataformas de Streaming */}
               <MoviePlatforms
                 platforms={platforms}
@@ -124,11 +124,11 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                 sentimentColorBorder={sentimentColorBorder}
               />
             </Box>
-            
+
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
               {movie.year && (
-                <Chip 
-                  label={movie.year} 
+                <Chip
+                  label={movie.year}
                   size="small"
                   color="primary"
                   variant="outlined"
@@ -136,9 +136,9 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                 />
               )}
               {movie.director && (
-                <Chip 
-                  icon={<Person />} 
-                  label={movie.director} 
+                <Chip
+                  icon={<Person />}
+                  label={movie.director}
                   size="small"
                   color="secondary"
                   variant="outlined"
@@ -152,9 +152,9 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
 
             {/* Gêneros compactos */}
             {movie.genres && movie.genres.length > 0 && (
-              <Box 
-                sx={{ 
-                  display: 'flex',
+              <Box
+                sx={{
+                  display: { xs: 'none', sm: 'flex' },
                   flexDirection: 'row',
                   flexWrap: 'nowrap',
                   gap: 0.5,
@@ -170,14 +170,14 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                 }}
               >
                 {limitedGenres.map((genre: string) => (
-                  <Chip 
-                    key={genre} 
-                    label={genre} 
+                  <Chip
+                    key={genre}
+                    label={genre}
                     size="small"
                     color="default"
                     variant="outlined"
-                    sx={{ 
-                      fontSize: '0.7rem', 
+                    sx={{
+                      fontSize: '0.7rem',
                       height: '20px',
                       flexShrink: 0,
                       whiteSpace: 'nowrap',
@@ -186,13 +186,13 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                   />
                 ))}
                 {movie.genres.length > 3 && (
-                  <Chip 
+                  <Chip
                     label={`+${movie.genres.length - 3}`}
                     size="small"
                     color="default"
                     variant="outlined"
-                    sx={{ 
-                      fontSize: '0.7rem', 
+                    sx={{
+                      fontSize: '0.7rem',
                       height: '20px',
                       flexShrink: 0,
                       whiteSpace: 'nowrap',
@@ -203,54 +203,55 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
               </Box>
             )}
 
-            {/* Reason - Campo Principal com coração e seta */}
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                alignItems: 'flex-start', 
-                gap: 0.5,
-                p: 0.5,
-                mt: 0.5,
-                borderRadius: 1,
-                backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
-                border: `1px solid ${sentimentColorBorder}`,
-                transition: 'all 0.2s ease'
-              }}
-            >
-              <Favorite 
-                sx={{ 
-                  fontSize: 16, 
-                  color: sentimentColor,
-                  mt: 0.2,
-                  flexShrink: 0
-                }} 
-              />
-              <Typography 
-                variant="caption" 
-                color="text.secondary"
-                sx={{ 
-                  lineHeight: 1.3,
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  fontSize: '0.75rem',
-                  flex: 1
-                }}
-              >
-                {reason}
-              </Typography>
-              <ChevronRight 
-                sx={{ 
-                  fontSize: 26,
-                  color: sentimentColor,
-                  mt: 0.2,
-                  flexShrink: 0
-                }} 
-              />
-            </Box>
           </Box>
+        </Box>
+
+        {/* Reason - Campo Principal (Abaixo da imagem) */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 0.5,
+            p: 0.5,
+            mt: 0.5,
+            borderRadius: 1,
+            backgroundColor: mode === 'light' ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)',
+            border: `1px solid ${sentimentColorBorder}`,
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <Favorite
+            sx={{
+              fontSize: 16,
+              color: sentimentColor,
+              mt: 0.2,
+              flexShrink: 0
+            }}
+          />
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{
+              lineHeight: 1.3,
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              fontSize: '0.75rem',
+              flex: 1
+            }}
+          >
+            {reason}
+          </Typography>
+          <ChevronRight
+            sx={{
+              fontSize: 26,
+              color: sentimentColor,
+              mt: 0.2,
+              flexShrink: 0
+            }}
+          />
         </Box>
       </CardContent>
     </Card>

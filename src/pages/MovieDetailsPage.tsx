@@ -211,8 +211,6 @@ const MovieDetailsPage: React.FC = () => {
             themeColor={themeColor}
           />
 
-
-
         </Box>
 
         {/* Coluna Direita - Conteúdo Principal */}
@@ -269,7 +267,7 @@ const MovieDetailsPage: React.FC = () => {
               fontSize: '0.9rem',
               textAlign: { xs: 'center', md: 'left' }
             }}>
-              Título original: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.title}</span>
+              Título original: <span style={{ color: themeColor, fontWeight: 500 }}>{movie.original_title}</span>
             </Typography>
 
             {/* Separador */}
@@ -613,9 +611,9 @@ const MovieDetailsPage: React.FC = () => {
             }}>A Análise Emocional do Vibesfilm</Typography>
 
             {/* Alerta de Conteúdo */}
-            {movie?.contentWarnings &&
-              movie.contentWarnings !== 'Atenção: nenhum alerta de conteúdo significativo.' && (
-                <Box sx={{ mb: 2, width: '100%' }}>
+            <Box sx={{ mb: 2, width: '100%' }}>
+              {movie?.contentWarnings && movie.contentWarnings !== 'Atenção: nenhum alerta de conteúdo significativo.' ? (
+                <>
                   <Typography variant="h6" component="h3" sx={{
                     mb: 1,
                     color: '#ff6b35',
@@ -640,8 +638,36 @@ const MovieDetailsPage: React.FC = () => {
                   }}>
                     <span style={{ fontWeight: 600 }}>Atenção: </span>{movie.contentWarnings.replace('Atenção: ', '')}
                   </Paper>
-                </Box>
+                </>
+              ) : (
+                <>
+                  <Typography variant="h6" component="h3" sx={{
+                    mb: 1,
+                    color: 'success.main',
+                    textAlign: { xs: 'center', md: 'left' },
+                    fontSize: { xs: '1rem', md: '1.1rem' },
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                    justifyContent: { xs: 'center', md: 'flex-start' }
+                  }}>
+                    ✅ Verificação de Conteúdo
+                  </Typography>
+                  <Paper elevation={0} sx={{
+                    bgcolor: 'rgba(46, 125, 50, 0.05)',
+                    color: 'text.secondary',
+                    p: 1.5,
+                    borderRadius: 2,
+                    border: '1px solid rgba(46, 125, 50, 0.2)',
+                    textAlign: { xs: 'center', md: 'left' },
+                    fontSize: { xs: '0.9rem', md: '1rem' }
+                  }}>
+                    Nenhum alerta de conteúdo significativo identificado.
+                  </Paper>
+                </>
               )}
+            </Box>
 
             {/* 1. A Vibe do Filme */}
             <Box sx={{ mb: 2, width: '100%' }}>

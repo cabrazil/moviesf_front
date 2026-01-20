@@ -10,35 +10,30 @@ interface MovieRatingsProps {
   movie: any;
 }
 
-const RatingIcon: React.FC<{ src: string; alt: string; size?: number; colorFilter?: string }> = ({ 
-  src, 
-  alt, 
-  size = 18, 
-  colorFilter 
+const RatingIcon: React.FC<{ src: string; alt: string; size?: number; colorFilter?: string }> = ({
+  src,
+  alt,
+  size = 18,
+  colorFilter
 }) => (
-  <img 
-    src={src} 
-    alt={alt} 
-    style={{ 
-      width: size, 
-      height: size, 
-      objectFit: 'contain', 
-      verticalAlign: 'middle', 
-      marginRight: 2, 
-      filter: colorFilter || undefined 
-    }} 
+  <img
+    src={src}
+    alt={alt}
+    style={{
+      width: size,
+      height: size,
+      objectFit: 'contain',
+      verticalAlign: 'middle',
+      marginRight: 2,
+      filter: colorFilter || undefined
+    }}
   />
 );
 
 const MovieRatings: React.FC<MovieRatingsProps> = React.memo(({ movie }) => {
-  const hasRatings = 
-    (typeof (movie as any).vote_average !== 'undefined' && (movie as any).vote_average !== null) ||
-    (typeof movie.imdbRating !== 'undefined' && movie.imdbRating !== null) ||
-    (typeof movie.rottenTomatoesRating !== 'undefined' && movie.rottenTomatoesRating !== null) ||
-    (typeof movie.metacriticRating !== 'undefined' && movie.metacriticRating !== null);
 
   return (
-    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 1 }}>
+    <Stack direction="row" spacing={{ xs: 0.5, md: 1 }} flexWrap="wrap" alignItems="center" useFlexGap sx={{ mb: 1 }}>
       {/* TMDB */}
       {typeof (movie as any).vote_average !== 'undefined' && (movie as any).vote_average !== null && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -76,9 +71,7 @@ const MovieRatings: React.FC<MovieRatingsProps> = React.memo(({ movie }) => {
         </Box>
       )}
       {/* Barra vertical de separação */}
-      {hasRatings && (
-        <Typography variant="caption" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
-      )}
+
       {/* Duração */}
       {movie.runtime && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -88,19 +81,38 @@ const MovieRatings: React.FC<MovieRatingsProps> = React.memo(({ movie }) => {
           </Typography>
         </Box>
       )}
+      {/* Separador Duração | Classificação */}
+      {movie.runtime && (movie as any).certification && (
+        <Typography variant="caption" sx={{ color: 'text.disabled', mx: 0.5 }}>|</Typography>
+      )}
       {/* Classificação */}
       {(movie as any).certification && (
-        <Chip 
-          label={(movie as any).certification} 
-          size="small"
-          sx={{ 
-            fontSize: '0.7rem', 
-            height: '20px',
-            backgroundColor: 'warning.light',
-            color: 'warning.contrastText',
-            fontWeight: 'bold'
-          }}
-        />
+        <>
+          <Typography
+            variant="caption"
+            sx={{
+              display: { xs: 'block', md: 'none' },
+              fontSize: '0.75rem',
+              fontWeight: 'bold',
+              color: 'warning.main',
+              lineHeight: 1
+            }}
+          >
+            {(movie as any).certification}
+          </Typography>
+          <Chip
+            label={(movie as any).certification}
+            size="small"
+            sx={{
+              display: { xs: 'none', md: 'flex' },
+              fontSize: '0.7rem',
+              height: '20px',
+              backgroundColor: 'warning.light',
+              color: 'warning.contrastText',
+              fontWeight: 'bold'
+            }}
+          />
+        </>
       )}
     </Stack>
   );
