@@ -224,7 +224,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
           }}
         >
-          Ótima escolha! Agora, onde você gostaria de assistir?
+          <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+            Onde você assiste?
+          </Box>
+          <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+            Ótima escolha! Agora, onde você gostaria de assistir?
+          </Box>
         </Typography>
 
         {selectedOptionText && (
@@ -391,7 +396,7 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
               fontWeight: 500
             }}
           >
-            Outras plataformas ({otherSubscriptionPlatforms.length})
+            Demais plataformas ({otherSubscriptionPlatforms.length})
           </Typography>
           <IconButton size="small" sx={{ ml: 1 }}>
             {showOtherPlatforms ? <ExpandLess /> : <ExpandMore />}

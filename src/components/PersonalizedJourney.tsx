@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Grid, 
-  Paper, 
-  Container, 
-  Select, 
-  MenuItem, 
-  FormControl, 
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Paper,
+  Container,
+  Select,
+  MenuItem,
+  FormControl,
   InputLabel,
   Chip,
   Fade,
   LinearProgress
 } from '@mui/material';
-import { 
-  MainSentiment, 
-  EmotionalIntention, 
-  PersonalizedJourneyFlow, 
-  JourneyStepFlow, 
-  JourneyOptionFlow, 
-  getPersonalizedJourneyFlow 
+import {
+  MainSentiment,
+  EmotionalIntention,
+  PersonalizedJourneyFlow,
+  JourneyStepFlow,
+  JourneyOptionFlow,
+  getPersonalizedJourneyFlow
 } from '../services/api';
 import { useThemeManager } from '../contexts/ThemeContext';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes';
@@ -36,7 +36,7 @@ interface PersonalizedJourneyProps {
 // Função para validar a integridade da jornada personalizada (atualizada para Intenções Emocionais)
 const validatePersonalizedJourneyIntegrity = (journeyFlow: PersonalizedJourneyFlow): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
-  
+
   if (!journeyFlow || !journeyFlow.steps) {
     errors.push('PersonalizedJourneyFlow ou steps não disponíveis');
     return { isValid: false, errors };
@@ -51,11 +51,11 @@ const validatePersonalizedJourneyIntegrity = (journeyFlow: PersonalizedJourneyFl
     if (!step.stepId) {
       errors.push(`Step ${stepIndex + 1} não possui stepId`);
     }
-    
+
     if (!step.question && !step.customQuestion) {
       errors.push(`Step ${step.stepId} não possui pergunta nem pergunta customizada`);
     }
-    
+
     if (!step.options || step.options.length === 0) {
       errors.push(`Step ${step.stepId} não possui opções`);
     } else {
@@ -63,20 +63,20 @@ const validatePersonalizedJourneyIntegrity = (journeyFlow: PersonalizedJourneyFl
         if (!option.text) {
           errors.push(`Opção ${optionIndex + 1} do step ${step.stepId} não possui texto`);
         }
-        
+
         if (option.isEndState === false && !option.nextStepId) {
           errors.push(`Opção "${option.text}" do step ${step.stepId} não é final mas não possui nextStepId`);
         }
-        
+
         // NOVA VALIDAÇÃO: Verificar se opções com nextStepId têm isEndState = false
         if (option.nextStepId && option.isEndState === true) {
           errors.push(`Opção "${option.text}" do step ${step.stepId} possui nextStepId mas isEndState = true (inconsistência)`);
         }
-        
+
         if (option.isEndState === true && (!option.movieSuggestions || option.movieSuggestions.length === 0)) {
           errors.push(`Opção "${option.text}" do step ${step.stepId} é final mas não possui sugestões de filmes`);
         }
-        
+
         // Verificar se nextStepId aponta para um step válido
         if (option.nextStepId) {
           const nextStepExists = journeyFlow.steps.some(s => s.stepId === option.nextStepId);
@@ -117,33 +117,33 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [stepHistory, setStepHistory] = useState<JourneyStepFlow[]>([]);
   const { mode } = useThemeManager();
-  
+
   // Cache usando useRef para evitar re-renders
   const journeyCacheRef = useRef<Map<string, PersonalizedJourneyFlow>>(new Map());
-  
+
   // Flag para evitar requisições duplicadas usando useRef
   const isLoadingJourneyRef = useRef(false);
 
   // Memoizar cores do sentimento
-  const currentSentimentColors = useMemo(() => 
+  const currentSentimentColors = useMemo(() =>
     mode === 'dark' ? darkSentimentColors : lightSentimentColors,
     [mode]
   );
 
   // Memoizar cor do sentimento atual
-  const sentimentColor = useMemo(() => 
+  const sentimentColor = useMemo(() =>
     currentSentimentColors[selectedSentiment.id as keyof typeof currentSentimentColors] || '#1976d2',
     [currentSentimentColors, selectedSentiment.id]
   );
 
   // Memoizar label da intenção
-  const intentionLabel = useMemo(() => 
+  const intentionLabel = useMemo(() =>
     getIntentionLabel(selectedIntention.type),
     [selectedIntention.type]
   );
 
   // Memoizar se tem muitas opções
-  const hasManyOptions = useMemo(() => 
+  const hasManyOptions = useMemo(() =>
     currentStep?.options ? currentStep.options.length > 8 : false,
     [currentStep?.options]
   );
@@ -157,21 +157,21 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         }
         return;
       }
-      
+
       try {
         // Verificar cache primeiro
         const cacheKey = `${selectedSentiment.id}-${selectedIntention.id}`;
         if (process.env.NODE_ENV === 'development') {
           console.log('🔍 Verificando cache para chave:', cacheKey);
         }
-        
+
         if (journeyCacheRef.current.has(cacheKey)) {
           if (process.env.NODE_ENV === 'development') {
             console.log('✅ Jornada encontrada no cache, carregando...');
           }
           const cachedFlow = journeyCacheRef.current.get(cacheKey)!;
           setJourneyFlow(cachedFlow);
-          
+
           // Encontrar o primeiro step do cache
           let firstStep = cachedFlow.steps.find(step => step.priority === 1);
           if (!firstStep) {
@@ -179,7 +179,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             const sortedByOrder = [...cachedFlow.steps].sort((a, b) => a.order - b.order);
             firstStep = sortedByPriority[0] || sortedByOrder[0];
           }
-          
+
           if (firstStep) {
             setCurrentStep(firstStep);
             setLoading(false);
@@ -189,14 +189,14 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             return;
           }
         }
-        
+
         if (process.env.NODE_ENV === 'development') {
           console.log('🔄 Cache não encontrado, carregando da API...');
         }
         isLoadingJourneyRef.current = true;
         setLoading(true);
         setLoadingProgress(0);
-        
+
         // Simular progresso para feedback visual
         const progressInterval = setInterval(() => {
           setLoadingProgress(prev => {
@@ -204,12 +204,12 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             return prev;
           });
         }, 100);
-        
+
         const flow = await getPersonalizedJourneyFlow(selectedSentiment.id, selectedIntention.id);
-        
+
         clearInterval(progressInterval);
         setLoadingProgress(100);
-        
+
         // Validar integridade da jornada personalizada
         const validation = validatePersonalizedJourneyIntegrity(flow);
         if (!validation.isValid) {
@@ -223,21 +223,21 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             console.log('✅ Jornada personalizada validada com sucesso');
           }
         }
-        
+
         setJourneyFlow(flow);
-        
+
         // Salvar no cache
         journeyCacheRef.current.set(cacheKey, flow);
         if (process.env.NODE_ENV === 'development') {
           console.log('💾 Jornada salva no cache com chave:', cacheKey);
         }
-        
+
         // NOVA LÓGICA PARA JORNADAS BASEADAS EM INTENÇÕES
         if (process.env.NODE_ENV === 'development') {
           console.log(`🧠 Jornada personalizada para intenção: ${selectedIntention.type}`);
           console.log('🔄 Sistema baseado em EmotionalIntentionJourneyStep - sem order=1');
         }
-        
+
         // Encontrar o primeiro step personalizado (baseado em priority, não order)
         let firstStep = flow.steps.find(step => step.priority === 1);
         if (!firstStep) {
@@ -249,7 +249,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             console.log(`🎯 Usando step com priority=${firstStep?.priority} ou order=${firstStep?.order}`);
           }
         }
-        
+
         if (!firstStep) {
           if (process.env.NODE_ENV === 'development') {
             console.error('❌ Nenhum step encontrado na jornada personalizada');
@@ -259,7 +259,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           isLoadingJourneyRef.current = false;
           return;
         }
-        
+
         if (process.env.NODE_ENV === 'development') {
           console.log('🚀 Iniciando jornada personalizada no step:', {
             id: firstStep.id,
@@ -270,7 +270,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             contextualHint: firstStep.contextualHint
           });
         }
-        
+
         setCurrentStep(firstStep);
         // Pequeno delay para mostrar o progresso completo
         setTimeout(() => {
@@ -294,12 +294,12 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const findStepById = useCallback((stepId: string, steps: JourneyStepFlow[]): JourneyStepFlow | undefined => {
     // Tentar busca exata primeiro
     let nextStep = steps.find((step: JourneyStepFlow) => step.stepId === stepId);
-    
+
     // Se não encontrar, tentar busca com trim (remover espaços)
     if (!nextStep && stepId) {
       nextStep = steps.find((step: JourneyStepFlow) => step.stepId.trim() === stepId.trim());
     }
-    
+
     return nextStep;
   }, []);
 
@@ -311,7 +311,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       console.log('nextStepId:', option.nextStepId);
       console.log('movieSuggestions:', option.movieSuggestions);
     }
-    
+
     if (!journeyFlow || !currentStep) {
       if (process.env.NODE_ENV === 'development') {
         console.error('Erro: journeyFlow ou currentStep não disponível');
@@ -327,7 +327,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       if (process.env.NODE_ENV === 'development') {
         console.log('✅ Estado final detectado (isEndState = true)');
       }
-      
+
       // Verificar se há sugestões de filmes disponíveis
       if (option.movieSuggestions && option.movieSuggestions.length > 0) {
         if (process.env.NODE_ENV === 'development') {
@@ -335,7 +335,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           console.log('Sugestões:', option.movieSuggestions);
           console.log('✅ Texto da opção selecionada:', option.text);
         }
-        
+
         // Adicionar o texto da opção às sugestões para uso na tela de filtros
         const movieSuggestionsWithOptionText = option.movieSuggestions.map((suggestion: any) => ({
           ...suggestion,
@@ -344,9 +344,9 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
             text: option.text
           }
         }));
-        
-        navigate('/filters', { 
-          state: { 
+
+        navigate('/filters', {
+          state: {
             movieSuggestions: movieSuggestionsWithOptionText,
             selectedOptionText: option.text, // Backup direto
             journeyContext: {
@@ -355,7 +355,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
               journeyType: 'personalized',
               returnPath: '/intro'
             }
-          } 
+          }
         });
         return;
       } else {
@@ -372,7 +372,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       if (process.env.NODE_ENV === 'development') {
         console.log('➡️ Continuando jornada personalizada (isEndState = false)');
       }
-      
+
       // Verificar se há nextStepId
       if (!option.nextStepId) {
         if (process.env.NODE_ENV === 'development') {
@@ -435,7 +435,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
       if (process.env.NODE_ENV === 'development') {
         console.log('⚠️ isEndState não definido, verificando nextStepId...');
       }
-      
+
       if (option.nextStepId) {
         if (process.env.NODE_ENV === 'development') {
           console.log('➡️ nextStepId encontrado, continuando jornada...');
@@ -522,11 +522,11 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           }}
         >
           <Box sx={{ mb: 3 }}>
-            <Box 
-              sx={{ 
-                width: 40, 
-                height: 40, 
-                border: 3, 
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                border: 3,
                 borderColor: 'primary.main',
                 borderTopColor: 'transparent',
                 borderRadius: '50%',
@@ -536,23 +536,23 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   '0%': { transform: 'rotate(0deg)' },
                   '100%': { transform: 'rotate(360deg)' }
                 }
-              }} 
+              }}
             />
             <Typography variant="h6" color="text.secondary">
               Preparando sua jornada...
             </Typography>
             <Box sx={{ width: '100%', maxWidth: 300, mt: 2, mb: 1 }}>
-              <LinearProgress 
-                variant="determinate" 
-                value={loadingProgress} 
-                sx={{ 
-                  height: 6, 
+              <LinearProgress
+                variant="determinate"
+                value={loadingProgress}
+                sx={{
+                  height: 6,
                   borderRadius: 3,
                   backgroundColor: 'grey.300',
                   '& .MuiLinearProgress-bar': {
                     borderRadius: 3
                   }
-                }} 
+                }}
               />
             </Box>
             <Typography variant="body2" color="text.secondary">
@@ -602,7 +602,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
 
   if (currentStep && currentStep.question && currentStep.options) {
     const step = currentStep;
-    
+
     if (process.env.NODE_ENV === 'development') {
       console.log('✅ Renderizando step:', {
         stepId: step.stepId,
@@ -629,14 +629,14 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           <Fade in={true} timeout={500}>
             <Box sx={{ mb: 4, width: '100%' }}>
               <Box sx={{ mb: 3, textAlign: 'center' }}>
-                <Typography 
-                  variant="h6" 
-                  sx={{ 
+                <Typography
+                  variant="h6"
+                  sx={{
                     mb: 1,
                     color: mode === 'dark' ? 'white' : 'black'
                   }}
                 >
-                  Jornada emocional:
+                  Intenção escolhida:
                 </Typography>
                 <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
                   <Chip
@@ -656,7 +656,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                     }}
                     size="medium"
                   />
-                  <Chip 
+                  <Chip
                     label={intentionLabel}
                     variant="outlined"
                     sx={{
@@ -675,16 +675,23 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   />
                 </Box>
               </Box>
-              
-              <Typography variant="h4" gutterBottom sx={{ 
-                fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
-                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
-              }}>
+
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  fontSize: { xs: '0.95rem', sm: '1.4rem', md: '1.5rem' },
+                  color: { xs: 'text.secondary', sm: 'text.primary' },
+                  lineHeight: { xs: 1.3, sm: 1.3, md: 1.4 },
+                  fontWeight: { xs: 'normal', sm: 'medium' },
+                  mb: { xs: 1, sm: 3 }
+                }}
+              >
                 {step.customQuestion || step.question}
               </Typography>
             </Box>
           </Fade>
-          
+
           {/* Opções */}
           <Fade in={true} timeout={800}>
             <Box sx={{ width: '100%', maxWidth: 800 }}>
@@ -696,7 +703,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                     value={selectedOption}
                     label="Selecione uma opção"
                     onChange={handleDropdownChange}
-                    sx={{ 
+                    sx={{
                       bgcolor: 'background.paper',
                       '& .MuiSelect-select': {
                         py: 2
@@ -716,12 +723,16 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                     <Grid item xs={12} sm={6} key={option.id}>
                       <Paper
                         sx={{
-                          p: { xs: 2, sm: 3 },
+                          p: { xs: 2.5, sm: 3 }, // Padding um pouco maior
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
                           backgroundColor: mode === 'light' ? '#f5f5f5' : undefined,
-                          minHeight: { xs: '120px', sm: 'auto' },
-                          '&:hover': { 
+                          height: '100%', // Força altura igual em todos os cards da linha
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center', // Centraliza conteúdo verticalmente
+                          minHeight: { xs: 'auto', sm: '140px' }, // Altura mínima consistente em desktop
+                          '&:hover': {
                             bgcolor: 'action.hover',
                             transform: { xs: 'none', sm: 'translateY(-2px)' },
                             boxShadow: { xs: 2, sm: 3 }

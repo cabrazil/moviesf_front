@@ -387,7 +387,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               wordBreak: 'break-word',
               overflow: 'hidden'
             }}>
-              Filmes sugeridos para opção: {selectedOptionText}
+              Filmes sugeridos para: {selectedOptionText}
             </Typography>
 
             {hasActiveFilters && (

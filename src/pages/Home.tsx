@@ -176,16 +176,17 @@ const Home: React.FC = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: { xs: 'calc(100vh - 80px)', sm: 'calc(100vh - 100px)' },
+            minHeight: { xs: 'calc(100vh - 60px)', sm: 'calc(100vh - 100px)' }, // Menor altura min em mobile
             textAlign: 'center',
-            pt: { xs: 1, sm: 2, md: 3 },
-            pb: { xs: 2, sm: 2, md: 3 },
+            pt: { xs: 2, sm: 2, md: 3 }, // Padding top um pouco maior para compensar header menor
+            pb: { xs: 4, sm: 2, md: 3 },
           }}
         >
           <Typography variant="h5" component="h2" sx={{
             mb: { xs: 1, sm: 1.5 },
             color: 'text.primary',
-            fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' }
+            fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' },
+            display: { xs: 'none', sm: 'block' } // Ocultar "Bem-vindo" em mobile muito pequeno para focar no logo
           }}>
             Bem-vindo(a) ao
           </Typography>
@@ -195,56 +196,61 @@ const Home: React.FC = () => {
             alt="VibesFilm Logo"
             onError={(e) => {
               console.error('Erro ao carregar logo:', e);
-              // Fallback para texto se a imagem falhar
               const target = e.target as HTMLImageElement;
               target.style.display = 'none';
             }}
             sx={{
-              width: { xs: 240, sm: 250, md: 300 },
+              width: { xs: 220, sm: 250, md: 300 },
               height: 'auto',
-              marginBottom: { xs: 1.5, sm: 2 },
+              marginBottom: { xs: 2, sm: 2 },
+              marginTop: { xs: 2, sm: 0 }, // Espaço extra se ocultar o bem-vindo
               filter: mode === 'dark'
                 ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))'
                 : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
-              maxWidth: '100%',
+              maxWidth: '80%', // Evitar que toque as bordas
               objectFit: 'contain'
             }}
           />
 
           <Typography variant="h2" component="h1" gutterBottom sx={{
-            fontSize: { xs: '1.4rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' },
+            fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' },
             mt: { xs: 1, sm: 1.5 },
-            mb: { xs: 1, sm: 1.5 },
-            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
+            mb: { xs: 1.5, sm: 1.5 },
+            lineHeight: { xs: 1.3, sm: 1.3, md: 1.4 },
+            px: { xs: 2, sm: 0 }
           }}>
             Encontre o filme perfeito para sua vibe!
           </Typography>
 
           <Typography variant="h6" color="text.secondary" paragraph sx={{
             maxWidth: 600,
-            mt: { xs: 1, sm: 1.5 },
-            mb: { xs: 2, sm: 2.5 },
-            fontSize: { xs: '1rem', sm: '1rem' },
-            px: { xs: 1, sm: 0 }
+            mt: { xs: 0.5, sm: 1.5 },
+            mb: { xs: 4, sm: 2.5 },
+            fontSize: { xs: '0.95rem', sm: '1rem' },
+            px: { xs: 2, sm: 0 },
+            lineHeight: 1.5
           }}>
             O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
           </Typography>
 
-          <Box sx={{ mt: { xs: 2, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 } }}>
+          <Box sx={{ mt: { xs: 0, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 }, width: '100%', display: 'flex', justifyContent: 'center' }}>
             <Button
               variant="contained"
               size="large"
               onClick={handleStart}
               sx={{
                 px: { xs: 4, sm: 5 },
-                py: { xs: 1.2, sm: 1.5 },
+                py: { xs: 1.5, sm: 1.5 },
                 fontSize: { xs: '1.1rem', sm: '1.2rem' },
-                borderRadius: 2,
+                borderRadius: 3, // Mais arredondado como no mobile
                 width: { xs: '100%', sm: 'auto' },
-                backgroundColor: '#1976d2', // Azul fixo (Material-UI primary blue)
+                maxWidth: { xs: '320px', sm: 'none' }, // Limitar largura no mobile
+                backgroundColor: '#1976d2',
                 color: '#ffffff',
+                boxShadow: 3,
                 '&:hover': {
-                  backgroundColor: '#1565c0', // Azul mais escuro no hover
+                  backgroundColor: '#1565c0',
+                  boxShadow: 6,
                 }
               }}
             >

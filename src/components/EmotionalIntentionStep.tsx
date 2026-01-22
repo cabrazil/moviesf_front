@@ -24,7 +24,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
 
   // Cache para intenções emocionais
   const [intentionsCache, setIntentionsCache] = useState<Map<number, EmotionalIntention[]>>(new Map());
-  
+
   // Flag para evitar requisições duplicadas
   const [isLoadingIntentions, setIsLoadingIntentions] = useState(false);
 
@@ -35,11 +35,11 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
         console.log('⏳ Intenções já estão sendo carregadas, ignorando requisição duplicada');
         return;
       }
-      
+
       try {
         // Verificar cache primeiro
         console.log('🔍 Verificando cache de intenções para sentimento ID:', selectedSentiment.id);
-        
+
         if (intentionsCache.has(selectedSentiment.id)) {
           console.log('✅ Intenções encontradas no cache, carregando...');
           const cachedIntentions = intentionsCache.get(selectedSentiment.id)!;
@@ -48,16 +48,16 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           console.log('✅ Intenções carregadas do cache com sucesso');
           return;
         }
-        
+
         console.log('🔄 Cache não encontrado, carregando da API...');
         setIsLoadingIntentions(true);
         const data = await getEmotionalIntentions(selectedSentiment.id);
-        
+
         // Validar dados recebidos
         if (!data || !data.intentions || !Array.isArray(data.intentions)) {
           throw new Error('Dados de intenções inválidos recebidos da API');
         }
-        
+
         // Salvar no cache
         setIntentionsCache(prev => {
           const newCache = new Map(prev);
@@ -65,7 +65,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           console.log('💾 Intenções salvas no cache para sentimento ID:', selectedSentiment.id);
           return newCache;
         });
-        
+
         setIntentions(data.intentions);
         setLoading(false);
         setIsLoadingIntentions(false);
@@ -91,7 +91,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
     return labels[type as keyof typeof labels] || type;
   };
 
-  
+
 
 
 
@@ -111,7 +111,7 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
     setError(null);
     setLoading(true);
     setIsLoadingIntentions(false); // Reset da flag para permitir nova requisição
-    
+
     // Limpar cache para forçar nova requisição
     setIntentionsCache(prev => {
       const newCache = new Map(prev);
@@ -158,13 +158,13 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           py: 4
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{ 
+        <Typography variant="h4" gutterBottom sx={{
           fontSize: { xs: '1.2rem', sm: '1.4rem', md: '1.5rem' },
           lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 }
         }}>
           O que você gostaria de fazer com esse sentimento?
         </Typography>
-        
+
         <Box sx={{ mb: 3, textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
           <Chip
             label={selectedSentiment.name}
@@ -185,8 +185,11 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
           />
         </Box>
 
-        <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-          Escolha sua intenção emocional:
+        <Typography variant="h6" color="text.secondary" sx={{
+          mb: { xs: 2, sm: 3 },
+          fontSize: { xs: '0.9rem', sm: '1rem' }
+        }}>
+          Escolha sua intenção:
         </Typography>
 
         <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ maxWidth: '1000px', px: { xs: 1, sm: 0 } }}>
@@ -202,51 +205,69 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
               return indexA - indexB;
             })
             .map((intention) => (
-            <Grid item xs={12} sm={6} key={intention.id}>
-              <Paper
-                sx={{
-                  p: { xs: 2, sm: 3 },
-                  cursor: 'pointer',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'all 0.3s ease',
-                  minHeight: { xs: '140px', sm: 'auto' },
-                  '&:hover': { 
-                    bgcolor: 'action.hover',
-                    transform: { xs: 'none', sm: 'translateY(-2px)' },
-                    boxShadow: { xs: 2, sm: 3 }
-                  },
-                  '&:active': {
-                    transform: { xs: 'scale(0.98)', sm: 'translateY(-2px)' },
-                  }
-                }}
-                onClick={() => onIntentionSelect(intention)}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: { xs: 1, sm: 2 } }}>
-                  <Box sx={{ mr: { xs: 1, sm: 2 } }}>
-                    <IntentionIcon intentionType={intention.type} size={32} />
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ 
-                      fontWeight: 'bold',
-                      fontSize: { xs: '1rem', sm: '1.25rem' }
+              <Grid item xs={6} sm={6} key={intention.id}>
+                <Paper
+                  sx={{
+                    p: { xs: 1.5, sm: 3 },
+                    cursor: 'pointer',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: { xs: 'center', sm: 'flex-start' }, // Centralizar no mobile
+                    textAlign: { xs: 'center', sm: 'left' },
+                    justifyContent: { xs: 'center', sm: 'flex-start' },
+                    transition: 'all 0.3s ease',
+                    minHeight: { xs: '140px', sm: 'auto' },
+                    '&:hover': {
+                      bgcolor: 'action.hover',
+                      transform: { xs: 'none', sm: 'translateY(-2px)' },
+                      boxShadow: { xs: 2, sm: 3 }
+                    },
+                    '&:active': {
+                      transform: { xs: 'scale(0.98)', sm: 'translateY(-2px)' },
+                    }
+                  }}
+                  onClick={() => onIntentionSelect(intention)}
+                >
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: 'center',
+                    mb: { xs: 1, sm: 2 },
+                    width: '100%'
+                  }}>
+                    <Box sx={{
+                      mr: { xs: 0, sm: 2 },
+                      mb: { xs: 1, sm: 0 },
+                      display: 'flex',
+                      justifyContent: 'center'
                     }}>
-                      {getIntentionLabel(intention.type)}
-                    </Typography>
+                      <IntentionIcon intentionType={intention.type} size={32} />
+                    </Box>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography variant="h6" sx={{
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.95rem', sm: '1.25rem' }
+                      }}>
+                        {getIntentionLabel(intention.type)}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-                
-                <Typography variant="body1" sx={{ 
-                  mb: { xs: 1, sm: 2 }, 
-                  flexGrow: 1,
-                  fontSize: { xs: '0.9rem', sm: '1rem' },
-                  lineHeight: { xs: 1.3, sm: 1.4 }
-                }}>
-                  {intention.description}
-                </Typography>
-                
-                {/* {intention.preferredGenres.length > 0 && (
+
+                  <Typography variant="body1" sx={{
+                    mb: { xs: 0, sm: 2 },
+                    flexGrow: 1,
+                    fontSize: { xs: '0.8rem', sm: '1rem' },
+                    lineHeight: { xs: 1.2, sm: 1.4 },
+                    display: { xs: '-webkit-box', sm: 'block' },
+                    overflow: 'hidden',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: { xs: 4, sm: 'none' } // Limitar linhas no mobile
+                  }}>
+                    {intention.description}
+                  </Typography>
+
+                  {/* {intention.preferredGenres.length > 0 && (
                   <Box sx={{ mt: 'auto' }}>
                     <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
                       Gêneros preferidos:
@@ -272,9 +293,9 @@ const EmotionalIntentionStep: React.FC<EmotionalIntentionStepProps> = ({
                     </Box>
                   </Box>
                 )} */}
-              </Paper>
-            </Grid>
-          ))}
+                </Paper>
+              </Grid>
+            ))}
         </Grid>
 
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>

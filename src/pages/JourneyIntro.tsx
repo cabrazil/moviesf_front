@@ -28,23 +28,23 @@ const JourneyIntro: React.FC = () => {
         console.log('🔄 JourneyIntro - Iniciando carregamento de sentimentos...');
         const data = await getMainSentiments();
         console.log('✅ JourneyIntro - Sentimentos carregados:', data.length, 'sentimentos');
-        
+
         const sortedSentiments = data.sort((a, b) => a.id - b.id);
         setSentiments(sortedSentiments);
-        
+
         // Verificar se está restaurando uma jornada
         const restoreState = location.state;
         console.log('🔍 JourneyIntro - Verificando state:', restoreState);
-        
+
         // Validação robusta antes da restauração
-        const isValidRestoreState = restoreState?.restoreJourney && 
-          restoreState.selectedSentiment && 
+        const isValidRestoreState = restoreState?.restoreJourney &&
+          restoreState.selectedSentiment &&
           restoreState.selectedSentiment.id &&
           restoreState.selectedIntention &&
           restoreState.selectedIntention.id &&
           typeof restoreState.selectedSentiment.id === 'number' &&
           typeof restoreState.selectedIntention.id === 'number';
-        
+
         if (isValidRestoreState) {
           console.log('🔄 Restaurando jornada com validação completa...', {
             sentimentId: restoreState.selectedSentiment.id,
@@ -52,22 +52,22 @@ const JourneyIntro: React.FC = () => {
             sentimentName: restoreState.selectedSentiment.name,
             intentionType: restoreState.selectedIntention.type
           });
-          
+
           // Configurar tema do sentimento
           console.log('🎨 Configurando tema para sentimento ID:', restoreState.selectedSentiment.id);
           selectSentimentTheme(restoreState.selectedSentiment.id);
-          
+
           // Restaurar estados
           setSelectedSentiment(restoreState.selectedSentiment);
           if (restoreState.selectedIntention) {
             setSelectedIntention(restoreState.selectedIntention);
           }
-          
+
           // Determinar tipo de jornada e ir para o step correto
           if (restoreState.journeyType === 'personalized' && restoreState.selectedIntention) {
             setCurrentStep('journey');
           }
-          
+
           // Limpar o state para não restaurar novamente
           // navigate('/intro', { replace: true }); // REMOVIDO - estava causando perda de contexto
         } else if (restoreState?.restoreJourney) {
@@ -115,14 +115,14 @@ const JourneyIntro: React.FC = () => {
     console.log('🔄 handleBackToSentiment - Resetando para seleção de sentimento');
     setSelectedSentiment(null);
     setSelectedIntention(null);
-    
+
     setCurrentStep('sentiment');
     resetToDefaultTheme();
   };
 
   const handleBackToIntention = () => {
     setSelectedIntention(null);
-    
+
     setCurrentStep('intention');
   };
 
@@ -130,7 +130,7 @@ const JourneyIntro: React.FC = () => {
     console.log('🔄 handleRestart - Reiniciando jornada completamente');
     setSelectedSentiment(null);
     setSelectedIntention(null);
-    
+
     setCurrentStep('sentiment');
     resetToDefaultTheme();
   };
@@ -139,17 +139,17 @@ const JourneyIntro: React.FC = () => {
     return (
       <Container maxWidth="lg">
         <Box sx={{ py: 2, textAlign: 'center' }}>
-          <Skeleton 
-            variant="text" 
-            width="60%" 
-            height={60} 
-            sx={{ mx: 'auto', mb: 2 }} 
+          <Skeleton
+            variant="text"
+            width="60%"
+            height={60}
+            sx={{ mx: 'auto', mb: 2 }}
           />
-          <Skeleton 
-            variant="text" 
-            width="80%" 
-            height={32} 
-            sx={{ mx: 'auto' }} 
+          <Skeleton
+            variant="text"
+            width="80%"
+            height={32}
+            sx={{ mx: 'auto' }}
           />
         </Box>
         <Grid container spacing={3} sx={{ mt: 2 }}>
@@ -180,35 +180,46 @@ const JourneyIntro: React.FC = () => {
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Fade in={true} timeout={600}>
           <Box sx={{ py: 2, textAlign: 'center' }}>
-            <Typography variant="h2" gutterBottom sx={{ 
-            fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
-            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
-            fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
-          }}>
-            Como você está se sentindo hoje?
-          </Typography>
+            <Typography variant="h2" gutterBottom sx={{
+              fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
+              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+              fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
+            }}>
+
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                Como você está?
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                Como você está se sentindo hoje?
+              </Box>
+            </Typography>
             <Typography variant="h6" color="text.secondary" sx={{
               fontSize: { xs: '0.9rem', sm: '1rem' },
               px: { xs: 1, sm: 0 },
-              mb: 4
+              mb: { xs: 2, sm: 4 } // Menos margem no mobile
             }}>
-              Escolha o sentimento que melhor descreve seu estado emocional.
+              Defina seu sentimento nesse momento.
             </Typography>
           </Box>
         </Fade>
         {sentiments.length > 0 ? (
           <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mt: 4, px: { xs: 1, sm: 0 } }}>
             {sentiments.map((sentiment, index) => (
-              <Grid item xs={12} sm={6} md={4} key={sentiment.id}>
+              <Grid item xs={6} sm={6} md={4} key={sentiment.id}>
                 <Fade in={true} timeout={800 + (index * 100)}>
                   <Paper
                     onClick={() => handleSentimentSelect(sentiment)}
                     sx={{
-                      p: { xs: 2, sm: 3 },
+                      p: { xs: 2.0, sm: 3 },
                       cursor: 'pointer',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       border: `2px solid ${currentSentimentColors[sentiment.id as keyof typeof currentSentimentColors]}`,
-                      minHeight: { xs: '120px', sm: 'auto' },
+                      minHeight: { xs: '150px', sm: '160px' }, // Altura fixa para alinhar
+                      display: 'flex',
+                      flexDirection: { xs: 'column', sm: 'column' }, // Sempre coluna para consistência visual mobile-like
+                      alignItems: { xs: 'center', sm: 'flex-start' }, // Centralizado no mobile
+                      justifyContent: { xs: 'center', sm: 'flex-start' },
+                      textAlign: { xs: 'center', sm: 'left' },
                       '&:hover': {
                         transform: { xs: 'none', sm: 'translateY(-4px)' },
                         boxShadow: { xs: 2, sm: 6 },
@@ -218,18 +229,30 @@ const JourneyIntro: React.FC = () => {
                       }
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                      <SentimentIcon sentimentId={sentiment.id} size={24} />
-                      <Typography variant="h6" component="h2" sx={{ 
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: { xs: 'column', sm: 'row' },
+                      alignItems: 'center',
+                      gap: 1,
+                      mb: 1,
+                      width: '100%'
+                    }}>
+                      <SentimentIcon sentimentId={sentiment.id} size={32} />
+                      <Typography variant="h6" component="h2" sx={{
                         fontWeight: 'bold',
-                        fontSize: { xs: '1rem', sm: '1.25rem' }
+                        fontSize: { xs: '1rem', sm: '1.25rem' },
+                        mt: { xs: 1, sm: 0 }
                       }}>
                         {sentiment.name}
                       </Typography>
                     </Box>
                     <Typography variant="body2" color="text.secondary" sx={{
-                      fontSize: { xs: '0.85rem', sm: '0.875rem' },
-                      lineHeight: { xs: 1.3, sm: 1.4 }
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                      lineHeight: { xs: 1.3, sm: 1.4 },
+                      display: { xs: '-webkit-box', sm: 'block' },
+                      overflow: 'hidden',
+                      WebkitBoxOrient: 'vertical',
+                      WebkitLineClamp: { xs: 4, sm: 'none' } // Limitar linhas no mobile
                     }}>
                       {sentiment.shortDescription}
                     </Typography>
@@ -252,7 +275,7 @@ const JourneyIntro: React.FC = () => {
             </Button>
           </Box>
         )}
-        
+
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
           <Button
             variant="outlined"
