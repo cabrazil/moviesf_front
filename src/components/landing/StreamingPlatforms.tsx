@@ -53,7 +53,7 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
     if (logoUrl) {
       return logoUrl;
     }
-    
+
     // Mapeamento de nomes para arquivos de logo
     const logoMap: { [key: string]: string } = {
       'Netflix': '/platforms/netflix.avif',
@@ -66,9 +66,9 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
       'Looke': '/platforms/looke.avif',
       'Claro Video': '/platforms/clarovideo.avif',
       'iTunes': '/platforms/itunes.avif',
-      'Google Play': '/platforms/play.avif',
       'Microsoft Store': '/platforms/microsoft-store.jpg',
-      'YouTube Premium': '/platforms/youtubepremium.jpg',
+      'YouTube': '/platforms/logo-youtube.png',
+      'YouTube Premium': '/platforms/youtubepremium.jpg', // Mantendo para compatibilidade legada temporária
       'Oldflix': '/platforms/oldflix.avif',
       'Reserva Imovision': '/platforms/reservaimovision.avif',
       'Amazon MGM+': '/platforms/amazonmgmplus.avif',
@@ -151,10 +151,10 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
       {/* Plataformas de Assinatura */}
       {subscriptionPlatforms.length > 0 && (
         <Box sx={{ mb: 4 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              mb: 2, 
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
               color: 'primary.main',
               fontWeight: 600,
               display: 'flex',
@@ -164,16 +164,16 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
           >
             Incluído na Assinatura
           </Typography>
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
+          <Typography
+            variant="body2"
+            color="text.secondary"
             sx={{ mb: 3 }}
           >
             Assista gratuitamente com sua assinatura atual
           </Typography>
-          <Stack 
-            direction={{ xs: 'column', sm: 'row' }} 
-            spacing={2} 
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
             sx={{ flexWrap: 'wrap' }}
           >
             {subscriptionPlatforms.map((platform) => (
@@ -186,10 +186,10 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
       {/* Plataformas de Aluguel/Compra */}
       {rentalPurchasePlatforms.length > 0 && (
         <Box sx={{ mb: 4 }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              mb: 2, 
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
               color: 'warning.main',
               fontWeight: 600,
               display: 'flex',
@@ -199,16 +199,16 @@ export const StreamingPlatforms: React.FC<StreamingPlatformsProps> = ({
           >
             Aluguel ou Compra
           </Typography>
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
+          <Typography
+            variant="body2"
+            color="text.secondary"
             sx={{ mb: 3 }}
           >
             Disponível para aluguel ou compra digital
           </Typography>
-          <Stack 
-            direction={{ xs: 'column', sm: 'row' }} 
-            spacing={2} 
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={2}
             sx={{ flexWrap: 'wrap' }}
           >
             {rentalPurchasePlatforms.map((platform) => (

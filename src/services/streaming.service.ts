@@ -24,31 +24,30 @@ export const getStreamingPlatforms = async (): Promise<StreamingPlatform[]> => {
 
 export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize = TMDB_CONFIG.IMAGE_SIZE as TMDBImageSize, platformName?: string): string => {
   if (!logoPath) {
-    throw new Error('Logo path não pode ser null ou vazio');
+    // Retornar fallback local se o nome da plataforma for fornecido (ex: Youtube)
+    if (platformName && platformName.toLowerCase().includes('youtube')) {
+      return '/platforms/youtube.png';
+    }
+    return '';
   }
-  
-  // Fallback: Se for YouTube, sempre usar logo local
-  if (platformName && platformName.toLowerCase().includes('youtube')) {
-    return '/platforms/youtube.png';
-  }
-  
-  // Se já é uma URL completa, retorna como está
-  if (logoPath.startsWith('http')) {
+
+  // 1. Prioridade: URL Completa (Supabase, External, etc)
+  if (logoPath.startsWith('http') || logoPath.startsWith('https://')) {
     return logoPath;
   }
-  
-  // Se é um path relativo do TMDB (contém extensão de imagem e não é um path local)
-  if (logoPath.startsWith('/') && (logoPath.includes('.jpg') || logoPath.includes('.png') || logoPath.includes('.jpeg'))) {
-    // Verificar se é um path local (como /platforms/...)
-    if (logoPath.startsWith('/platforms/')) {
-      // Para paths locais, retornar como está (será resolvido pelo servidor)
-      return logoPath;
-    }
-    // Se é um path do TMDB, constrói a URL completa
+
+  // 2. Fallback: Path Local (Legado ou estático)
+  if (logoPath.startsWith('/platforms/')) {
+    return logoPath;
+  }
+
+  // 3. Fallback: TMDB Path (Legado)
+  // Apenas se parecer um path de imagem relativo e não for local
+  if (logoPath.startsWith('/') && /\.(jpg|png|jpeg|svg)$/i.test(logoPath)) {
     return `${TMDB_CONFIG.IMAGE_BASE_URL}/${size}${logoPath}`;
   }
-  
-  // Se é um path local, retorna como está
+
+  // Retorna como está se não casar com nada (pode ser dataURI ou relativo simples)
   return logoPath;
 };
 

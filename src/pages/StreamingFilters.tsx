@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getStreamingPlatforms, getPlatformLogoUrlMedium } from '../services/streaming.service';
+import { getStreamingPlatforms, getPlatformLogoUrl } from '../services/streaming.service';
 
 interface StreamingFiltersProps { }
 
@@ -59,34 +59,15 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
         // Mapear plataformas principais com logos
         const mainPlatforms = priorityPlatforms.map(platform => {
-          let logo = '';
-          try {
-            if (platform.logoPath) {
-              logo = getPlatformLogoUrlMedium(platform.logoPath, platform.name);
-            } else {
-              // Fallback para logo local
-              logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-            }
-          } catch (error) {
-            console.error(`Erro ao processar logo de ${platform.name}:`, error);
-            logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-          }
+          const logo = getPlatformLogoUrl(platform.logoPath, undefined, platform.name) ||
+            `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
           return { name: platform.name, logo, id: platform.id };
         });
 
         // Mapear plataformas secundárias com logos
         const otherPlatforms = secondaryPlatforms.map(platform => {
-          let logo = '';
-          try {
-            if (platform.logoPath) {
-              logo = getPlatformLogoUrlMedium(platform.logoPath, platform.name);
-            } else {
-              logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-            }
-          } catch (error) {
-            console.error(`Erro ao processar logo de ${platform.name}:`, error);
-            logo = `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-          }
+          const logo = getPlatformLogoUrl(platform.logoPath, undefined, platform.name) ||
+            `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
           return { name: platform.name, logo, id: platform.id };
         });
 
