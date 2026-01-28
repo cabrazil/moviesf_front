@@ -785,9 +785,9 @@ const MovieDetailsPage: React.FC = () => {
                   textAlign: { xs: 'center', md: 'left' },
                   fontSize: { xs: '1rem', md: '1.1rem' },
                   fontWeight: 600
-                }}>Tags Emocionais Chave:</Typography>
+                }}>Este filme ressoa com quem busca:</Typography>
                 <Stack direction="row" spacing={{ xs: 1, md: 0.5 }} sx={{
-                  flexWrap: 'wrap',
+                  flexWrap: { xs: 'wrap', md: 'nowrap' },
                   justifyContent: { xs: 'center', md: 'flex-start' },
                   maxWidth: 700,
                   gap: { xs: '8px', md: '4px' }

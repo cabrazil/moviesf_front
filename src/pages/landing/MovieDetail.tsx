@@ -819,6 +819,67 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                   })()}
                 </Paper>
 
+                {/* Tags Emocionais Chave - Portada de MovieDetailsPage */}
+                {movie.emotionalTags && movie.emotionalTags.length > 0 && (
+                  <Box sx={{ mb: 2, width: '100%' }}>
+                    <Typography variant="h3" component="h3" sx={{
+                      mb: 1,
+                      color: '#1976d2',
+                      textAlign: { xs: 'center', md: 'left' },
+                      fontSize: { xs: '1rem', md: '1.1rem' },
+                      fontWeight: 600
+                    }}>Este filme ressoa com quem busca:</Typography>
+                    <Box sx={{
+                      display: 'flex',
+                      flexWrap: { xs: 'wrap', md: 'nowrap' },
+                      justifyContent: { xs: 'center', md: 'flex-start' },
+                      gap: { xs: 1, md: 0.5 },
+                      maxWidth: 700
+                    }}>
+                      {movie.emotionalTags
+                        // Remover duplicatas baseado no subSentiment (manter a primeira ocorrência com maior relevância)
+                        .reduce((acc: any[], tag: any) => {
+                          const existing = acc.find((t: any) => t.subSentiment === tag.subSentiment);
+                          if (!existing) {
+                            acc.push(tag);
+                          } else if (tag.relevance > existing.relevance) {
+                            // Se encontrar duplicata com maior relevância, substituir
+                            const index = acc.indexOf(existing);
+                            acc[index] = tag;
+                          }
+                          return acc;
+                        }, [])
+                        .sort((a: any, b: any) => b.relevance - a.relevance) // Ordenar por relevância (maior para menor)
+                        .slice(0, 4) // Pegar apenas as 4 mais relevantes
+                        .map((tag: any, index: number) => (
+                          <Chip
+                            key={index}
+                            label={tag.subSentiment}
+                            size="small"
+                            sx={{
+                              fontSize: '0.8rem',
+                              height: 24,
+                              bgcolor: 'transparent',
+                              color: 'text.primary',
+                              border: '1px solid',
+                              borderColor: 'text.primary',
+                              opacity: 0.8,
+                              '&:hover': {
+                                bgcolor: 'rgba(255, 255, 255, 0.08)',
+                                opacity: 1
+                              },
+                              padding: '0 4px',
+                              '& .MuiChip-label': {
+                                paddingLeft: '8px',
+                                paddingRight: '8px',
+                              }
+                            }}
+                          />
+                        ))}
+                    </Box>
+                  </Box>
+                )}
+
                 {/* Selo de Curadoria - Artigos Pilares */}
                 {movie.pillarArticles && movie.pillarArticles.length > 0 && (
                   <PillarArticleBadge
