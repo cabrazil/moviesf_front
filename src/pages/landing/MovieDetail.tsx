@@ -810,7 +810,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     if (topSuggestion?.reason) {
                       return (
                         <>
-                          <strong style={{ color: '#1976d2' }}>A Reflexão:</strong> Este filme pode ser perfeito para quem busca {topSuggestion.reason}
+                          <strong style={{ color: '#1976d2', fontSize: '1.0rem' }}>O Convite:</strong> "{topSuggestion.reason}"
                         </>
                       );
                     }

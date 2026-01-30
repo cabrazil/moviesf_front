@@ -697,7 +697,7 @@ const MovieDetailsPage: React.FC = () => {
             </Box>
 
             {/* 2. Para Quem Recomendamos? */}
-            <Box sx={{ mb: 2, width: '100%' }}>
+            {/* <Box sx={{ mb: 2, width: '100%' }}>
               <Typography variant="subtitle1" sx={{
                 mb: 1,
                 color: '#1976d2',
@@ -721,7 +721,7 @@ const MovieDetailsPage: React.FC = () => {
                   "Este filme pode ser perfeito para quem busca uma experiência cinematográfica única e envolvente."
                 }
               </Paper>
-            </Box>
+            </Box> */}
 
             {/* 3. Por que recomendamos para você? (só aparece se veio de uma jornada) */}
             {personalizedContent.hasPersonalizedContent ? (
