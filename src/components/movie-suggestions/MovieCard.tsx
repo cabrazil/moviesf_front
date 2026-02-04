@@ -239,7 +239,8 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               fontSize: '0.75rem',
-              flex: 1
+              flex: 1,
+              fontWeight: 500
             }}
           >
             {reason}

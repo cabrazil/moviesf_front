@@ -225,17 +225,21 @@ const MovieDetailsPage: React.FC = () => {
         }}>
           {/* Título - H1 */}
           <Box sx={{
+            mb: 1,
             display: 'flex',
+            flexDirection: 'row',
             alignItems: 'center',
             gap: 1,
-            mb: 1,
-            justifyContent: { xs: 'center', md: 'flex-start' }
+            justifyContent: { xs: 'center', md: 'flex-start' },
+            flexWrap: 'wrap',
+            width: '100%'
           }}>
             <Typography variant="h4" sx={{
               color: 'text.primary',
               fontWeight: 600,
               fontSize: { xs: '1.4rem', md: '1.6rem' },
-              lineHeight: 1.2
+              lineHeight: 1.2,
+              textAlign: { xs: 'center', md: 'left' }
             }}>{movie.title}</Typography>
             {movie.year && (
               <Chip
@@ -245,7 +249,8 @@ const MovieDetailsPage: React.FC = () => {
                   bgcolor: themeColor,
                   color: '#fff',
                   fontSize: '0.85rem',
-                  height: 24
+                  height: 24,
+                  flexShrink: 0
                 }}
               />
             )}

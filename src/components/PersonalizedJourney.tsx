@@ -628,51 +628,72 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
           {/* Cabeçalho com contexto */}
           <Fade in={true} timeout={500}>
             <Box sx={{ mb: 4, width: '100%' }}>
-              <Box sx={{ mb: 3, textAlign: 'center' }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    mb: 1,
-                    color: mode === 'dark' ? 'white' : 'black'
-                  }}
-                >
-                  Intenção escolhida:
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
-                  <Chip
-                    label={selectedSentiment.name}
-                    variant="outlined"
+              <Box sx={{
+                mb: 3,
+                textAlign: { xs: 'left', sm: 'center' },
+                px: { xs: 2, sm: 0 }
+              }}>
+                {/* Layout inline para mobile, stacked para desktop */}
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'row', sm: 'column' },
+                  alignItems: { xs: 'center', sm: 'center' },
+                  gap: { xs: 1.5, sm: 0 },
+                  flexWrap: { xs: 'wrap', sm: 'nowrap' }
+                }}>
+                  <Typography
+                    variant="h6"
                     sx={{
-                      borderColor: sentimentColor,
-                      color: sentimentColor,
-                      fontWeight: 'bold',
-                      fontSize: '1rem',
-                      height: '40px',
-                      borderRadius: '20px',
-                      borderWidth: '2px',
-                      '& .MuiChip-label': {
-                        px: 2
-                      }
+                      mb: { xs: 0, sm: 1 },
+                      color: mode === 'dark' ? 'white' : 'black',
+                      fontSize: { xs: '0.9rem', sm: '1.25rem' },
+                      fontWeight: { xs: 'normal', sm: 'medium' },
+                      whiteSpace: { xs: 'nowrap', sm: 'normal' }
                     }}
-                    size="medium"
-                  />
-                  <Chip
-                    label={intentionLabel}
-                    variant="outlined"
-                    sx={{
-                      borderColor: sentimentColor,
-                      color: sentimentColor,
-                      fontWeight: 'bold',
-                      fontSize: '1rem',
-                      height: '40px',
-                      borderRadius: '20px',
-                      borderWidth: '2px',
-                      '& .MuiChip-label': {
-                        px: 2
-                      }
-                    }}
-                    size="medium"
-                  />
+                  >
+                    Intenção:
+                  </Typography>
+                  <Box sx={{
+                    display: 'flex',
+                    justifyContent: { xs: 'flex-start', sm: 'center' },
+                    gap: { xs: 1, sm: 2 },
+                    flexWrap: 'wrap'
+                  }}>
+                    <Chip
+                      label={selectedSentiment.name}
+                      variant="outlined"
+                      sx={{
+                        borderColor: sentimentColor,
+                        color: sentimentColor,
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.85rem', sm: '1rem' },
+                        height: { xs: '32px', sm: '40px' },
+                        borderRadius: '20px',
+                        borderWidth: '2px',
+                        '& .MuiChip-label': {
+                          px: { xs: 1.5, sm: 2 }
+                        }
+                      }}
+                      size="medium"
+                    />
+                    <Chip
+                      label={intentionLabel}
+                      variant="outlined"
+                      sx={{
+                        borderColor: sentimentColor,
+                        color: sentimentColor,
+                        fontWeight: 'bold',
+                        fontSize: { xs: '0.85rem', sm: '1rem' },
+                        height: { xs: '32px', sm: '40px' },
+                        borderRadius: '20px',
+                        borderWidth: '2px',
+                        '& .MuiChip-label': {
+                          px: { xs: 1.5, sm: 2 }
+                        }
+                      }}
+                      size="medium"
+                    />
+                  </Box>
                 </Box>
               </Box>
 
