@@ -21,7 +21,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
   const journeyContext = location.state?.journeyContext;
   const streamingFilters = location.state?.streamingFilters;
   const [currentPage, setCurrentPage] = useState(0);
-  const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('relevance');
+  const [sortType, setSortType] = useState<'smart' | 'rating' | 'year' | 'relevance'>('year');
+  const [mobileDisplayLimit, setMobileDisplayLimit] = useState(12);
 
   const { mode } = useThemeManager();
   const currentSentimentColors = useMemo(() =>
@@ -46,10 +47,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Reset da página quando os filtros ou ordenação mudarem (apenas se não for mobile)
+  // Reset da página quando os filtros ou ordenação mudarem
   useEffect(() => {
     if (!isMobile) {
       setCurrentPage(0);
+    } else {
+      setMobileDisplayLimit(12);
     }
   }, [sortType, isMobile]);
 
@@ -157,8 +160,8 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     return result;
   }, [movieSuggestions, streamingFilters, isMobile]);
 
-  // Ordenar e paginar sugestões (memoizado)
-  const { totalPages, displaySuggestions } = useMemo(() => {
+  // 1. Ordenar e preparar sugestões (incluindo Rotação e Shuffle de Elite)
+  const sortedSuggestions = useMemo(() => {
     const sorted = [...filteredSuggestions].sort((a, b) => {
       switch (sortType) {
         case 'smart':
@@ -211,26 +214,52 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       const rotatedTop = [...topMovies.slice(offset), ...topMovies.slice(0, offset)];
       finalSorted = [...rotatedTop, ...remaining];
 
-      console.log(`🔄 Rotação ativa (dia ${dayOfYear}, índice ${rotationIndex}): Top 16 rotacionado em ${offset} posições`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔄 Rotação ativa (dia ${dayOfYear}, índice ${rotationIndex}): Top 16 rotacionado em ${offset} posições`);
+      }
     }
 
+    // Shuffle de Elite (Top-K) para Mobile + Relevance
+    if (isMobile && (sortType === 'relevance' || sortType === 'smart') && finalSorted.length > 0) {
+      const SHUFFLE_SIZE = 12; // Embaralhar os top 12
+      const topBatch = finalSorted.slice(0, SHUFFLE_SIZE);
+      const rest = finalSorted.slice(SHUFFLE_SIZE);
+
+      // Fisher-Yates Shuffle para o top batch
+      for (let i = topBatch.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [topBatch[i], topBatch[j]] = [topBatch[j], topBatch[i]];
+      }
+
+      finalSorted = [...topBatch, ...rest];
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔀 Shuffle de Elite aplicado aos top 12 filmes');
+      }
+    }
+
+    return finalSorted;
+  }, [filteredSuggestions, isMobile, sortType]);
+
+  // 2. Paginar sugestões para exibição
+  const { totalPages, displaySuggestions } = useMemo(() => {
     if (isMobile) {
       return {
         totalPages: 1,
-        displaySuggestions: finalSorted
+        displaySuggestions: sortedSuggestions.slice(0, mobileDisplayLimit)
       };
     }
 
-    const total = Math.ceil(finalSorted.length / MOVIES_PER_PAGE);
+    const total = Math.ceil(sortedSuggestions.length / MOVIES_PER_PAGE);
     const start = currentPage * MOVIES_PER_PAGE;
     const end = start + MOVIES_PER_PAGE;
-    const display = finalSorted.slice(start, end);
+    const display = sortedSuggestions.slice(start, end);
 
     return {
       totalPages: total,
       displaySuggestions: display
     };
-  }, [filteredSuggestions, currentPage, isMobile, sortType]);
+  }, [sortedSuggestions, isMobile, mobileDisplayLimit, currentPage]);
 
   // Callbacks memoizados
   const handleRestart = useCallback(() => {
@@ -516,6 +545,18 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
             </Grid>
           ))}
         </Grid>
+
+        {isMobile && displaySuggestions.length < filteredSuggestions.length && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Button
+              variant="outlined"
+              onClick={() => setMobileDisplayLimit(prev => prev + 12)}
+              sx={{ px: 3, py: 1 }}
+            >
+              Ver mais
+            </Button>
+          </Box>
+        )}
 
         {/* Footer com Paginação e Navegação */}
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 3 }}>
