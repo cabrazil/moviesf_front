@@ -222,19 +222,35 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     // Shuffle de Elite (Top-K) para Mobile + Relevance
     if (isMobile && (sortType === 'relevance' || sortType === 'smart') && finalSorted.length > 0) {
       const SHUFFLE_SIZE = 12; // Embaralhar os top 12
+      const MIN_RELEVANCE_SCORE = 6.5; // Nota de corte para o Shuffle de Elite
+
       const topBatch = finalSorted.slice(0, SHUFFLE_SIZE);
       const rest = finalSorted.slice(SHUFFLE_SIZE);
 
-      // Fisher-Yates Shuffle para o top batch
-      for (let i = topBatch.length - 1; i > 0; i--) {
+      // Filtrar apenas filmes com score >= MIN_RELEVANCE_SCORE para o shuffle
+      const elitePool: MovieSuggestionFlow[] = [];
+      const nonEliteTop: MovieSuggestionFlow[] = [];
+
+      topBatch.forEach(suggestion => {
+        const score = (suggestion as any).relevanceScore ? Number((suggestion as any).relevanceScore) : 0;
+        if (score >= MIN_RELEVANCE_SCORE) {
+          elitePool.push(suggestion);
+        } else {
+          nonEliteTop.push(suggestion);
+        }
+      });
+
+      // Fisher-Yates Shuffle para o elitePool
+      for (let i = elitePool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [topBatch[i], topBatch[j]] = [topBatch[j], topBatch[i]];
+        [elitePool[i], elitePool[j]] = [elitePool[j], elitePool[i]];
       }
 
-      finalSorted = [...topBatch, ...rest];
+      // Reconstruir lista: Elite Shuffled + Non-Elite Top (em ordem original) + Resto
+      finalSorted = [...elitePool, ...nonEliteTop, ...rest];
 
       if (process.env.NODE_ENV === 'development') {
-        console.log('🔀 Shuffle de Elite aplicado aos top 12 filmes');
+        console.log(`🔀 Shuffle de Elite aplicado: ${elitePool.length} filmes embaralhados (Score >= ${MIN_RELEVANCE_SCORE})`);
       }
     }
 
@@ -546,17 +562,28 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           ))}
         </Grid>
 
-        {isMobile && displaySuggestions.length < filteredSuggestions.length && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={() => setMobileDisplayLimit(prev => prev + 12)}
-              sx={{ px: 3, py: 1 }}
-            >
-              Ver mais
-            </Button>
-          </Box>
-        )}
+        {isMobile &&
+          (sortType === 'relevance' || sortType === 'smart') && (
+            <Box sx={{ mt: 3, mb: 2, px: 2, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', fontSize: '0.85rem' }}>
+                Top 12 selecionados. Para ver todos, ordene por Ano ou Rating.
+              </Typography>
+            </Box>
+          )}
+
+        {isMobile &&
+          (sortType !== 'relevance' && sortType !== 'smart') &&
+          displaySuggestions.length < filteredSuggestions.length && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => setMobileDisplayLimit(prev => prev + 12)}
+                sx={{ px: 3, py: 1 }}
+              >
+                Ver mais
+              </Button>
+            </Box>
+          )}
 
         {/* Footer com Paginação e Navegação */}
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1, mt: 3 }}>
