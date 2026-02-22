@@ -240,7 +240,6 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
       } else {
         // Modo Elite: aplicar corte de score e restringir ao top 12
         const topBatch = finalSorted.slice(0, SHUFFLE_SIZE);
-        const rest = finalSorted.slice(SHUFFLE_SIZE);
 
         const elitePool: MovieSuggestionFlow[] = [];
         const nonEliteTop: MovieSuggestionFlow[] = [];
