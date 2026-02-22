@@ -221,36 +221,51 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
     // Shuffle de Elite (Top-K) para Mobile + Relevance
     if (isMobile && (sortType === 'relevance' || sortType === 'smart') && finalSorted.length > 0) {
-      const SHUFFLE_SIZE = 12; // Embaralhar os top 12
+      const SHUFFLE_SIZE = 12; // Tamanho máximo do grupo Elite
       const MIN_RELEVANCE_SCORE = 6.5; // Nota de corte para o Shuffle de Elite
+      const isBelowThreshold = finalSorted.length <= SHUFFLE_SIZE;
 
-      const topBatch = finalSorted.slice(0, SHUFFLE_SIZE);
-      const rest = finalSorted.slice(SHUFFLE_SIZE);
-
-      // Filtrar apenas filmes com score >= MIN_RELEVANCE_SCORE para o shuffle
-      const elitePool: MovieSuggestionFlow[] = [];
-      const nonEliteTop: MovieSuggestionFlow[] = [];
-
-      topBatch.forEach(suggestion => {
-        const score = (suggestion as any).relevanceScore ? Number((suggestion as any).relevanceScore) : 0;
-        if (score >= MIN_RELEVANCE_SCORE) {
-          elitePool.push(suggestion);
-        } else {
-          nonEliteTop.push(suggestion);
+      if (isBelowThreshold) {
+        // Poucos filmes disponíveis (ex: filtro de streaming): embaralhar todos sem corte de score
+        const pool = [...finalSorted];
+        for (let i = pool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
         }
-      });
+        finalSorted = pool;
 
-      // Fisher-Yates Shuffle para o elitePool
-      for (let i = elitePool.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [elitePool[i], elitePool[j]] = [elitePool[j], elitePool[i]];
-      }
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔀 Shuffle completo (${finalSorted.length} filmes, abaixo do limite Elite)`);
+        }
+      } else {
+        // Modo Elite: aplicar corte de score e restringir ao top 12
+        const topBatch = finalSorted.slice(0, SHUFFLE_SIZE);
+        const rest = finalSorted.slice(SHUFFLE_SIZE);
 
-      // Reconstruir lista: Elite Shuffled + Non-Elite Top (em ordem original) + Resto
-      finalSorted = [...elitePool, ...nonEliteTop, ...rest];
+        const elitePool: MovieSuggestionFlow[] = [];
+        const nonEliteTop: MovieSuggestionFlow[] = [];
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🔀 Shuffle de Elite aplicado: ${elitePool.length} filmes embaralhados (Score >= ${MIN_RELEVANCE_SCORE})`);
+        topBatch.forEach(suggestion => {
+          const score = (suggestion as any).relevanceScore ? Number((suggestion as any).relevanceScore) : 0;
+          if (score >= MIN_RELEVANCE_SCORE) {
+            elitePool.push(suggestion);
+          } else {
+            nonEliteTop.push(suggestion);
+          }
+        });
+
+        // Fisher-Yates Shuffle para o elitePool
+        for (let i = elitePool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [elitePool[i], elitePool[j]] = [elitePool[j], elitePool[i]];
+        }
+
+        // Restringir ao top 12: Elite Shuffled + Non-Elite Top (sem o resto)
+        finalSorted = [...elitePool, ...nonEliteTop];
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`🔀 Shuffle de Elite RESTRITO: ${finalSorted.length} filmes (Elite: ${elitePool.length}, Outros: ${nonEliteTop.length})`);
+        }
       }
     }
 
@@ -566,7 +581,12 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
           (sortType === 'relevance' || sortType === 'smart') && (
             <Box sx={{ mt: 3, mb: 2, px: 2, textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', fontSize: '0.85rem' }}>
-                Top 12 selecionados. Para ver todos, ordene por Ano ou Rating.
+                {displaySuggestions.length < filteredSuggestions.length
+                  ? `Top ${displaySuggestions.length} selecionados. Para ver todos, ordene por Ano ou Rating.`
+                  : displaySuggestions.length === filteredSuggestions.length
+                    ? `${displaySuggestions.length} filmes disponíveis com os filtros atuais.`
+                    : 'Top 12 selecionados. Para ver todos, ordene por Ano ou Rating.'
+                }
               </Typography>
             </Box>
           )}
