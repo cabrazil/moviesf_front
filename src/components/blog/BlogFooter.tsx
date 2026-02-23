@@ -10,10 +10,7 @@ export function BlogFooter() {
     categories: [
       { name: 'Análises Emocionais', href: '/categoria/analises-emocionais' },
       { name: 'Clássicos Atemporais', href: '/categoria/classicos-atemporais' },
-      { name: 'Guias e Streaming', href: '/categoria/guias-e-streaming' },
-      { name: 'Jornadas Emocionais', href: '/categoria/jornadas-emocionais' },
-      { name: 'Por Trás das Cenas', href: '/categoria/por-tras-das-cenas' },
-      { name: 'Primeiras Impressões', href: '/categoria/primeiras-impressoes' },
+      { name: 'Listas e Jornadas', href: '/categoria/jornadas-emocionais' },
     ],
     vibesfilm: [
       { name: 'Usar o App', href: '/app', external: true },
@@ -55,14 +52,14 @@ export function BlogFooter() {
         }}>
           {/* Brand Column */}
           <div>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '12px', 
-              marginBottom: '16px' 
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '16px'
             }}>
-              <img 
-                src={logoBlog} 
+              <img
+                src={logoBlog}
                 alt="VibesFilm Blog Logo"
                 style={{
                   height: 48,
@@ -72,16 +69,16 @@ export function BlogFooter() {
                 }}
               />
             </div>
-            <p style={{ 
-              color: '#E0E0E0', 
-              fontSize: '14px', 
-              lineHeight: '1.6', 
+            <p style={{
+              color: '#E0E0E0',
+              fontSize: '14px',
+              lineHeight: '1.6',
               marginBottom: '24px'
-            }}>Transformar a experiência de escolha de filmes, conectando pessoas com histórias 
-               que realmente importam para seus corações e mentes. Artigos, análises e curadoria 
-               cinematográfica.
+            }}>Transformar a experiência de escolha de filmes, conectando pessoas com histórias
+              que realmente importam para seus corações e mentes. Artigos, análises e curadoria
+              cinematográfica.
             </p>
-            
+
             {/* Social Links */}
             <div style={{ display: 'flex', gap: '30px' }}>
               {socialLinks.map((social) => {
@@ -115,15 +112,15 @@ export function BlogFooter() {
 
           {/* Categories Links */}
           <div>
-            <h4 style={{ 
-              color: '#FDFFFC', 
-              fontWeight: '600', 
+            <h4 style={{
+              color: '#FDFFFC',
+              fontWeight: '600',
               marginBottom: '14px'
             }}>Categorias</h4>
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', listStyle: 'none', padding: 0, margin: 0 }}>
               {footerLinks.categories.map((link) => (
                 <li key={link.name}>
-                  <Link 
+                  <Link
                     to={link.href}
                     style={{
                       color: '#E0E0E0',
@@ -143,16 +140,16 @@ export function BlogFooter() {
 
           {/* VibesFilm Links */}
           <div>
-            <h4 style={{ 
-              color: '#FDFFFC', 
-              fontWeight: '600', 
+            <h4 style={{
+              color: '#FDFFFC',
+              fontWeight: '600',
               marginBottom: '14px'
             }}>VibesFilm</h4>
             <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', listStyle: 'none', padding: 0, margin: 0 }}>
               {footerLinks.vibesfilm.map((link) => (
                 <li key={link.name}>
                   {link.external ? (
-                    <a 
+                    <a
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -172,7 +169,7 @@ export function BlogFooter() {
                       <ExternalLink size={12} />
                     </a>
                   ) : (
-                    <Link 
+                    <Link
                       to={link.href}
                       style={{
                         color: '#E0E0E0',
@@ -209,8 +206,8 @@ export function BlogFooter() {
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
-            <p style={{ 
-              color: '#E0E0E0', 
+            <p style={{
+              color: '#E0E0E0',
               fontSize: '14px',
               margin: 0,
               display: 'flex',
@@ -219,10 +216,10 @@ export function BlogFooter() {
             }}>
               © {currentYear} VibesFilm. Feito com <Heart size={16} style={{ color: '#ef4444', fill: 'currentColor' }} /> para cinéfilos.
             </p>
-            
+
             <div style={{ display: 'flex', gap: '24px' }}>
               {footerLinks.legal.map((link) => (
-                <Link 
+                <Link
                   key={link.name}
                   to={link.href}
                   style={{

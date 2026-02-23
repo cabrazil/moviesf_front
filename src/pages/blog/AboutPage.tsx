@@ -1,6 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ArrowLeft, Heart, Users, Lightbulb } from 'lucide-react';
-import { blogApi } from '../../services/blogApi';
 import { useState, useEffect } from 'react';
 
 // Adicionar estilos CSS para a animação
@@ -20,8 +19,8 @@ if (typeof document !== 'undefined') {
 }
 
 export default function AboutPage() {
-  const [categories, setCategories] = useState<any[]>([]);
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
 
   // Detectar tamanho da tela
   useEffect(() => {
@@ -35,25 +34,19 @@ export default function AboutPage() {
   }, []);
 
   useEffect(() => {
-    // Scroll para o topo quando a página carregar
-    window.scrollTo(0, 0);
-
-    const fetchCategories = async () => {
-      try {
-        const response = await blogApi.getCategories();
-        if (response.success && response.data) {
-          const filteredCategories = response.data.filter((category: any) =>
-            category.articleCount > 0 || category.article_count > 0
-          );
-          setCategories(filteredCategories);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar categorias:', error);
+    // Hash scrolling ou topo
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100); // Pequeno delay para garantir o render
       }
-    };
-
-    fetchCategories();
-  }, []);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location.hash]);
 
   return (
     <>
@@ -202,7 +195,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          <article style={{
+          <article id="o-projeto" style={{
             backgroundColor: 'rgba(2, 44, 73, 0.3)',
             borderRadius: '16px',
             padding: isMobile ? '24px' : '48px',
@@ -269,7 +262,7 @@ export default function AboutPage() {
           </article>
 
           {/* Features */}
-          <section style={{ marginBottom: isMobile ? '32px' : '48px' }}>
+          <section id="como-funciona" style={{ marginBottom: isMobile ? '32px' : '48px' }}>
             <h3 style={{
               fontSize: isMobile ? '20px' : '24px',
               fontWeight: 'bold',
@@ -485,116 +478,7 @@ export default function AboutPage() {
             </div>
           </section>
 
-          {/* Blog Section */}
-          <section style={{ marginBottom: '48px' }}>
-            <div style={{
-              backgroundColor: 'rgba(2, 44, 73, 0.3)',
-              borderRadius: '16px',
-              padding: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)'
-            }}>
-              <h3 style={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                color: '#FDFFFC',
-                marginBottom: '16px',
-                textAlign: 'center'
-              }}>
-                Blog Vibesfilm
-              </h3>
-              <p style={{
-                fontSize: '1.125rem',
-                lineHeight: '1.8',
-                color: '#E0E0E0',
-                marginBottom: '24px'
-              }}>
-                Além das recomendações personalizadas, nosso blog oferece análises profundas sobre filmes,
-                explorando como diferentes obras cinematográficas podem impactar nossas emoções e experiências.
-                Descubra artigos que conectam cinema e sentimentos, ajudando você a entender melhor a relação
-                entre filmes e emoções.
-              </p>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {categories.length > 0 ? (
-                  categories.slice(0, 4).map((category) => (
-                    <Link
-                      key={category.id}
-                      to={`/blog/categoria/${category.slug}`}
-                      style={{
-                        padding: '6px 12px',
-                        backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                        color: '#3B82F6',
-                        border: '1px solid rgba(46, 196, 182, 0.2)',
-                        borderRadius: '20px',
-                        fontSize: '0.875rem',
-                        fontWeight: '500',
-                        textDecoration: 'none',
-                        transition: 'all 0.3s ease',
-                        display: 'inline-block'
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.2)';
-                        e.currentTarget.style.borderColor = '#3B82F6';
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)';
-                        e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.2)';
-                      }}
-                    >
-                      {category.title}
-                    </Link>
-                  ))
-                ) : (
-                  <>
-                    <span style={{
-                      padding: '6px 12px',
-                      backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#3B82F6',
-                      border: '1px solid rgba(46, 196, 182, 0.2)',
-                      borderRadius: '20px',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}>
-                      Análises Emocionais
-                    </span>
-                    <span style={{
-                      padding: '6px 12px',
-                      backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#3B82F6',
-                      border: '1px solid rgba(46, 196, 182, 0.2)',
-                      borderRadius: '20px',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}>
-                      Curadoria por Sentimentos
-                    </span>
-                    <span style={{
-                      padding: '6px 12px',
-                      backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#3B82F6',
-                      border: '1px solid rgba(46, 196, 182, 0.2)',
-                      borderRadius: '20px',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}>
-                      Tendências
-                    </span>
-                    <span style={{
-                      padding: '6px 12px',
-                      backgroundColor: 'rgba(46, 196, 182, 0.1)',
-                      color: '#3B82F6',
-                      border: '1px solid rgba(46, 196, 182, 0.2)',
-                      borderRadius: '20px',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}>
-                      Recomendações
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
+
 
           {/* Mission */}
           <section>
