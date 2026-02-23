@@ -26,22 +26,22 @@ export function CategoryPage() {
   useEffect(() => {
     // Scroll para o topo quando a página carrega
     window.scrollTo(0, 0);
-    
+
     const fetchCategoryData = async () => {
       if (!categorySlug) return;
-      
+
       try {
         setLoading(true);
         setError(null);
-        
+
         console.log('🔍 Buscando dados para categoria:', categorySlug);
-        
+
         // Buscar posts da categoria e dados da categoria em paralelo
         const [postsResponse, categoriesResponse] = await Promise.all([
           blogApi.getPostsByCategory(categorySlug, 1, 20),
           blogApi.getCategories()
         ]);
-        
+
         if (postsResponse.success && postsResponse.data) {
           setPosts(postsResponse.data.articles);
           console.log('✅ Artigos encontrados:', postsResponse.data.articles.length);
@@ -49,14 +49,17 @@ export function CategoryPage() {
           console.error('Erro ao buscar artigos da categoria:', postsResponse.error);
           setPosts([]);
         }
-        
+
         if (categoriesResponse.success && categoriesResponse.data) {
-          const foundCategory = categoriesResponse.data.find(cat => cat.slug === categorySlug);
+          const filteredCategories = categoriesResponse.data.filter((cat: any) =>
+            cat.articleCount > 0 || cat.article_count > 0
+          );
+          const foundCategory = filteredCategories.find((cat: any) => cat.slug === categorySlug);
           if (foundCategory) {
             setCategory(foundCategory);
             console.log('✅ Categoria encontrada:', foundCategory.title);
           } else {
-            setError('Categoria não encontrada');
+            setError('Categoria vazia ou não encontrada');
           }
         } else {
           console.error('Erro ao buscar dados da categoria:', categoriesResponse.error);
@@ -92,10 +95,10 @@ export function CategoryPage() {
 
   if (loading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
         backgroundSize: '200% 200%',
@@ -119,29 +122,29 @@ export function CategoryPage() {
 
   if (error || !categorySlug || !category) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
         backgroundSize: '200% 200%',
         animation: 'gradientShift 8s ease infinite'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: 'bold', 
-            color: '#FDFFFC', 
-            marginBottom: '16px' 
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            color: '#FDFFFC',
+            marginBottom: '16px'
           }}>
             Categoria não encontrada
           </h1>
           <p style={{ color: '#E0E0E0', marginBottom: '32px' }}>
             {error || 'A categoria que você está procurando não existe.'}
           </p>
-          <Link 
-            to="/blog/categorias" 
+          <Link
+            to="/blog/categorias"
             style={{
               backgroundColor: '#3B82F6',
               color: '#011627',
@@ -162,20 +165,20 @@ export function CategoryPage() {
   }
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
       backgroundSize: '200% 200%',
       animation: 'gradientShift 8s ease infinite'
     }}>
       {/* Back Button */}
-      <div style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
-        padding: isMobile ? '16px 16px 0' : '32px 40px 0' 
+      <div style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
+        padding: isMobile ? '16px 16px 0' : '32px 40px 0'
       }}>
-        <Link 
-          to="/blog/categorias" 
+        <Link
+          to="/blog/categorias"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -194,9 +197,9 @@ export function CategoryPage() {
       </div>
 
       {/* Category Header */}
-      <header style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
+      <header style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
         padding: isMobile ? '0 16px 32px' : '0 40px 48px',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
@@ -221,18 +224,18 @@ export function CategoryPage() {
             </span>
           </div>
 
-          <h1 style={{ 
-            fontSize: isMobile ? '1.75rem' : '2.5rem', 
-            fontWeight: 'bold', 
-            color: '#FDFFFC', 
-            marginBottom: isMobile ? '12px' : '16px' 
+          <h1 style={{
+            fontSize: isMobile ? '1.75rem' : '2.5rem',
+            fontWeight: 'bold',
+            color: '#FDFFFC',
+            marginBottom: isMobile ? '12px' : '16px'
           }}>
             Artigos de {category.title}
           </h1>
-          
+
           {category.description && (
-            <p style={{ 
-              color: '#E0E0E0', 
+            <p style={{
+              color: '#E0E0E0',
               fontSize: isMobile ? '1rem' : '1.125rem',
               marginBottom: isMobile ? '12px' : '16px',
               maxWidth: '600px',
@@ -241,11 +244,11 @@ export function CategoryPage() {
               {category.description}
             </p>
           )}
-          
-          <p style={{ 
-            color: '#E0E0E0', 
+
+          <p style={{
+            color: '#E0E0E0',
             fontSize: isMobile ? '1rem' : '1.125rem',
-            marginBottom: isMobile ? '24px' : '32px' 
+            marginBottom: isMobile ? '24px' : '32px'
           }}>
             {posts.length} {posts.length === 1 ? 'artigo encontrado' : 'artigos encontrados'}
           </p>
@@ -253,9 +256,9 @@ export function CategoryPage() {
       </header>
 
       {/* Articles List */}
-      <main style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
+      <main style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
         padding: isMobile ? '0 16px 32px' : '0 40px 48px',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
@@ -271,36 +274,36 @@ export function CategoryPage() {
                   transition: 'all 0.3s ease',
                   cursor: 'pointer'
                 }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.3)';
-                  e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.5)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                  e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}>
-                  <div style={{ 
-                    display: 'flex', 
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.3)';
+                    e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.5)';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.3)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
+                  <div style={{
+                    display: 'flex',
                     gap: isMobile ? '12px' : '16px',
                     flexDirection: isMobile ? 'column' : 'row'
                   }}>
                     {/* Image - Compacta */}
-                    <div style={{ 
-                      width: isMobile ? '100%' : '160px', 
-                      flexShrink: 0, 
-                      height: isMobile ? '200px' : '100%' 
+                    <div style={{
+                      width: isMobile ? '100%' : '160px',
+                      flexShrink: 0,
+                      height: isMobile ? '200px' : '100%'
                     }}>
-                      <div style={{ 
+                      <div style={{
                         height: '100%',
-                        overflow: 'hidden', 
-                        borderRadius: '8px' 
+                        overflow: 'hidden',
+                        borderRadius: '8px'
                       }}>
-                        <img 
-                          src={getFeaturedImageUrl(post.imageUrl || '')} 
+                        <img
+                          src={getFeaturedImageUrl(post.imageUrl || '')}
                           alt={post.imageAlt || post.title}
                           style={{
                             width: '100%',
@@ -313,22 +316,22 @@ export function CategoryPage() {
                         />
                       </div>
                     </div>
-                    
+
                     {/* Content - Expandido */}
-                    <div style={{ 
-                      flex: 1, 
-                      display: 'flex', 
-                      flexDirection: 'column', 
+                    <div style={{
+                      flex: 1,
+                      display: 'flex',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
                       width: isMobile ? '100%' : 'auto'
                     }}>
                       <div>
                         {/* Category and Reading Time */}
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          justifyContent: 'space-between', 
-                          marginBottom: '8px' 
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          marginBottom: '8px'
                         }}>
                           <span style={{
                             display: 'inline-block',
@@ -342,11 +345,11 @@ export function CategoryPage() {
                           }}>
                             {post.category_title}
                           </span>
-                          <div style={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            color: '#E0E0E0', 
-                            fontSize: '0.75rem' 
+                          <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            color: '#E0E0E0',
+                            fontSize: '0.75rem'
                           }}>
                             <Clock size={12} style={{ marginRight: '4px', color: '#FF6B35' }} />
                             {post.readingTime || calculateReadingTime(post.content)} min
@@ -364,7 +367,7 @@ export function CategoryPage() {
                         }}>
                           {post.title}
                         </h2>
-                        
+
                         {/* Excerpt */}
                         <p style={{
                           color: '#E0E0E0',
@@ -381,16 +384,16 @@ export function CategoryPage() {
                       </div>
 
                       {/* Author and Date - Inline */}
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
                         justifyContent: isMobile ? 'flex-start' : 'space-between',
                         flexDirection: isMobile ? 'column' : 'row',
                         gap: isMobile ? '8px' : '0'
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <img 
-                            src={post.author_image || '/default-avatar.svg'} 
+                          <img
+                            src={post.author_image || '/default-avatar.svg'}
                             alt={post.author_name}
                             style={{
                               width: isMobile ? '20px' : '24px',
@@ -400,18 +403,18 @@ export function CategoryPage() {
                             }}
                           />
                           <div>
-                            <p style={{ 
-                              color: '#FDFFFC', 
-                              fontSize: isMobile ? '0.8rem' : '0.75rem', 
+                            <p style={{
+                              color: '#FDFFFC',
+                              fontSize: isMobile ? '0.8rem' : '0.75rem',
                               fontWeight: '500',
                               margin: 0
                             }}>
                               {post.author_name}
                             </p>
-                            <div style={{ 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              color: '#E0E0E0', 
+                            <div style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              color: '#E0E0E0',
                               fontSize: isMobile ? '0.8rem' : '0.75rem'
                             }}>
                               <Calendar size={10} style={{ marginRight: '4px' }} />
@@ -419,7 +422,7 @@ export function CategoryPage() {
                             </div>
                           </div>
                         </div>
-                        
+
                         <span style={{
                           color: '#3B82F6',
                           fontSize: isMobile ? '0.9rem' : '0.875rem',
@@ -436,19 +439,19 @@ export function CategoryPage() {
             ))}
           </div>
         ) : (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '48px 0' 
+          <div style={{
+            textAlign: 'center',
+            padding: '48px 0'
           }}>
-            <p style={{ 
-              color: '#E0E0E0', 
+            <p style={{
+              color: '#E0E0E0',
               fontSize: '1.125rem',
               marginBottom: '16px'
             }}>
               Nenhum artigo encontrado nesta categoria.
             </p>
-            <Link 
-              to="/blog/categorias" 
+            <Link
+              to="/blog/categorias"
               style={{
                 color: '#3B82F6',
                 textDecoration: 'none',

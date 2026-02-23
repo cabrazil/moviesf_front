@@ -91,11 +91,14 @@ export function BlogLatestPosts() {
 
         if (categoriesResponse.success && categoriesResponse.data) {
           console.log('🏷️ Categorias recebidas da API:', categoriesResponse.data.length);
-          setCategoriesData(categoriesResponse.data);
+          const filteredCategories = categoriesResponse.data.filter((category: any) =>
+            category.articleCount > 0 || category.article_count > 0
+          );
+          setCategoriesData(filteredCategories);
         } else {
           console.error('Erro ao buscar categorias, usando dados mock:', categoriesResponse.error);
           // Fallback para dados mock
-          setCategoriesData(categories as any);
+          setCategoriesData(categories.filter((c: any) => c.articleCount > 0) as any);
         }
       } catch (err) {
         console.error('Erro ao buscar dados:', err);

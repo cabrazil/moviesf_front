@@ -12,34 +12,38 @@ export function CategoriesPage() {
   useEffect(() => {
     // Scroll para o topo quando a página carrega
     window.scrollTo(0, 0);
-    
+
     const fetchCategories = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         console.log('🏷️ Buscando categorias...');
-        
+
         const response = await blogApi.getCategories();
-        
+
         if (response.success && response.data) {
-          console.log('✅ Categorias recebidas da API:', response.data.length);
-          // Mapear article_count para articleCount
-          const mappedData = response.data.map((category: any) => ({
-            ...category,
-            articleCount: category.article_count || 0
-          }));
+          console.log('✅ Categorias recebidas da API antes do filtro:', response.data.length);
+          // Mapear article_count para articleCount e filtrar categorias vazias
+          const mappedData = response.data
+            .map((category: any) => ({
+              ...category,
+              articleCount: category.article_count || 0
+            }))
+            .filter((category: any) => category.articleCount > 0);
+
+          console.log('✅ Categorias com artigos (após filtro):', mappedData.length);
           setCategoriesData(mappedData);
         } else {
           console.error('Erro ao buscar categorias, usando dados mock:', response.error);
           // Fallback para dados mock
-          setCategoriesData(categories as any);
+          setCategoriesData(categories.filter((c: any) => c.articleCount > 0) as any);
         }
       } catch (err) {
         console.error('Erro ao buscar categorias:', err);
         setError('Erro ao carregar categorias');
         // Fallback para dados mock
-        setCategoriesData(categories as any);
+        setCategoriesData(categories.filter((c: any) => c.articleCount > 0) as any);
       } finally {
         setLoading(false);
       }
@@ -51,10 +55,10 @@ export function CategoriesPage() {
 
   if (loading) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
         backgroundSize: '200% 200%',
@@ -78,29 +82,29 @@ export function CategoriesPage() {
 
   if (error && categoriesData.length === 0) {
     return (
-      <div style={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'center',
         background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
         backgroundSize: '200% 200%',
         animation: 'gradientShift 8s ease infinite'
       }}>
         <div style={{ textAlign: 'center' }}>
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: 'bold', 
-            color: '#FDFFFC', 
-            marginBottom: '16px' 
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            color: '#FDFFFC',
+            marginBottom: '16px'
           }}>
             Erro ao carregar categorias
           </h1>
           <p style={{ color: '#E0E0E0', marginBottom: '32px' }}>
             {error}
           </p>
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             style={{
               backgroundColor: '#3B82F6',
               color: '#011627',
@@ -121,20 +125,20 @@ export function CategoriesPage() {
   }
 
   return (
-    <div style={{ 
+    <div style={{
       minHeight: '100vh',
       background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
       backgroundSize: '200% 200%',
       animation: 'gradientShift 8s ease infinite'
     }}>
       {/* Back Button */}
-      <div style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
-        padding: '32px 40px 0' 
+      <div style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
+        padding: '32px 40px 0'
       }}>
-        <Link 
-          to="/blog" 
+        <Link
+          to="/blog"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -153,9 +157,9 @@ export function CategoriesPage() {
       </div>
 
       {/* Categories Header */}
-      <header style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
+      <header style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
         padding: '0 40px 48px',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
@@ -180,19 +184,19 @@ export function CategoriesPage() {
             </span>
           </div>
 
-          <h1 style={{ 
-            fontSize: '2.5rem', 
-            fontWeight: 'bold', 
-            color: '#FDFFFC', 
-            marginBottom: '16px' 
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            color: '#FDFFFC',
+            marginBottom: '16px'
           }}>
             Todas as Categorias
           </h1>
-          
-          <p style={{ 
-            color: '#E0E0E0', 
+
+          <p style={{
+            color: '#E0E0E0',
             fontSize: '1.125rem',
-            marginBottom: '32px' 
+            marginBottom: '32px'
           }}>
             Explore nossos artigos organizados por temas
           </p>
@@ -200,17 +204,17 @@ export function CategoriesPage() {
       </header>
 
       {/* Categories Grid */}
-      <main style={{ 
-        maxWidth: '1024px', 
-        margin: '0 auto', 
+      <main style={{
+        maxWidth: '1024px',
+        margin: '0 auto',
         padding: '0 40px 48px',
         fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
       }}>
         {categoriesData.length > 0 ? (
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-            gap: '24px' 
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px'
           }}>
             {categoriesData.map((category) => (
               <div key={category.id} style={{
@@ -221,18 +225,18 @@ export function CategoriesPage() {
                 transition: 'all 0.3s ease',
                 cursor: 'pointer'
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.3)';
-                e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.5)';
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-                e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.3)';
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}>
+                onMouseOver={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(46, 196, 182, 0.3)';
+                  e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.5)';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.backgroundColor = 'rgba(2, 44, 73, 0.3)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}>
                 {/* Category Header */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{
@@ -272,7 +276,7 @@ export function CategoriesPage() {
                       </p>
                     </div>
                   </div>
-                  
+
                   {category.description && (
                     <p style={{
                       color: '#E0E0E0',
@@ -311,7 +315,7 @@ export function CategoriesPage() {
                 </div>
 
                 {/* Call to Action */}
-                <Link 
+                <Link
                   to={`/blog/categoria/${category.slug}`}
                   style={{
                     display: 'block',
@@ -334,19 +338,19 @@ export function CategoriesPage() {
             ))}
           </div>
         ) : (
-          <div style={{ 
-            textAlign: 'center', 
-            padding: '48px 0' 
+          <div style={{
+            textAlign: 'center',
+            padding: '48px 0'
           }}>
-            <p style={{ 
-              color: '#E0E0E0', 
+            <p style={{
+              color: '#E0E0E0',
               fontSize: '1.125rem',
               marginBottom: '16px'
             }}>
               Nenhuma categoria encontrada.
             </p>
-            <Link 
-              to="/" 
+            <Link
+              to="/"
               style={{
                 color: '#3B82F6',
                 textDecoration: 'none',
