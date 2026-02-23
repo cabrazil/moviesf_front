@@ -142,8 +142,8 @@ export function BlogLatestPosts() {
   };
 
   const filteredPosts = selectedCategory === 'all'
-    ? displayedPosts // Mostrar posts exibidos
-    : displayedPosts.filter(post => post.category_slug === selectedCategory);
+    ? displayedPosts // Mostrar posts exibidos (paginados) se for 'all'
+    : allPosts.filter(post => post.category_slug === selectedCategory); // Mostrar todos os posts da categoria selecionada
 
   const handleCategoryChange = (categorySlug: string) => {
     setSelectedCategory(categorySlug);
