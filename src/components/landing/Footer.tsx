@@ -11,14 +11,14 @@ export const Footer: React.FC = () => {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4">
-              <img 
-                src={logoBlog} 
+              <img
+                src={logoBlog}
                 alt="VibesFilm Logo"
                 className="h-8 w-auto max-w-32 object-contain"
               />
             </Link>
             <p className="text-gray-400 text-sm mb-4">
-              Descubra filmes que ressoam com seus sentimentos. 
+              Descubra filmes que ressoam com seus sentimentos.
               Transforme sua experiência cinematográfica através de jornadas emocionais personalizadas.
             </p>
             <Link
@@ -115,7 +115,7 @@ export const Footer: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 text-gray-400 text-sm">
               <Mail className="w-4 h-4" />
-              <span>contato@emofilms.com</span>
+              <span>contato@vibesfilm.com</span>
             </div>
           </div>
         </div>

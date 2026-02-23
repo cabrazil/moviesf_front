@@ -5,8 +5,8 @@
 export const SECURITY_CONFIG = {
   // Domínios permitidos para requisições
   ALLOWED_DOMAINS: [
-    'emofilms.com',
-    'www.emofilms.com',
+    'vibesfilm.com',
+    'www.vibesfilm.com',
     'vibesfilm.com',
     'www.vibesfilm.com',
     'localhost',

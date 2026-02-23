@@ -4,8 +4,8 @@
 
 // Lista de domínios permitidos
 const ALLOWED_DOMAINS = [
-  'emofilms.com',
-  'www.emofilms.com',
+  'vibesfilm.com',
+  'www.vibesfilm.com',
   'vibesfilm.com',
   'www.vibesfilm.com',
   'image.tmdb.org',

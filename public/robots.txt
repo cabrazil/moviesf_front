@@ -47,7 +47,7 @@ User-agent: Bingbot
 Allow: /
 
 # Sitemap
-Sitemap: https://emofilms.com/sitemap.xml
+Sitemap: https://vibesfilm.com/sitemap.xml
 
 # Crawl-delay para bots respeitosos
 Crawl-delay: 1
