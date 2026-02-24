@@ -279,7 +279,9 @@ export default function AboutPage() {
               marginBottom: isMobile ? '24px' : '32px',
               lineHeight: '1.6'
             }}>
-              O processo de busca no Vibesfilm é estruturado em uma "jornada emocional" de três etapas:
+              O Vibesfilm é uma plataforma que recomenda filmes baseado no estado emocional atual do usuário.
+              Em vez de você procurar filmes por gênero ou ator, você diz como está se sentindo e o modelo então te guia
+              através de uma "jornada emocional" de três etapas:
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '16px' : '24px' }}>
@@ -321,7 +323,8 @@ export default function AboutPage() {
                     lineHeight: '1.6',
                     marginBottom: isMobile ? '6px' : '8px'
                   }}>
-                    O usuário começa escolhendo seu sentimento principal atual (ex: "Estou feliz," "Estou triste," "Estou ansioso," "Calmo(a)"). O sentimento base define o estado inicial do usuário.
+                    O usuário começa escolhendo seu estado de espírito atual, como você está? Defina seu sentimento nesse momento
+                    (ex: "Estou Feliz," "Estou Triste," "Estou Ansioso(a)," "Calmo(a)").
                   </p>
                   <p style={{
                     color: '#B0B0B0',
@@ -373,23 +376,13 @@ export default function AboutPage() {
                     lineHeight: '1.6',
                     marginBottom: isMobile ? '8px' : '12px'
                   }}>
-                    Em seguida, o usuário define o que ele quer fazer com essa emoção. Existem quatro intenções emocionais principais:
+                    Em seguida, o usuário define o que ele quer fazer com essa emoção. Existem quatro intenções principais:
                   </p>
                   <div style={{
                     display: 'grid',
                     gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: isMobile ? '8px' : '12px'
                   }}>
-                    <div style={{
-                      backgroundColor: 'rgba(46, 196, 182, 0.05)',
-                      padding: isMobile ? '6px 10px' : '8px 12px',
-                      borderRadius: '8px',
-                      border: '1px solid rgba(46, 196, 182, 0.1)',
-                      color: '#E0E0E0',
-                      fontSize: isMobile ? '0.85rem' : '0.9rem'
-                    }}>
-                      <strong style={{ color: '#3B82F6' }}>Explorar:</strong> Entender as causas ou nuances da emoção.
-                    </div>
                     <div style={{
                       backgroundColor: 'rgba(46, 196, 182, 0.05)',
                       padding: isMobile ? '6px 10px' : '8px 12px',
@@ -419,6 +412,16 @@ export default function AboutPage() {
                       fontSize: isMobile ? '0.85rem' : '0.9rem'
                     }}>
                       <strong style={{ color: '#3B82F6' }}>Transformar:</strong> Mudar para um estado emocional diferente.
+                    </div>
+                    <div style={{
+                      backgroundColor: 'rgba(46, 196, 182, 0.05)',
+                      padding: isMobile ? '6px 10px' : '8px 12px',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(46, 196, 182, 0.1)',
+                      color: '#E0E0E0',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem'
+                    }}>
+                      <strong style={{ color: '#3B82F6' }}>Explorar:</strong> Entender as causas ou nuances da emoção.
                     </div>
                   </div>
                 </div>
