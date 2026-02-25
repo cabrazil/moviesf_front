@@ -119,7 +119,7 @@ export function BlogHeader() {
           alignItems: 'center',
           gap: '16px'
         }}>
-          <button style={{
+          {/* <button style={{
             padding: '8px',
             borderRadius: '8px',
             border: 'none',
@@ -132,7 +132,7 @@ export function BlogHeader() {
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           >
             <Search size={20} />
-          </button>
+          </button> */}
           <a
             href="/app"
             style={{
@@ -225,7 +225,7 @@ export function BlogHeader() {
             })}
 
             {/* Mobile Search */}
-            <div style={{
+            {/* <div style={{
               padding: '12px 16px',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
               marginTop: '8px',
@@ -235,7 +235,7 @@ export function BlogHeader() {
             }}>
               <Search size={20} color="#E0E0E0" />
               <span style={{ color: '#E0E0E0', fontSize: '16px' }}>Buscar</span>
-            </div>
+            </div> */}
 
             {/* Mobile App Button */}
             <div style={{
