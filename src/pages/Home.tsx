@@ -39,11 +39,13 @@ const Home: React.FC = () => {
             component="img"
             src={logoBlog}
             alt="VibesFilm Logo"
+            onClick={() => window.location.href = 'https://vibesfilm.com/'}
             sx={{
               height: { xs: 36, sm: 48 },
               width: 'auto',
               maxWidth: { xs: 200, sm: 320 },
-              objectFit: 'contain'
+              objectFit: 'contain',
+              cursor: 'pointer'
             }}
           />
 
