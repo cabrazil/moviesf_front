@@ -173,10 +173,10 @@ class RateLimiter {
   }
 }
 
-// Rate limiter mais permissivo em desenvolvimento
+// Rate limiter mais permissivo para não barrar usuários navegando nas jornadas rapidamente
 export const rateLimiter = new RateLimiter(
-  process.env.NODE_ENV === 'development' ? 50 : 10, // Mais requisições em dev
-  process.env.NODE_ENV === 'development' ? 30000 : 60000 // Janela menor em dev
+  process.env.NODE_ENV === 'development' ? 200 : 100, // Permitir até 100 interações por minuto em Prod
+  process.env.NODE_ENV === 'development' ? 30000 : 60000 // Mantendo janelas originais
 );
 
 /**
