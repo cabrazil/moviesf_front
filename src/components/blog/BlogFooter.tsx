@@ -11,6 +11,7 @@ export function BlogFooter() {
       { name: 'Análises Emocionais', href: '/categoria/analises-emocionais' },
       { name: 'Clássicos Atemporais', href: '/categoria/classicos-atemporais' },
       { name: 'Listas e Jornadas', href: '/categoria/jornadas-emocionais' },
+      { name: 'No Radar', href: '/categoria/no-radar' },
     ],
     vibesfilm: [
       { name: 'Usar o App', href: '/app', external: true },
