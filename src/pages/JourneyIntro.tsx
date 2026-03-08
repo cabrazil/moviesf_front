@@ -187,10 +187,10 @@ const JourneyIntro: React.FC = () => {
             }}>
 
               <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-                Como você está?
+                Como você se sente agora?
               </Box>
               <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-                Como você está se sentindo hoje?
+                Como você se sente agora?
               </Box>
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{
@@ -198,7 +198,7 @@ const JourneyIntro: React.FC = () => {
               px: { xs: 1, sm: 0 },
               mb: { xs: 2, sm: 4 } // Menos margem no mobile
             }}>
-              Defina seu sentimento nesse momento.
+              Escolha o estado que mais combina com seu momento.
             </Typography>
           </Box>
         </Fade>
