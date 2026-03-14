@@ -1222,8 +1222,8 @@ const MovieDetailsPage: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Barra de navegação fixa (botões padrão) */}
-      <Box sx={{ position: 'fixed', left: 0, right: 0, bottom: 0, bgcolor: 'background.paper', borderTop: `2px solid ${themeColor}`, py: 2, display: 'flex', justifyContent: 'center', gap: 2, zIndex: 10 }}>
+      {/* Barra de navegação fixa (botões padrão) - apenas mobile */}
+      <Box sx={{ position: 'fixed', left: 0, right: 0, bottom: 0, bgcolor: 'background.paper', borderTop: `2px solid ${themeColor}`, py: 2, display: { xs: 'flex', md: 'none' }, justifyContent: 'center', gap: 2, zIndex: 10 }}>
         <Stack direction="row" spacing={2}>
           <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} onClick={() => window.history.back()}>
             Filmes
