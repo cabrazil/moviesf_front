@@ -221,7 +221,7 @@ const Home: React.FC = () => {
             lineHeight: { xs: 1.3, sm: 1.3, md: 1.4 },
             px: { xs: 2, sm: 0 }
           }}>
-            Encontre o filme perfeito para sua vibe!
+            Cada emoção tem um filme.
           </Typography>
 
           <Typography variant="h6" color="text.secondary" paragraph sx={{
@@ -232,7 +232,11 @@ const Home: React.FC = () => {
             px: { xs: 2, sm: 0 },
             lineHeight: 1.5
           }}>
-            O cinema vai além de espelhar seu estado de espírito: ele pode te ajudar a processar uma emoção, transformar seu humor, manter uma boa energia ou explorar novas sensações.
+            O cinema é a bússola para o que você sente. Encontre a obra certa para o seu momento, seja para{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span> uma emoção,{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> seu humor,{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>manter</span> sua energia ou{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>explorar</span> novas sensações.
           </Typography>
 
           <Box sx={{ mt: { xs: 0, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 }, width: '100%', display: 'flex', justifyContent: 'center' }}>
