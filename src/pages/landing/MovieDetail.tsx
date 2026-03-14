@@ -1416,7 +1416,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                           lineHeight: 1.6
                         }}>
                           {movie.awardsSummary && movie.awardsSummary.trim() !== '' && !movie.awardsSummary.toLowerCase().includes('oscar')
-                            ? `Este filme recebeu "${movie.awardsSummary}" em outras cerimônias de premiações.`
+                            ? `Outros reconhecimentos: ${movie.awardsSummary.replace('no no total', 'no total').replace(/([a-z])(\d+ vit)/gi, '$1. $2')}.`
                             : 'Este filme pode ter recebido outros reconhecimentos importantes em festivais e premiações especializadas.'
                           }
                         </Typography>

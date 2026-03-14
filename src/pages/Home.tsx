@@ -184,14 +184,7 @@ const Home: React.FC = () => {
             pb: { xs: 4, sm: 2, md: 3 },
           }}
         >
-          <Typography variant="h5" component="h2" sx={{
-            mb: { xs: 1, sm: 1.5 },
-            color: 'text.primary',
-            fontSize: { xs: '1.2rem', sm: '1.25rem', md: '1.5rem' },
-            display: { xs: 'none', sm: 'block' } // Ocultar "Bem-vindo" em mobile muito pequeno para focar no logo
-          }}>
-            Bem-vindo(a) ao
-          </Typography>
+
           <Box
             component="img"
             src={logoBlog}

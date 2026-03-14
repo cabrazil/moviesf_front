@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, Chip, Divider, Stack, Paper, Button, Modal, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CloseIcon from '@mui/icons-material/Close';
@@ -17,6 +17,7 @@ import { getPersonalizedContent } from '../components/movie-details/movieDetails
 const MovieDetailsPage: React.FC = () => {
   const { mode } = useThemeManager();
   const location = useLocation();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { identifier } = useParams();
@@ -1099,7 +1100,7 @@ const MovieDetailsPage: React.FC = () => {
                   lineHeight: 1.6
                 }}>
                   {movie.awardsSummary && movie.awardsSummary.trim() !== '' && !movie.awardsSummary.toLowerCase().includes('oscar')
-                    ? `Este filme recebeu "${movie.awardsSummary}" em outras cerimônias de premiações.`
+                    ? `Outros reconhecimentos: ${movie.awardsSummary.replace('no no total', 'no total').replace(/([a-z])(\d+ vit)/gi, '$1. $2')}.`
                     : 'Este filme pode ter recebido outros reconhecimentos importantes em festivais e premiações especializadas.'
                   }
                 </Typography>
@@ -1219,19 +1220,45 @@ const MovieDetailsPage: React.FC = () => {
           )}
           */}
 
+          {/* Botões de Navegação (Desktop) */}
+          <Box sx={{
+            display: { xs: 'none', md: 'flex' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: '100%',
+            mt: 4,
+            mb: 2,
+            px: 2
+          }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ px: 4, py: 1, borderWidth: 1, fontSize: '1rem', fontWeight: 600 }}
+              onClick={() => navigate(-1)}
+            >
+              Filmes
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ px: 4, py: 1, borderWidth: 1, fontSize: '1rem', fontWeight: 600 }}
+              onClick={() => navigate('/app')}
+            >
+              Home
+            </Button>
+          </Box>
+
         </Box>
       </Box>
 
       {/* Barra de navegação fixa (botões padrão) - apenas mobile */}
-      <Box sx={{ position: 'fixed', left: 0, right: 0, bottom: 0, bgcolor: 'background.paper', borderTop: `2px solid ${themeColor}`, py: 2, display: { xs: 'flex', md: 'none' }, justifyContent: 'center', gap: 2, zIndex: 10 }}>
-        <Stack direction="row" spacing={2}>
-          <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} onClick={() => window.history.back()}>
-            Filmes
-          </Button>
-          <Button variant="outlined" color="primary" sx={{ px: 4, borderWidth: 1 }} href="/app">
-            Home
-          </Button>
-        </Stack>
+      <Box sx={{ position: 'fixed', left: 0, right: 0, bottom: 0, bgcolor: 'background.paper', borderTop: `1px solid ${themeColor}40`, py: 1.5, px: 3, display: { xs: 'flex', md: 'none' }, justifyContent: 'space-between', alignItems: 'center', zIndex: 10, boxShadow: '0 -2px 10px rgba(0,0,0,0.05)' }}>
+        <Button variant="outlined" color="primary" sx={{ px: 3, borderWidth: 1, fontWeight: 600, fontSize: '1rem' }} onClick={() => navigate(-1)}>
+          Filmes
+        </Button>
+        <Button variant="outlined" color="primary" sx={{ px: 3, borderWidth: 1, fontWeight: 600, fontSize: '1rem' }} onClick={() => navigate('/app')}>
+          Home
+        </Button>
       </Box>
 
       {/* Modal do Trailer */}
