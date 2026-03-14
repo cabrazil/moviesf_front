@@ -38,7 +38,7 @@ export function BlogHero() {
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text'
         }}>
-          O filme perfeito para sua vibe!
+          Cada emoção tem um filme.
         </h1>
 
         <p style={{
@@ -47,8 +47,7 @@ export function BlogHero() {
           marginBottom: isMobile ? '24px' : '32px',
           lineHeight: '1.6'
         }}>
-          Muito além de sinopses, mergulhamos na alma de cada obra. Descubra análises sobre o poder emocional dos filmes e
-          como cada história pode ser uma bússola cinematográfica para o seu momento.
+          Muito além de sinopses, mergulhamos na alma de cada obra. No Vibesfilm, o cinema é curadoria para o que você sente: análises profundas sobre o impacto das histórias e como cada filme pode ser a bússola perfeita para o seu momento.
         </p>
 
         <div style={{
