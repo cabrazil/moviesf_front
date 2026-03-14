@@ -36,7 +36,7 @@ api.interceptors.request.use(
       const csrfToken = generateCSRFToken();
       config.headers['X-CSRF-Token'] = csrfToken;
     }
-    
+
     // Adicionar token de autenticação se existir
     const token = localStorage.getItem('token');
     if (token) {
@@ -73,20 +73,20 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expirado ou inválido
       localStorage.removeItem('token');
-      logSecurityEvent('Authentication failed', { 
+      logSecurityEvent('Authentication failed', {
         status: error.response.status,
-        url: error.config?.url 
+        url: error.config?.url
       });
       window.location.href = '/login';
     } else if (error.response?.status === 403) {
-      logSecurityEvent('Access forbidden', { 
+      logSecurityEvent('Access forbidden', {
         status: error.response.status,
-        url: error.config?.url 
+        url: error.config?.url
       });
     } else if (error.response?.status === 429) {
-      logSecurityEvent('Rate limit exceeded', { 
+      logSecurityEvent('Rate limit exceeded', {
         status: error.response.status,
-        url: error.config?.url 
+        url: error.config?.url
       });
     }
 
@@ -111,11 +111,11 @@ function sanitizeResponseData(data: any): any {
   if (typeof data === 'string') {
     return data.replace(/[<>]/g, '');
   }
-  
+
   if (Array.isArray(data)) {
     return data.map(item => sanitizeResponseData(item));
   }
-  
+
   if (typeof data === 'object' && data !== null) {
     const sanitized: any = {};
     for (const [key, value] of Object.entries(data)) {
@@ -123,7 +123,7 @@ function sanitizeResponseData(data: any): any {
     }
     return sanitized;
   }
-  
+
   return data;
 }
 
@@ -186,6 +186,7 @@ export interface JourneyStepFlow {
   stepId: string;
   order: number;
   question: string;
+  mobileQuestion?: string;
   options: JourneyOptionFlow[];
   priority?: number;
   customQuestion?: string;
@@ -196,6 +197,7 @@ export interface JourneyStepFlow {
 export interface JourneyOptionFlow {
   id: number;
   text: string;
+  mobileText?: string;
   description?: string;
   nextStepId: string | null;
   isEndState: boolean;
@@ -275,7 +277,7 @@ export const getJourneyFlow = async (mainSentimentId: number): Promise<JourneyFl
 
 // Nova função para buscar jornada personalizada baseada na intenção emocional
 export const getPersonalizedJourneyFlow = async (
-  mainSentimentId: number, 
+  mainSentimentId: number,
   emotionalIntentionId: number
 ): Promise<PersonalizedJourneyFlow> => {
   try {
@@ -291,23 +293,23 @@ export const getPersonalizedJourneyFlow = async (
 export const getEmotionalIntentions = async (sentimentId: number): Promise<EmotionalIntentionsResponse> => {
   try {
     console.log('🌐 Fazendo requisição para intenções emocionais, sentimento ID:', sentimentId);
-    
+
     // Validar parâmetro de entrada
     if (!sentimentId || typeof sentimentId !== 'number' || sentimentId <= 0) {
       throw new Error(`ID de sentimento inválido: ${sentimentId}`);
     }
-    
+
     const response = await api.get(`/api/emotional-intentions/${sentimentId}`);
-    
+
     // Validar resposta
     if (!response.data) {
       throw new Error('Resposta vazia da API de intenções emocionais');
     }
-    
+
     if (!response.data.intentions || !Array.isArray(response.data.intentions)) {
       throw new Error('Formato de resposta inválido: intentions não é um array');
     }
-    
+
     console.log('✅ Intenções emocionais carregadas com sucesso:', response.data.intentions.length, 'intenções');
     return response.data;
   } catch (error) {
@@ -378,4 +380,4 @@ export const deleteMovie = async (id: string): Promise<void> => {
   await api.delete(`/movies/${id}`);
 };
 
- 
+

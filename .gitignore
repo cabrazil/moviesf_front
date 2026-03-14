@@ -36,6 +36,7 @@ scripts/
 *.sln
 *.sw?
 *.csv
+*.agent
 
 # Landing Page - Comentar/descomentar conforme necessário
 # Para deploy sem LP na Vercel, descomente as linhas abaixo:

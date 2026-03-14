@@ -13,7 +13,9 @@ import {
   InputLabel,
   Chip,
   Fade,
-  LinearProgress
+  LinearProgress,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import {
   MainSentiment,
@@ -117,6 +119,8 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [stepHistory, setStepHistory] = useState<JourneyStepFlow[]>([]);
   const { mode } = useThemeManager();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Cache usando useRef para evitar re-renders
   const journeyCacheRef = useRef<Map<string, PersonalizedJourneyFlow>>(new Map());
@@ -348,7 +352,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
         navigate('/filters', {
           state: {
             movieSuggestions: movieSuggestionsWithOptionText,
-            selectedOptionText: option.text, // Backup direto
+            selectedOptionText: (isMobile && option.mobileText) ? option.mobileText : option.text, // Backup direto
             journeyContext: {
               selectedSentiment,
               selectedIntention,
@@ -708,7 +712,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   mb: { xs: 1, sm: 3 }
                 }}
               >
-                {step.customQuestion || step.question}
+                {isMobile && step.mobileQuestion ? step.mobileQuestion : (step.customQuestion || step.question)}
               </Typography>
             </Box>
           </Fade>
@@ -733,7 +737,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                   >
                     {step.options.map((option: JourneyOptionFlow) => (
                       <MenuItem key={option.id} value={option.id}>
-                        {option.text} ({option.id})
+                        {isMobile && option.mobileText ? option.mobileText : option.text} ({option.id})
                       </MenuItem>
                     ))}
                   </Select>
@@ -768,7 +772,7 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
                           fontSize: { xs: '1rem', sm: '1.25rem' },
                           mb: { xs: 1, sm: 1 }
                         }}>
-                          {option.text}
+                          {isMobile && option.mobileText ? option.mobileText : option.text}
                         </Typography>
                         {option.description && (
                           <Typography variant="body2" color="text.secondary" sx={{
