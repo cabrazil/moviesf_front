@@ -182,7 +182,7 @@ const MovieDetailsPage: React.FC = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', pb: 8 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', color: 'text.primary', pb: { xs: 14, md: 8 } }}>
       {/* Layout Híbrido - Conteúdo Principal Primeiro */}
       <Box sx={{
         display: 'flex',
