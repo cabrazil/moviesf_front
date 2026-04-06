@@ -51,13 +51,13 @@ export const lightSentimentColors = {
   13: '#F57C00', // Laranja amarelado (era #E65100 - muito próximo do vermelho)
   14: '#1565C0', // Azul mais escuro (era #1976D2) 
   15: '#2E7D32', // Verde mais escuro (era #388E3C)
-  16: '#C62828', // Vermelho mais escuro (era #D32F2F)
-  17: '#6A1B9A', // Roxo mais escuro (era #7B1FA2)
+  16: '#6A1B9A', // Roxo - Ansioso(a) (psicologia: tensão, introspecção)
+  17: '#C62828', // Vermelho - Animado(a) (psicologia: energia, ação)
   18: '#424242', // Cinza mais escuro (era #616161)
 };
 
 export const darkSentimentColors = {
-  13: '#FF6B35', 14: '#4dabf5', 15: '#4CAF50', 16: '#F44336', 17: '#BA68C8', 18: '#9E9E9E',
+  13: '#FF6B35', 14: '#4dabf5', 15: '#4CAF50', 16: '#BA68C8', 17: '#F44336', 18: '#9E9E9E',
 };
 
 // --- THEME CREATION ---
