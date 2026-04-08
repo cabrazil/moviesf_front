@@ -42,10 +42,21 @@ export function TagPage() {
           setPosts(response.data.articles);
           console.log('✅ Artigos encontrados:', response.data.articles.length);
           
-          // Extrair nome da tag do slug
-          const formattedTagName = tagSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          setTagName(formattedTagName);
-          console.log('🏷️ Nome da tag:', formattedTagName);
+          // Tentar extrair o nome real da tag (com acentos) dos artigos retornados
+          let resolvedTagName = '';
+          for (const article of response.data.articles) {
+            const matchingTag = article.tags?.find(t => t.slug === tagSlug);
+            if (matchingTag?.name) {
+              resolvedTagName = matchingTag.name;
+              break;
+            }
+          }
+          // Fallback: reconstruir a partir do slug se não encontrar o name
+          if (!resolvedTagName) {
+            resolvedTagName = tagSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          }
+          setTagName(resolvedTagName);
+          console.log('🏷️ Nome da tag:', resolvedTagName);
         } else {
           setError('Tag não encontrada');
         }
