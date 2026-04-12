@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Heart, Mail, Instagram, Twitter, Youtube, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoBlog from '../../assets/logo_header.png';
@@ -5,6 +6,16 @@ import { NewsletterForm } from '../newsletter/NewsletterForm';
 
 export function BlogFooter() {
   const currentYear = new Date().getFullYear();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const footerLinks = {
     categories: [
@@ -42,14 +53,14 @@ export function BlogFooter() {
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
-        padding: '48px 20px'
+        padding: isMobile ? '40px 16px' : '48px 20px'
       }}>
         {/* Main Footer Content */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '32px',
-          marginBottom: '48px'
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: isMobile ? '40px' : '32px',
+          marginBottom: isMobile ? '40px' : '48px'
         }}>
           {/* Brand Column */}
           <div>
@@ -81,7 +92,11 @@ export function BlogFooter() {
             </p>
 
             {/* Social Links */}
-            <div style={{ display: 'flex', gap: '30px' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: isMobile ? '24px' : '30px',
+              justifyContent: isMobile ? 'flex-start' : 'flex-start' 
+            }}>
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -202,8 +217,8 @@ export function BlogFooter() {
         }}>
           <div style={{
             display: 'flex',
-            flexDirection: 'column',
-            gap: '14px',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: '20px',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
@@ -218,7 +233,12 @@ export function BlogFooter() {
               © {currentYear} VibesFilm. Feito com <Heart size={16} style={{ color: '#ef4444', fill: 'currentColor' }} /> para cinéfilos.
             </p>
 
-            <div style={{ display: 'flex', gap: '24px' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: isMobile ? '16px' : '24px',
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>
               {footerLinks.legal.map((link) => (
                 <Link
                   key={link.name}
