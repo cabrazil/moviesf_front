@@ -115,6 +115,7 @@ interface Movie {
     relevance: number;
     journeyOptionFlow: {
       text: string;
+      displayTitle?: string | null;
       journeyStepFlow: {
         question: string;
         journeyFlow: {
@@ -166,6 +167,7 @@ interface Movie {
 
 interface MovieDetailProps {
   slug?: string;
+  hideHeader?: boolean;
 }
 
 
@@ -325,7 +327,7 @@ const translateOscarCategory = (category: string): string => {
 };
 
 // Função para gerar texto da seção "Para quem pode ser esse filme?"
-const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
+const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = false }) => {
   const { identifier } = useParams<{ identifier: string }>();
   const navigate = useNavigate();
   const { mode, toggleThemeMode } = useThemeManager();
@@ -427,6 +429,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
   if (!movie) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+        {!hideHeader && (
         <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
           <Toolbar sx={{ justifyContent: 'space-between' }}>
             <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
@@ -446,6 +449,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
             </IconButton>
           </Toolbar>
         </AppBar>
+        )}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h4" color="text.primary" sx={{ mb: 2 }}>
@@ -486,6 +490,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
         />
       )}
       {/* Header */}
+      {!hideHeader && (
       <AppBar position="static" sx={{
         backgroundColor: mode === 'dark' ? 'transparent' : 'rgba(0,0,0,0.05)',
         boxShadow: 'none',
@@ -525,6 +530,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
           </Box>
         </Toolbar>
       </AppBar>
+      )}
 
       <Container maxWidth="xl" sx={{ py: 1, px: { xs: 2, sm: 2, md: 3 }, overflow: 'hidden' }}>
         {/* Hero Section - Layout Desktop */}
@@ -807,11 +813,36 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug }) => {
                     const topSuggestion = movie?.movieSuggestionFlows
                       ?.sort((a, b) => b.relevance - a.relevance)[0];
 
-                    if (topSuggestion?.reason) {
+                    if (topSuggestion) {
+                      const score = Number(topSuggestion.relevance).toFixed(1);
+                      const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle || 
+                                           topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
+                      const optionText = topSuggestion.journeyOptionFlow?.text;
+                      
                       return (
-                        <>
-                          <strong style={{ color: '#1976d2', fontSize: '1.0rem' }}>O Convite:</strong> "{topSuggestion.reason}"
-                        </>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                            <Chip 
+                              label={`Score: ${score}`} 
+                              sx={{ bgcolor: '#4caf50', color: 'white', fontWeight: 'bold' }} 
+                            />
+                            {journeyTitle && (
+                              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+                                Classificação excelente para a jornada: {journeyTitle}
+                              </Typography>
+                            )}
+                          </Box>
+                          {optionText && (
+                            <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', pl: 1, borderLeft: '3px solid #1976d2' }}>
+                              "...para quem busca a sensação de {optionText}"
+                            </Typography>
+                          )}
+                          {topSuggestion.reason && (
+                            <Typography variant="body1" sx={{ mt: 1, color: 'text.primary' }}>
+                              <strong style={{ color: '#1976d2' }}>O Convite:</strong> "{topSuggestion.reason}"
+                            </Typography>
+                          )}
+                        </Box>
                       );
                     }
 

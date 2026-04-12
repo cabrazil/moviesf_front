@@ -22,7 +22,9 @@ export function BlogLayout({ children }: BlogLayoutProps) {
       background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
       backgroundSize: '200% 200%',
       animation: 'gradientShift 8s ease infinite',
-      minHeight: '100vh'
+      minHeight: '100vh',
+      width: '100%',
+      overflowX: 'hidden'
     }}>
       <BlogHeader />
       <main style={{ flex: 1, backgroundColor: 'transparent' }}>

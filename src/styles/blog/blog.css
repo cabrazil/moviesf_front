@@ -455,7 +455,41 @@ body.blog-active {
   font-weight: 600;
 }
 
-/* Responsividade */
+/* ============================================
+   Ficha Premium (Estilos Globais e Base do Layout)
+   ============================================ */
+
+/* Ficha Inferior Estilos Genéricos (Desktop) */
+.premium-hero-layer {
+  flex-direction: row;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.premium-hero-metadata, .premium-hero-genres, .premium-hero-actions {
+  flex-wrap: wrap;
+}
+
+.premium-hero-vibe {
+  padding-left: 20px;
+  border-left: 4px solid #FF6B35;
+  text-align: left;
+}
+
+.premium-ficha-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.premium-ficha-item {
+  display: flex;
+  align-items: flex-start; /* Alinha o emoji sempre com a primeira linha se o texto quebrar! */
+  gap: 12px;
+}
+
 @media (max-width: 768px) {
   .nota-curadoria {
     padding: 1.25rem;
@@ -469,5 +503,45 @@ body.blog-active {
   .nota-curadoria-icon {
     width: 20px;
     height: 20px;
+  }
+
+  /* Quebra centralizada para Ficha Premium no Celular */
+  .premium-hero-layer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .premium-hero-metadata {
+    justify-content: center;
+  }
+
+  .premium-hero-genres {
+    justify-content: center;
+  }
+
+  .premium-hero-vibe {
+    padding-left: 0;
+    border-left: none;
+    border-top: 4px solid #FF6B35;
+    padding-top: 16px;
+    text-align: center;
+  }
+
+  .premium-hero-actions {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+  
+  .premium-hero-actions button, .premium-hero-actions a {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .premium-ficha-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
   }
 }

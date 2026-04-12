@@ -18,6 +18,7 @@ import AboutPage from './pages/blog/AboutPage';
 import ContactPage from './pages/blog/ContactPage';
 import PrivacyPage from './pages/blog/PrivacyPage';
 import TermsPage from './pages/blog/TermsPage';
+import { MoviePremiumFicha } from './pages/blog/MoviePremiumFicha';
 
 
 function App() {
@@ -39,6 +40,7 @@ function App() {
             <Route path="/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/lista/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
+            <Route path="/filme/:slug" element={<BlogLayout><MoviePremiumFicha /></BlogLayout>} />
             
             {/* App Routes */}
             <Route path="/app" element={<Home />} />

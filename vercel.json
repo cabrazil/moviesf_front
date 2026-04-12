@@ -11,11 +11,6 @@
       "permanent": true
     },
     {
-      "source": "/filme/(.*)",
-      "destination": "/onde-assistir/$1",
-      "permanent": true
-    },
-    {
       "source": "/filme-mobile/(.*)",
       "destination": "/onde-assistir-mobile/$1",
       "permanent": true
@@ -52,6 +47,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/filme/(.*)",
+      "destination": "/index.html"
+    },
     {
       "source": "/app/(.*)",
       "destination": "/index.html"

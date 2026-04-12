@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Home, User, Tag } from 'lucide-react';
 import logoBlog from '../../assets/logo_header.png';
+import { MovieLiveSearch } from './MovieLiveSearch';
 
 export function BlogHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,20 +120,7 @@ export function BlogHeader() {
           alignItems: 'center',
           gap: '16px'
         }}>
-          {/* <button style={{
-            padding: '8px',
-            borderRadius: '8px',
-            border: 'none',
-            backgroundColor: 'transparent',
-            color: '#E0E0E0',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(46, 196, 182, 0.1)'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            <Search size={20} />
-          </button> */}
+          <MovieLiveSearch />
           <a
             href="/app"
             style={{
@@ -142,7 +130,8 @@ export function BlogHeader() {
               borderRadius: '8px',
               textDecoration: 'none',
               fontWeight: '500',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              flexShrink: 0
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
@@ -225,17 +214,13 @@ export function BlogHeader() {
             })}
 
             {/* Mobile Search */}
-            {/* <div style={{
+            <div style={{
               padding: '12px 16px',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              marginTop: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
+              marginTop: '8px'
             }}>
-              <Search size={20} color="#E0E0E0" />
-              <span style={{ color: '#E0E0E0', fontSize: '16px' }}>Buscar</span>
-            </div> */}
+              <MovieLiveSearch isMobile onClose={() => setIsMenuOpen(false)} />
+            </div>
 
             {/* Mobile App Button */}
             <div style={{
