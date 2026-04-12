@@ -7,6 +7,9 @@
     <loc>https://api.vibesfilm.com/sitemap/movies.xml</loc>
   </sitemap>
   <sitemap>
+    <loc>https://api.vibesfilm.com/sitemap/movie-landings.xml</loc>
+  </sitemap>
+  <sitemap>
     <loc>https://api.vibesfilm.com/sitemap/articles.xml</loc>
   </sitemap>
 </sitemapindex>

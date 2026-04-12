@@ -36,6 +36,7 @@ import PillarArticleBadge from '../../components/movie-details/PillarArticleBadg
 
 interface Movie {
   id: string;
+  slug?: string;
   title: string;
   original_title?: string;
   year?: number;
@@ -414,6 +415,19 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
 
     fetchMovieData();
   }, [finalSlug]);
+
+  useEffect(() => {
+    if (loading) {
+      document.body.setAttribute('data-movie-page-loaded', 'false');
+      return;
+    }
+
+    document.body.setAttribute('data-movie-page-loaded', movie ? 'true' : 'not-found');
+
+    return () => {
+      document.body.removeAttribute('data-movie-page-loaded');
+    };
+  }, [loading, movie]);
 
 
   if (loading) {

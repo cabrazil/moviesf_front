@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet-async';
 
 interface MovieMetaTagsProps {
   movie: {
+    slug?: string;
     title: string;
     year?: number;
     description?: string;
@@ -77,13 +78,17 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
 
   // Gerar URL canônica
   const generateCanonicalUrl = () => {
-    const slug = title.toLowerCase()
+    if (movie.slug) {
+      return `https://vibesfilm.com/onde-assistir/${movie.slug}`;
+    }
+
+    const fallbackSlug = title.toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim();
-    
-    return `https://vibesfilm.com/onde-assistir/${slug}`;
+
+    return `https://vibesfilm.com/onde-assistir/${fallbackSlug}`;
   };
 
   // Gerar Schema.org markup
@@ -177,14 +182,16 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       <meta property="og:description" content={generateDescription()} />
       <meta property="og:image" content={thumbnail} />
       <meta property="og:url" content={generateCanonicalUrl()} />
-      <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="vibesfilm" />
+      <meta property="og:type" content="video.movie" />
+      <meta property="og:site_name" content="VibesFilm" />
+      <meta property="og:locale" content="pt_BR" />
       
       {/* Twitter Card tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={generateTitle()} />
       <meta name="twitter:description" content={generateDescription()} />
       <meta name="twitter:image" content={thumbnail} />
+      <meta name="twitter:url" content={generateCanonicalUrl()} />
       
       {/* Schema.org markup */}
       <script type="application/ld+json">
@@ -192,7 +199,8 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       </script>
       
       {/* Meta tags adicionais */}
-      <meta name="robots" content="index, follow" />
+      <meta name="robots" content="index, follow, max-image-preview:large" />
+      <meta name="googlebot" content="index, follow, max-image-preview:large" />
       <meta name="author" content="vibesfilm" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Helmet>
