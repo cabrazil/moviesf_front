@@ -89,6 +89,11 @@ async function getMovieRoutes() {
     const response = await fetch(sitemapUrl);
 
     if (!response.ok) {
+      if (response.status === 404) {
+        console.warn(`Sitemap ainda indisponivel, ignorando por enquanto: ${sitemapUrl}`);
+        continue;
+      }
+
       throw new Error(`Falha ao buscar sitemap de filmes: ${response.status} ${response.statusText} (${sitemapUrl})`);
     }
 
@@ -156,7 +161,25 @@ async function main() {
     server.listen(port, host, resolve);
   });
 
-  const browser = await chromium.launch({ headless: true });
+  let browser;
+
+  try {
+    browser = await chromium.launch({ headless: true });
+  } catch (error) {
+    console.warn('Nao foi possivel iniciar o navegador do Playwright. Pulando prerenderizacao SEO.');
+    console.warn(String(error));
+    await new Promise((resolve, reject) => {
+      server.close((closeError) => {
+        if (closeError) {
+          reject(closeError);
+          return;
+        }
+        resolve();
+      });
+    });
+    return;
+  }
+
   const page = await browser.newPage();
 
   try {
