@@ -337,16 +337,28 @@ export function ArticlePage() {
               {post.category_title}
             </span>
 
-
-            {/* Article Meta */}
+            {/* Article Title */}
+            <h1 style={{
+              fontSize: isMobile ? '1.75rem' : '2.75rem',
+              fontWeight: 800,
+              color: '#FDFFFC',
+              marginBottom: isMobile ? '16px' : '24px',
+              marginTop: isMobile ? '8px' : '16px',
+              lineHeight: 1.2,
+              letterSpacing: '-0.02em',
+              textAlign: 'center',
+              display: 'block'
+            }}>
+              {post.title}
+            </h1>
             <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '24px',
+              gap: isMobile ? '12px' : '24px',
               color: '#E0E0E0',
-              fontSize: '0.875rem',
-              marginBottom: '32px',
+              fontSize: isMobile ? '0.75rem' : '0.875rem',
+              marginBottom: isMobile ? '24px' : '32px',
               flexWrap: 'wrap'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -514,11 +526,11 @@ export function ArticlePage() {
                   )
                   .replace(
                     /<h1([^>]*)>/gi,
-                    '<h1$1 style="font-size: 30px; font-weight: 600; color: #FDFFFC; margin: 24px 0 16px 0; line-height: 1.3;">'
+                    `<h1$1 style="font-size: ${isMobile ? '24px' : '30px'}; font-weight: 600; color: #FDFFFC; margin: 24px 0 16px 0; line-height: 1.3;">`
                   )
                   .replace(
                     /<h2([^>]*)>/gi,
-                    '<h2$1 style="font-size: 24px; font-weight: 600; color: #FDFFFC; margin: 20px 0 12px 0; line-height: 1.4;">'
+                    `<h2$1 style="font-size: ${isMobile ? '20px' : '24px'}; font-weight: 600; color: #FDFFFC; margin: 20px 0 12px 0; line-height: 1.4;">`
                   )
                   .replace(
                     /<a([^>]*)>/gi,

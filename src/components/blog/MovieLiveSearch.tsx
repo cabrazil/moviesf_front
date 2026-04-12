@@ -171,18 +171,19 @@ export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchPr
       {isOpen && results.length > 0 && (
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
+            position: isMobile ? 'relative' : 'absolute',
+            top: isMobile ? '12px' : 'calc(100% + 8px)',
             left: isMobile ? 0 : 'auto',
             right: 0,
             width: isMobile ? '100%' : '360px',
-            backgroundColor: 'rgba(10, 25, 47, 0.98)',
-            border: '1px solid rgba(59, 130, 246, 0.25)',
-            borderRadius: '12px',
-            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(16px)',
+            backgroundColor: isMobile ? 'rgba(255, 255, 255, 0.03)' : 'rgba(10, 25, 47, 0.98)',
+            border: isMobile ? 'none' : '1px solid rgba(59, 130, 246, 0.25)',
+            borderRadius: isMobile ? '8px' : '12px',
+            boxShadow: isMobile ? 'none' : '0 20px 60px rgba(0, 0, 0, 0.5)',
+            backdropFilter: isMobile ? 'none' : 'blur(16px)',
             zIndex: 200,
             overflow: 'hidden',
+            marginBottom: isMobile ? '8px' : 0
           }}
         >
           {/* Cabeçalho do dropdown */}
@@ -331,12 +332,12 @@ export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchPr
       {isOpen && !isLoading && query.length >= 2 && results.length === 0 && (
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
+            position: isMobile ? 'relative' : 'absolute',
+            top: isMobile ? '12px' : 'calc(100% + 8px)',
             right: 0,
             width: isMobile ? '100%' : '320px',
-            backgroundColor: 'rgba(10, 25, 47, 0.98)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: isMobile ? 'rgba(255, 255, 255, 0.03)' : 'rgba(10, 25, 47, 0.98)',
+            border: isMobile ? 'none' : '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',
             padding: '20px',
             textAlign: 'center',

@@ -43,6 +43,18 @@ export function BlogHeader() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isMenuOpen, isMobile]);
 
+  // Bloquear scroll do corpo quando o menu mobile está aberto
+  useEffect(() => {
+    if (isMenuOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen, isMobile]);
+
   return (
     <header style={{
       backgroundColor: 'rgba(1, 22, 39, 0.95)',
@@ -168,11 +180,15 @@ export function BlogHeader() {
             top: '100%',
             left: 0,
             right: 0,
-            padding: '16px 20px',
+            height: 'calc(100vh - 64px)', // Altura total menos o header
+            overflowY: 'auto', // Permitir scroll se o menu for longo
+            padding: '16px 20px 40px 20px', // Mais padding embaixo
             borderTop: '1px solid rgba(255, 255, 255, 0.1)',
             backgroundColor: 'rgba(1, 22, 39, 0.98)',
             backdropFilter: 'blur(10px)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+            display: 'flex',
+            flexDirection: 'column'
           }}
         >
           <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
