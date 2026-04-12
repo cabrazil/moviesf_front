@@ -13,9 +13,10 @@ dist
 dist-ssr
 *.local
 downloads/
-scripts/
 
 # Scripts
+scripts/*
+!scripts/prerender-movies.mjs
 
 # Environment
 .env
