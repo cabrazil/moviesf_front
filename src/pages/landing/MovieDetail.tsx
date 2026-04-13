@@ -837,20 +837,16 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                             <Chip 
-                              label={`Score: ${score}`} 
-                              sx={{ bgcolor: '#4caf50', color: 'white', fontWeight: 'bold' }} 
+                              label={`Vibes: ${score}`} 
+                              sx={{ bgcolor: Number(score) >= 7.5 ? '#4caf50' : '#ff9800', color: 'white', fontWeight: 'bold' }} 
                             />
                             {journeyTitle && (
                               <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
-                                Classificação excelente para a jornada: {journeyTitle}
+                                {Number(score) >= 7.5 ? 'Excelente classificação' : 'Boa classificação'} para a jornada: {journeyTitle}
                               </Typography>
                             )}
                           </Box>
-                          {optionText && (
-                            <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic', pl: 1, borderLeft: '3px solid #1976d2' }}>
-                              "...para quem busca a sensação de {optionText}"
-                            </Typography>
-                          )}
+
                           {topSuggestion.reason && (
                             <Typography variant="body1" sx={{ mt: 1, color: 'text.primary' }}>
                               <strong style={{ color: '#1976d2' }}>O Convite:</strong> "{topSuggestion.reason}"
