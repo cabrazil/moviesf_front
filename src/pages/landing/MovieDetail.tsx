@@ -831,7 +831,6 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                       const score = Number(topSuggestion.relevance).toFixed(1);
                       const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle || 
                                            topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
-                      const optionText = topSuggestion.journeyOptionFlow?.text;
                       
                       return (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
