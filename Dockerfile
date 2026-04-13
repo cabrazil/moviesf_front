@@ -15,7 +15,7 @@ ENV VITE_API_BASE_URL=https://api.vibesfilm.com
 RUN npm run build:prod
 
 # Estágio 2: Servidor Nginx para entrega dos arquivos estáticos
-FROM nginx:stable-alpine
+FROM nginx:stable-alpine AS production
 
 # Copiar os arquivos buildados do estágio anterior
 COPY --from=build /app/dist /usr/share/nginx/html
