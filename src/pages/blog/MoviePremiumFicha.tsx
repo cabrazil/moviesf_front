@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader, Play } from 'lucide-react';
 import { getPlatformLogoUrlMedium } from '../../services/streaming.service';
-import { Helmet } from 'react-helmet-async';
 
 interface MovieData {
   id: string;
@@ -147,6 +146,64 @@ export function MoviePremiumFicha() {
     };
   }, [loading, movie]);
 
+  // SEO: atualiza <title> e meta tags via DOM diretamente (sem react-helmet)
+  useEffect(() => {
+    if (!movie) return;
+    const fallbackDesc = `Curadoria e análise emocional do filme ${movie.title}`;
+    const desc = movie.landingPageHook ||
+      (movie.description?.trim() ? movie.description.substring(0, 155) + '...' : fallbackDesc);
+
+    document.title = `${movie.title} (${movie.year}) - Análise e Onde Assistir | VibesFilm`;
+
+    const setMeta = (attr: string, key: string, value: string) => {
+      let el = document.querySelector(`meta[${attr}='${key}']`);
+      if (!el) {
+        el = document.createElement('meta');
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', value);
+    };
+
+    setMeta('name', 'description', desc);
+    setMeta('property', 'og:type', 'video.movie');
+    setMeta('property', 'og:title', `${movie.title} (${movie.year}) - Análise e Onde Assistir`);
+    setMeta('property', 'og:description', desc);
+    setMeta('property', 'og:image', movie.thumbnail);
+    setMeta('property', 'og:url', `https://vibesfilm.com/filme/${movie.slug || movie.id}`);
+    setMeta('name', 'twitter:card', 'summary_large_image');
+    setMeta('name', 'twitter:title', `${movie.title} (${movie.year}) - VibesFilm`);
+    setMeta('name', 'twitter:description', desc);
+    setMeta('name', 'twitter:image', movie.thumbnail);
+
+    // Schema.org JSON-LD
+    const existingScript = document.querySelector('script[data-movie-schema]');
+    if (existingScript) existingScript.remove();
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'Movie',
+      name: movie.title,
+      image: movie.thumbnail,
+      dateCreated: `${movie.year}-01-01`,
+      director: { '@type': 'Person', name: movie.director },
+      description: movie.description,
+      actor: movie.mainCast?.slice(0, 4).map(c => ({
+        '@type': 'PerformanceRole',
+        actor: { '@type': 'Person', name: c.actorName },
+        characterName: c.characterName
+      }))
+    };
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.setAttribute('data-movie-schema', 'true');
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+
+    return () => {
+      document.querySelector('script[data-movie-schema]')?.remove();
+    };
+  }, [movie]);
+
   // Função para unificar plataformas com múltiplos accessTypes (ex: Apple TV Aluguel vs Compra)
   const unifyPlatforms = (platforms: StreamingPlatform[]) => {
     const platformMap = new Map<string, StreamingPlatform>();
@@ -195,68 +252,9 @@ export function MoviePremiumFicha() {
   const hookText = extractHookText(movie.landingPageHook);
   const awardWins = movie.oscarAwards?.totalWins ?? 0;
   const awardNominations = movie.oscarAwards?.totalNominations ?? 0;
-  const canonicalSlug = movie.slug || slug || movie.id;
-  const canonicalUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
-  const titleText = `${movie.title} (${movie.year}) - Análise e Onde Assistir | VibesFilm`;
-  const ogTitle = `${movie.title} (${movie.year}) - Análise e Onde Assistir`;
-  const twitterTitle = `${movie.title} (${movie.year}) - VibesFilm`;
-  const fallbackDesc = movie.title ? `Curadoria e análise emocional do filme ${movie.title}` : 'Análise de filme';
-  const metaDescription = String(
-    hookText ||
-    (movie.description && movie.description.trim().length > 0 ? movie.description.substring(0, 155) + '...' : fallbackDesc)
-  );
-
-  const schemaData = movie ? {
-    "@context": "https://schema.org",
-    "@type": "Movie",
-    "name": movie.title,
-    "image": movie.thumbnail,
-    "dateCreated": `${movie.year}-01-01`,
-    "director": {
-      "@type": "Person",
-      "name": movie.director
-    },
-    "description": hookText || movie.description,
-    "actor": movie.mainCast?.slice(0, 4).map(c => ({
-      "@type": "PerformanceRole",
-      "actor": {
-        "@type": "Person",
-        "name": c.actorName
-      },
-      "characterName": c.characterName
-    }))
-  } : null;
 
   return (
     <>
-      {movie && (
-        <Helmet>
-          <title>{titleText}</title>
-          <meta name="description" content={metaDescription} />
-          <meta name="robots" content="index, follow, max-image-preview:large" />
-          <meta name="googlebot" content="index, follow, max-image-preview:large" />
-          <link rel="canonical" href={canonicalUrl} />
-          
-          {/* Open Graph / Facebook */}
-          <meta property="og:type" content="video.movie" />
-          <meta property="og:title" content={ogTitle} />
-          <meta property="og:description" content={metaDescription} />
-          <meta property="og:image" content={movie.thumbnail} />
-          <meta property="og:url" content={canonicalUrl} />
-          <meta property="og:site_name" content="VibesFilm" />
-          <meta property="og:locale" content="pt_BR" />
-          
-          {/* Twitter */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={twitterTitle} />
-          <meta name="twitter:description" content={metaDescription} />
-          <meta name="twitter:image" content={movie.thumbnail} />
-          <meta name="twitter:url" content={canonicalUrl} />
-          
-          {/* Schema.org Structured Data */}
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
-        </Helmet>
-      )}
       <div style={{
         fontFamily: "'Outfit', sans-serif",
         color: '#fff',
