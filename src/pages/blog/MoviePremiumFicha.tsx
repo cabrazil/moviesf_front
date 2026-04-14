@@ -33,6 +33,7 @@ interface MovieData {
     subSentiment: string;
     relevance: number;
   }>;
+  contentWarnings?: string | null;
   movieSuggestionFlows?: Array<{
     reason: string;
     relevance: number;
@@ -547,6 +548,51 @@ export function MoviePremiumFicha() {
             </p>
           )}
         </div>
+
+          {/* Card: Alerta de Conteúdo */}
+          {movie.contentWarnings && (() => {
+            const hasWarning = !movie.contentWarnings!.toLowerCase().includes('nenhum alerta');
+            const rawText = movie.contentWarnings!.replace(/^aten[çc][ãa]o:\s*/i, '').trim();
+            const alertText = rawText.charAt(0).toUpperCase() + rawText.slice(1);
+            return (
+              <div style={{
+                background: hasWarning
+                  ? 'rgba(255, 183, 77, 0.05)'
+                  : 'rgba(76, 175, 80, 0.05)',
+                border: `1px solid ${hasWarning ? 'rgba(255, 183, 77, 0.25)' : 'rgba(76, 175, 80, 0.25)'}`,
+                borderRadius: '16px',
+                padding: '20px 24px',
+                backdropFilter: 'blur(20px)',
+                display: 'flex',
+                gap: '14px',
+                alignItems: 'flex-start',
+              }}>
+                <span style={{ fontSize: '20px', flexShrink: 0, marginTop: '2px' }}>
+                  {hasWarning ? '⚠️' : '✅'}
+                </span>
+                <div>
+                  <h3 style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '1.5px',
+                    color: hasWarning ? '#FFB74D' : '#66BB6A',
+                    marginBottom: '8px',
+                  }}>
+                    {hasWarning ? 'Alerta de Conteúdo' : 'Verificação de Conteúdo'}
+                  </h3>
+                  <p style={{
+                    fontSize: '14px',
+                    color: 'rgba(255,255,255,0.75)',
+                    lineHeight: '1.6',
+                    margin: 0,
+                  }}>
+                    {alertText}
+                  </p>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Card 4: Ressoa com quem busca (SubSentiments) */}
           {movie.emotionalTags && movie.emotionalTags.length > 0 && (
