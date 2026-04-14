@@ -39,6 +39,21 @@
     <meta name="p:domain_verify" content="1837cbfe175dd1aa92b5851fd2e55551"/>
     
     <title>vibesfilm - Cada emoção tem um filme.</title>
+
+    <!-- Anti-FOUC: fundo escuro imediato antes do JS carregar -->
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #011627;
+        color: #FDFFFC;
+        font-family: 'Outfit', sans-serif;
+      }
+      #root {
+        min-height: 100vh;
+        background-color: #011627;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
