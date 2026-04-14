@@ -40,20 +40,30 @@
     
     <title>vibesfilm - Cada emoção tem um filme.</title>
 
-    <!-- Anti-FOUC: fundo escuro imediato antes do JS carregar -->
-    <style>
+    <!-- Anti-FOUC: fundo correto imediato antes do JS carregar -->
+    <style id="fouc-styles">
       html, body {
         margin: 0;
         padding: 0;
-        background-color: #011627;
-        color: #FDFFFC;
         font-family: 'Outfit', sans-serif;
       }
       #root {
         min-height: 100vh;
-        background-color: #011627;
       }
     </style>
+    <script>
+      (function() {
+        try {
+          var savedMode = localStorage.getItem('themeMode');
+          var bg = savedMode === 'light' ? '#F3F4F6' : '#011627';
+          var color = savedMode === 'light' ? '#1F2937' : '#FDFFFC';
+          document.documentElement.style.backgroundColor = bg;
+          document.documentElement.style.color = color;
+          document.body.style.backgroundColor = bg;
+          document.body.style.color = color;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
