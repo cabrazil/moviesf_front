@@ -84,7 +84,7 @@ export function BlogHero() {
               e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 107, 53, 0.4)';
             }}
           >
-            🎯 Encontrar Meu Filme
+            🎯 Descobrir Minha Vibe
           </a>
 
           <button
