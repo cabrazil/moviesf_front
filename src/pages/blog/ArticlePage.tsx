@@ -745,19 +745,28 @@ export function ArticlePage() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#3B82F6',
-                color: '#011627',
+                backgroundColor: '#FF6B35',
+                color: '#FFFFFF',
                 padding: isMobile ? '10px 20px' : '12px 24px',
                 borderRadius: '8px',
                 textDecoration: 'none',
                 fontWeight: '500',
                 fontSize: isMobile ? '0.9rem' : '1rem',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 14px rgba(255, 107, 53, 0.4)'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0A6E65'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3B82F6'}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#E55A2B';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.6)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#FF6B35';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(255, 107, 53, 0.4)';
+              }}
             >
-              <span>Descobrir Meu Filme</span>
+              <span>Descobrir Minha Vibe</span>
               <ArrowLeft size={16} style={{ transform: 'rotate(180deg)' }} />
             </a>
           </div>
