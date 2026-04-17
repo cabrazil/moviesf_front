@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Film, Loader, ArrowRight } from 'lucide-react';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface SearchResult {
   id: string;
@@ -266,7 +267,7 @@ export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchPr
               >
                 {movie.thumbnail ? (
                   <img
-                    src={movie.thumbnail}
+                    src={getBlogImageUrl(movie.thumbnail)}
                     alt={movie.title}
                     style={{
                       width: '40px',
@@ -553,7 +554,7 @@ export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchPr
                   >
                     {movie.thumbnail ? (
                       <img
-                        src={movie.thumbnail}
+                        src={getBlogImageUrl(movie.thumbnail)}
                         alt={movie.title}
                         style={{
                           width: '44px',
