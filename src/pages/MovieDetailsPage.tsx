@@ -1165,7 +1165,7 @@ const MovieDetailsPage: React.FC = () => {
                     }}>
                       {similarMovie.thumbnail ? (
                         <img
-                          src={similarMovie.thumbnail}
+                          src={getBlogImageUrl(similarMovie.thumbnail)}
                           alt={similarMovie.title}
                           style={{
                             width: '100%',

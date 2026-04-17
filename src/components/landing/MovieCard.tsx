@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Play, Heart } from 'lucide-react';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface Movie {
   id: string;
@@ -45,7 +46,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
       {/* Movie Poster */}
       <div className="relative">
         <img
-          src={movie.thumbnail || '/images/default-movie.jpg'}
+          src={getBlogImageUrl(movie.thumbnail || '') || '/images/default-movie.jpg'}
           alt={movie.title}
           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
         />

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Loader, Play } from 'lucide-react';
 import { getPlatformLogoUrlMedium } from '../../services/streaming.service';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface MovieData {
   id: string;
@@ -170,12 +171,12 @@ export function MoviePremiumFicha() {
     setMeta('property', 'og:type', 'video.movie');
     setMeta('property', 'og:title', `${movie.title} (${movie.year}) - Análise e Onde Assistir`);
     setMeta('property', 'og:description', desc);
-    setMeta('property', 'og:image', movie.thumbnail);
+    setMeta('property', 'og:image', getBlogImageUrl(movie.thumbnail));
     setMeta('property', 'og:url', `https://vibesfilm.com/filme/${movie.slug || movie.id}`);
     setMeta('name', 'twitter:card', 'summary_large_image');
     setMeta('name', 'twitter:title', `${movie.title} (${movie.year}) - VibesFilm`);
     setMeta('name', 'twitter:description', desc);
-    setMeta('name', 'twitter:image', movie.thumbnail);
+    setMeta('name', 'twitter:image', getBlogImageUrl(movie.thumbnail));
 
     // Schema.org JSON-LD
     const existingScript = document.querySelector('script[data-movie-schema]');
@@ -184,7 +185,7 @@ export function MoviePremiumFicha() {
       '@context': 'https://schema.org',
       '@type': 'Movie',
       name: movie.title,
-      image: movie.thumbnail,
+      image: getBlogImageUrl(movie.thumbnail),
       dateCreated: `${movie.year}-01-01`,
       director: { '@type': 'Person', name: movie.director },
       description: movie.description,
@@ -281,7 +282,7 @@ export function MoviePremiumFicha() {
         <div style={{
           position: 'absolute',
           top: -20, left: -20, right: -20, bottom: -20,
-          backgroundImage: `url(${movie.thumbnail})`,
+          backgroundImage: `url(${getBlogImageUrl(movie.thumbnail)})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           filter: 'blur(35px) brightness(0.4) saturate(1.5)',
@@ -310,7 +311,7 @@ export function MoviePremiumFicha() {
           
           {/* Pôster Principal Límpido */}
           <img 
-            src={movie.thumbnail} 
+            src={getBlogImageUrl(movie.thumbnail)} 
             alt={movie.title}
             style={{
               width: '100%',

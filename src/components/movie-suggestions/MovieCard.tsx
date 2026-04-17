@@ -7,6 +7,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import MovieRatings from './MovieRatings';
 import MoviePlatforms from './MoviePlatforms';
 import { getSentimentColorWithOpacity } from './movieHelpers';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface MovieCardProps {
   suggestion: MovieSuggestionFlow;
@@ -80,7 +81,7 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
           {movie.thumbnail && (
             <Box sx={{ flexShrink: 0 }}>
               <LazyLoadImage
-                src={movie.thumbnail}
+                src={getBlogImageUrl(movie.thumbnail)}
                 alt={movie.title}
                 effect="opacity"
                 style={{

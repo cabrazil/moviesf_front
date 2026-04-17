@@ -16,6 +16,7 @@ import imdbLogo from '../../assets/imdb.png';
 import rtLogo from '../../assets/rottentomatoes.png';
 import metacriticLogo from '../../assets/metascore.svg';
 import PillarArticleBadge from '../../components/movie-details/PillarArticleBadge';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 
 
@@ -575,7 +576,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
               <Box sx={{ position: 'relative', mb: 3 }}>
                 <Box
                   component="img"
-                  src={movie.thumbnail || '/images/default-movie.jpg'}
+                  src={getBlogImageUrl(movie.thumbnail || '') || '/images/default-movie.jpg'}
                   alt={movie.title}
                   sx={{
                     width: { xs: 260, md: 320 },
@@ -1570,7 +1571,7 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                               }}>
                                 {similarMovie.thumbnail ? (
                                   <img
-                                    src={similarMovie.thumbnail}
+                                    src={getBlogImageUrl(similarMovie.thumbnail)}
                                     alt={similarMovie.title}
                                     style={{
                                       width: '100%',

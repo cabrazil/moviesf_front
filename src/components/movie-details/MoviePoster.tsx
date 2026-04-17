@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
+import { getBlogImageUrl } from '../../utils/blogImages';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 interface MoviePosterProps {
@@ -23,7 +24,7 @@ const MoviePoster: React.FC<MoviePosterProps> = React.memo(({ thumbnail, title, 
     >
       {thumbnail ? (
         <LazyLoadImage
-          src={thumbnail}
+          src={getBlogImageUrl(thumbnail)}
           alt={title}
           effect="opacity"
           style={{

@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface SimilarMovie {
   id: string;
@@ -67,7 +68,7 @@ const SimilarMovies: React.FC<SimilarMoviesProps> = React.memo(({ similarMovies 
             }}>
               {similarMovie.thumbnail ? (
                 <LazyLoadImage
-                  src={similarMovie.thumbnail}
+                  src={getBlogImageUrl(similarMovie.thumbnail)}
                   alt={similarMovie.title}
                   effect="opacity"
                   style={{

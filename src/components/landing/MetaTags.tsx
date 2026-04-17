@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import { getBlogImageUrl } from '../../utils/blogImages';
 
 interface MovieMetaTagsProps {
   movie: {
@@ -31,7 +32,7 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
   const director = movie.director;
   const rating = movie.vote_average;
   const genres = movie.genres?.join(', ') || '';
-  const thumbnail = movie.thumbnail;
+  const thumbnail = movie.thumbnail ? getBlogImageUrl(movie.thumbnail) : undefined;
 
   // Gerar descrição otimizada para SEO
   const generateDescription = () => {
