@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { getBlogImageUrl } from '../../utils/blogImages';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
