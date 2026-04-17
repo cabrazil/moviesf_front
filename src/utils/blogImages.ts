@@ -195,22 +195,31 @@ export function validateBlogImage(file: File): { valid: boolean; error?: string 
  * Converte caminhos locais para URLs corretas
  */
 export function processContentImages(htmlContent: string): string {
-  // Regex para encontrar tags img com src locais
-  const imgRegex = /<img([^>]*)\s+src=["']([^"']+)["']([^>]*)>/gi;
+  if (!htmlContent) return '';
+
+  const imgRegex = /<img([^>]+)src=["']([^"']+)["']([^>]*)>/gi;
 
   return htmlContent.replace(imgRegex, (match, before, src, after) => {
-    // Se já é uma URL externa, não processa
+    // Se for uma URL direta do Supabase dentro do conteúdo, trocar pelo Proxy
+    if (src.includes(SUPABASE_ORIGIN_URL)) {
+      const proxyUrl = src.replace(SUPABASE_ORIGIN_URL, IMAGE_PROXY_URL);
+      return `<img${before}src="${proxyUrl}"${after}>`;
+    }
+
+    // Se já é uma URL externa de outro domínio, não processa
     if (src.startsWith('http') || src.startsWith('//')) {
       return match;
     }
 
-    // Se é um caminho local do blog, processa
-    if (src.startsWith('/images/') || src.startsWith('images/') || src.startsWith('blog/')) {
-      // Remove prefixo /images/ se existir
-      const cleanPath = src.replace(/^\/?images\//, '');
-      const optimizedUrl = getContentImageUrl(cleanPath);
+    // Limpar o caminho
+    let cleanPath = src;
+    if (src.startsWith('/images/')) cleanPath = src.substring(8);
+    else if (src.startsWith('images/')) cleanPath = src.substring(7);
 
-      return `<img${before} src="${optimizedUrl}"${after}>`;
+    // Se o caminho parece ser de um asset do blog
+    if (src.startsWith('/images/') || src.startsWith('images/') || src.startsWith('blog/') || src.startsWith('blog-articles/')) {
+      const optimizedUrl = getContentImageUrl(cleanPath);
+      return `<img${before}src="${optimizedUrl}"${after}>`;
     }
 
     // Se é um caminho relativo simples, assume que está em blog/
