@@ -1,5 +1,6 @@
 import { api } from './api';
 import { TMDB_CONFIG, TMDBImageSize, TMDBLogoSizes } from '../config/tmdb.config';
+import { getBlogImageUrl } from '../utils/blogImages';
 
 export interface StreamingPlatform {
   id: number;
@@ -31,9 +32,9 @@ export const getPlatformLogoUrl = (logoPath: string | null, size: TMDBImageSize 
     return '';
   }
 
-  // 1. Prioridade: URL Completa (Supabase, External, etc)
+  // 1. Prioridade: URLs Externas (Aplicamos o Proxy se for Supabase)
   if (logoPath.startsWith('http') || logoPath.startsWith('https://')) {
-    return logoPath;
+    return getBlogImageUrl(logoPath);
   }
 
   // 2. Fallback: Path Local (Legado ou estático)
