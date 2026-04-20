@@ -684,11 +684,11 @@ export function MoviePremiumFicha() {
                     const rawScore = Number(suggestion.relevance);
                     const score = rawScore.toFixed(2);
                     
-                    let scoreColor = '#6B7280'; // Vermelho suave / Cinza
-                    let shadowColor = 'rgba(107, 114, 128, 0.2)';
+                    let scoreColor = '#EF4444'; // Red default
+                    let shadowColor = 'rgba(239, 68, 68, 0.2)';
                     if (rawScore >= 8.5) {
-                      scoreColor = '#059669'; // Verde forte
-                      shadowColor = 'rgba(5, 150, 105, 0.2)';
+                      scoreColor = '#2563EB'; // Azul Premium
+                      shadowColor = 'rgba(37, 99, 235, 0.2)';
                     } else if (rawScore >= 7.5) {
                       scoreColor = '#10B981'; // Verde
                       shadowColor = 'rgba(16, 185, 129, 0.2)';

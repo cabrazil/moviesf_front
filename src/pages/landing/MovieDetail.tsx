@@ -830,21 +830,21 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
 
                     if (topSuggestion) {
                       const rawScore = Number(topSuggestion.relevance);
-                      const score = rawScore.toFixed(1);
+                      const score = rawScore.toFixed(2);
                       const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle || 
                                            topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
                       
-                      let scoreColor = '#6B7280'; // Vermelho suave / Cinza (Fraca)
-                      let scoreLabel = 'Classificação fraca';
+                      let scoreColor = '#EF4444'; // Red default (Fraca / Ruim)
+                      let scoreLabel = 'Escolha não recomendada';
                       if (rawScore >= 8.5) {
-                        scoreColor = '#059669'; // Verde forte (Excepcional)
-                        scoreLabel = 'Classificação excepcional';
+                        scoreColor = '#2563EB'; // Azul Premium / Masterpiece
+                        scoreLabel = 'Indicação de Elite (Masterpiece)';
                       } else if (rawScore >= 7.5) {
                         scoreColor = '#10B981'; // Verde (Forte)
-                        scoreLabel = 'Classificação forte';
+                        scoreLabel = 'Excelente sugestão';
                       } else if (rawScore >= 6.0) {
                         scoreColor = '#D97706'; // Laranja (Razoável)
-                        scoreLabel = 'Classificação razoável';
+                        scoreLabel = 'Boa sugestão';
                       }
 
                       return (
