@@ -829,20 +829,34 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                       ?.sort((a, b) => b.relevance - a.relevance)[0];
 
                     if (topSuggestion) {
-                      const score = Number(topSuggestion.relevance).toFixed(1);
+                      const rawScore = Number(topSuggestion.relevance);
+                      const score = rawScore.toFixed(1);
                       const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle || 
                                            topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
                       
+                      let scoreColor = '#6B7280'; // Vermelho suave / Cinza (Fraca)
+                      let scoreLabel = 'Classificação fraca';
+                      if (rawScore >= 8.5) {
+                        scoreColor = '#059669'; // Verde forte (Excepcional)
+                        scoreLabel = 'Classificação excepcional';
+                      } else if (rawScore >= 7.5) {
+                        scoreColor = '#10B981'; // Verde (Forte)
+                        scoreLabel = 'Classificação forte';
+                      } else if (rawScore >= 6.0) {
+                        scoreColor = '#D97706'; // Laranja (Razoável)
+                        scoreLabel = 'Classificação razoável';
+                      }
+
                       return (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
                             <Chip 
                               label={`Vibes: ${score}`} 
-                              sx={{ bgcolor: Number(score) >= 7.5 ? '#4caf50' : '#ff9800', color: 'white', fontWeight: 'bold' }} 
+                              sx={{ bgcolor: scoreColor, color: 'white', fontWeight: 'bold' }} 
                             />
                             {journeyTitle && (
                               <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
-                                {Number(score) >= 7.5 ? 'Excelente classificação' : 'Boa classificação'} para a jornada: {journeyTitle}
+                                {scoreLabel} para a jornada: {journeyTitle}
                               </Typography>
                             )}
                           </Box>

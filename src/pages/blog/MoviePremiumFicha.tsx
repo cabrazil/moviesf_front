@@ -683,7 +683,19 @@ export function MoviePremiumFicha() {
                   {topSuggestions.map((suggestion, index) => {
                     const rawScore = Number(suggestion.relevance);
                     const score = rawScore.toFixed(2);
-                    const isExcellent = rawScore >= 7.5;
+                    
+                    let scoreColor = '#6B7280'; // Vermelho suave / Cinza
+                    let shadowColor = 'rgba(107, 114, 128, 0.2)';
+                    if (rawScore >= 8.5) {
+                      scoreColor = '#059669'; // Verde forte
+                      shadowColor = 'rgba(5, 150, 105, 0.2)';
+                    } else if (rawScore >= 7.5) {
+                      scoreColor = '#10B981'; // Verde
+                      shadowColor = 'rgba(16, 185, 129, 0.2)';
+                    } else if (rawScore >= 6.0) {
+                      scoreColor = '#D97706'; // Laranja
+                      shadowColor = 'rgba(217, 119, 6, 0.2)';
+                    }
                     
                     const mainSentiment = suggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name || 'Curioso(a)';
                     
@@ -706,20 +718,20 @@ export function MoviePremiumFicha() {
                           position: 'absolute',
                           top: 0, left: 0, right: 0,
                           height: '2px',
-                          background: isExcellent ? '#059669' : '#D97706',
+                          background: scoreColor,
                           opacity: 0.8
                         }} />
                         
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
                           <div style={{
-                            background: isExcellent ? '#059669' : '#D97706',
+                            background: scoreColor,
                             color: '#fff',
                             padding: '8px 12px',
                             borderRadius: '8px',
                             fontSize: '20px',
                             fontWeight: 800,
                             lineHeight: 1,
-                            boxShadow: isExcellent ? '0 4px 12px rgba(5, 150, 105, 0.2)' : '0 4px 12px rgba(217, 119, 6, 0.2)'
+                            boxShadow: `0 4px 12px ${shadowColor}`
                           }}>
                             {score}
                           </div>
