@@ -445,25 +445,25 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         {!hideHeader && (
-        <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
-              Vibesfilm
-            </Typography>
-            <IconButton
-              sx={{
-                ml: 1,
-                color: mode === 'dark' ? 'white' : 'black',
-                '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                }
-              }}
-              onClick={toggleThemeMode}
-            >
-              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-            </IconButton>
-          </Toolbar>
-        </AppBar>
+          <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
+            <Toolbar sx={{ justifyContent: 'space-between' }}>
+              <Typography variant="h6" component="div" sx={{ color: 'text.primary' }}>
+                Vibesfilm
+              </Typography>
+              <IconButton
+                sx={{
+                  ml: 1,
+                  color: mode === 'dark' ? 'white' : 'black',
+                  '&:hover': {
+                    backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                  }
+                }}
+                onClick={toggleThemeMode}
+              >
+                {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+              </IconButton>
+            </Toolbar>
+          </AppBar>
         )}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
           <Box sx={{ textAlign: 'center' }}>
@@ -506,45 +506,45 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
       )}
       {/* Header */}
       {!hideHeader && (
-      <AppBar position="static" sx={{
-        backgroundColor: mode === 'dark' ? 'transparent' : 'rgba(0,0,0,0.05)',
-        boxShadow: 'none',
-        borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)'
-      }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box
-            component="img"
-            src={logoBlog}
-            alt="VibesFilm Logo"
-            onClick={() => navigate('/')}
-            sx={{
-              height: { xs: 32, sm: 40 },
-              width: 'auto',
-              maxWidth: { xs: 150, sm: 200 },
-              objectFit: 'contain',
-              cursor: 'pointer',
-              transition: 'opacity 0.2s',
-              '&:hover': {
-                opacity: 0.8
-              }
-            }}
-          />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton
+        <AppBar position="static" sx={{
+          backgroundColor: mode === 'dark' ? 'transparent' : 'rgba(0,0,0,0.05)',
+          boxShadow: 'none',
+          borderBottom: mode === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.1)'
+        }}>
+          <Toolbar sx={{ justifyContent: 'space-between' }}>
+            <Box
+              component="img"
+              src={logoBlog}
+              alt="VibesFilm Logo"
+              onClick={() => navigate('/')}
               sx={{
-                ml: 1,
-                color: mode === 'dark' ? 'white' : 'black',
+                height: { xs: 32, sm: 40 },
+                width: 'auto',
+                maxWidth: { xs: 150, sm: 200 },
+                objectFit: 'contain',
+                cursor: 'pointer',
+                transition: 'opacity 0.2s',
                 '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                  opacity: 0.8
                 }
               }}
-              onClick={toggleThemeMode}
-            >
-              {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
-            </IconButton>
-          </Box>
-        </Toolbar>
-      </AppBar>
+            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <IconButton
+                sx={{
+                  ml: 1,
+                  color: mode === 'dark' ? 'white' : 'black',
+                  '&:hover': {
+                    backgroundColor: mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                  }
+                }}
+                onClick={toggleThemeMode}
+              >
+                {mode === 'light' ? <Brightness4Icon /> : <Brightness7Icon />}
+              </IconButton>
+            </Box>
+          </Toolbar>
+        </AppBar>
       )}
 
       <Container maxWidth="xl" sx={{ py: 1, px: { xs: 2, sm: 2, md: 3 }, overflow: 'hidden' }}>
@@ -831,14 +831,14 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                     if (topSuggestion) {
                       const rawScore = Number(topSuggestion.relevance);
                       const score = rawScore.toFixed(2);
-                      const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle || 
-                                           topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
-                      
+                      const journeyTitle = topSuggestion.journeyOptionFlow?.displayTitle ||
+                        topSuggestion.journeyOptionFlow?.journeyStepFlow?.journeyFlow?.mainSentiment?.name;
+
                       let scoreColor = '#EF4444'; // Red default (Fraca / Ruim)
                       let scoreLabel = 'Escolha não recomendada';
                       if (rawScore >= 8.5) {
                         scoreColor = '#2563EB'; // Azul Premium / Masterpiece
-                        scoreLabel = 'Indicação de Elite (Masterpiece)';
+                        scoreLabel = 'Indicação de Elite';
                       } else if (rawScore >= 7.5) {
                         scoreColor = '#10B981'; // Verde (Forte)
                         scoreLabel = 'Excelente sugestão';
@@ -850,9 +850,9 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                       return (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
-                            <Chip 
-                              label={`Vibes: ${score}`} 
-                              sx={{ bgcolor: scoreColor, color: 'white', fontWeight: 'bold' }} 
+                            <Chip
+                              label={`Vibes: ${score}`}
+                              sx={{ bgcolor: scoreColor, color: 'white', fontWeight: 'bold' }}
                             />
                             {journeyTitle && (
                               <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>

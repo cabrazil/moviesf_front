@@ -46,3 +46,4 @@ scripts/*
 # src/components/landing/
 
 # Para deploy com LP na Vercel, mantenha comentado (padrão)
+*.code-workspace
