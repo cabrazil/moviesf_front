@@ -116,7 +116,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
             });
 
-            if (isSubscriptionPlatform && accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
+            if (isSubscriptionPlatform && (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || accessType === 'FREE_WITH_ADS')) {
               return true;
             }
           }

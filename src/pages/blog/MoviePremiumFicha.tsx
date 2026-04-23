@@ -473,7 +473,7 @@ export function MoviePremiumFicha() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {unifiedSubs.length > 0 && (
                 <div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px' }}>Disponível para assinantes</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px' }}>Assinatura e Gratuito</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                     {unifiedSubs.map(platform => (
                       <a 
@@ -486,18 +486,37 @@ export function MoviePremiumFicha() {
                           display: 'block',
                           cursor: platform.baseUrl ? 'pointer' : 'default',
                           transition: 'transform 0.2s',
+                          position: 'relative'
                         }}
                         onMouseOver={(e) => platform.baseUrl && (e.currentTarget.style.transform = 'scale(1.05)')}
                         onMouseOut={(e) => platform.baseUrl && (e.currentTarget.style.transform = 'none')}
-                        title={platform.name}
+                        title={platform.accessType === 'FREE_WITH_ADS' ? `${platform.name} - Gratuito com Anúncios` : platform.name}
                       >
+                        {platform.accessType === 'FREE_WITH_ADS' && (
+                          <span style={{
+                            position: 'absolute',
+                            top: -6,
+                            right: -6,
+                            background: '#22c55e',
+                            color: '#fff',
+                            fontSize: '9px',
+                            fontWeight: 700,
+                            padding: '2px 5px',
+                            borderRadius: '4px',
+                            letterSpacing: '0.5px',
+                            zIndex: 1,
+                            lineHeight: 1.2
+                          }}>GRÁTIS</span>
+                        )}
                         <img 
                           src={getPlatformLogoUrlMedium(platform.logoPath, platform.name)} 
                           alt={platform.name}
                           style={{ 
                             width: '56px', height: '56px', 
                             borderRadius: '14px', 
-                            border: '1px solid rgba(255,255,255,0.2)',
+                            border: platform.accessType === 'FREE_WITH_ADS'
+                              ? '1px solid rgba(34, 197, 94, 0.5)'
+                              : '1px solid rgba(255,255,255,0.2)',
                             opacity: platform.baseUrl ? 1 : 0.6
                           }}
                         />

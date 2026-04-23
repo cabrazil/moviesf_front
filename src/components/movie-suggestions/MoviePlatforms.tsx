@@ -64,8 +64,8 @@ const MoviePlatforms: React.FC<MoviePlatformsProps> = React.memo(({
             return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
           });
         
-        // Lógica simplificada: só permitir assinaturas que correspondem aos filtros
-        if (accessType === 'INCLUDED_WITH_SUBSCRIPTION') {
+        // Lógica: permitir assinaturas e gratuitos que correspondem aos filtros
+        if (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || accessType === 'FREE_WITH_ADS') {
           return matchesSubscription;
         }
         
@@ -91,9 +91,9 @@ const MoviePlatforms: React.FC<MoviePlatformsProps> = React.memo(({
       
       return { platformsToShow, showMoreChip, showCountChip, countValue };
     } else {
-      // Sem filtros ativos, mostrar até 3 plataformas de assinatura + "ver mais" se há aluguel/compra
+      // Sem filtros ativos, mostrar até 3 plataformas de assinatura/gratuitas + "ver mais" se há aluguel/compra
       const subscriptionPlatforms = platforms.filter((platform: any) => 
-        platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION'
+        platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || platform.accessType === 'FREE_WITH_ADS'
       );
       
       const platformsToShow = subscriptionPlatforms.slice(0, 3);
@@ -116,7 +116,7 @@ const MoviePlatforms: React.FC<MoviePlatformsProps> = React.memo(({
   return (
     <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap sx={{ mb: 0.5 }}>
       {platformsToShow.map((platform: any, index: number) => {
-        const isSubscription = platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+        const isSubscription = platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || platform.accessType === 'FREE_WITH_ADS';
         return (
           <Chip
             key={index}

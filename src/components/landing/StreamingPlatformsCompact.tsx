@@ -75,12 +75,13 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
     const isLogoLoaded = logosLoaded.has(platform.id);
     const freeTrialText = getFreeTrialText(platform);
     const isSubscription = platform.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+    const isFreeWithAds = platform.accessType === 'FREE_WITH_ADS';
     
     // Tooltip content
     const tooltipContent = (
       <Box sx={{ p: 0.3 }}>
         <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.2, fontSize: '0.8rem' }}>
-          {platform.name} - {isSubscription ? 'Assinatura' : 'Aluguel e Compra'}
+          {platform.name} - {isSubscription ? 'Assinatura' : isFreeWithAds ? 'Gratuito com Anúncios' : 'Aluguel e Compra'}
         </Typography>
         {freeTrialText && showFreeTrial && (
           <Typography variant="body2" sx={{ 
@@ -94,7 +95,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
           </Typography>
         )}
         <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-          Clique para {isSubscription ? 'assistir' : 'alugar/comprar'}
+          Clique para {isSubscription ? 'assistir' : isFreeWithAds ? 'assistir gratuitamente' : 'alugar/comprar'}
         </Typography>
       </Box>
     );
@@ -203,7 +204,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
         {unifiedSubscriptionPlatforms.length > 0 && (
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography variant="subtitle2" sx={{ mb: 1.5, color: 'text.secondary', fontWeight: 600 }}>
-              Assinatura:
+              Assinatura e Gratuito:
             </Typography>
             <Box sx={{ 
               display: 'flex', 

@@ -114,7 +114,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
             const hasPlatform = suggestion.movie.platforms.some((moviePlatform: any) => {
               const platformName = moviePlatform.streamingPlatform?.name;
               return platformName === platform.name &&
-                moviePlatform.accessType === 'INCLUDED_WITH_SUBSCRIPTION';
+                (moviePlatform.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
+                 moviePlatform.accessType === 'FREE_WITH_ADS');
             });
 
             if (hasPlatform) count++;

@@ -107,7 +107,7 @@ const MovieDetailsPage: React.FC = () => {
   // Memoizar dados das plataformas para StreamingPlatformsCompact (antes dos early returns)
   const subscriptionPlatforms = useMemo(() =>
     movieData?.subscriptionPlatforms
-      ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION')
+      ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || p.accessType === 'FREE_WITH_ADS')
       .map((p: any) => ({
         id: p.id || `${p.name}-${p.accessType}`,
         name: p.name,
