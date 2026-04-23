@@ -105,37 +105,13 @@ const MovieDetailsPage: React.FC = () => {
   }, [movieData?.movie?.id]);
 
   // Memoizar dados das plataformas para StreamingPlatformsCompact (antes dos early returns)
-  const subscriptionPlatforms = useMemo(() =>
-    movieData?.subscriptionPlatforms
-      ?.filter((p: any) => p.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || p.accessType === 'FREE_WITH_ADS')
-      .map((p: any) => ({
-        id: p.id || `${p.name}-${p.accessType}`,
-        name: p.name,
-        category: p.category || 'streaming',
-        logoPath: p.logoPath,
-        hasFreeTrial: p.hasFreeTrial || false,
-        freeTrialDuration: p.freeTrialDuration || null,
-        baseUrl: p.baseUrl || null,
-        accessType: p.accessType
-      })) || [],
-    [movieData?.subscriptionPlatforms]
-  );
+  const subscriptionPlatforms = useMemo(() => {
+    return movieData?.subscriptionPlatforms || [];
+  }, [movieData?.subscriptionPlatforms]);
 
-  const rentalPurchasePlatforms = useMemo(() =>
-    movieData?.subscriptionPlatforms
-      ?.filter((p: any) => p.accessType === 'RENTAL' || p.accessType === 'PURCHASE')
-      .map((p: any) => ({
-        id: p.id || `${p.name}-${p.accessType}`,
-        name: p.name,
-        category: p.category || 'rental',
-        logoPath: p.logoPath,
-        hasFreeTrial: false,
-        freeTrialDuration: null,
-        baseUrl: p.baseUrl || null,
-        accessType: p.accessType
-      })) || [],
-    [movieData?.subscriptionPlatforms]
-  );
+  const rentalPurchasePlatforms = useMemo(() => {
+    return movieData?.rentalPurchasePlatforms || [];
+  }, [movieData?.rentalPurchasePlatforms]);
 
   // Memoizar conteúdo personalizado (antes dos early returns)
   const personalizedContent = useMemo(() => {
@@ -374,7 +350,7 @@ const MovieDetailsPage: React.FC = () => {
               fontWeight: 600
             }}>Onde assistir hoje?</Typography>
 
-            {movieData?.subscriptionPlatforms && movieData.subscriptionPlatforms.length > 0 ? (
+            {(subscriptionPlatforms.length > 0 || rentalPurchasePlatforms.length > 0) ? (
               <StreamingPlatformsCompact
                 subscriptionPlatforms={subscriptionPlatforms}
                 rentalPurchasePlatforms={rentalPurchasePlatforms}
