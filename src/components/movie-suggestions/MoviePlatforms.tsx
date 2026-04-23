@@ -46,27 +46,22 @@ const MoviePlatforms: React.FC<MoviePlatformsProps> = React.memo(({
         const accessType = platform.accessType || '';
         
         // Verificar se a plataforma corresponde aos filtros selecionados
-        const matchesSubscription = streamingFilters.subscriptionPlatforms.length === 0 || 
-          streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
-            if (selectedPlatform === '__OTHER_PLATFORMS__') {
-              const mainPlatforms = [
-                'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay', 
-                'apple tv+', 'claro video'
-              ];
-              const isMainPlatform = mainPlatforms.some(main => 
-                platformName.toLowerCase().includes(main)
-              );
-              return !isMainPlatform;
-            }
-            
-            const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
-            const cleanPlatformName = platformName.toLowerCase().trim();
-            return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
-          });
-        
-        // Lógica: permitir assinaturas e gratuitos que correspondem aos filtros
-        if (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || accessType === 'FREE_WITH_ADS') {
-          return matchesSubscription;
+        const selectedPlatformInfo = streamingFilters.subscriptionPlatforms.find((p: any) => {
+          const platformData = typeof p === 'string' ? { name: p, category: '' } : p;
+          const cleanSelectedPlatform = platformData.name.toLowerCase().trim();
+          const cleanPlatformName = platformName.toLowerCase().trim();
+          return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+        });
+
+        if (selectedPlatformInfo) {
+          const platformData = typeof selectedPlatformInfo === 'string' ? { name: selectedPlatformInfo, category: '' } : selectedPlatformInfo;
+          const isRentalPurchasePlatform = platformData.category === 'FREE_PRIMARY' || platformData.category === 'RENTAL_PURCHASE_PRIMARY';
+          
+          if (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
+              accessType === 'FREE_WITH_ADS' ||
+              (isRentalPurchasePlatform && (accessType === 'RENTAL' || accessType === 'PURCHASE'))) {
+            return true;
+          }
         }
         
         return false;

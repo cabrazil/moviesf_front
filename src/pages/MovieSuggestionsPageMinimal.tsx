@@ -81,8 +81,7 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
     const result = movieSuggestions.filter(suggestion => {
       // Filtro por plataformas de streaming (se aplicável)
       if (streamingFilters) {
-        const hasNoFilters = streamingFilters.subscriptionPlatforms.length === 0 &&
-          (!streamingFilters.includeRentalPurchase || streamingFilters.rentalPurchasePlatforms.length === 0);
+        const hasNoFilters = streamingFilters.subscriptionPlatforms.length === 0;
 
         if (hasNoFilters) {
           return true;
@@ -98,26 +97,34 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
 
           // Verificar plataformas de assinatura
           if (streamingFilters.subscriptionPlatforms.length > 0) {
-            const isSubscriptionPlatform = streamingFilters.subscriptionPlatforms.some((selectedPlatform: string) => {
-              if (selectedPlatform === '__OTHER_PLATFORMS__') {
-                const mainPlatforms = [
-                  'prime video', 'netflix', 'disney+', 'hbo max', 'globoplay',
-                  'apple tv+', 'claro video'
-                ];
-                const isMainPlatform = mainPlatforms.some(main =>
-                  platformName.toLowerCase().includes(main)
-                );
-                return !isMainPlatform;
-              }
-
-              const cleanSelectedPlatform = selectedPlatform.toLowerCase().trim();
+            const selectedPlatformInfo = (streamingFilters.subscriptionPlatforms as any[]).find((p: any) => {
+              const platformData = typeof p === 'string' ? { name: p, category: '' } : p;
+              const cleanSelectedPlatform = platformData.name.toLowerCase().trim();
               const cleanPlatformName = platformName.toLowerCase().trim();
-
               return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
             });
 
-            if (isSubscriptionPlatform && (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || accessType === 'FREE_WITH_ADS')) {
-              return true;
+            if (selectedPlatformInfo) {
+              const moviePlatformCategory = (platform.streamingPlatform?.category || '').toUpperCase().trim();
+              const filterPlatformCategory = (typeof selectedPlatformInfo === 'object' ? (selectedPlatformInfo as any).category : '').toUpperCase().trim();
+              const platformName = (platform.streamingPlatform?.name || '').toLowerCase().trim();
+              
+              const isKnownRentalPlatform = 
+                platformName.includes('mercado') || 
+                platformName.includes('apple tv');
+
+              const isRentalPurchasePlatform = 
+                moviePlatformCategory === 'FREE_PRIMARY' || 
+                moviePlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
+                filterPlatformCategory === 'FREE_PRIMARY' ||
+                filterPlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
+                isKnownRentalPlatform;
+              
+              if (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
+                  accessType === 'FREE_WITH_ADS' ||
+                  (isRentalPurchasePlatform && (accessType === 'RENTAL' || accessType === 'PURCHASE'))) {
+                return true;
+              }
             }
           }
 

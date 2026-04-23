@@ -20,7 +20,7 @@ import { getStreamingPlatforms, getPlatformLogoUrl } from '../services/streaming
 interface StreamingFiltersProps { }
 
 export interface StreamingFilters {
-  subscriptionPlatforms: string[];
+  subscriptionPlatforms: Array<{ name: string, category: string }>;
 }
 
 const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
@@ -33,8 +33,8 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   const [showOtherPlatforms, setShowOtherPlatforms] = useState(false);
 
   // Plataformas dinâmicas (carregadas da API)
-  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{ name: string, logo: string, id: number }>>([]);
-  const [otherSubscriptionPlatforms, setOtherSubscriptionPlatforms] = useState<Array<{ name: string, logo: string, id: number }>>([]);
+  const [mainSubscriptionPlatforms, setMainSubscriptionPlatforms] = useState<Array<{ name: string, logo: string, id: number, category: string }>>([]);
+  const [otherSubscriptionPlatforms, setOtherSubscriptionPlatforms] = useState<Array<{ name: string, logo: string, id: number, category: string }>>([]);
 
   // Contagem de filmes por plataforma
   const [platformMovieCounts, setPlatformMovieCounts] = useState<Record<number, number>>({});
@@ -42,43 +42,35 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   useEffect(() => {
     const loadPlatforms = async () => {
       try {
-        console.log('🔄 Carregando plataformas da API...');
         const platforms = await getStreamingPlatforms();
-        console.log(`✅ ${platforms.length} plataformas carregadas`);
 
         // Filtrar apenas plataformas de assinatura (SUBSCRIPTION_PRIMARY e HYBRID)
         const subscriptionPlatforms = platforms.filter(p =>
-          p.category === 'SUBSCRIPTION_PRIMARY' || p.category === 'HYBRID'
+          p.category === 'SUBSCRIPTION_PRIMARY' || p.category === 'HYBRID' || p.category === 'FREE_PRIMARY'
         );
 
         // Separar por showFilter
         const priorityPlatforms = subscriptionPlatforms.filter(p => p.showFilter === 'PRIORITY');
         const secondaryPlatforms = subscriptionPlatforms.filter(p => p.showFilter === 'SECONDARY');
 
-        console.log(`📊 PRIORITY: ${priorityPlatforms.length}, SECONDARY: ${secondaryPlatforms.length}`);
-
         // Mapear plataformas principais com logos
         const mainPlatforms = priorityPlatforms.map(platform => {
           const logo = getPlatformLogoUrl(platform.logoPath, undefined, platform.name) ||
             `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-          return { name: platform.name, logo, id: platform.id };
+          return { name: platform.name, logo, id: platform.id, category: platform.category };
         });
 
         // Mapear plataformas secundárias com logos
         const otherPlatforms = secondaryPlatforms.map(platform => {
           const logo = getPlatformLogoUrl(platform.logoPath, undefined, platform.name) ||
             `/platforms/logo-${platform.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}.png`;
-          return { name: platform.name, logo, id: platform.id };
+          return { name: platform.name, logo, id: platform.id, category: platform.category };
         });
 
         setMainSubscriptionPlatforms(mainPlatforms);
         setOtherSubscriptionPlatforms(otherPlatforms);
 
-        console.log('✅ Plataformas principais:', mainPlatforms.map(p => p.name).join(', '));
-        console.log('✅ Outras plataformas:', otherPlatforms.map(p => p.name).join(', '));
-
       } catch (error) {
-        console.error('❌ Erro ao carregar plataformas:', error);
         // Em caso de erro, deixar arrays vazios
         setMainSubscriptionPlatforms([]);
         setOtherSubscriptionPlatforms([]);
@@ -91,15 +83,12 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   }, []);
 
   // Função para contar filmes por plataforma
-  const fetchMovieCountsByPlatform = async (platforms: Array<{ name: string, logo: string, id: number }>) => {
+  const fetchMovieCountsByPlatform = async (platforms: Array<{ name: string, logo: string, id: number, category: string }>) => {
     try {
-      console.log('🔍 Contando filmes por plataforma...');
-
       // Buscar filmes da opção escolhida (se disponível)
       const movieSuggestions = location.state?.movieSuggestions;
 
       if (!movieSuggestions || movieSuggestions.length === 0) {
-        console.log('❌ Nenhuma sugestão de filme disponível para contagem');
         return;
       }
 
@@ -111,11 +100,34 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
 
         movieSuggestions.forEach((suggestion: any) => {
           if (suggestion.movie?.platforms && suggestion.movie.platforms.length > 0) {
+
             const hasPlatform = suggestion.movie.platforms.some((moviePlatform: any) => {
-              const platformName = moviePlatform.streamingPlatform?.name;
-              return platformName === platform.name &&
-                (moviePlatform.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
-                 moviePlatform.accessType === 'FREE_WITH_ADS');
+              const platformName = moviePlatform.streamingPlatform?.name?.toLowerCase().trim();
+              const targetName = platform.name.toLowerCase().trim();
+              
+              const moviePlatformCategory = (moviePlatform.streamingPlatform?.category || '').toUpperCase().trim();
+              const targetPlatformCategory = (platform.category || '').toUpperCase().trim();
+              
+              // Regra Definitiva: Permite aluguel se a categoria for correta OU se for uma plataforma conhecida de aluguel (Mercado Play / Apple TV)
+              const isKnownRentalPlatform = 
+                targetName.includes('mercado') || 
+                targetName.includes('apple tv') ||
+                platformName.includes('mercado') || 
+                platformName.includes('apple tv');
+
+              const isRentalPurchaseCategory = 
+                moviePlatformCategory === 'FREE_PRIMARY' || 
+                moviePlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
+                targetPlatformCategory === 'FREE_PRIMARY' ||
+                targetPlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
+                isKnownRentalPlatform;
+              
+              const isNameMatch = platformName === targetName;
+              const isAccessMatch = (moviePlatform.accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
+                                     moviePlatform.accessType === 'FREE_WITH_ADS' ||
+                                     (isRentalPurchaseCategory && (moviePlatform.accessType === 'RENTAL' || moviePlatform.accessType === 'PURCHASE')));
+              
+              return isNameMatch && isAccessMatch;
             });
 
             if (hasPlatform) count++;
@@ -123,12 +135,9 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
         });
 
         counts[platform.id] = count;
-        console.log(`📊 ${platform.name}: ${count} filmes`);
       });
 
       setPlatformMovieCounts(counts);
-      console.log('✅ Contagem de filmes concluída:', counts);
-
     } catch (error) {
       console.error('❌ Erro ao contar filmes por plataforma:', error);
     }
@@ -151,8 +160,11 @@ const StreamingFilters: React.FC<StreamingFiltersProps> = () => {
   };
 
   const handleContinue = () => {
+    const allPlatforms = [...mainSubscriptionPlatforms, ...otherSubscriptionPlatforms];
+    const selectedPlatformsData = allPlatforms.filter(p => selectedSubscriptionPlatforms.includes(p.name));
+    
     const filters: StreamingFilters = {
-      subscriptionPlatforms: selectedSubscriptionPlatforms
+      subscriptionPlatforms: selectedPlatformsData.map(p => ({ name: p.name, category: p.category }))
     };
 
     const selectedOptionText = location.state?.selectedOptionText ||

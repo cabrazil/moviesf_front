@@ -334,12 +334,6 @@ const PersonalizedJourney: React.FC<PersonalizedJourneyProps> = ({
 
       // Verificar se há sugestões de filmes disponíveis
       if (option.movieSuggestions && option.movieSuggestions.length > 0) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('✅ Sugestões de filmes encontradas, navegando para página de filtros');
-          console.log('Sugestões:', option.movieSuggestions);
-          console.log('✅ Texto da opção selecionada:', option.text);
-        }
-
         // Adicionar o texto da opção às sugestões para uso na tela de filtros
         const movieSuggestionsWithOptionText = option.movieSuggestions.map((suggestion: any) => ({
           ...suggestion,
