@@ -33,6 +33,7 @@ const AppBannerWrapper = () => {
     path.startsWith('/filters') || 
     path.startsWith('/suggestions') || 
     path.startsWith('/sugestoes') ||
+    path.startsWith('/onde-assistir') ||
     path === '/Home'; // Algumas vezes o case pode variar
   
   if (isAppRoute) {
