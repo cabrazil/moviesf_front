@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProviderWrapper } from './contexts/ThemeContext';
 import { CookieBanner } from './components/CookieBanner';
@@ -19,13 +19,34 @@ import ContactPage from './pages/blog/ContactPage';
 import PrivacyPage from './pages/blog/PrivacyPage';
 import TermsPage from './pages/blog/TermsPage';
 import { MoviePremiumFicha } from './pages/blog/MoviePremiumFicha';
+import { SmartAppBanner } from './components/blog/SmartAppBanner';
 
+// Componente para decidir se mostra o banner baseado na rota
+const AppBannerWrapper = () => {
+  const location = useLocation();
+  const path = location.pathname;
+  
+  // Lista de rotas que pertencem ao "App" (incluindo legadas)
+  const isAppRoute = 
+    path.startsWith('/app') || 
+    path.startsWith('/intro') || 
+    path.startsWith('/filters') || 
+    path.startsWith('/suggestions') || 
+    path.startsWith('/sugestoes') ||
+    path === '/Home'; // Algumas vezes o case pode variar
+  
+  if (isAppRoute) {
+    return <SmartAppBanner />;
+  }
+  return null;
+};
 
 function App() {
   return (
     <HelmetProvider>
       <ThemeProviderWrapper>
         <Router>
+          <AppBannerWrapper />
           <CookieBanner />
           <Routes>
             {/* Blog Routes (now at root) */}

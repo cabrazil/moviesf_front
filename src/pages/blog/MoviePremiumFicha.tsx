@@ -406,7 +406,12 @@ export function MoviePremiumFicha() {
             )}
 
             {/* Ações */}
-            <div className="premium-hero-actions" style={{ display: 'flex', gap: '16px', marginTop: '10px' }}>
+            <div className="premium-hero-actions" style={{ 
+              display: 'flex', 
+              gap: '16px', 
+              marginTop: '10px',
+              flexWrap: 'wrap'
+            }}>
               <button style={{
                 display: 'flex', alignItems: 'center', gap: '8px',
                 padding: '12px 28px',
@@ -418,7 +423,7 @@ export function MoviePremiumFicha() {
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
-                transition: 'background 0.2s, transform 0.2s',
+                transition: 'all 0.2s ease',
                 boxShadow: '0 4px 14px rgba(255, 107, 53, 0.4)'
               }} onClick={() => {
                 if (movie.mainTrailer?.key) {
@@ -433,6 +438,47 @@ export function MoviePremiumFicha() {
                 <Play fill="currentColor" size={20} />
                 Assistir Trailer
               </button>
+
+              {/* CTA Google Play */}
+              <a 
+                href="https://play.google.com/store/apps/details?id=com.vibesfilm.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '8px 20px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  color: '#fff',
+                  textDecoration: 'none',
+                  transition: 'all 0.3s ease',
+                  backdropFilter: 'blur(10px)',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+                  <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 600 }}>Gostou da curadoria abaixo?</span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: '#fff' }}>Abra o App</span>
+                </div>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3.60938 1.95312C3.375 2.1875 3.23438 2.5625 3.23438 3.03125V20.9688C3.23438 21.4375 3.375 21.8125 3.60938 22.0469L3.65625 22.0938L13.7344 12.0156V11.9844L3.65625 1.90625L3.60938 1.95312Z" fill="#00E3FF"/>
+                  <path d="M17.0625 15.3438L13.7344 12.0156V11.9844L17.0625 8.65625L17.1094 8.6875L21.0469 10.9219C22.1719 11.5625 22.1719 12.4375 21.0469 13.0781L17.1094 15.3125L17.0625 15.3438Z" fill="#FFE000"/>
+                  <path d="M17.1094 15.3125L13.7344 11.9844L3.65625 22.0469C4.03125 22.4375 4.64062 22.4844 5.34375 22.0938L17.1094 15.3125Z" fill="#FF3A44"/>
+                  <path d="M17.1094 8.6875L5.34375 1.90625C4.64062 1.51562 4.03125 1.5625 3.65625 1.95312L13.7344 12.0156L17.1094 8.6875Z" fill="#32FF7E"/>
+                </svg>
+              </a>
             </div>
           </div>
         </div>

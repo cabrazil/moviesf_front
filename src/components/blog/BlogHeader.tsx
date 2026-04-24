@@ -19,13 +19,13 @@ export function BlogHeader() {
 
   // Detectar tamanho da tela
   useEffect(() => {
-    const checkScreenSize = () => {
+    const checkDevice = () => {
       setIsMobile(window.innerWidth < 768);
     };
 
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
   // Fechar menu ao clicar fora

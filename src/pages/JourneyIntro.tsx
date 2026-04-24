@@ -9,6 +9,7 @@ import { useThemeManager } from '../contexts/ThemeContext';
 import SentimentIcon from '../components/SentimentIcon';
 import { lightSentimentColors, darkSentimentColors } from '../styles/themes'; // Import sentimentColors
 
+
 type JourneyStep = 'sentiment' | 'intention' | 'journey';
 
 const JourneyIntro: React.FC = () => {
