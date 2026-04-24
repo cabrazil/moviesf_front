@@ -6,13 +6,10 @@ export function SmartAppBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // 1. Verificar se é Android
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    // 2. Verificar se o usuário já fechou o banner nesta sessão
+    // 1. Verificar se o usuário já fechou o banner nesta sessão
     const isBannerDismissed = sessionStorage.getItem('smart-app-banner-dismissed');
 
-    if (isAndroid && !isBannerDismissed) {
+    if (!isBannerDismissed) {
       setIsVisible(true);
     }
   }, []);
@@ -78,7 +75,7 @@ export function SmartAppBanner() {
             whiteSpace: 'nowrap', 
             overflow: 'hidden', 
             textOverflow: 'ellipsis' 
-          }}>Baixe o App oficial</span>
+          }}>Baixe o App oficial (iOS em breve)</span>
         </div>
       </div>
 
