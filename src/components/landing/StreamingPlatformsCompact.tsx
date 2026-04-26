@@ -202,7 +202,7 @@ export const StreamingPlatformsCompact: React.FC<StreamingPlatformsCompactProps>
         {unifiedSubscriptionPlatforms.length > 0 && (
           <Box sx={{ flex: 1, minWidth: 200 }}>
             <Typography variant="subtitle2" sx={{ mb: 1.5, color: 'text.secondary', fontWeight: 600 }}>
-              Assinatura e Gratuito:
+              Assinatura ou Gratuito:
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2.5 }}>
               {unifiedSubscriptionPlatforms.map((platform) => (

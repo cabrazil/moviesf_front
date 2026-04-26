@@ -568,7 +568,7 @@ export function MoviePremiumFicha() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {unifiedSubs.length > 0 && (
                 <div>
-                  <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px' }}>Assinatura e Gratuito</div>
+                  <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', marginBottom: '12px' }}>Assinatura ou Gratuito</div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                     {unifiedSubs.map(platform => (
                       <a 
