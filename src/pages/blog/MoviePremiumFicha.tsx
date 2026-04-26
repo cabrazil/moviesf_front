@@ -662,6 +662,12 @@ export function MoviePremiumFicha() {
               Atualmente sem opções oficiais de streaming no Brasil.
             </p>
           )}
+
+          {(unifiedSubs.length > 0 || unifiedRentals.length > 0) && (
+            <div style={{ marginTop: '16px', fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>
+              * Os períodos e termos de teste grátis podem variar. Consulte a plataforma para detalhes atualizados.
+            </div>
+          )}
         </div>
 
           {/* Card: Alerta de Conteúdo */}
