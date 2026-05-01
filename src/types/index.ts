@@ -41,7 +41,10 @@ export interface Movie {
   thumbnail?: string;
   streamingPlatforms: string[];
   runtime?: number;
-  movieSentiments?: MovieSentiment[];
+  movieSentiments?: Array<{
+    relevance: number;
+    subSentiment: { name: string };
+  }>;
   movieSuggestions?: MovieSuggestion[];
   movieSuggestionFlows?: MovieSuggestionFlow[];
   imdbRating?: number;
