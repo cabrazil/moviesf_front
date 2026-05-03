@@ -26,7 +26,7 @@ export default function PrivacyPage() {
 
   return (
     <>
-      <div style={{ 
+      <div style={{
         minHeight: '100vh',
         background: 'linear-gradient(120deg, #011627, #0B2B40, #1B2A41)',
         backgroundSize: '200% 200%',
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
           </header>
 
           {/* Content Card */}
-          <div style={{ 
+          <div style={{
             background: 'rgba(255, 255, 255, 0.06)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '16px',
@@ -64,8 +64,8 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Introdução</h2>
               <p style={{ margin: 0 }}>
-                Esta Política descreve como o <strong>vibesfilm.com</strong> coleta e trata dados pessoais. 
-                Nosso foco é editorial e de curadoria cinematográfica; coletamos o mínimo necessário para 
+                Esta Política descreve como o <strong>vibesfilm.com</strong> coleta e trata dados pessoais.
+                Nosso foco é editorial e de curadoria cinematográfica; coletamos o mínimo necessário para
                 melhorar sua experiência de descoberta de filmes.
               </p>
             </section>
@@ -84,15 +84,15 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Cookies e Web Beacons</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Utilizamos cookies para armazenar informações como suas preferências pessoais quando visita nosso website. 
+                Utilizamos cookies para armazenar informações como suas preferências pessoais quando visita nosso website.
                 Isso pode incluir configurações de interface, preferências de conteúdo ou dados de sessão.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Também utilizamos cookies de análise (como Google Analytics) para entender como os usuários interagem 
+                Também utilizamos cookies de análise (como Google Analytics) para entender como os usuários interagem
                 com nosso conteúdo, melhorando a experiência de navegação.
               </p>
               <p style={{ margin: 0 }}>
-                Você pode configurar seu navegador para ser avisado sobre a recepção de cookies e impedir sua instalação. 
+                Você pode configurar seu navegador para ser avisado sobre a recepção de cookies e impedir sua instalação.
                 As instruções estão disponíveis nas configurações do seu navegador.
               </p>
             </section>
@@ -100,18 +100,18 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Anúncios e Publicidade</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                O <strong>vibesfilm.com</strong> pode utilizar serviços de publicidade de terceiros para exibir anúncios. 
-                Esses serviços podem usar cookies e web beacons para personalizar anúncios baseados em suas visitas 
+                O <strong>vibesfilm.com</strong> pode utilizar serviços de publicidade de terceiros para exibir anúncios.
+                Esses serviços podem usar cookies e web beacons para personalizar anúncios baseados em suas visitas
                 a este e outros websites.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Você pode desativar a publicidade personalizada acessando as 
-                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}> Configurações de anúncios do Google </a> 
-                ou visitando <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>www.aboutads.info </a> 
+                Você pode desativar a publicidade personalizada acessando as
+                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}> Configurações de anúncios do Google </a>
+                ou visitando <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>www.aboutads.info </a>
                 para desativar cookies de publicidade de terceiros.
               </p>
               <p style={{ margin: 0 }}>
-                Não nos responsabilizamos pelo conteúdo, promessas ou veracidade das informações dos anúncios exibidos 
+                Não nos responsabilizamos pelo conteúdo, promessas ou veracidade das informações dos anúncios exibidos
                 por terceiros. Toda responsabilidade pelos anúncios é dos anunciantes.
               </p>
             </section>
@@ -119,11 +119,11 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Links para Sites Terceiros</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                O <strong>vibesfilm.com</strong> possui links para outros sites que podem conter informações úteis 
+                O <strong>vibesfilm.com</strong> possui links para outros sites que podem conter informações úteis
                 para nossos visitantes. Nossa política de privacidade não se aplica a sites de terceiros.
               </p>
               <p style={{ margin: 0 }}>
-                Não nos responsabilizamos pela política de privacidade ou conteúdo presente nesses sites. 
+                Não nos responsabilizamos pela política de privacidade ou conteúdo presente nesses sites.
                 Recomendamos ler a política de privacidade de cada site que visitar.
               </p>
             </section>
@@ -131,11 +131,11 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Analytics e Remarketing</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Utilizamos Google Analytics e serviços similares para analisar o uso do site e melhorar a experiência. 
+                Utilizamos Google Analytics e serviços similares para analisar o uso do site e melhorar a experiência.
                 Esses serviços podem usar cookies para coletar informações sobre suas visitas.
               </p>
               <p style={{ margin: 0 }}>
-                Para mais informações sobre como o Google gerencia dados em seus produtos de anúncios, 
+                Para mais informações sobre como o Google gerencia dados em seus produtos de anúncios,
                 acesse <a href="https://www.google.com/policies/technologies/partner-sites/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>este link</a>.
               </p>
             </section>
@@ -154,25 +154,24 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Newsletter</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Quando você se inscreve em nossa newsletter, coletamos e armazenamos seu endereço de email 
+                Quando você se inscreve em nossa newsletter, coletamos e armazenamos seu endereço de email
                 para enviar comunicações relacionadas ao conteúdo do VibesFilm.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                <strong>Finalidade do armazenamento:</strong> Utilizamos seu email exclusivamente para enviar 
-                artigos, análises e conteúdo sobre cinema e emoções. Os envios iniciarão em breve, assim que 
+                <strong>Finalidade do armazenamento:</strong> Utilizamos seu email exclusivamente para enviar
+                artigos, análises e conteúdo sobre cinema e emoções. Os envios iniciarão em breve, assim que
                 tivermos conteúdo suficiente para compartilhar.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                <strong>Prazo de retenção:</strong> Mantemos seu email em nossa base enquanto você permanecer 
+                <strong>Prazo de retenção:</strong> Mantemos seu email em nossa base enquanto você permanecer
                 inscrito. Você pode solicitar a exclusão a qualquer momento.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                <strong>Seus direitos:</strong> Você pode descadastrar-se da newsletter a qualquer momento 
-                entrando em contato conosco em <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a> 
-                ou através do link de descadastro que será incluído em cada email enviado.
+                <strong>Seus direitos:</strong> Você pode descadastrar-se da newsletter a qualquer momento
+                entrando em contato conosco em <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a> ou através do link de descadastro que será incluído em cada email enviado.
               </p>
               <p style={{ margin: 0 }}>
-                <strong>Dados adicionais:</strong> Podemos armazenar informações técnicas como endereço IP e 
+                <strong>Dados adicionais:</strong> Podemos armazenar informações técnicas como endereço IP e
                 navegador utilizado no momento da inscrição para fins de segurança e conformidade com a LGPD.
               </p>
             </section>
@@ -209,20 +208,39 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Segurança dos Dados</h2>
               <p style={{ margin: 0 }}>
-                Implementamos medidas de segurança técnicas e organizacionais para proteger seus dados 
+                Implementamos medidas de segurança técnicas e organizacionais para proteger seus dados
                 contra acesso não autorizado, alteração, divulgação ou destruição.
+              </p>
+            </section>
+
+            <section style={{ marginBottom: '18px' }}>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Uso no aplicativo móvel</h2>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Esta Política de Privacidade também se aplica ao aplicativo móvel VibesFilm.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                O aplicativo pode coletar dados de uso e informações técnicas de forma não identificável, como interações com funcionalidades, tempo de uso, tipo de dispositivo e dados de desempenho. Essas informações são utilizadas exclusivamente para melhorar a experiência do usuário e o funcionamento do aplicativo.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Mesmo sem a criação de conta, algumas informações podem ser processadas em nossos servidores para viabilizar funcionalidades e aprimorar continuamente o serviço.
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Podemos utilizar ferramentas de terceiros, como serviços de análise e publicidade (ex: Google Analytics e Google AdMob), que podem coletar dados não identificáveis para fins de métricas e exibição de anúncios.
+              </p>
+              <p style={{ margin: 0 }}>
+                Não coletamos informações pessoais sensíveis nem dados que identifiquem diretamente o usuário, exceto quando fornecidos voluntariamente, como no caso de inscrição em newsletter ou contato.
               </p>
             </section>
 
             <section>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Atualizações desta Política</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Podemos atualizar esta Política periodicamente para refletir mudanças em nossas práticas 
-                ou requisitos legais. Recomendamos revisar regularmente.
+                Podemos atualizar esta Política periodicamente para refletir mudanças em nossas práticas
+                ou requisitos legais.
               </p>
               <p style={{ margin: 0 }}>
-                O uso do <strong>vibesfilm.com</strong> pressupõe a aceitação desta política. 
-                Reservamo-nos o direito de alterar este acordo sem aviso prévio.
+                O uso do <strong>vibesfilm.com</strong> pressupõe a aceitação desta política.
+                Recomendamos revisar esta política periodicamente para se manter informado sobre eventuais atualizações.
               </p>
             </section>
           </div>
