@@ -219,16 +219,26 @@ export default function PrivacyPage() {
                 Esta Política de Privacidade também se aplica ao aplicativo móvel VibesFilm.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                O aplicativo pode coletar dados de uso e informações técnicas de forma não identificável, como interações com funcionalidades, tempo de uso, tipo de dispositivo e dados de desempenho. Essas informações são utilizadas exclusivamente para melhorar a experiência do usuário e o funcionamento do aplicativo.
+                Atualmente, o aplicativo não coleta dados pessoais do usuário nem realiza coleta de dados de uso de forma persistente.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Mesmo sem a criação de conta, algumas informações podem ser processadas em nossos servidores para viabilizar funcionalidades e aprimorar continuamente o serviço.
+                O aplicativo pode processar informações temporárias necessárias para o funcionamento das funcionalidades, como requisições a servidores, sem armazenamento que permita identificação do usuário.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Podemos utilizar ferramentas de terceiros, como serviços de análise e publicidade (ex: Google Analytics e Google AdMob), que podem coletar dados não identificáveis para fins de métricas e exibição de anúncios.
+                Não utilizamos, nesta versão do aplicativo, ferramentas de análise ou publicidade que realizem coleta de dados do usuário.
               </p>
               <p style={{ margin: 0 }}>
-                Não coletamos informações pessoais sensíveis nem dados que identifiquem diretamente o usuário, exceto quando fornecidos voluntariamente, como no caso de inscrição em newsletter ou contato.
+                Caso essas funcionalidades venham a ser implementadas no futuro, esta política será atualizada para refletir as mudanças.
+              </p>
+            </section>
+
+            <section style={{ marginBottom: '18px' }}>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Fontes de Dados e Direitos Autorais</h2>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Este aplicativo utiliza dados fornecidos por fontes públicas e licenciadas, incluindo o The Movie Database (TMDB). O VibesFilm não é afiliado, associado ou patrocinado pelas plataformas de streaming mencionadas.
+              </p>
+              <p style={{ margin: 0 }}>
+                Utilizamos a API do TMDB, mas não é endossado ou certificado pelo TMDB.
               </p>
             </section>
 
