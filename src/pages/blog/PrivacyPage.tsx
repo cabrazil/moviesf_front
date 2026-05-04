@@ -219,10 +219,10 @@ export default function PrivacyPage() {
                 Esta Política de Privacidade também se aplica ao aplicativo móvel VibesFilm.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Atualmente, o aplicativo não coleta dados pessoais do usuário nem realiza coleta de dados de uso de forma persistente.
+                Atualmente, o aplicativo não coleta, armazena ou compartilha dados pessoais do usuário, nem realiza coleta de dados de uso de forma persistente.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                O aplicativo pode processar informações temporárias necessárias para o funcionamento das funcionalidades, como requisições a servidores, sem armazenamento que permita identificação do usuário.
+                O aplicativo pode processar informações temporárias necessárias para o funcionamento das funcionalidades, como requisições a servidores, sem armazenamento persistente ou identificação do usuário.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
                 Não utilizamos, nesta versão do aplicativo, ferramentas de análise ou publicidade que realizem coleta de dados do usuário.
@@ -237,8 +237,11 @@ export default function PrivacyPage() {
               <p style={{ margin: '0 0 8px 0' }}>
                 Este aplicativo utiliza dados fornecidos por fontes públicas e licenciadas, incluindo o The Movie Database (TMDB). O VibesFilm não é afiliado, associado ou patrocinado pelas plataformas de streaming mencionadas.
               </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                O VibesFilm atua exclusivamente como uma ferramenta de recomendação e não hospeda, transmite ou distribui conteúdos audiovisuais.
+              </p>
               <p style={{ margin: 0 }}>
-                Utilizamos a API do TMDB, mas não é endossado ou certificado pelo TMDB.
+                Este produto utiliza a API do TMDB, mas não é endossado ou certificado pelo TMDB.
               </p>
             </section>
 
