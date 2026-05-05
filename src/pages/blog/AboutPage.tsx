@@ -514,6 +514,31 @@ export default function AboutPage() {
               </p>
             </div>
           </section>
+          {/* TMDB Attribution */}
+          <section style={{ marginTop: isMobile ? '32px' : '48px', textAlign: 'center' }}>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '12px',
+              opacity: 0.8
+            }}>
+              <img 
+                src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" 
+                alt="Powered by TMDB" 
+                style={{ height: '20px' }}
+              />
+              <p style={{
+                color: '#E0E0E0',
+                fontSize: '0.85rem',
+                margin: 0,
+                maxWidth: '600px',
+                lineHeight: '1.5'
+              }}>
+                This product uses the TMDB API but is not endorsed or certified by TMDB.
+              </p>
+            </div>
+          </section>
         </main>
       </div>
     </>
