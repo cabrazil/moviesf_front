@@ -504,28 +504,41 @@ export function MoviePremiumFicha() {
                     </svg>
                   </a>
 
-                  {/* CTA iOS Coming Soon Compact */}
-                  <div 
+                  {/* CTA iOS */}
+                  <a 
+                    href="https://apps.apple.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '10px',
                       padding: '6px 12px',
-                      backgroundColor: 'transparent',
-                      border: '1px dashed rgba(255, 255, 255, 0.25)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(255, 255, 255, 0.15)',
                       borderRadius: '8px',
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      cursor: 'default',
+                      color: '#fff',
+                      textDecoration: 'none',
+                      transition: 'all 0.3s ease',
+                      backdropFilter: 'blur(10px)',
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.15)';
                     }}
                   >
                     <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>
-                      <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 600 }}>iOS</span>
-                      <span style={{ fontSize: '13px', fontWeight: 700 }}>Em breve</span>
+                      <span style={{ fontSize: '8px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', fontWeight: 600 }}>iOS</span>
+                      <span style={{ fontSize: '13px', fontWeight: 700 }}>Apple Store</span>
                     </div>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2.01.77-3.27.82-1.31.05-2.31-1.32-3.14-2.53C4.25 17 2.97 12.01 4.72 9c.88-1.52 2.41-2.48 4.11-2.51 1.27-.02 2.46.87 3.24.87.78 0 2.22-1.05 3.75-.9.65.02 2.46.25 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.3 2.72zM12.91 5.99c.02-.01.05-.03.08-.06.53-.63.89-1.51.77-2.41-.02-.03-.04-.07-.07-.09-.9.04-1.78.61-2.26 1.21-.02.03-.04.05-.05.08-.53.64-.88 1.55-.74 2.44.02.03.05.07.08.08.06.01.12.02.18.02.73 0 1.52-.39 2.01-.89z"/>
                     </svg>
-                  </div>
+                  </a>
                 </div>
               </div>
             </div>

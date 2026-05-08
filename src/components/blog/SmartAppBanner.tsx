@@ -75,7 +75,7 @@ export function SmartAppBanner() {
             whiteSpace: 'nowrap', 
             overflow: 'hidden', 
             textOverflow: 'ellipsis' 
-          }}>Baixe o App oficial (iOS em breve)</span>
+          }}>Baixe o App oficial (Android e iOS)</span>
         </div>
       </div>
 
