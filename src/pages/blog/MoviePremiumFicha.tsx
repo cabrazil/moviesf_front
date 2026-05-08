@@ -506,7 +506,7 @@ export function MoviePremiumFicha() {
 
                   {/* CTA iOS */}
                   <a 
-                    href="https://apps.apple.com/"
+                    href="https://apps.apple.com/br/app/vibesfilm/id6764453105"
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
