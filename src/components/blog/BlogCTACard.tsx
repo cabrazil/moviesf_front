@@ -103,10 +103,10 @@ export function BlogCTACard() {
           style={{
             backgroundColor: platform === 'android' ? '#059669' : '#FFFFFF',
             color: platform === 'android' ? '#FFFFFF' : '#011627',
-            padding: '14px 24px',
+            padding: '12px 20px',
             borderRadius: '8px',
             border: 'none',
-            fontSize: '1.1rem',
+            fontSize: '1rem',
             fontWeight: '700',
             textDecoration: 'none',
             cursor: 'pointer',
@@ -114,9 +114,10 @@ export function BlogCTACard() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '12px',
+            gap: '8px',
             width: '100%',
             maxWidth: '280px',
+            whiteSpace: 'nowrap',
             boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)'
           }}
           onMouseOver={(e) => {
