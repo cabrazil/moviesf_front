@@ -11,11 +11,8 @@ interface BlogArticleCardProps {
 export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    });
+    const months = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
   };
 
   const calculateReadingTime = (content: string) => {
@@ -312,23 +309,28 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
                 width: '24px',
                 height: '24px',
                 borderRadius: '50%',
-                objectFit: 'cover'
+                objectFit: 'cover',
+                flexShrink: 0
               }}
             />
             <p style={{ 
               color: '#FDFFFC', 
               fontSize: '0.75rem', 
               fontWeight: '500',
-              margin: 0
+              margin: 0,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap'
             }}>{post.author_name}</p>
-            <span style={{ color: '#E0E0E0', fontSize: '0.75rem' }}>•</span>
+            <span style={{ color: '#E0E0E0', fontSize: '0.75rem', flexShrink: 0 }}>•</span>
             <div style={{ 
               display: 'flex', 
               alignItems: 'center', 
               color: '#E0E0E0', 
-              fontSize: '0.75rem' 
+              fontSize: '0.75rem',
+              flexShrink: 0
             }}>
-              <Calendar size={12} style={{ marginRight: '4px' }} />
+              <Calendar size={12} style={{ marginRight: '4px', flexShrink: 0 }} />
               {formatDate(post.date)}
             </div>
           </div>

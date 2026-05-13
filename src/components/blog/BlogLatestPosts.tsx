@@ -54,7 +54,7 @@ export function BlogLatestPosts() {
   const getArticlesPerPage = () => {
     if (window.innerWidth < 768) return 6;   // Mobile: 2 colunas x 3 linhas
     if (window.innerWidth < 1024) return 9;  // Tablet: 3 colunas x 3 linhas
-    return 12; // Desktop: 3 colunas x 4 linhas
+    return 16; // Desktop: 4 colunas x 4 linhas
   };
 
   // Buscar artigos e categorias iniciais
@@ -393,7 +393,7 @@ export function BlogLatestPosts() {
             gridTemplateColumns: viewMode === 'grid'
               ? isMobile
                 ? '1fr'
-                : 'repeat(auto-fit, minmax(300px, 1fr))'
+                : 'repeat(auto-fit, minmax(260px, 1fr))'
               : '1fr',
             maxWidth: viewMode === 'list' ? '800px' : 'none',
             margin: viewMode === 'list' ? '0 auto' : '0'
@@ -407,8 +407,8 @@ export function BlogLatestPosts() {
                 </div>
               ];
 
-              // Inserir CTA a cada 6 artigos
-              if ((index + 1) % 6 === 0 && index < filteredPosts.length - 1) {
+              // Inserir CTA a cada 8 artigos (final de 2 linhas na visualização desktop)
+              if ((index + 1) % 8 === 0 && index < filteredPosts.length - 1) {
                 items.push(
                   <div key={`cta-${index}`} style={{
                     animation: 'fadeIn 0.6s ease-out'
