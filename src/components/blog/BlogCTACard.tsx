@@ -101,9 +101,9 @@ export function BlogCTACard() {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            backgroundColor: platform === 'android' ? '#32FF7E' : '#FFFFFF',
-            color: platform === 'android' ? '#011627' : '#011627',
-            padding: '14px 28px',
+            backgroundColor: platform === 'android' ? '#059669' : '#FFFFFF',
+            color: platform === 'android' ? '#FFFFFF' : '#011627',
+            padding: '14px 24px',
             borderRadius: '8px',
             border: 'none',
             fontSize: '1.1rem',
@@ -113,7 +113,10 @@ export function BlogCTACard() {
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            justifyContent: 'center',
+            gap: '12px',
+            width: '100%',
+            maxWidth: '280px',
             boxShadow: '0 4px 14px rgba(0, 0, 0, 0.2)'
           }}
           onMouseOver={(e) => {
@@ -128,10 +131,10 @@ export function BlogCTACard() {
           {platform === 'android' ? (
             <>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3.60938 1.95312C3.375 2.1875 3.23438 2.5625 3.23438 3.03125V20.9688C3.23438 21.4375 3.375 21.8125 3.60938 22.0469L3.65625 22.0938L13.7344 12.0156V11.9844L3.65625 1.90625L3.60938 1.95312Z" fill="#011627"/>
-                <path d="M17.0625 15.3438L13.7344 12.0156V11.9844L17.0625 8.65625L17.1094 8.6875L21.0469 10.9219C22.1719 11.5625 22.1719 12.4375 21.0469 13.0781L17.1094 15.3125L17.0625 15.3438Z" fill="#011627"/>
-                <path d="M17.1094 15.3125L13.7344 11.9844L3.65625 22.0469C4.03125 22.4375 4.64062 22.4844 5.34375 22.0938L17.1094 15.3125Z" fill="#011627"/>
-                <path d="M17.1094 8.6875L5.34375 1.90625C4.64062 1.51562 4.03125 1.5625 3.65625 1.95312L13.7344 12.0156L17.1094 8.6875Z" fill="#011627"/>
+                <path d="M3.60938 1.95312C3.375 2.1875 3.23438 2.5625 3.23438 3.03125V20.9688C3.23438 21.4375 3.375 21.8125 3.60938 22.0469L3.65625 22.0938L13.7344 12.0156V11.9844L3.65625 1.90625L3.60938 1.95312Z" fill="#FFFFFF"/>
+                <path d="M17.0625 15.3438L13.7344 12.0156V11.9844L17.0625 8.65625L17.1094 8.6875L21.0469 10.9219C22.1719 11.5625 22.1719 12.4375 21.0469 13.0781L17.1094 15.3125L17.0625 15.3438Z" fill="#FFFFFF"/>
+                <path d="M17.1094 15.3125L13.7344 11.9844L3.65625 22.0469C4.03125 22.4375 4.64062 22.4844 5.34375 22.0938L17.1094 15.3125Z" fill="#FFFFFF"/>
+                <path d="M17.1094 8.6875L5.34375 1.90625C4.64062 1.51562 4.03125 1.5625 3.65625 1.95312L13.7344 12.0156L17.1094 8.6875Z" fill="#FFFFFF"/>
               </svg>
               Baixar na Google Play
             </>

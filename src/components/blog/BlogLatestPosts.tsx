@@ -407,8 +407,9 @@ export function BlogLatestPosts() {
                 </div>
               ];
 
-              // Inserir CTA a cada 8 artigos (final de 2 linhas na visualização desktop)
-              if ((index + 1) % 8 === 0 && index < filteredPosts.length - 1) {
+              // Inserir CTA a cada 8 artigos no desktop, e a cada 3 no mobile
+              const ctaFrequency = isMobile ? 3 : 8;
+              if ((index + 1) % ctaFrequency === 0 && index < filteredPosts.length - 1) {
                 items.push(
                   <div key={`cta-${index}`} style={{
                     animation: 'fadeIn 0.6s ease-out'
