@@ -56,6 +56,7 @@ function App() {
             <Route path="/sobre" element={<BlogLayout><AboutPage /></BlogLayout>} />
             <Route path="/contato" element={<BlogLayout><ContactPage /></BlogLayout>} />
             <Route path="/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
+            <Route path="/cookies" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
             <Route path="/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
@@ -79,6 +80,7 @@ function App() {
             <Route path="/blog/sobre" element={<BlogLayout><AboutPage /></BlogLayout>} />
             <Route path="/blog/contato" element={<BlogLayout><ContactPage /></BlogLayout>} />
             <Route path="/blog/privacidade" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
+            <Route path="/blog/cookies" element={<BlogLayout><PrivacyPage /></BlogLayout>} />
             <Route path="/blog/termos" element={<BlogLayout><TermsPage /></BlogLayout>} />
             <Route path="/blog/artigo/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/blog/analise/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
