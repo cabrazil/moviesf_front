@@ -1,7 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Download, Mail, Instagram, Twitter, Facebook, Github } from 'lucide-react';
+import { Download, Mail, Instagram, Youtube } from 'lucide-react';
 import logoBlog from '../../assets/logo_header.png';
+
+const Tiktok = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 export const Footer: React.FC = () => {
   return (
@@ -89,28 +103,31 @@ export const Footer: React.FC = () => {
             <h3 className="text-white font-semibold mb-4">Conecte-se</h3>
             <div className="flex space-x-4 mb-4">
               <a
-                href="#"
+                href="https://www.instagram.com/vibesfilm.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition-colors"
+                title="Instagram"
               >
                 <Instagram className="w-5 h-5 text-white" />
               </a>
               <a
-                href="#"
+                href="https://www.tiktok.com/@vibesfilm.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition-colors"
+                title="TikTok"
               >
-                <Twitter className="w-5 h-5 text-white" />
+                <Tiktok className="w-5 h-5 text-white" />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@vibesfilm-app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition-colors"
+                title="YouTube"
               >
-                <Facebook className="w-5 h-5 text-white" />
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 bg-white bg-opacity-10 rounded-full flex items-center justify-center hover:bg-opacity-20 transition-colors"
-              >
-                <Github className="w-5 h-5 text-white" />
+                <Youtube className="w-5 h-5 text-white" />
               </a>
             </div>
             <div className="flex items-center gap-2 text-gray-400 text-sm">

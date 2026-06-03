@@ -1,8 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Heart, Mail, Instagram, Twitter, Youtube, ExternalLink } from 'lucide-react';
+import { Heart, Mail, Instagram, Youtube, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logoBlog from '../../assets/logo_header.png';
 import { NewsletterForm } from '../newsletter/NewsletterForm';
+
+const Tiktok = ({ size = 20, ...props }: { size?: number; [key: string]: any }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    width={size}
+    height={size}
+    {...props}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
 
 export function BlogFooter() {
   const currentYear = new Date().getFullYear();
@@ -38,9 +54,9 @@ export function BlogFooter() {
   };
 
   const socialLinks = [
-    { name: 'Instagram', icon: Instagram, href: '#', color: 'hover:text-pink-400' },
-    { name: 'Twitter', icon: Twitter, href: '#', color: 'hover:text-blue-400' },
-    { name: 'YouTube', icon: Youtube, href: '#', color: 'hover:text-red-400' },
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/vibesfilm.app', color: 'hover:text-pink-400' },
+    { name: 'TikTok', icon: Tiktok, href: 'https://www.tiktok.com/@vibesfilm.app', color: 'hover:text-neutral-400' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@vibesfilm-app', color: 'hover:text-red-400' },
     { name: 'Email', icon: Mail, href: 'mailto:contato@vibesfilm.com', color: 'hover:text-green-400' },
   ];
 
