@@ -670,12 +670,32 @@ export function ArticlePage() {
                 }}>
                   Sobre {post.author_name}
                 </h3>
-                <p style={{
+                <div style={{
                   color: '#E0E0E0',
-                  lineHeight: '1.6'
+                  lineHeight: '1.6',
+                  fontSize: '0.95rem'
                 }}>
-                  {post.author_bio || 'Autor do VibesFilm Blog, apaixonado por cinema e emoções.'}
-                </p>
+                  {post.author_name?.includes('Carlos') ? (
+                    <>
+                      <p style={{ margin: 0 }}>
+                        Fundador e curador do Vibesfilm, Carlos construiu sua carreira na área de tecnologia, trabalhando com análise, sistemas e resolução de problemas. Após se retirar da vida corporativa, passou a dedicar parte do seu tempo à união de duas paixões: cinema e tecnologia.
+                      </p>
+                      <p style={{ margin: '8px 0 0 0' }}>
+                        O Vibesfilm nasceu dessa combinação. Utilizando uma abordagem estruturada, Carlos desenvolve uma metodologia própria de curadoria emocional para ajudar pessoas a encontrar filmes pela experiência emocional que procuram viver.
+                      </p>
+                    </>
+                  ) : post.author_bio ? (
+                    post.author_bio.split('\n\n').map((paragraph, index) => (
+                      <p key={index} style={{ margin: index === 0 ? '0' : '8px 0 0 0' }}>
+                        {paragraph}
+                      </p>
+                    ))
+                  ) : (
+                    <p style={{ margin: 0 }}>
+                      Autor do VibesFilm Blog, apaixonado por cinema e emoções.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

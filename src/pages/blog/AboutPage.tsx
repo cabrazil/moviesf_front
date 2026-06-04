@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ArrowLeft, Heart, Users, Lightbulb } from 'lucide-react';
+import { ArrowLeft, Heart, Users, Lightbulb, Brain, Sliders, GitFork, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 // Adicionar estilos CSS para a animação
@@ -177,19 +177,28 @@ export default function AboutPage() {
                   color: '#FDFFFC',
                   fontSize: isMobile ? '18px' : '20px',
                   fontWeight: '600',
-                  margin: '0 0 8px 0',
+                  margin: '0 0 12px 0',
                   textAlign: isMobile ? 'center' : 'left'
                 }}>
-                  Sobre Carlos B Silva
+                  Sobre o Autor
                 </h3>
                 <p style={{
                   color: '#E0E0E0',
-                  fontSize: isMobile ? '14px' : '16px',
+                  fontSize: isMobile ? '14px' : '15px',
+                  lineHeight: '1.6',
+                  margin: '0 0 12px 0',
+                  textAlign: isMobile ? 'center' : 'left'
+                }}>
+                  Fundador e curador do Vibesfilm, Carlos construiu sua carreira na área de tecnologia, trabalhando com análise, sistemas e resolução de problemas. Após se retirar da vida corporativa, passou a dedicar parte do seu tempo à união de duas paixões: cinema e tecnologia.
+                </p>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: isMobile ? '14px' : '15px',
                   lineHeight: '1.6',
                   margin: 0,
                   textAlign: isMobile ? 'center' : 'left'
                 }}>
-                  Fundador e curador do Vibesfilm. Apaixonado por cinema e pela forma como a tecnologia pode nos ajudar a entender as emoções que os filmes despertam. Carlos acredita que existe um filme perfeito para cada sentimento e dedica-se a construir as pontes entre a arte cinematográfica e a experiência humana.
+                  O Vibesfilm nasceu dessa combinação. Utilizando uma abordagem estruturada, Carlos desenvolve uma metodologia própria de curadoria emocional para ajudar pessoas a encontrar filmes não apenas pelo gênero ou popularidade, mas pela experiência emocional que procuram viver. Seu objetivo é aproximar o cinema das emoções humanas, tornando a escolha de um filme mais significativa e pessoal.
                 </p>
               </div>
             </div>
@@ -231,8 +240,7 @@ export default function AboutPage() {
             }}>
               Quantas vezes você já passou mais tempo procurando um filme do que assistindo? A paralisia da
               escolha é real. Rolamos por catálogos infinitos em serviços de streaming, recebendo sugestões
-              baseadas em um único critério: o gênero. "Você gostou de Ação? Aqui tem mais ação". Mas e se a
-              sua necessidade não for um gênero, mas sim uma emoção?
+              baseadas em um único critério: o gênero. Mas e se a sua real necessidade não for um gênero, mas sim uma emoção?
             </div>
 
             <div style={{
@@ -241,23 +249,21 @@ export default function AboutPage() {
               color: '#E0E0E0',
               marginBottom: isMobile ? '16px' : '24px'
             }}>
-              É exatamente essa a lacuna que o Vibesfilm preenche. Trata-se de uma inovadora plataforma que
-              recomenda filmes com base no seu estado emocional atual. A proposta é mais humana e precisa,
-              entendendo que o cinema é, antes de tudo, sobre os sentimentos que ele nos provoca. É como ter
-              um amigo cinéfilo que sabe exatamente qual filme você precisa assistir baseado no seu humor e no
-              que você quer sentir depois.
+              É exatamente essa a lacuna que o Vibesfilm preenche. Para tornar isso possível, o Vibesfilm organiza
+              sentimentos, intenções e experiências emocionais em jornadas cuidadosamente mapeadas. Cada recomendação
+              busca responder não apenas ao que você gosta de assistir, mas ao que você precisa sentir, compreender ou vivenciar naquele momento.
             </div>
 
             <div style={{
               fontSize: isMobile ? '1rem' : '1.125rem',
               lineHeight: '1.8',
               color: '#E0E0E0',
-              marginBottom: isMobile ? '24px' : '32px'
+              marginBottom: 0
             }}>
-              O Vibesfilm reconhece que as pessoas gostam de assistir filmes para se emocionar, seja para rir
-              ou para chorar. É uma ferramenta que devolve o poder da escolha ao espectador, de uma forma
-              muito mais conectada e significativa. Em um mundo de conteúdo infinito, encontrar o filme que
-              dialoga com a nossa alma é o verdadeiro luxo. E o Vibesfilm promete ser a bússola para essa descoberta.
+              Cada jornada emocional foi construída a partir da análise de centenas de filmes e da identificação
+              dos tipos de experiências emocionais que eles oferecem. Em vez de classificar filmes apenas por gênero,
+              o Vibesfilm procura compreender como cada obra pode dialogar com diferentes estados emocionais,
+              de forma muito mais conectada e significativa.
             </div>
           </article>
 
@@ -481,36 +487,244 @@ export default function AboutPage() {
             </div>
           </section>
 
+          {/* A Estrutura por Trás da Curadoria */}
+          <section id="metodologia" style={{ marginBottom: isMobile ? '32px' : '48px' }}>
+            <h3 style={{
+              fontSize: isMobile ? '20px' : '24px',
+              fontWeight: 'bold',
+              color: '#FDFFFC',
+              textAlign: 'center',
+              marginBottom: isMobile ? '12px' : '16px'
+            }}>
+              A Estrutura por Trás da Curadoria
+            </h3>
+            <p style={{
+              fontSize: isMobile ? '1rem' : '1.125rem',
+              color: '#E0E0E0',
+              textAlign: 'center',
+              marginBottom: isMobile ? '24px' : '32px',
+              lineHeight: '1.6'
+            }}>
+              O Vibesfilm não utiliza apenas algoritmos genéricos ou filtros simples de gênero. Há uma engrenagem dedicada e uma metodologia estruturada projetada para garantir que a indicação realmente ressoe com o seu momento:
+            </p>
 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+              gap: '20px',
+              marginBottom: '24px'
+            }}>
+              {/* Card 1: Subsentimentos */}
+              <div style={{
+                backgroundColor: 'rgba(2, 44, 73, 0.3)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '8px',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Brain size={20} color="#3B82F6" />
+                </div>
+                <h4 style={{
+                  fontSize: '1.15rem',
+                  fontWeight: '600',
+                  color: '#FDFFFC',
+                  margin: 0
+                }}>
+                  Subsentimentos e Nuances Emocionais
+                </h4>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: '0.925rem',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  Não classificamos os filmes apenas como "alegres" ou "tristes". Nós mapeamos <strong>subsentimentos específicos</strong> (como nostalgia, superação, melancolia acolhedora ou calmaria reflexiva). Isso nos permite entender a real atmosfera de uma obra para conectá-la ao seu estado de espírito exato.
+                </p>
+              </div>
+
+              {/* Card 2: Cálculo de Relevância */}
+              <div style={{
+                backgroundColor: 'rgba(2, 44, 73, 0.3)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '8px',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Sliders size={20} color="#3B82F6" />
+                </div>
+                <h4 style={{
+                  fontSize: '1.15rem',
+                  fontWeight: '600',
+                  color: '#FDFFFC',
+                  margin: 0
+                }}>
+                  Cálculo de Relevância (Intensidade vs Cobertura)
+                </h4>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: '0.925rem',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  Utilizamos um modelo de pontuação próprio que cruza a <strong>Intensidade</strong> da emoção no filme com a sua <strong>Cobertura</strong> (o quanto desse sentimento está presente ao longo da narrativa). Dessa forma, separamos filmes que apenas tocam em um tema daqueles que verdadeiramente imergem o espectador nele.
+                </p>
+              </div>
+
+              {/* Card 3: Jornadas de Transição */}
+              <div style={{
+                backgroundColor: 'rgba(2, 44, 73, 0.3)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '8px',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <GitFork size={20} color="#3B82F6" />
+                </div>
+                <h4 style={{
+                  fontSize: '1.15rem',
+                  fontWeight: '600',
+                  color: '#FDFFFC',
+                  margin: 0
+                }}>
+                  Jornadas de Transição
+                </h4>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: '0.925rem',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  Reconhecemos que as emoções são dinâmicas. Nosso sistema é desenhado para ajudar você em quatro direções: <strong>Manter</strong> sua vibe atual, <strong>Processar</strong> uma emoção complexa, <strong>Transformar</strong> seu humor para um estado melhor, ou simplesmente <strong>Explorar</strong> novas sensações com segurança artística.
+                </p>
+              </div>
+
+              {/* Card 4: Curadoria Assistida e Validação Humana */}
+              <div style={{
+                backgroundColor: 'rgba(2, 44, 73, 0.3)',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px'
+              }}>
+                <div style={{
+                  backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                  borderRadius: '8px',
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Sparkles size={20} color="#3B82F6" />
+                </div>
+                <h4 style={{
+                  fontSize: '1.15rem',
+                  fontWeight: '600',
+                  color: '#FDFFFC',
+                  margin: 0
+                }}>
+                  Sensibilidade Humana com Rigor de Dados
+                </h4>
+                <p style={{
+                  color: '#E0E0E0',
+                  fontSize: '0.925rem',
+                  lineHeight: '1.6',
+                  margin: 0
+                }}>
+                  Nenhuma indicação é feita ao acaso por um algoritmo sem alma. Embora utilizemos uma estrutura analítica de dados e inteligência artificial para mapear os sentimentos, cada indicação passa por uma <strong>validação e curadoria fina manual</strong>. É a fusão da engenharia de dados com a paixão real pelo cinema.
+                </p>
+              </div>
+            </div>
+          </section>
 
           {/* Mission */}
-          <section>
+          <section style={{ marginBottom: isMobile ? '32px' : '48px' }}>
             <div style={{
               backgroundColor: 'rgba(2, 44, 73, 0.3)',
               borderRadius: '16px',
-              padding: '16px',
+              padding: isMobile ? '24px' : '40px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               backdropFilter: 'blur(10px)',
               textAlign: 'center'
             }}>
               <h3 style={{
-                fontSize: '24px',
+                fontSize: isMobile ? '20px' : '24px',
                 fontWeight: 'bold',
                 color: '#FDFFFC',
-                marginBottom: '8px',
+                marginBottom: '20px',
                 textAlign: 'center'
               }}>
-                Nossa Missão
+                A Alma do Projeto
               </h3>
               <p style={{
-                fontSize: '1.125rem',
+                fontSize: isMobile ? '1.05rem' : '1.2rem',
                 lineHeight: '1.8',
-                fontStyle: 'italic',
                 color: '#E0E0E0',
-                margin: 0
+                maxWidth: '800px',
+                margin: '0 auto 20px auto',
+                fontWeight: '300'
               }}>
-                "Transformar a experiência de escolha de filmes, conectando pessoas com histórias que
-                realmente importam para seus corações e mentes."
+                "Acreditamos que as pessoas raramente procuram apenas um filme. Elas procuram companhia, compreensão, inspiração, conforto, reflexão ou até mesmo um espaço seguro para sentir aquilo que estão vivendo."
+              </p>
+              <p style={{
+                fontSize: isMobile ? '1.05rem' : '1.2rem',
+                lineHeight: '1.8',
+                color: '#3B82F6',
+                maxWidth: '800px',
+                margin: '0 auto 20px auto',
+                fontWeight: '500'
+              }}>
+                Por isso, o Vibesfilm não começa perguntando quais gêneros você gosta. Ele começa perguntando como você está.
+              </p>
+              <p style={{
+                fontSize: isMobile ? '1.05rem' : '1.2rem',
+                lineHeight: '1.8',
+                color: '#E0E0E0',
+                maxWidth: '800px',
+                margin: '0 auto',
+                fontWeight: '300',
+                fontStyle: 'italic'
+              }}>
+                "Porque o filme certo nem sempre é o mais popular, o mais premiado ou o mais recomendado. Muitas vezes, é simplesmente aquele que conversa com você no momento certo."
               </p>
             </div>
           </section>
