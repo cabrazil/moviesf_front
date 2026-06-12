@@ -68,7 +68,7 @@ export function BlogLatestPosts() {
 
         // Buscar artigos e categorias em paralelo
         const [postsResponse, categoriesResponse] = await Promise.all([
-          blogApi.getPosts({ limit: 50, page: 1 }), // Buscar mais artigos para simular paginação
+          blogApi.getPosts({ limit: 200, page: 1 }), // Buscar mais artigos para simular paginação no front
           blogApi.getCategories()
         ]);
 
