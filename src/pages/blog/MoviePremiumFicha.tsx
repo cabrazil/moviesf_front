@@ -169,6 +169,8 @@ export function MoviePremiumFicha() {
     };
 
     setMeta('name', 'description', desc);
+    setMeta('name', 'robots', 'noindex, follow');
+    setMeta('name', 'googlebot', 'noindex, follow');
     setMeta('property', 'og:type', 'video.movie');
     setMeta('property', 'og:title', `${movie.title} (${movie.year}) - Análise e Onde Assistir`);
     setMeta('property', 'og:description', desc);

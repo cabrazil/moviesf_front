@@ -200,8 +200,8 @@ export const MovieMetaTags: React.FC<MovieMetaTagsProps> = ({ movie, platforms, 
       </script>
       
       {/* Meta tags adicionais */}
-      <meta name="robots" content="index, follow, max-image-preview:large" />
-      <meta name="googlebot" content="index, follow, max-image-preview:large" />
+      <meta name="robots" content="noindex, follow" />
+      <meta name="googlebot" content="noindex, follow" />
       <meta name="author" content="vibesfilm" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Helmet>
