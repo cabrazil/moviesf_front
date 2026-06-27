@@ -31,7 +31,9 @@ export const getApiBaseUrl = (): string => {
     // Se estiver em produção (não localhost), usar URL de produção
     // Backend em subdomínio (ex: api.vibesfilm.com)
     if (hostname.includes('vibesfilm.com')) {
-      return `https://api.${hostname.replace(/^[^.]+\./, '')}`;
+      const isSubdomain = hostname.split('.').length > 2;
+      const domain = isSubdomain ? hostname.replace(/^[^.]+\./, '') : hostname;
+      return `https://api.${domain}`;
     }
     
     // Fallback: usar localhost (para desenvolvimento local)
