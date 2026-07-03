@@ -93,58 +93,19 @@ const MovieSuggestionsPageMinimal: React.FC = () => {
         if (movieStreamingPlatforms.length === 0) return false;
 
         const hasSelectedPlatform = movieStreamingPlatforms.some((platform: any) => {
-          const platformName = platform.streamingPlatform?.name || '';
-          const accessType = platform.accessType || '';
+          const platformName = (platform.streamingPlatform?.name || '').toLowerCase().trim();
+          if (!platformName) return false;
 
-          // Verificar plataformas de assinatura
           if (streamingFilters.subscriptionPlatforms.length > 0) {
-            const selectedPlatformInfo = (streamingFilters.subscriptionPlatforms as any[]).find((p: any) => {
-              const platformData = typeof p === 'string' ? { name: p, category: '' } : p;
-              const cleanSelectedPlatform = platformData.name.toLowerCase().trim();
-              const cleanPlatformName = platformName.toLowerCase().trim();
-              return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
+            return streamingFilters.subscriptionPlatforms.some((p: any) => {
+              const platformData = typeof p === 'string' ? { name: p } : p;
+              const cleanSelectedPlatform = (platformData.name || '').toLowerCase().trim();
+              return (
+                platformName === cleanSelectedPlatform ||
+                platformName.includes(cleanSelectedPlatform) ||
+                cleanSelectedPlatform.includes(platformName)
+              );
             });
-
-            if (selectedPlatformInfo) {
-              const moviePlatformCategory = (platform.streamingPlatform?.category || '').toUpperCase().trim();
-              const filterPlatformCategory = (typeof selectedPlatformInfo === 'object' ? (selectedPlatformInfo as any).category : '').toUpperCase().trim();
-              const platformName = (platform.streamingPlatform?.name || '').toLowerCase().trim();
-              
-              const isKnownRentalPlatform = 
-                platformName.includes('mercado') || 
-                platformName.includes('apple tv');
-
-              const isRentalPurchasePlatform = 
-                moviePlatformCategory === 'FREE_PRIMARY' || 
-                moviePlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
-                filterPlatformCategory === 'FREE_PRIMARY' ||
-                filterPlatformCategory === 'RENTAL_PURCHASE_PRIMARY' ||
-                isKnownRentalPlatform;
-              
-              if (accessType === 'INCLUDED_WITH_SUBSCRIPTION' || 
-                  accessType === 'FREE_WITH_ADS' ||
-                  (isRentalPurchasePlatform && (accessType === 'RENTAL' || accessType === 'PURCHASE'))) {
-                return true;
-              }
-            }
-          }
-
-          // Verificar plataformas de aluguel/compra
-          if (streamingFilters.includeRentalPurchase && streamingFilters.rentalPurchasePlatforms.length > 0) {
-            const isRentalPurchasePlatform = streamingFilters.rentalPurchasePlatforms.some((selectedPlatform: string) => {
-              const cleanSelectedPlatform = selectedPlatform
-                .replace(' (Aluguel/Compra)', '')
-                .replace(' (Aluguel/Compra/Gratuito)', '')
-                .toLowerCase()
-                .trim();
-              const cleanPlatformName = platformName.toLowerCase().trim();
-
-              return cleanPlatformName === cleanSelectedPlatform || cleanPlatformName.includes(cleanSelectedPlatform);
-            });
-
-            if (isRentalPurchasePlatform && (accessType === 'PURCHASE' || accessType === 'RENTAL')) {
-              return true;
-            }
           }
 
           return false;
