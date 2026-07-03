@@ -252,7 +252,7 @@ const Home: React.FC = () => {
             Encontre o filme certo para o seu momento.
           </Typography>
 
-          {/* Descrição adaptativa */}
+          {/* Descrição unificada */}
           <Typography variant="h6" color="text.secondary" paragraph sx={{
             maxWidth: 580,
             fontSize: { xs: '0.95rem', sm: '1.05rem' },
@@ -260,18 +260,10 @@ const Home: React.FC = () => {
             lineHeight: 1.5,
             m: 0
           }}>
-            <Box component="span" sx={{ display: { xs: 'block', sm: 'none' } }}>
-              Deixe o cinema <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span>,{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> ou{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>amplificar</span> o que você sente.
-            </Box>
-            <Box component="span" sx={{ display: { xs: 'none', sm: 'block' } }}>
-              O cinema é a bússola para o que você sente. Encontre a obra certa para o seu momento, seja para{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span> uma emoção,{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> seu humor,{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>manter</span> sua energia ou{' '}
-              <span style={{ color: '#1976d2', fontWeight: 600 }}>explorar</span> novas sensações.
-            </Box>
+            Deixe o cinema <span style={{ color: '#1976d2', fontWeight: 600 }}>acolher</span>,{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> ou{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>ampliar</span> o que você sente.{' '}
+            <span style={{ color: '#1976d2', fontWeight: 600 }}>Em apenas 4 escolhas.</span>
           </Typography>
 
           {/* Slogan com aspas */}
