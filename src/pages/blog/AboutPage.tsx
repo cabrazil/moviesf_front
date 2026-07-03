@@ -198,7 +198,7 @@ export default function AboutPage() {
                   margin: 0,
                   textAlign: isMobile ? 'center' : 'left'
                 }}>
-                  O Vibesfilm nasceu dessa combinação. Utilizando uma abordagem estruturada, Carlos desenvolve uma metodologia própria de curadoria emocional para ajudar pessoas a encontrar filmes não apenas pelo gênero ou popularidade, mas pela experiência emocional que procuram viver. Seu objetivo é aproximar o cinema das emoções humanas, tornando a escolha de um filme mais significativa e pessoal.
+                  O Vibesfilm nasceu da união entre cinema e tecnologia. A partir da análise de centenas de filmes, Carlos desenvolveu uma forma de organizar recomendações pela experiência que cada obra oferece, ajudando pessoas a encontrar o filme certo para o momento que estão vivendo. Seu objetivo é aproximar o cinema das emoções humanas, tornando a escolha de um filme mais significativa e pessoal.
                 </p>
               </div>
             </div>

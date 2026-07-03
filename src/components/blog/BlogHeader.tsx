@@ -70,7 +70,7 @@ export function BlogHeader() {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '64px'
+        height: isMobile ? '72px' : '84px'
       }}>
         {/* Logo */}
         <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
@@ -78,9 +78,9 @@ export function BlogHeader() {
             src={logoBlog}
             alt="VibesFilm Logo"
             style={{
-              height: isMobile ? 40 : 48,
+              height: isMobile ? 52 : 68,
               width: 'auto',
-              maxWidth: isMobile ? 200 : 320,
+              maxWidth: isMobile ? 260 : 420,
               objectFit: 'contain'
             }}
           />
@@ -141,14 +141,14 @@ export function BlogHeader() {
               padding: '8px 16px',
               borderRadius: '8px',
               textDecoration: 'none',
-              fontWeight: '500',
+              fontWeight: '600',
               transition: 'all 0.3s ease',
               flexShrink: 0
             }}
             onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
             onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
           >
-            Usar App
+            Testar o App
           </a>
         </div>
 
@@ -180,7 +180,7 @@ export function BlogHeader() {
             top: '100%',
             left: 0,
             right: 0,
-            height: 'calc(100vh - 64px)', // Altura total menos o header
+            height: 'calc(100vh - 72px)', // Altura total menos o header
             overflowY: 'auto', // Permitir scroll se o menu for longo
             padding: '16px 20px 40px 20px', // Mais padding embaixo
             borderTop: '1px solid rgba(255, 255, 255, 0.1)',
@@ -262,7 +262,7 @@ export function BlogHeader() {
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#E55A2B'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#FF6B35'}
               >
-                Usar App VibesFilm
+                Testar o App
               </a>
             </div>
           </nav>

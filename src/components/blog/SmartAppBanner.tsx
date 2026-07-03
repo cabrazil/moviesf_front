@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import logoSmall from '../../assets/logo_header.png';
 
 export function SmartAppBanner() {
   const [isVisible, setIsVisible] = useState(false);
@@ -36,7 +35,7 @@ export function SmartAppBanner() {
       backdropFilter: 'blur(15px)',
       boxShadow: '0 2px 10px rgba(0, 0, 0, 0.5)'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
         <button 
           onClick={handleDismiss}
           style={{
@@ -46,32 +45,18 @@ export function SmartAppBanner() {
             cursor: 'pointer',
             padding: '4px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            flexShrink: 0
           }}
         >
           <X size={18} />
         </button>
 
-        <div style={{
-          width: '36px',
-          height: '36px',
-          borderRadius: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          flexShrink: 0
-        }}>
-          <img src={logoSmall} alt="Vibesfilm" style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '3px' }} />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-          <span style={{ color: '#FFFFFF', fontSize: '13px', fontWeight: 600 }}>Sua vibe pede um filme</span>
+        <div style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
           <span style={{ 
-            color: 'rgba(255, 255, 255, 0.6)', 
-            fontSize: '11px', 
+            color: '#FFFFFF', 
+            fontSize: '13px', 
+            fontWeight: 600,
             whiteSpace: 'nowrap', 
             overflow: 'hidden', 
             textOverflow: 'ellipsis' 

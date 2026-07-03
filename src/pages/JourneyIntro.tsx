@@ -180,24 +180,12 @@ const JourneyIntro: React.FC = () => {
     return (
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Fade in={true} timeout={600}>
-          <Box sx={{ py: 2, textAlign: 'center' }}>
-            <Typography variant="h2" gutterBottom sx={{
-              fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.75rem' },
-              lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
-              fontWeight: { xs: 'bold', sm: 'normal', md: 'normal' }
-            }}>
-
-              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-                Como você se sente agora?
-              </Box>
-              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-                Como você se sente agora?
-              </Box>
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{
-              fontSize: { xs: '0.9rem', sm: '1rem' },
-              px: { xs: 1, sm: 0 },
-              mb: { xs: 2, sm: 4 } // Menos margem no mobile
+          <Box sx={{ py: { xs: 1.5, sm: 2 }, textAlign: 'center' }}>
+            <Typography variant="h2" sx={{
+              fontSize: { xs: '1.3rem', sm: '1.6rem', md: '1.75rem' },
+              lineHeight: { xs: 1.3, sm: 1.3, md: 1.4 },
+              fontWeight: 700,
+              mb: { xs: 1, sm: 2 }
             }}>
               Escolha o estado que mais combina com seu momento.
             </Typography>

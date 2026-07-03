@@ -41,9 +41,9 @@ const Home: React.FC = () => {
             alt="VibesFilm Logo"
             onClick={() => window.location.href = 'https://vibesfilm.com/'}
             sx={{
-              height: { xs: 36, sm: 48 },
+              height: { xs: 40, sm: 52 },
               width: 'auto',
-              maxWidth: { xs: 200, sm: 320 },
+              maxWidth: { xs: 220, sm: 340 },
               objectFit: 'contain',
               cursor: 'pointer'
             }}
@@ -92,6 +92,26 @@ const Home: React.FC = () => {
             alignItems: 'center',
             gap: 1
           }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => navigate('/blog')}
+              sx={{
+                color: mode === 'dark' ? 'white' : '#1976d2',
+                borderColor: mode === 'dark' ? 'rgba(255,255,255,0.3)' : 'rgba(25,118,210,0.5)',
+                textTransform: 'none',
+                fontWeight: '600',
+                fontSize: '0.8rem',
+                px: 1.5,
+                py: 0.3,
+                '&:hover': {
+                  borderColor: '#1976d2',
+                  backgroundColor: 'rgba(25, 118, 210, 0.08)'
+                }
+              }}
+            >
+              Blog 🍿
+            </Button>
             <IconButton
               sx={{
                 color: mode === 'dark' ? 'white' : 'black',
@@ -178,13 +198,13 @@ const Home: React.FC = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: { xs: 'calc(100vh - 60px)', sm: 'calc(100vh - 100px)' }, // Menor altura min em mobile
+            minHeight: { xs: 'calc(100vh - 70px)', sm: 'calc(100vh - 110px)' },
             textAlign: 'center',
-            pt: { xs: 2, sm: 2, md: 3 }, // Padding top um pouco maior para compensar header menor
-            pb: { xs: 4, sm: 2, md: 3 },
+            py: { xs: 2, sm: 4 },
+            gap: { xs: 1.5, sm: 2.5 },
           }}
         >
-
+          {/* Logo Central */}
           <Box
             component="img"
             src={logoBlog}
@@ -195,65 +215,123 @@ const Home: React.FC = () => {
               target.style.display = 'none';
             }}
             sx={{
-              width: { xs: 220, sm: 250, md: 300 },
+              width: { xs: 200, sm: 260, md: 300 },
               height: 'auto',
-              marginBottom: { xs: 2, sm: 2 },
-              marginTop: { xs: 2, sm: 0 }, // Espaço extra se ocultar o bem-vindo
+              maxHeight: { xs: 90, sm: 120, md: 140 },
               filter: mode === 'dark'
-                ? 'drop-shadow(0px 4px 8px rgba(255,255,255,0.2))'
-                : 'drop-shadow(0px 4px 8px rgba(0,0,0,0.3))',
-              maxWidth: '80%', // Evitar que toque as bordas
-              objectFit: 'contain'
+                ? 'drop-shadow(0px 4px 12px rgba(255,255,255,0.15))'
+                : 'drop-shadow(0px 4px 12px rgba(0,0,0,0.25))',
+              maxWidth: '85%',
+              objectFit: 'contain',
+              mb: { xs: 0.5, sm: 1 }
             }}
           />
 
-          <Typography variant="h2" component="h1" gutterBottom sx={{
-            fontSize: { xs: '1.5rem', sm: '1.8rem', md: '2.2rem', lg: '2.5rem' },
-            mt: { xs: 1, sm: 1.5 },
-            mb: { xs: 1.5, sm: 1.5 },
-            lineHeight: { xs: 1.3, sm: 1.3, md: 1.4 },
-            px: { xs: 2, sm: 0 }
-          }}>
-            Cada emoção tem um filme.
+          {/* Subtítulo Kicker no estilo App Mobile */}
+          <Typography
+            variant="caption"
+            sx={{
+              letterSpacing: '2.5px',
+              textTransform: 'uppercase',
+              fontSize: { xs: '0.7rem', sm: '0.8rem' },
+              fontWeight: 700,
+              color: mode === 'dark' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+            }}
+          >
+            Cinema & Emoção
           </Typography>
 
+          {/* Título Principal */}
+          <Typography variant="h2" component="h1" sx={{
+            fontSize: { xs: '1.6rem', sm: '2rem', md: '2.4rem' },
+            fontWeight: 800,
+            lineHeight: 1.25,
+            maxWidth: 650,
+            px: { xs: 1, sm: 0 }
+          }}>
+            Encontre o filme certo para o seu momento.
+          </Typography>
+
+          {/* Descrição adaptativa */}
           <Typography variant="h6" color="text.secondary" paragraph sx={{
-            maxWidth: 600,
-            mt: { xs: 0.5, sm: 1.5 },
-            mb: { xs: 4, sm: 2.5 },
-            fontSize: { xs: '0.95rem', sm: '1rem' },
-            px: { xs: 2, sm: 0 },
-            lineHeight: 1.5
+            maxWidth: 580,
+            fontSize: { xs: '0.95rem', sm: '1.05rem' },
+            px: { xs: 1.5, sm: 0 },
+            lineHeight: 1.5,
+            m: 0
           }}>
-            O cinema é a bússola para o que você sente. Encontre a obra certa para o seu momento, seja para{' '}
-            <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span> uma emoção,{' '}
-            <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> seu humor,{' '}
-            <span style={{ color: '#1976d2', fontWeight: 600 }}>manter</span> sua energia ou{' '}
-            <span style={{ color: '#1976d2', fontWeight: 600 }}>explorar</span> novas sensações.
+            <Box component="span" sx={{ display: { xs: 'block', sm: 'none' } }}>
+              Deixe o cinema <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span>,{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> ou{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>amplificar</span> o que você sente.
+            </Box>
+            <Box component="span" sx={{ display: { xs: 'none', sm: 'block' } }}>
+              O cinema é a bússola para o que você sente. Encontre a obra certa para o seu momento, seja para{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>processar</span> uma emoção,{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>transformar</span> seu humor,{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>manter</span> sua energia ou{' '}
+              <span style={{ color: '#1976d2', fontWeight: 600 }}>explorar</span> novas sensações.
+            </Box>
           </Typography>
 
-          <Box sx={{ mt: { xs: 0, sm: 3 }, px: { xs: 2, sm: 0 }, mb: { xs: 2, sm: 0 }, width: '100%', display: 'flex', justifyContent: 'center' }}>
+          {/* Slogan com aspas */}
+          <Typography variant="body2" color="text.secondary" sx={{
+            fontSize: { xs: '0.85rem', sm: '0.9rem' },
+            fontStyle: 'italic',
+            opacity: 0.8,
+            m: 0
+          }}>
+            "Cada emoção tem um filme."
+          </Typography>
+
+          {/* Container de Ações */}
+          <Box sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            mt: { xs: 1, sm: 1.5 }
+          }}>
             <Button
               variant="contained"
               size="large"
               onClick={handleStart}
               sx={{
                 px: { xs: 4, sm: 5 },
-                py: { xs: 1.5, sm: 1.5 },
-                fontSize: { xs: '1.1rem', sm: '1.2rem' },
-                borderRadius: 3, // Mais arredondado como no mobile
-                width: { xs: '100%', sm: 'auto' },
-                maxWidth: { xs: '320px', sm: 'none' }, // Limitar largura no mobile
+                py: { xs: 1.4, sm: 1.6 },
+                fontSize: { xs: '1.05rem', sm: '1.15rem' },
+                fontWeight: 700,
+                borderRadius: '50px', // Estilo Pill Button do App Mobile
+                width: { xs: '90%', sm: 'auto' },
+                maxWidth: { xs: '340px', sm: 'none' },
                 backgroundColor: '#1976d2',
                 color: '#ffffff',
-                boxShadow: 3,
+                boxShadow: '0 4px 14px rgba(25, 118, 210, 0.4)',
                 '&:hover': {
                   backgroundColor: '#1565c0',
-                  boxShadow: 6,
+                  boxShadow: '0 6px 20px rgba(25, 118, 210, 0.6)',
                 }
               }}
             >
-              Vamos começar
+              Como você se sente agora?
+            </Button>
+
+            <Button
+              variant="text"
+              onClick={() => navigate('/blog')}
+              sx={{
+                display: { xs: 'inline-flex', sm: 'none' },
+                mt: 1.5,
+                color: mode === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                textTransform: 'none',
+                fontSize: '0.85rem',
+                '&:hover': {
+                  color: '#1976d2',
+                  backgroundColor: 'transparent'
+                }
+              }}
+            >
+              Prefere ler artigos? <span style={{ textDecoration: 'underline', marginLeft: 6, fontWeight: 600 }}>Acesse o Blog ➔</span>
             </Button>
           </Box>
         </Box>

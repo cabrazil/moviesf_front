@@ -681,7 +681,7 @@ export function ArticlePage() {
                         Fundador e curador do Vibesfilm, Carlos construiu sua carreira na área de tecnologia, trabalhando com análise, sistemas e resolução de problemas. Após se retirar da vida corporativa, passou a dedicar parte do seu tempo à união de duas paixões: cinema e tecnologia.
                       </p>
                       <p style={{ margin: '8px 0 0 0' }}>
-                        O Vibesfilm nasceu dessa combinação. Utilizando uma abordagem estruturada, Carlos desenvolve uma metodologia própria de curadoria emocional para ajudar pessoas a encontrar filmes pela experiência emocional que procuram viver.
+                        O Vibesfilm nasceu da união entre cinema e tecnologia. A partir da análise de centenas de filmes, Carlos desenvolveu uma forma de organizar recomendações pela experiência que cada obra oferece, ajudando pessoas a encontrar o filme certo para o momento que estão vivendo.
                       </p>
                     </>
                   ) : post.author_bio ? (
