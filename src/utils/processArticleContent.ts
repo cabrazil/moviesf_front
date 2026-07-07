@@ -13,6 +13,14 @@ export function processArticleContent(htmlContent: string): string {
 
   let processedContent = htmlContent;
 
+  // Se a flag estiver ativa, remover links para as fichas de filmes e onde-assistir durante a revisão do AdSense
+  if (import.meta.env.VITE_HIDE_MOVIE_HUB_LINKS === 'true') {
+    processedContent = processedContent.replace(
+      /<a\s+[^>]*href=["'](?:https?:\/\/(?:www\.)?vibesfilm\.com)?\/(filme|onde-assistir)\/[^"']*["'][^>]*>(.*?)<\/a>/gi,
+      '$2'
+    );
+  }
+
   // Regex para encontrar a seção "Alertas e Cuidados"
   // Suporta variações: com/sem emoji, com/sem dois pontos, h2 ou h3
   // Captura qualquer texto adicional dentro da tag (ex: nome do filme ou contexto)

@@ -132,7 +132,7 @@ export function BlogHeader() {
           alignItems: 'center',
           gap: '16px'
         }}>
-          <MovieLiveSearch />
+          {import.meta.env.VITE_HIDE_MOVIE_HUB_LINKS !== 'true' && <MovieLiveSearch />}
           <a
             href="/app"
             style={{
@@ -230,13 +230,15 @@ export function BlogHeader() {
             })}
 
             {/* Mobile Search */}
-            <div style={{
-              padding: '12px 16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              marginTop: '8px'
-            }}>
-              <MovieLiveSearch isMobile onClose={() => setIsMenuOpen(false)} />
-            </div>
+            {import.meta.env.VITE_HIDE_MOVIE_HUB_LINKS !== 'true' && (
+              <div style={{
+                padding: '12px 16px',
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                marginTop: '8px'
+              }}>
+                <MovieLiveSearch isMobile onClose={() => setIsMenuOpen(false)} />
+              </div>
+            )}
 
             {/* Mobile App Button */}
             <div style={{
