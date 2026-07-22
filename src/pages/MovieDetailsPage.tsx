@@ -807,6 +807,66 @@ const MovieDetailsPage: React.FC = () => {
                 </Stack>
               </Box>
             )}
+
+            {/* Artigo de Análise do Blog */}
+            {movie.hasAnalysisArticle && movie.analysisArticleSlug && (
+              <Box sx={{ mt: 3, width: '100%' }}>
+                <Paper
+                  elevation={0}
+                  onClick={() => {
+                    const blogUrl = window.location.origin.includes('localhost')
+                      ? 'https://vibesfilm.com'
+                      : window.location.origin;
+                    window.open(`${blogUrl}/artigo/${movie.analysisArticleSlug}`, '_blank');
+                  }}
+                  sx={{
+                    bgcolor: 'transparent',
+                    color: 'text.secondary',
+                    p: 2,
+                    borderRadius: 2,
+                    border: `1.5px solid ${themeColor}60`,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    justifyContent: 'space-between',
+                    gap: 2,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      borderColor: themeColor,
+                      backgroundColor: `${themeColor}08`,
+                      transform: 'translateY(-2px)'
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <span style={{ fontSize: '1.4rem' }}>📝</span>
+                    <Box>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', textAlign: 'left' }}>
+                        Análise Profunda Disponível
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.85rem', textAlign: 'left' }}>
+                        Quer entender o impacto emocional e a curadoria por trás deste filme? Leia o artigo completo no blog Vibesfilm.
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 'bold',
+                      color: themeColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      alignSelf: { xs: 'flex-end', sm: 'auto' },
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    Ler Artigo Completo ➜
+                  </Typography>
+                </Paper>
+              </Box>
+            )}
           </Box>
 
           {/* Linha horizontal na cor do sentimento */}

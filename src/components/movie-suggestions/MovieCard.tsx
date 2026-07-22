@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, Box, Typography, Stack, Chip } from '@mui/material';
-import { Person, Favorite, ChevronRight } from '@mui/icons-material';
+import { Person, Favorite, ChevronRight, Article } from '@mui/icons-material';
 import { MovieSuggestionFlow } from '../../services/api';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import MovieRatings from './MovieRatings';
@@ -144,6 +144,23 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
                   color="secondary"
                   variant="outlined"
                   sx={{ fontSize: '0.7rem' }}
+                />
+              )}
+              {movie.hasAnalysisArticle && (
+                <Chip
+                  icon={<Article style={{ fontSize: '0.85rem' }} />}
+                  label="Análise"
+                  size="small"
+                  color="success"
+                  variant="filled"
+                  sx={{ 
+                    fontSize: '0.7rem', 
+                    fontWeight: 'bold', 
+                    bgcolor: '#2e7d32', 
+                    color: '#fff',
+                    height: 24,
+                    '& .MuiChip-icon': { color: 'inherit' }
+                  }}
                 />
               )}
             </Stack>

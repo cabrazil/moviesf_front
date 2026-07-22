@@ -943,6 +943,66 @@ const MovieDetail: React.FC<MovieDetailProps> = ({ slug: propSlug, hideHeader = 
                   />
                 )}
 
+                {/* Artigo de Análise do Blog */}
+                {movie.hasAnalysisArticle && movie.analysisArticleSlug && (
+                  <Box sx={{ mb: 2, width: '100%' }}>
+                    <Paper
+                      elevation={0}
+                      onClick={() => {
+                        const blogUrl = window.location.origin.includes('localhost')
+                          ? 'https://vibesfilm.com'
+                          : window.location.origin;
+                        window.open(`${blogUrl}/artigo/${movie.analysisArticleSlug}`, '_blank');
+                      }}
+                      sx={{
+                        bgcolor: 'transparent',
+                        color: 'text.secondary',
+                        p: 1.5,
+                        borderRadius: 2,
+                        border: '1.5px solid #1976d240',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: { xs: 'column', sm: 'row' },
+                        alignItems: { xs: 'flex-start', sm: 'center' },
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          borderColor: '#1976d2',
+                          backgroundColor: 'rgba(25, 118, 210, 0.05)',
+                          transform: 'translateY(-2px)'
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <span style={{ fontSize: '1.3rem' }}>📝</span>
+                        <Box sx={{ textAlign: 'left' }}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                            Análise Profunda Disponível
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.85rem' }}>
+                            Quer entender o impacto emocional e a curadoria por trás deste filme? Leia o artigo completo.
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 'bold',
+                          color: '#1976d2',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.5,
+                          alignSelf: { xs: 'flex-end', sm: 'auto' },
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        Ler Artigo Completo ➜
+                      </Typography>
+                    </Paper>
+                  </Box>
+                )}
+
                 {/* CTA "Encontre o Filme Perfeito para Sua Vibe" */}
                 <Box sx={{
                   display: 'flex',

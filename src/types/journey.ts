@@ -55,4 +55,6 @@ export interface Movie {
   imdbRating?: number;
   rottenTomatoesRating?: number;
   metacriticRating?: number;
+  hasAnalysisArticle?: boolean;
+  analysisArticleSlug?: string;
 } 
