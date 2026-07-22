@@ -139,6 +139,8 @@ interface Movie {
     journeyOptionFlowId: number;
     displayTitle: string | null;
   } | null;
+  hasAnalysisArticle?: boolean;
+  analysisArticleSlug?: string;
   pillarArticles?: Array<{
     id: number;
     blogArticleId: string;
