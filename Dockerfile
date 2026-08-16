@@ -5,7 +5,7 @@ FROM node:22-slim AS build
 ARG VITE_API_BASE_URL=https://api.vibesfilm.com
 ARG VITE_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 ARG VITE_TMDB_IMAGE_SIZE=w92
-ARG VITE_HIDE_MOVIE_HUB_LINKS=true
+ARG VITE_HIDE_MOVIE_HUB_LINKS=false
 
 WORKDIR /app
 

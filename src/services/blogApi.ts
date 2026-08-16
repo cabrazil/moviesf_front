@@ -1,4 +1,4 @@
-import { getBlogApiUrl } from '../config/api.config';
+import { getBlogApiUrl, getApiBaseUrl } from '../config/api.config';
 
 // Serviço de API para o blog - usa função centralizada
 const API_BASE_URL = getBlogApiUrl();
@@ -60,6 +60,29 @@ export interface BlogTag {
   slug: string;
   color?: string;
   articleCount?: number;
+}
+
+// Daily Curation types (seção "Perfeito para Hoje")
+export interface DailyCurationMovie {
+  id: string;
+  title: string;
+  year: number | null;
+  thumbnail: string | null;
+  slug: string | null;
+  genres: string[];
+  pillarArticle: { slug: string } | null;
+}
+
+export interface DailyCuration {
+  id: number;
+  buttonTitle: string;
+  buttonMicrocopy: string;
+  headerPhrase: string;
+  movies: DailyCurationMovie[];
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
+  priority: number;
 }
 
 class BlogApiService {
@@ -156,6 +179,31 @@ class BlogApiService {
   // Buscar comentários de um artigo
   async getPostComments(articleId: number): Promise<BlogApiResponse<any[]>> {
     return this.request(`/posts/${articleId}/comments`);
+  }
+
+  // Buscar curadoria diária ativa com filmes resolvidos
+  // Nota: usa getApiBaseUrl() pois a rota está em /api/daily-curation, não /api/blog
+  async getDailyCuration(): Promise<DailyCuration | null> {
+    try {
+      const baseUrl = getApiBaseUrl();
+      const response = await fetch(`${baseUrl}/api/daily-curation/today/full`, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.status === 404) {
+        // Nenhuma curadoria ativa — comportamento normal
+        return null;
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erro ao buscar curadoria diária:', error);
+      return null;
+    }
   }
 }
 
