@@ -1,8 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Loader, Play } from 'lucide-react';
+import { Loader, Play, Users, ChevronDown, ChevronUp, BookOpen, Sparkles, Film, ArrowRight } from 'lucide-react';
 import { getPlatformLogoUrlMedium } from '../../services/streaming.service';
 import { getBlogImageUrl } from '../../utils/blogImages';
+import tmdbLogo from '../../assets/themoviedb.png';
+import imdbLogo from '../../assets/imdb.png';
+import rtLogo from '../../assets/rottentomatoes.png';
+import metacriticLogo from '../../assets/metascore.svg';
+
+interface SimilarMovieData {
+  id: string;
+  title: string;
+  year?: number;
+  thumbnail?: string;
+  slug?: string;
+  relevanceScore?: number | string;
+  journeyOptionFlowId?: number;
+  displayTitle?: string;
+}
 
 interface MovieData {
   id: string;
@@ -15,8 +30,15 @@ interface MovieData {
   runtime: number;
   certification: string;
   thumbnail: string;
+  vote_average?: number;
+  vote_count?: number;
+  imdbRating?: number;
+  rottenTomatoesRating?: number;
+  metacriticRating?: number;
   genres?: string[];
   landingPageHook?: string;
+  hasAnalysisArticle?: boolean;
+  analysisArticleSlug?: string | null;
   mainCast?: Array<{ actorName: string; characterName: string; order: number }>;
   oscarAwards?: {
     totalWins?: number;
@@ -82,6 +104,12 @@ const extractHookText = (landingPageHook?: string): string => {
   }
 };
 
+const parseRating = (val: any): number | undefined => {
+  if (val === null || val === undefined) return undefined;
+  const num = Number(val);
+  return isNaN(num) || num <= 0 ? undefined : num;
+};
+
 const normalizeMovieData = (rawMovie: MovieData | null | undefined): MovieData | null => {
   if (!rawMovie) return null;
 
@@ -95,6 +123,10 @@ const normalizeMovieData = (rawMovie: MovieData | null | undefined): MovieData |
 
   return {
     ...rawMovie,
+    imdbRating: parseRating(rawMovie.imdbRating),
+    rottenTomatoesRating: parseRating(rawMovie.rottenTomatoesRating),
+    metacriticRating: parseRating(rawMovie.metacriticRating),
+    vote_average: parseRating(rawMovie.vote_average),
     genres: Array.isArray(rawMovie.genres) ? rawMovie.genres : [],
     emotionalTags: Array.isArray(rawMovie.emotionalTags) ? rawMovie.emotionalTags : [],
     mainCast: Array.isArray(rawMovie.mainCast) ? rawMovie.mainCast : [],
@@ -113,8 +145,11 @@ export function MoviePremiumFicha() {
   const [loading, setLoading] = useState(true);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
   const [isSynopsisExpanded, setIsSynopsisExpanded] = useState(false);
+  const [showFullCast, setShowFullCast] = useState(false);
+  const [similarMovies, setSimilarMovies] = useState<SimilarMovieData[]>([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchMovieData = async () => {
       try {
         const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333';
@@ -125,6 +160,7 @@ export function MoviePremiumFicha() {
         setMovie(normalizeMovieData(data.movie));
         setSubscriptionPlatforms(data.subscriptionPlatforms || []);
         setRentalPlatforms(data.rentalPurchasePlatforms || []);
+        setSimilarMovies(data.similarMovies || []);
       } catch (error) {
         console.error(error);
       } finally {
@@ -380,7 +416,7 @@ export function MoviePremiumFicha() {
             </div>
 
             {/* Gêneros */}
-            <div className="premium-hero-genres" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '30px' }}>
+            <div className="premium-hero-genres" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '20px' }}>
               {movie.genres?.map(g => (
                 <span key={g} style={{
                   padding: '6px 14px',
@@ -394,6 +430,93 @@ export function MoviePremiumFicha() {
                 </span>
               ))}
             </div>
+
+            {/* Notas da Crítica */}
+            {(typeof movie.imdbRating === 'number' || typeof movie.rottenTomatoesRating === 'number' || typeof movie.metacriticRating === 'number' || typeof movie.vote_average === 'number') && (
+              <div className="premium-hero-ratings" style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                flexWrap: 'wrap',
+                marginBottom: '28px'
+              }}>
+                {/* IMDb */}
+                {typeof movie.imdbRating === 'number' && movie.imdbRating > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    backgroundColor: 'rgba(245, 197, 24, 0.1)',
+                    border: '1px solid rgba(245, 197, 24, 0.3)',
+                    borderRadius: '8px',
+                    backdropFilter: 'blur(8px)',
+                  }} title="Nota IMDb">
+                    <img src={imdbLogo} alt="IMDb" style={{ width: '26px', height: 'auto', display: 'block' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#F5C518' }}>
+                      {movie.imdbRating.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Rotten Tomatoes */}
+                {typeof movie.rottenTomatoesRating === 'number' && movie.rottenTomatoesRating > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    backgroundColor: 'rgba(250, 50, 10, 0.1)',
+                    border: '1px solid rgba(250, 50, 10, 0.3)',
+                    borderRadius: '8px',
+                    backdropFilter: 'blur(8px)',
+                  }} title="Rotten Tomatoes Tomatometer">
+                    <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: '18px', height: '18px', objectFit: 'contain', display: 'block' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#FA320A' }}>
+                      {movie.rottenTomatoesRating}%
+                    </span>
+                  </div>
+                )}
+
+                {/* Metacritic */}
+                {typeof movie.metacriticRating === 'number' && movie.metacriticRating > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    backgroundColor: 'rgba(51, 204, 51, 0.1)',
+                    border: '1px solid rgba(51, 204, 51, 0.3)',
+                    borderRadius: '8px',
+                    backdropFilter: 'blur(8px)',
+                  }} title="Metascore">
+                    <img src={metacriticLogo} alt="Metacritic" style={{ width: '18px', height: '18px', display: 'block' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#66CC33' }}>
+                      {movie.metacriticRating}
+                    </span>
+                  </div>
+                )}
+
+                {/* TMDb */}
+                {typeof movie.vote_average === 'number' && movie.vote_average > 0 && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '4px 10px',
+                    backgroundColor: 'rgba(1, 180, 228, 0.1)',
+                    border: '1px solid rgba(1, 180, 228, 0.3)',
+                    borderRadius: '8px',
+                    backdropFilter: 'blur(8px)',
+                  }} title="Avaliação TMDB">
+                    <img src={tmdbLogo} alt="TMDb" style={{ width: '18px', height: 'auto', display: 'block' }} />
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: '#01B4E4' }}>
+                      {movie.vote_average.toFixed(1)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* A Vibe do Filme (Landing Page Hook) */}
             {hookText && (
@@ -969,51 +1092,335 @@ export function MoviePremiumFicha() {
         </div>
       </div>
 
-      {/* Ficha Técnica: Elenco e Premiações (Filete Inferior) */}
-      {(movie.mainCast?.length || movie.oscarAwards) && (
-        <div className="premium-ficha-footer" style={{
+      {/* ======== FASE 3: ELENCO PRINCIPAL & RECONHECIMENTO ======== */}
+      {movie.mainCast && movie.mainCast.length > 0 && (
+        <div style={{
           maxWidth: '1200px',
-          margin: '0 auto 0',
-          padding: '20px',
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-          borderRadius: '16px',
-          backdropFilter: 'blur(20px)'
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          position: 'relative',
+          zIndex: 10,
         }}>
-          {/* Lado Esquerdo: Elenco Principal */}
-          {movie.mainCast && movie.mainCast.length > 0 && (
-            <div className="premium-ficha-item" style={{ flex: 1, minWidth: '0' }}>
-              <span style={{ fontSize: '24px' }}>🎭</span>
-              <div>
-                <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Elenco Principal</div>
-                <div style={{ fontSize: '16px', color: 'rgba(255,255,255,0.9)', fontWeight: 300 }}>
-                  {movie.mainCast.slice(0, 4).map(c => c.actorName).join(', ')}
-                </div>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            borderRadius: '16px',
+            padding: '28px',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Users size={18} color="#60A5FA" />
+                <h3 style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 600, margin: 0 }}>
+                  Elenco Principal
+                </h3>
               </div>
+              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>
+                {movie.mainCast.length} atores listados
+              </span>
             </div>
-          )}
 
-          {/* Lado Direito: Premiações */}
-          {movie.oscarAwards && (awardWins > 0 || awardNominations > 0) && (
-            <div className="premium-ficha-item">
-              <span style={{ fontSize: '24px' }}>🏆</span>
-              <div>
-                <div style={{ fontSize: '13px', color: 'rgba(255,215,0,0.6)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Reconhecimento</div>
-                <div style={{ fontSize: '16px', color: '#FFD700', fontWeight: 500 }}>
-                  {awardWins > 0 ? (
-                    <>
-                      Vencedor de {awardWins} Oscar{awardWins > 1 ? 's' : ''}
-                      {awardNominations > 0 && (
-                        <span style={{ color: 'rgba(255,215,0,0.7)', fontWeight: 300 }}> (e {awardNominations} indicações)</span>
-                      )}
-                    </>
-                  ) : (
-                    <span>Indicado a {awardNominations} Oscar{awardNominations > 1 ? 's' : ''}</span>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
+              gap: '12px'
+            }}>
+              {(showFullCast ? movie.mainCast : movie.mainCast.slice(0, 6)).map((actor, idx) => (
+                <div key={idx} style={{
+                  padding: '12px 16px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '2px',
+                  transition: 'background 0.2s ease',
+                }}>
+                  <span style={{ fontSize: '15px', fontWeight: 600, color: '#F1F5F9' }}>
+                    {actor.actorName}
+                  </span>
+                  {actor.characterName && (
+                    <span style={{ fontSize: '13px', color: '#94A3B8', fontStyle: 'italic' }}>
+                      como {actor.characterName}
+                    </span>
                   )}
                 </div>
+              ))}
+            </div>
+
+            {movie.mainCast.length > 6 && (
+              <button
+                onClick={() => setShowFullCast(!showFullCast)}
+                style={{
+                  marginTop: '16px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#60A5FA',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 0',
+                  fontFamily: 'inherit'
+                }}
+              >
+                {showFullCast ? (
+                  <>Ver menos <ChevronUp size={16} /></>
+                ) : (
+                  <>Ver elenco completo (+{movie.mainCast.length - 6} atores) <ChevronDown size={16} /></>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Premiações e Reconhecimento (quando houver) */}
+      {movie.oscarAwards && (awardWins > 0 || awardNominations > 0) && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          position: 'relative',
+          zIndex: 10,
+        }}>
+          <div style={{
+            padding: '20px 24px',
+            background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, rgba(255, 107, 53, 0.04) 100%)',
+            border: '1px solid rgba(255, 215, 0, 0.2)',
+            borderRadius: '16px',
+            backdropFilter: 'blur(20px)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px'
+          }}>
+            <span style={{ fontSize: '28px' }}>🏆</span>
+            <div>
+              <div style={{ fontSize: '12px', color: 'rgba(255, 215, 0, 0.7)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '2px', fontWeight: 600 }}>Reconhecimento & Prêmios</div>
+              <div style={{ fontSize: '16px', color: '#FFD700', fontWeight: 600 }}>
+                {awardWins > 0 ? (
+                  <>
+                    Vencedor de {awardWins} Oscar{awardWins > 1 ? 's' : ''}
+                    {awardNominations > 0 && (
+                      <span style={{ color: 'rgba(255, 215, 0, 0.8)', fontWeight: 400 }}> (e {awardNominations} indicações)</span>
+                    )}
+                  </>
+                ) : (
+                  <span>Indicado a {awardNominations} Oscar{awardNominations > 1 ? 's' : ''}</span>
+                )}
               </div>
             </div>
-          )}
+          </div>
+        </div>
+      )}
+
+      {/* ======== FASE 4: DESTAQUE DE ARTIGO NO BLOG ======== */}
+      {movie.hasAnalysisArticle && movie.analysisArticleSlug && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          position: 'relative',
+          zIndex: 10,
+        }}>
+          <a
+            href={`/artigo/${movie.analysisArticleSlug}`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigate(`/artigo/${movie.analysisArticleSlug}`);
+            }}
+            style={{
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '20px',
+              padding: '24px 28px',
+              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(255, 107, 53, 0.08) 100%)',
+              border: '1px solid rgba(59, 130, 246, 0.3)',
+              borderRadius: '16px',
+              backdropFilter: 'blur(20px)',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
+              color: '#fff',
+              flexWrap: 'wrap'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.6)';
+              e.currentTarget.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+              e.currentTarget.style.transform = 'none';
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: '240px' }}>
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <BookOpen size={24} color="#60A5FA" />
+              </div>
+              <div>
+                <div style={{ fontSize: '18px', fontWeight: 700, color: '#F1F5F9', marginBottom: '4px' }}>
+                  Leia a análise Vibesfilm do filme
+                </div>
+                <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.5 }}>
+                  Mais do que contar a história, nossa análise explora suas emoções, escolhas e aquilo que permanece depois dos créditos.
+                </div>
+              </div>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 18px',
+              backgroundColor: '#2563EB',
+              color: '#fff',
+              borderRadius: '10px',
+              fontSize: '14px',
+              fontWeight: 600,
+              flexShrink: 0
+            }}>
+              <span>Ler Análise</span>
+              <ArrowRight size={16} />
+            </div>
+          </a>
+        </div>
+      )}
+
+      {/* ======== FASE 5: FILMES QUE CONVERSAM COM ESTA VIBE ======== */}
+      {similarMovies && similarMovies.length > 0 && (
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          position: 'relative',
+          zIndex: 10,
+        }}>
+          <div style={{
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.05)',
+            borderRadius: '16px',
+            padding: '28px',
+            backdropFilter: 'blur(20px)',
+            boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)'
+          }}>
+            <div style={{ marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                <Sparkles size={18} color="#FF6B35" />
+                <h3 style={{ fontSize: '14px', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 600, margin: 0 }}>
+                  Filmes que conversam com esta vibe
+                </h3>
+              </div>
+              {similarMovies[0]?.displayTitle && (
+                <p style={{ fontSize: '15px', color: '#60A5FA', fontStyle: 'italic', margin: '4px 0 0 0' }}>
+                  "{similarMovies[0].displayTitle}"
+                </p>
+              )}
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              gap: '16px'
+            }}>
+              {similarMovies.slice(0, 6).map((simMovie) => (
+                <a
+                  key={simMovie.id}
+                  href={`/filme/${simMovie.slug || simMovie.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/filme/${simMovie.slug || simMovie.id}`);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  style={{
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    cursor: 'pointer'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+                    e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.5)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'none';
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.05)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ position: 'relative', aspectRatio: '2/3', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                    {simMovie.thumbnail ? (
+                      <img
+                        src={getBlogImageUrl(simMovie.thumbnail)}
+                        alt={simMovie.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Film size={28} color="#334155" />
+                      </div>
+                    )}
+                    {simMovie.relevanceScore && (
+                      <span style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        color: '#60A5FA',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        padding: '2px 6px',
+                        borderRadius: '6px',
+                        backdropFilter: 'blur(4px)',
+                        border: '1px solid rgba(59, 130, 246, 0.3)'
+                      }}>
+                        ★ {Number(simMovie.relevanceScore).toFixed(1)}
+                      </span>
+                    )}
+                  </div>
+                  <div style={{ padding: '10px 12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                    <div style={{
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: '#F1F5F9',
+                      lineHeight: 1.3,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                    }}>
+                      {simMovie.title}
+                    </div>
+                    {simMovie.year && (
+                      <div style={{ fontSize: '11px', color: '#64748B', marginTop: '4px' }}>
+                        {simMovie.year}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

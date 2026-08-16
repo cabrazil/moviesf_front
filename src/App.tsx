@@ -3,6 +3,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProviderWrapper } from './contexts/ThemeContext';
 import { CookieBanner } from './components/CookieBanner';
 import Home from './pages/Home';
+import HubLanding from './pages/HubLanding';
 import JourneyIntro from './pages/JourneyIntro';
 import MovieSuggestionsPageMinimal from './pages/MovieSuggestionsPageMinimal';
 import StreamingFilters from './pages/StreamingFilters';
@@ -20,6 +21,19 @@ import PrivacyPage from './pages/blog/PrivacyPage';
 import TermsPage from './pages/blog/TermsPage';
 import { MoviePremiumFicha } from './pages/blog/MoviePremiumFicha';
 import { SmartAppBanner } from './components/blog/SmartAppBanner';
+
+import { useEffect } from 'react';
+
+// Componente para rolar ao topo a cada troca de rota
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
 
 // Componente para decidir se mostra o banner baseado na rota
 const AppBannerWrapper = () => {
@@ -46,6 +60,7 @@ function App() {
     <HelmetProvider>
       <ThemeProviderWrapper>
         <Router>
+          <ScrollToTop />
           <AppBannerWrapper />
           <CookieBanner />
           <Routes>
@@ -63,6 +78,9 @@ function App() {
             <Route path="/lista/:slug" element={<BlogLayout><ArticlePage /></BlogLayout>} />
             <Route path="/tag/:tagSlug" element={<BlogLayout><TagPage /></BlogLayout>} />
             <Route path="/filme/:slug" element={<BlogLayout><MoviePremiumFicha /></BlogLayout>} />
+            
+            {/* Hub Landing (link-in-bio) */}
+            <Route path="/hub" element={<HubLanding />} />
             
             {/* App Routes */}
             <Route path="/app" element={<Home />} />

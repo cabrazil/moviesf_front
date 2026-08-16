@@ -29,15 +29,9 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(({
   const movie = suggestion.movie;
 
   const handleClick = useCallback(() => {
-    navigate(`/onde-assistir/${movie.id}`, {
-      state: {
-        movie: movie,
-        reason: suggestion.reason,
-        sentimentId: journeyContext?.selectedSentiment?.id,
-        intentionType: journeyContext?.selectedIntention?.type
-      }
-    });
-  }, [navigate, movie, suggestion.reason, journeyContext]);
+    const destination = (movie as any).slug ? `/filme/${(movie as any).slug}` : `/filme/${movie.id}`;
+    navigate(destination);
+  }, [navigate, movie]);
 
   // Memoizar plataformas processadas
   const platforms = useMemo(() => (movie as any).platforms || [], [movie]);
