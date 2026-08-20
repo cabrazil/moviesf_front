@@ -146,10 +146,16 @@ export function MoviePremiumFicha() {
         if (!response.ok) throw new Error('Filme não encontrado');
         
         const data = await response.json();
-        setMovie(normalizeMovieData(data.movie));
+        const normalized = normalizeMovieData(data.movie);
+        setMovie(normalized);
         setSubscriptionPlatforms(data.subscriptionPlatforms || []);
         setRentalPlatforms(data.rentalPurchasePlatforms || []);
         setSimilarMovies(data.similarMovies || []);
+
+        // Se acessou por ID (UUID) e o filme tem slug amigável, atualiza a URL do navegador
+        if (normalized.slug && slug && slug !== normalized.slug) {
+          window.history.replaceState(null, '', `/filme/${normalized.slug}`);
+        }
       } catch (error) {
         console.error(error);
       } finally {
@@ -679,21 +685,27 @@ export function MoviePremiumFicha() {
               <button
                 onClick={async () => {
                   if (!movie) return;
-                  const url = window.location.href;
-                  const title = `${movie.title} (${movie.year}) | VibesFilm`;
-                  const text = `🎬 Olha essa indicação no VibesFilm: *${movie.title}* (${movie.year})\n👉 Veja a vibe e onde assistir:`;
+                  const canonicalSlug = movie.slug || slug;
+                  const shareUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
+                  const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
+                  const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"\n` : '';
+                  const shareMessage = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
 
                   if (navigator.share) {
                     try {
-                      await navigator.share({ title, text, url });
+                      await navigator.share({
+                        title: shareTitle,
+                        text: shareMessage,
+                        url: shareUrl
+                      });
                       return;
                     } catch {
-                      // Usuário cancelou
+                      // Usuário cancelou ou fechou a gaveta nativa
                     }
                   }
 
                   try {
-                    await navigator.clipboard.writeText(url);
+                    await navigator.clipboard.writeText(shareMessage);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2500);
                   } catch (e) {
