@@ -89,30 +89,42 @@ export default function PrivacyPage() {
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
                 Também utilizamos cookies de análise (como Google Analytics) para entender como os usuários interagem
-                com nosso conteúdo, melhorando a experiência de navegação.
+                com nosso conteúdo, melhorando a experiência de navegação e desempenho da plataforma.
               </p>
               <p style={{ margin: 0 }}>
                 Você pode configurar seu navegador para ser avisado sobre a recepção de cookies e impedir sua instalação.
-                As instruções estão disponíveis nas configurações do seu navegador.
+                As instruções estão disponíveis nas configurações de privacidade do seu navegador.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
-              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Anúncios e Publicidade</h2>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Google AdSense e Publicidade de Terceiros</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                O <strong>vibesfilm.com</strong> pode utilizar serviços de publicidade de terceiros para exibir anúncios.
-                Esses serviços podem usar cookies e web beacons para personalizar anúncios baseados em suas visitas
-                a este e outros websites.
+                O <strong>vibesfilm.com</strong> utiliza o <strong>Google AdSense</strong> e outros serviços de publicidade de terceiros para veicular anúncios quando você visita nosso website.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Você pode desativar a publicidade personalizada acessando as
-                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}> Configurações de anúncios do Google </a>
-                ou visitando <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>www.aboutads.info </a>
-                para desativar cookies de publicidade de terceiros.
+                <strong>Como o Google e parceiros utilizam cookies:</strong>
+              </p>
+              <ul style={{ margin: '0 0 8px 0', paddingLeft: '18px' }}>
+                <li>Fornecedores terceiros, incluindo o <strong>Google</strong>, utilizam cookies (como o cookie DoubleClick / DART) para veicular anúncios com base em visitas anteriores do usuário a este ou a outros websites na internet.</li>
+                <li>Com o uso de cookies de publicidade, o Google e seus parceiros podem veicular anúncios personalizados para você com base nas suas visitas a este site e/ou a outros sites na Web.</li>
+                <li>Outras redes de publicidade e fornecedores parceiros certificados pelo Google também podem utilizar cookies e web beacons para medir a eficácia das campanhas e personalizar anúncios.</li>
+              </ul>
+              <p style={{ margin: '0 0 8px 0' }}>
+                <strong>Como desativar a personalização de anúncios:</strong>
+              </p>
+              <p style={{ margin: '0 0 8px 0' }}>
+                Você pode optar por desativar a publicidade personalizada a qualquer momento acessando as{' '}
+                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>Configurações de Anúncios do Google</a>.
+                Como alternativa, você pode visitar o portal{' '}
+                <a href="http://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>www.aboutads.info</a>{' '}
+                para desativar o uso de cookies de publicidade personalizada de fornecedores terceiros.
               </p>
               <p style={{ margin: 0 }}>
-                Não nos responsabilizamos pelo conteúdo, promessas ou veracidade das informações dos anúncios exibidos
-                por terceiros. Toda responsabilidade pelos anúncios é dos anunciantes.
+                Para mais informações sobre como o Google gerencia e processa dados em seus produtos de publicidade, acesse{' '}
+                <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>
+                  Como o Google usa dados quando você usa sites ou aplicativos de nossos parceiros
+                </a>.
               </p>
             </section>
 
@@ -120,34 +132,32 @@ export default function PrivacyPage() {
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Links para Sites Terceiros</h2>
               <p style={{ margin: '0 0 8px 0' }}>
                 O <strong>vibesfilm.com</strong> possui links para outros sites que podem conter informações úteis
-                para nossos visitantes. Nossa política de privacidade não se aplica a sites de terceiros.
+                para nossos visitantes (incluindo plataformas oficiais de streaming e serviços de catálogo). Nossa política de privacidade não se aplica a sites de terceiros.
               </p>
               <p style={{ margin: 0 }}>
-                Não nos responsabilizamos pela política de privacidade ou conteúdo presente nesses sites.
+                Não nos responsabilizamos pela política de privacidade ou conteúdo presente nesses sites externos.
                 Recomendamos ler a política de privacidade de cada site que visitar.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
-              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Analytics e Remarketing</h2>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Analytics e Estatísticas de Uso</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Utilizamos Google Analytics e serviços similares para analisar o uso do site e melhorar a experiência.
-                Esses serviços podem usar cookies para coletar informações sobre suas visitas.
+                Utilizamos o Google Analytics e ferramentas similares para analisar anonimamente o tráfego e o uso do site, permitindo aprimorar a experiência de curadoria e usabilidade.
               </p>
               <p style={{ margin: 0 }}>
-                Para mais informações sobre como o Google gerencia dados em seus produtos de anúncios,
-                acesse <a href="https://www.google.com/policies/technologies/partner-sites/" target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6' }}>este link</a>.
+                Essas ferramentas coletam dados agregados e anônimos sobre padrões de navegação e páginas mais acessadas.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Como usamos seus dados</h2>
               <ul style={{ margin: 0, paddingLeft: '18px' }}>
-                <li>Melhorar a experiência de navegação e relevância do conteúdo</li>
-                <li>Comunicar novidades e atualizações (quando você opta por receber)</li>
-                <li>Responder suas mensagens enviadas via contato</li>
-                <li>Analisar tendências de uso para aprimorar o site</li>
-                <li>Personalizar recomendações de conteúdo</li>
+                <li>Melhorar a experiência de navegação e relevância do conteúdo editorial</li>
+                <li>Comunicar novidades e atualizações da plataforma (quando você opta por receber)</li>
+                <li>Responder mensagens enviadas via formulário de contato ou e-mail</li>
+                <li>Analisar tendências de uso para aprimorar o sistema de curadoria emocional</li>
+                <li>Personalizar recomendações de filmes e jornadas</li>
               </ul>
             </section>
 
@@ -179,81 +189,69 @@ export default function PrivacyPage() {
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Compartilhamento de Dados</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Não vendemos seus dados pessoais. Compartilhamos apenas com:
+                Não vendemos nem comercializamos seus dados pessoais. Compartilhamos apenas com:
               </p>
               <ul style={{ margin: 0, paddingLeft: '18px' }}>
-                <li>Provedores de serviços necessários (hospedagem, analytics)</li>
-                <li>Parceiros de publicidade (quando você consente)</li>
-                <li>Autoridades competentes (quando exigido por lei)</li>
+                <li>Provedores de serviços essenciais de infraestrutura (hospedagem em nuvem, ferramentas de análise)</li>
+                <li>Parceiros de publicidade homologados (como o Google AdSense, mediante consentimento)</li>
+                <li>Autoridades competentes quando estritamente exigido por determinação legal ou regulatória</li>
               </ul>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
-              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Seus Direitos</h2>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Seus Direitos e Encarregado de Dados (LGPD)</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Você tem o direito de:
+                Em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 - LGPD), você tem o direito de:
               </p>
-              <ul style={{ margin: 0, paddingLeft: '18px' }}>
-                <li>Acessar seus dados pessoais</li>
-                <li>Corrigir informações incorretas</li>
-                <li>Solicitar exclusão de seus dados</li>
-                <li>Retirar consentimento a qualquer momento</li>
-                <li>Portabilidade de dados</li>
+              <ul style={{ margin: '0 0 8px 0', paddingLeft: '18px' }}>
+                <li>Confirmar a existência de tratamento e acessar seus dados pessoais</li>
+                <li>Solicitar a correção de dados incompletos, inexatos ou desatualizados</li>
+                <li>Solicitar a anonimização, bloqueio ou eliminação de dados desnecessários</li>
+                <li>Revogar seu consentimento a qualquer momento</li>
+                <li>Solicitar a portabilidade dos dados</li>
               </ul>
-              <p style={{ margin: '8px 0 0 0' }}>
-                Para exercer esses direitos, contate-nos em <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a>.
+              <p style={{ margin: 0 }}>
+                Para exercer qualquer um desses direitos ou esclarecer dúvidas sobre o tratamento de seus dados, contate nosso Encarregado de Proteção de Dados / Curador Editorial pelo e-mail: <a href="mailto:contato@vibesfilm.com" style={{ color: '#3B82F6' }}>contato@vibesfilm.com</a>.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Segurança dos Dados</h2>
               <p style={{ margin: 0 }}>
-                Implementamos medidas de segurança técnicas e organizacionais para proteger seus dados
-                contra acesso não autorizado, alteração, divulgação ou destruição.
+                Implementamos medidas de segurança técnicas e organizacionais adequadas (incluindo tráfego criptografado via HTTPS/SSL) para proteger seus dados contra acessos não autorizados, perdas ou incidentes.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
-              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Uso no aplicativo móvel</h2>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Uso no Aplicativo Móvel</h2>
               <p style={{ margin: '0 0 8px 0' }}>
                 Esta Política de Privacidade também se aplica ao aplicativo móvel VibesFilm.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                Atualmente, o aplicativo não coleta, armazena ou compartilha dados pessoais do usuário, nem realiza coleta de dados de uso de forma persistente.
+                Atualmente, o aplicativo não coleta, armazena ou compartilha dados pessoais sensíveis do usuário, nem realiza rastreamento invasivo de uso.
               </p>
               <p style={{ margin: '0 0 8px 0' }}>
-                O aplicativo pode processar informações temporárias necessárias para o funcionamento das funcionalidades, como requisições a servidores, sem armazenamento persistente ou identificação do usuário.
-              </p>
-              <p style={{ margin: '0 0 8px 0' }}>
-                Não utilizamos, nesta versão do aplicativo, ferramentas de análise ou publicidade que realizem coleta de dados do usuário.
-              </p>
-              <p style={{ margin: 0 }}>
-                Caso essas funcionalidades venham a ser implementadas no futuro, esta política será atualizada para refletir as mudanças.
+                O aplicativo processa exclusivamente informações técnicas temporárias necessárias para a busca de recomendações cinematográficas e conexão com nossos servidores seguros.
               </p>
             </section>
 
             <section style={{ marginBottom: '18px' }}>
-              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Fontes de Dados e Direitos Autorais</h2>
+              <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Fontes de Dados e Atribuição</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Este aplicativo utiliza dados fornecidos por fontes públicas e licenciadas, incluindo o The Movie Database (TMDB). O VibesFilm não é afiliado, associado ou patrocinado pelas plataformas de streaming mencionadas.
-              </p>
-              <p style={{ margin: '0 0 8px 0' }}>
-                O VibesFilm atua exclusivamente como uma ferramenta de recomendação e não hospeda, transmite ou distribui conteúdos audiovisuais.
+                Este produto utiliza a API do The Movie Database (TMDB) para metadados e imagens, mas não é endossado ou certificado pelo TMDB.
               </p>
               <p style={{ margin: 0 }}>
-                Este produto utiliza a API do TMDB, mas não é endossado ou certificado pelo TMDB.
+                O VibesFilm atua exclusivamente como uma ferramenta de curadoria editorial e recomendação, não hospedando nem transmitindo reproduções audiovisuais.
               </p>
             </section>
 
             <section>
               <h2 style={{ color: '#FDFFFC', fontSize: '1.25rem', margin: '0 0 8px 0' }}>Atualizações desta Política</h2>
               <p style={{ margin: '0 0 8px 0' }}>
-                Podemos atualizar esta Política periodicamente para refletir mudanças em nossas práticas
-                ou requisitos legais.
+                Esta política pode ser revisada periodicamente para refletir melhorias no projeto ou atualizações regulatórias.
               </p>
-              <p style={{ margin: 0 }}>
-                O uso do <strong>vibesfilm.com</strong> pressupõe a aceitação desta política.
-                Recomendamos revisar esta política periodicamente para se manter informado sobre eventuais atualizações.
+              <p style={{ margin: 0, color: '#94A3B8', fontSize: '0.9rem' }}>
+                <em>Última atualização: 20 de Agosto de 2026.</em>
               </p>
             </section>
           </div>

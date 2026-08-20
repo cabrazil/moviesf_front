@@ -4,6 +4,9 @@
     <loc>https://vibesfilm.com/sitemap-institucional.xml</loc>
   </sitemap>
   <sitemap>
+    <loc>https://api.vibesfilm.com/sitemap/movies.xml</loc>
+  </sitemap>
+  <sitemap>
     <loc>https://api.vibesfilm.com/sitemap/articles.xml</loc>
   </sitemap>
   <sitemap>

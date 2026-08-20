@@ -19,7 +19,7 @@ interface MovieCardProps {
 
 const MovieCard: React.FC<MovieCardProps> = React.memo(({
   suggestion,
-  journeyContext,
+  journeyContext: _journeyContext,
   streamingFilters,
   mode,
   sentimentColor

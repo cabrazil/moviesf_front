@@ -20,6 +20,11 @@ const HubLanding = () => {
   const [deepLinkMovie, setDeepLinkMovie] = useState<DeepLinkMovie | null>(null);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
+  // Definir título da página
+  useEffect(() => {
+    document.title = "VibesFilm | Cada emoção tem um filme";
+  }, []);
+
   // Deep link: resolve movie title from slug
   useEffect(() => {
     if (!filmSlug) return;
