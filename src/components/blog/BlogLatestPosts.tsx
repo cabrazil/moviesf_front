@@ -54,7 +54,7 @@ export function BlogLatestPosts() {
   const getArticlesPerPage = () => {
     if (window.innerWidth < 768) return 6;   // Mobile: 2 colunas x 3 linhas
     if (window.innerWidth < 1024) return 9;  // Tablet: 3 colunas x 3 linhas
-    return 16; // Desktop: 4 colunas x 4 linhas
+    return 20; // Desktop: 4 colunas x 5 linhas
   };
 
   // Buscar artigos e categorias iniciais
