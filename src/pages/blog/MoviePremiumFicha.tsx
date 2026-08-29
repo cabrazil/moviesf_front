@@ -381,18 +381,18 @@ export function MoviePremiumFicha() {
                   const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
                   const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"` : '';
                   // Texto para clipboard (inclui URL para quem não tem navigator.share)
-                  const clipboardText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
+                  const fullShareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
                   // Texto para navigator.share: SEM a URL no text, pois o campo url já a adiciona
                   // (WhatsApp concatena text + url, gerando URL duplicada se incluída nos dois)
-                  const shareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:`;
+                  
                   if (navigator.share) {
                     try {
-                      await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                      await navigator.share({ title: shareTitle, text: fullShareText });
                       return;
                     } catch { /* usuário cancelou */ }
                   }
                   try {
-                    await navigator.clipboard.writeText(clipboardText);
+                    await navigator.clipboard.writeText(fullShareText);
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2500);
                   } catch (e) { console.error(e); }
@@ -1516,16 +1516,16 @@ export function MoviePremiumFicha() {
               const shareUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
               const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
               const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"` : '';
-              const clipboardText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
-              const shareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:`;
+              const fullShareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
+              
               if (navigator.share) {
                 try {
-                  await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                  await navigator.share({ title: shareTitle, text: fullShareText });
                   return;
                 } catch { /* usuário cancelou */ }
               }
               try {
-                await navigator.clipboard.writeText(clipboardText);
+                await navigator.clipboard.writeText(fullShareText);
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2500);
               } catch (e) { console.error(e); }
