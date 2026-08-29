@@ -358,17 +358,79 @@ export function MoviePremiumFicha() {
 
           {/* Dados Vistosos (Título, Ano, etc) */}
           <div style={{ flex: 1, minWidth: '0', paddingBottom: '10px' }}>
-            <h1 style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
-              fontWeight: 800,
-              lineHeight: 1.1,
-              marginBottom: '10px',
-              wordBreak: 'break-word',
-              letterSpacing: '-0.02em',
-              textShadow: '0 4px 12px rgba(0,0,0,0.5)'
-            }}>
-              {movie.title}
-            </h1>
+            {/* Título + botão Compartilhar discreto */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+              <h1 style={{
+                fontSize: 'clamp(2.5rem, 5vw, 4.5rem)',
+                fontWeight: 800,
+                lineHeight: 1.1,
+                marginBottom: '10px',
+                wordBreak: 'break-word',
+                letterSpacing: '-0.02em',
+                textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                flex: 1
+              }}>
+                {movie.title}
+              </h1>
+              {/* Botão Compartilhar — discreto, junto ao título */}
+              <button
+                onClick={async () => {
+                  if (!movie) return;
+                  const canonicalSlug = movie.slug || slug;
+                  const shareUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
+                  const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
+                  const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"` : '';
+                  // Texto para clipboard (inclui URL para quem não tem navigator.share)
+                  const clipboardText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
+                  // Texto para navigator.share: SEM a URL no text, pois o campo url já a adiciona
+                  // (WhatsApp concatena text + url, gerando URL duplicada se incluída nos dois)
+                  const shareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:`;
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                      return;
+                    } catch { /* usuário cancelou */ }
+                  }
+                  try {
+                    await navigator.clipboard.writeText(clipboardText);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2500);
+                  } catch (e) { console.error(e); }
+                }}
+                title="Compartilhar este filme com amigos"
+                style={{
+                  flexShrink: 0,
+                  marginTop: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '8px 12px',
+                  backgroundColor: copied ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                  border: `1px solid ${copied ? 'rgba(59, 130, 246, 0.5)' : 'rgba(255, 255, 255, 0.15)'}`,
+                  borderRadius: '8px',
+                  color: copied ? '#60A5FA' : 'rgba(255,255,255,0.75)',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  backdropFilter: 'blur(8px)',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.color = '#fff';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = copied ? 'rgba(59, 130, 246, 0.2)' : 'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.color = copied ? '#60A5FA' : 'rgba(255,255,255,0.75)';
+                  e.currentTarget.style.borderColor = copied ? 'rgba(59, 130, 246, 0.5)' : 'rgba(255, 255, 255, 0.15)';
+                }}
+              >
+                {copied ? <Check size={14} color="#60A5FA" /> : <Share2 size={14} />}
+                <span>{copied ? 'Copiado!' : 'Indicar'}</span>
+              </button>
+            </div>
             
             <div className="premium-hero-metadata" style={{ 
               display: 'flex', 
@@ -663,97 +725,7 @@ export function MoviePremiumFicha() {
               </div>
             </div>
 
-            {/* Barra de Compartilhamento Rápido */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginTop: '16px',
-              flexWrap: 'wrap'
-            }}>
-              <span style={{
-                fontSize: '12px',
-                color: 'rgba(255,255,255,0.6)',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.8px'
-              }}>
-                Indicar Filme:
-              </span>
-
-              {/* Botão Único: Compartilhar / Copiar Link */}
-              <button
-                onClick={async () => {
-                  if (!movie) return;
-                  const canonicalSlug = movie.slug || slug;
-                  const shareUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
-                  const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
-                  const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"\n` : '';
-                  const shareMessage = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
-
-                  if (navigator.share) {
-                    try {
-                      await navigator.share({
-                        title: shareTitle,
-                        text: shareMessage,
-                        url: shareUrl
-                      });
-                      return;
-                    } catch {
-                      // Usuário cancelou ou fechou a gaveta nativa
-                    }
-                  }
-
-                  try {
-                    await navigator.clipboard.writeText(shareMessage);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2500);
-                  } catch (e) {
-                    console.error(e);
-                  }
-                }}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '8px 18px',
-                  backgroundColor: copied ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.08)',
-                  border: `1px solid ${copied ? 'rgba(59, 130, 246, 0.6)' : 'rgba(255, 255, 255, 0.15)'}`,
-                  borderRadius: '8px',
-                  color: copied ? '#60A5FA' : '#fff',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s ease',
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = copied ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255, 255, 255, 0.08)';
-                  e.currentTarget.style.borderColor = copied ? 'rgba(59, 130, 246, 0.6)' : 'rgba(255, 255, 255, 0.15)';
-                  e.currentTarget.style.transform = 'none';
-                }}
-                title="Compartilhar com amigos"
-              >
-                {copied ? (
-                  <>
-                    <Check size={15} color="#60A5FA" />
-                    <span>Link copiado!</span>
-                  </>
-                ) : (
-                  <>
-                    <Share2 size={15} />
-                    <span>Compartilhar</span>
-                  </>
-                )}
-              </button>
-            </div>
+            {/* Barra de Compartilhamento Rápido — removida; botão agora fica junto ao título */}
           </div>
         </div>
       </div>
@@ -1510,6 +1482,89 @@ export function MoviePremiumFicha() {
           </div>
         </div>
       )}
+
+      {/* ======== CTA FINAL: Compartilhar após Filmes Similares ======== */}
+      <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto 60px',
+        padding: '0 20px',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+          padding: '24px 28px',
+          background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%)',
+          border: '1px solid rgba(255, 107, 53, 0.2)',
+          borderRadius: '16px',
+          backdropFilter: 'blur(10px)',
+        }}>
+          <div>
+            <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.5)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '4px' }}>
+              Gostou desta ficha?
+            </p>
+            <p style={{ margin: 0, fontSize: '18px', color: '#FDFFFC', fontWeight: 700 }}>
+              Indique <span style={{ color: '#FF6B35' }}>{movie?.title}</span> para um amigo
+            </p>
+          </div>
+          <button
+            onClick={async () => {
+              if (!movie) return;
+              const canonicalSlug = movie.slug || slug;
+              const shareUrl = `https://vibesfilm.com/filme/${canonicalSlug}`;
+              const shareTitle = `${movie.title} (${movie.year}) | VibesFilm`;
+              const hookText = movie.landingPageHook ? `\n"${movie.landingPageHook}"` : '';
+              const clipboardText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:\n${shareUrl}`;
+              const shareText = `🎬 *${movie.title}* (${movie.year})${hookText}\n👉 Veja a vibe e onde assistir:`;
+              if (navigator.share) {
+                try {
+                  await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                  return;
+                } catch { /* usuário cancelou */ }
+              }
+              try {
+                await navigator.clipboard.writeText(clipboardText);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2500);
+              } catch (e) { console.error(e); }
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '12px 24px',
+              backgroundColor: copied ? 'rgba(59, 130, 246, 0.2)' : '#FF6B35',
+              border: `1px solid ${copied ? 'rgba(59, 130, 246, 0.5)' : 'transparent'}`,
+              borderRadius: '10px',
+              color: copied ? '#60A5FA' : '#fff',
+              fontSize: '15px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              transition: 'all 0.25s ease',
+              boxShadow: copied ? 'none' : '0 4px 14px rgba(255, 107, 53, 0.35)',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseOver={(e) => {
+              if (!copied) {
+                e.currentTarget.style.backgroundColor = '#E55A2B';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(255, 107, 53, 0.5)';
+              }
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.backgroundColor = copied ? 'rgba(59, 130, 246, 0.2)' : '#FF6B35';
+              e.currentTarget.style.transform = 'none';
+              e.currentTarget.style.boxShadow = copied ? 'none' : '0 4px 14px rgba(255, 107, 53, 0.35)';
+            }}
+          >
+            {copied ? <Check size={16} color="#60A5FA" /> : <Share2 size={16} />}
+            <span>{copied ? 'Link copiado! ✓' : 'Compartilhar este filme'}</span>
+          </button>
+        </div>
+      </div>
 
       </div>
 
