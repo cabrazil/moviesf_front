@@ -159,14 +159,11 @@ export function ArticlePage() {
         if (articleResponse.success && articleResponse.data) {
           const article = articleResponse.data;
 
-          // Validar se o tipo do artigo corresponde à rota acessada
+          // Garantir que a rota canônica seja sempre /blog/artigo/${slug}
           const currentPath = location.pathname;
-          const expectedType = currentPath.startsWith('/lista/') ? 'lista' : 'analise';
-
-          if (article.type && article.type !== expectedType) {
-            // Redirecionar para a rota correta baseada no tipo do artigo
-            console.log(`🔄 Redirecionando: ${currentPath} → /${article.type}/${slug} (tipo: ${article.type})`);
-            navigate(`/${article.type}/${slug}`, { replace: true });
+          if (!currentPath.startsWith('/blog/artigo/')) {
+            console.log(`🔄 Redirecionando para rota oficial: ${currentPath} → /blog/artigo/${slug}`);
+            navigate(`/blog/artigo/${slug}`, { replace: true });
             return;
           }
 
@@ -277,7 +274,7 @@ export function ArticlePage() {
         description={post.description || post.content.replace(/<[^>]*>/g, '').substring(0, 160)}
         imageUrl={post.imageUrl}
         imageAlt={post.imageAlt}
-        articleUrl={window.location.href}
+        articleUrl={`https://vibesfilm.com/blog/artigo/${post.slug}`}
         publishedAt={post.date}
         authorName={post.author_name}
         categoryName={post.category_title}

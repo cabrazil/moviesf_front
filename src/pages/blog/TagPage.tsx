@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { ArrowLeft, Tag as TagIcon, Calendar, Clock } from 'lucide-react';
 import { blogApi, type BlogPost } from '../../services/blogApi';
 import { getThumbnailImageUrl } from '../../utils/blogImages';
@@ -155,9 +156,23 @@ export function TagPage() {
     );
   }
 
+  const canonicalUrl = `https://vibesfilm.com/blog/tag/${tagSlug}`;
+  const pageTitle = `${tagName || tagSlug} - Artigos e Filmes | VibesFilm`;
+  const pageDescription = `Confira todos os artigos, análises e filmes relacionados à tag ${tagName || tagSlug} no VibesFilm.`;
+
   return (
-    <div style={{ 
-      minHeight: '100vh',
+    <>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={canonicalUrl} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      <div style={{ 
+        minHeight: '100vh',
       background: 'linear-gradient(135deg, #011627 0%, #022c49 50%, #011627 100%)',
       backgroundSize: '200% 200%',
       animation: 'gradientShift 8s ease infinite'
@@ -452,5 +467,6 @@ export function TagPage() {
         )}
       </main>
     </div>
+  </>
   );
 }
