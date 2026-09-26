@@ -489,7 +489,13 @@ export function MoviePremiumFicha() {
             </div>
 
             {/* Notas da Crítica */}
-            {(typeof movie.imdbRating === 'number' || typeof movie.rottenTomatoesRating === 'number' || typeof movie.metacriticRating === 'number' || typeof movie.vote_average === 'number') && (
+            {/* Notas da Crítica */}
+            {(
+              (movie.imdbRating != null && Number(movie.imdbRating) > 0) ||
+              (movie.rottenTomatoesRating != null && Number(movie.rottenTomatoesRating) > 0) ||
+              (movie.metacriticRating != null && Number(movie.metacriticRating) > 0) ||
+              (movie.vote_average != null && Number(movie.vote_average) > 0)
+            ) && (
               <div className="premium-hero-ratings" style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -498,7 +504,7 @@ export function MoviePremiumFicha() {
                 marginBottom: '28px'
               }}>
                 {/* IMDb */}
-                {typeof movie.imdbRating === 'number' && movie.imdbRating > 0 && (
+                {movie.imdbRating != null && Number(movie.imdbRating) > 0 && (
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -511,13 +517,13 @@ export function MoviePremiumFicha() {
                   }} title="Nota IMDb">
                     <img src={imdbLogo} alt="IMDb" style={{ width: '26px', height: 'auto', display: 'block' }} />
                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#F5C518' }}>
-                      {movie.imdbRating.toFixed(1)}
+                      {Number(movie.imdbRating).toFixed(1)}
                     </span>
                   </div>
                 )}
 
                 {/* Rotten Tomatoes */}
-                {typeof movie.rottenTomatoesRating === 'number' && movie.rottenTomatoesRating > 0 && (
+                {movie.rottenTomatoesRating != null && Number(movie.rottenTomatoesRating) > 0 && (
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -530,13 +536,13 @@ export function MoviePremiumFicha() {
                   }} title="Rotten Tomatoes Tomatometer">
                     <img src={rtLogo} alt="Rotten Tomatoes" style={{ width: '18px', height: '18px', objectFit: 'contain', display: 'block' }} />
                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#FA320A' }}>
-                      {movie.rottenTomatoesRating}%
+                      {Number(movie.rottenTomatoesRating)}%
                     </span>
                   </div>
                 )}
 
                 {/* Metacritic */}
-                {typeof movie.metacriticRating === 'number' && movie.metacriticRating > 0 && (
+                {movie.metacriticRating != null && Number(movie.metacriticRating) > 0 && (
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -549,13 +555,13 @@ export function MoviePremiumFicha() {
                   }} title="Metascore">
                     <img src={metacriticLogo} alt="Metacritic" style={{ width: '18px', height: '18px', display: 'block' }} />
                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#66CC33' }}>
-                      {movie.metacriticRating}
+                      {Number(movie.metacriticRating)}
                     </span>
                   </div>
                 )}
 
                 {/* TMDb */}
-                {typeof movie.vote_average === 'number' && movie.vote_average > 0 && (
+                {movie.vote_average != null && Number(movie.vote_average) > 0 && (
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -568,7 +574,7 @@ export function MoviePremiumFicha() {
                   }} title="Avaliação TMDB">
                     <img src={tmdbLogo} alt="TMDb" style={{ width: '18px', height: 'auto', display: 'block' }} />
                     <span style={{ fontSize: '14px', fontWeight: 700, color: '#01B4E4' }}>
-                      {movie.vote_average.toFixed(1)}
+                      {Number(movie.vote_average).toFixed(1)}
                     </span>
                   </div>
                 )}
