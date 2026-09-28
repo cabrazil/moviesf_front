@@ -85,7 +85,29 @@ const HubLanding = () => {
 
       {/* ─── Cards de Ação ─── */}
       <div className="hub-cards">
-        {/* Card 1: Descobrir */}
+        {/* Card Destaque: Perfeito para Hoje */}
+        <a
+          href="/hoje"
+          className="hub-card hub-card--today"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate('/hoje');
+          }}
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 107, 53, 0.25) 0%, rgba(2, 44, 73, 0.85) 100%)',
+            border: '1px solid rgba(255, 107, 53, 0.45)',
+            boxShadow: '0 4px 20px rgba(255, 107, 53, 0.2)',
+          }}
+        >
+          <span className="hub-card-emoji">✨</span>
+          <div className="hub-card-text">
+            <div className="hub-card-title" style={{ color: '#FF6B35', fontWeight: '700' }}>Perfeito para Hoje</div>
+            <div className="hub-card-subtitle">3 filmes selecionados para o seu momento</div>
+          </div>
+          <span className="hub-card-arrow" style={{ color: '#FF6B35' }}>→</span>
+        </a>
+
+        {/* Card 1: Descobrir Minha Vibe */}
         <a
           href="/app/intro"
           className="hub-card hub-card--discover"
@@ -94,10 +116,10 @@ const HubLanding = () => {
             navigate('/app/intro');
           }}
         >
-          <span className="hub-card-emoji">❤️</span>
+          <span className="hub-card-emoji">🧭</span>
           <div className="hub-card-text">
-            <div className="hub-card-title">Descobrir</div>
-            <div className="hub-card-subtitle">Sua jornada emocional</div>
+            <div className="hub-card-title">Descobrir Minha Vibe</div>
+            <div className="hub-card-subtitle">Sua jornada emocional completa</div>
           </div>
           <span className="hub-card-arrow">→</span>
         </a>
@@ -113,8 +135,8 @@ const HubLanding = () => {
           >
             <span className="hub-card-emoji">🔎</span>
             <div className="hub-card-text">
-              <div className="hub-card-title">Buscar</div>
-              <div className="hub-card-subtitle">Filme específico + onde assistir</div>
+              <div className="hub-card-title">Buscar Filme</div>
+              <div className="hub-card-subtitle">Encontre o filme do vídeo e onde assistir</div>
             </div>
             <span className="hub-card-arrow">→</span>
           </div>
@@ -129,7 +151,7 @@ const HubLanding = () => {
             >
               <span className="hub-card-emoji">🔎</span>
               <div className="hub-card-text">
-                <div className="hub-card-title">Buscar</div>
+                <div className="hub-card-title">Buscar Filme</div>
                 <div className="hub-card-subtitle">Digite o nome do filme</div>
               </div>
               <span className="hub-card-arrow" style={{ transform: 'rotate(90deg)' }}>→</span>
@@ -139,22 +161,26 @@ const HubLanding = () => {
             </div>
           </div>
         )}
+      </div>
 
-        {/* Card 3: Ler */}
+      {/* ─── Link sutil para o Blog no rodapé ─── */}
+      <div style={{ marginBottom: '24px', textAlign: 'center' }}>
         <a
           href="/"
-          className="hub-card hub-card--read"
           onClick={(e) => {
             e.preventDefault();
             navigate('/');
           }}
+          style={{
+            fontSize: '0.85rem',
+            color: 'rgba(253, 255, 252, 0.45)',
+            textDecoration: 'none',
+            transition: 'color 0.2s ease',
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(253, 255, 252, 0.8)')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(253, 255, 252, 0.45)')}
         >
-          <span className="hub-card-emoji">📖</span>
-          <div className="hub-card-text">
-            <div className="hub-card-title">Ler</div>
-            <div className="hub-card-subtitle">Blog e análises de filmes</div>
-          </div>
-          <span className="hub-card-arrow">→</span>
+          📖 Ler artigos e análises no Blog →
         </a>
       </div>
 

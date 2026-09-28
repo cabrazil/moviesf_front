@@ -21,6 +21,7 @@ import PrivacyPage from './pages/blog/PrivacyPage';
 import TermsPage from './pages/blog/TermsPage';
 import { MoviePremiumFicha } from './pages/blog/MoviePremiumFicha';
 import { SmartAppBanner } from './components/blog/SmartAppBanner';
+import { DailyCurationPage } from './pages/DailyCurationPage';
 
 import { useEffect } from 'react';
 
@@ -101,6 +102,10 @@ function App() {
             <Route path="/filme/:slug" element={<BlogLayout><MoviePremiumFicha /></BlogLayout>} />
             <Route path="/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
             <Route path="/onde-assistir-mobile/:identifier" element={<MovieDetailWrapper />} />
+            
+            {/* Daily Curation (PWA / Link Viral) */}
+            <Route path="/hoje" element={<DailyCurationPage />} />
+            <Route path="/perfeito-para-hoje" element={<DailyCurationPage />} />
             
             {/* Hub Landing (link-in-bio) */}
             <Route path="/hub" element={<HubLanding />} />
