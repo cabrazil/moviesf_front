@@ -11,6 +11,7 @@ export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
   const [platform, setPlatform] = useState<PwaPlatform>('other');
+  const [isIOSChrome, setIsIOSChrome] = useState(false);
 
   useEffect(() => {
     // 1. Detectar se já está rodando como PWA (modo standalone)
@@ -21,9 +22,12 @@ export function usePwaInstall() {
 
     setIsInstalled(isStandalone);
 
-    // 2. Detectar plataforma
+    // 2. Detectar plataforma e navegador
     const userAgent = window.navigator.userAgent.toLowerCase();
-    if (/iphone|ipad|ipod/.test(userAgent)) {
+    const isIos = /iphone|ipad|ipod/.test(userAgent);
+    setIsIOSChrome(isIos && /crios/.test(userAgent));
+
+    if (isIos) {
       setPlatform('ios');
     } else if (/android/.test(userAgent)) {
       setPlatform('android');
@@ -76,6 +80,7 @@ export function usePwaInstall() {
     canPromptNative: !!deferredPrompt && !isInstalled,
     isInstalled,
     platform,
+    isIOSChrome,
     triggerInstall,
   };
 }

@@ -24,7 +24,7 @@ export function DailyCurationPage() {
   const [copied, setCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
-  const { isInstalled, platform, triggerInstall } = usePwaInstall();
+  const { isInstalled, platform, isIOSChrome, triggerInstall } = usePwaInstall();
 
   const handleInstallClick = async () => {
     const result = await triggerInstall();
@@ -526,12 +526,32 @@ export function DailyCurationPage() {
 
             {platform === 'ios' ? (
               <div style={{ color: 'rgba(253, 255, 252, 0.85)', fontSize: '0.92rem', lineHeight: '1.6' }}>
-                <p style={{ margin: '0 0 10px 0' }}>Para adicionar à sua tela inicial no iPhone / iPad:</p>
-                <ol style={{ margin: '0 0 16px 20px', padding: 0 }}>
-                  <li>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta ⎋) na barra inferior do Safari.</li>
-                  <li>Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
-                  <li>Toque em <strong>"Adicionar"</strong> no canto superior direito.</li>
-                </ol>
+                {isIOSChrome ? (
+                  <>
+                    <p style={{ margin: '0 0 10px 0' }}>
+                      Para adicionar à sua tela inicial no <strong>Google Chrome (iPhone)</strong>:
+                    </p>
+                    <ol style={{ margin: '0 0 14px 20px', padding: 0 }}>
+                      <li>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta ⎋) ou no menu de <strong>três pontinhos (...)</strong> na barra do Chrome.</li>
+                      <li>Role a lista de ações para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
+                      <li>Toque em <strong>"Adicionar"</strong> no canto superior direito.</li>
+                    </ol>
+                    <p style={{ margin: '0', fontSize: '0.8rem', color: 'rgba(253, 255, 252, 0.55)' }}>
+                      💡 <em>Dica: No iPhone, você também pode abrir este link no <strong>Safari</strong> e tocar em "Compartilhar → Adicionar à Tela de Início" para criar o ícone direto.</em>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p style={{ margin: '0 0 10px 0' }}>
+                      Para adicionar à sua tela inicial no <strong>Safari (iPhone / iPad)</strong>:
+                    </p>
+                    <ol style={{ margin: '0 0 16px 20px', padding: 0 }}>
+                      <li>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta ⎋) na barra inferior do Safari.</li>
+                      <li>Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
+                      <li>Toque em <strong>"Adicionar"</strong> no canto superior direito.</li>
+                    </ol>
+                  </>
+                )}
               </div>
             ) : platform === 'desktop' ? (
               <div style={{ color: 'rgba(253, 255, 252, 0.85)', fontSize: '0.92rem', lineHeight: '1.6' }}>
