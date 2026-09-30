@@ -9,7 +9,6 @@ import {
   Check, 
   Compass, 
   Film,
-  Calendar,
   ExternalLink
 } from 'lucide-react';
 import { blogApi, type DailyCuration, type DailyCurationMovie } from '../services/blogApi';
@@ -55,18 +54,6 @@ export function DailyCurationPage() {
     fetchCuration();
   }, []);
 
-  // Formatar período
-  const formatPeriod = (startDateStr?: string, endDateStr?: string) => {
-    if (!startDateStr || !endDateStr) return '';
-    try {
-      const start = new Date(startDateStr);
-      const end = new Date(endDateStr);
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      return `${pad(start.getDate())}/${pad(start.getMonth() + 1)} até ${pad(end.getDate())}/${pad(end.getMonth() + 1)}`;
-    } catch {
-      return '';
-    }
-  };
 
   // Compartilhar nativo (Web Share API) ou copiar link
   const handleShare = async () => {
@@ -100,7 +87,10 @@ export function DailyCurationPage() {
     }
   };
 
-  const periodText = curation ? formatPeriod(curation.startDate, curation.endDate) : '';
+  // Título formatado com interrogação e sem emojis iniciais duplicados
+  const rawTitle = curation?.buttonTitle || 'Perfeito para Hoje';
+  const cleanTitle = rawTitle.replace(/^[^\w\sÀ-ÿ]+/, '').trim().replace(/[.?]+$/, '');
+  const displayTitle = `${cleanTitle}?`;
   const firstMovie = curation?.movies?.[0];
   const ogImageUrl = firstMovie?.thumbnail ? getBlogImageUrl(firstMovie.thumbnail) : 'https://vibesfilm.com/og-vibesfilm.png';
 
@@ -276,17 +266,8 @@ export function DailyCurationPage() {
                     letterSpacing: '0.12em',
                   }}
                 >
-                  {curation.buttonTitle || 'Perfeito para Hoje'}
+                  {displayTitle}
                 </span>
-                {periodText && (
-                  <>
-                    <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
-                    <span style={{ color: '#B0BEC5', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Calendar size={13} />
-                      {periodText}
-                    </span>
-                  </>
-                )}
               </div>
 
               {/* Frase poética */}
@@ -315,8 +296,9 @@ export function DailyCurationPage() {
               style={{
                 display: 'grid',
                 gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-                gap: isMobile ? '16px' : '24px',
-                marginBottom: '48px',
+                gap: isMobile ? '14px' : '20px',
+                maxWidth: isMobile ? '100%' : '780px',
+                margin: '0 auto 48px auto',
               }}
             >
               {curation.movies.map((movie, idx) => (
@@ -643,7 +625,7 @@ function MovieCard({
         <Link
           to={targetLink}
           style={{
-            width: '100px',
+            width: '85px',
             flexShrink: 0,
             aspectRatio: '2/3',
             borderRadius: '10px',

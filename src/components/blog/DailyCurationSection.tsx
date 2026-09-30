@@ -77,10 +77,12 @@ export function DailyCurationSection() {
     ? `/analise/${mainMovie.pillarArticle.slug}`
     : `/filme/${mainMovie.slug}`;
 
-  // Limpar emojis iniciais do título do botão para não duplicar com o ícone Sparkles
-  const cleanTitle = (curation.buttonTitle || 'Perfeito para Hoje')
+  // Limpar emojis iniciais e garantir ponto de interrogação no final
+  const rawTitle = (curation.buttonTitle || 'Perfeito para Hoje')
     .replace(/^[^\w\sÀ-ÿ]+/, '')
-    .trim();
+    .trim()
+    .replace(/[.?]+$/, '');
+  const cleanTitle = `${rawTitle}?`;
 
   return (
     <section
@@ -178,7 +180,7 @@ export function DailyCurationSection() {
               letterSpacing: '0.01em',
             }}
           >
-            Nossa recomendação editorial desta semana.
+            Uma pequena curadoria para o seu momento.
           </span>
         </div>
 
