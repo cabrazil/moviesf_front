@@ -15,7 +15,6 @@ const siteUrl = process.env.PRERENDER_SITE_URL || `http://${host}:${port}`;
 const apiBaseUrl = (process.env.PRERENDER_API_BASE_URL || process.env.VITE_API_BASE_URL || 'https://api.vibesfilm.com').replace(/\/$/, '');
 const sitemapUrls = [
   process.env.PRERENDER_MOVIE_SITEMAP_URL || `${apiBaseUrl}/sitemap/movies.xml`,
-  process.env.PRERENDER_LANDING_SITEMAP_URL || `${apiBaseUrl}/sitemap/movie-landings.xml`,
 ];
 const movieLimit = Number(process.env.PRERENDER_MOVIES_LIMIT || 0);
 

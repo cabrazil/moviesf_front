@@ -212,6 +212,15 @@ export function MoviePremiumFicha() {
     setMeta('name', 'twitter:description', desc);
     setMeta('name', 'twitter:image', getBlogImageUrl(movie.thumbnail));
 
+    // Tag Canônica
+    let canonical = document.querySelector("link[rel='canonical']");
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', `https://vibesfilm.com/filme/${movie.slug || movie.id}`);
+
     // Schema.org JSON-LD
     const existingScript = document.querySelector('script[data-movie-schema]');
     if (existingScript) existingScript.remove();
