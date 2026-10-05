@@ -15,7 +15,8 @@ export function BlogArticleCard({ post, featured = false }: BlogArticleCardProps
     return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
   };
 
-  const calculateReadingTime = (content: string) => {
+  const calculateReadingTime = (content?: string) => {
+    if (!content) return 5;
     // Remove HTML tags e espaços extras
     const textContent = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
     

@@ -81,7 +81,8 @@ export function TagPage() {
     });
   };
 
-  const calculateReadingTime = (content: string) => {
+  const calculateReadingTime = (content?: string) => {
+    if (!content) return 5;
     const textContent = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
     const wordsPerMinute = 200;
     const wordCount = textContent.split(' ').length;
