@@ -249,7 +249,7 @@ const Home: React.FC = () => {
             maxWidth: 650,
             px: { xs: 1, sm: 0 }
           }}>
-            Encontre o filme certo para o seu momento.
+            Descubra filmes que combinam com o seu momento.
           </Typography>
 
           {/* Descrição unificada */}
