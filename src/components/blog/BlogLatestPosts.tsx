@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Clock, Filter, Grid, List } from 'lucide-react';
+import { Clock, Filter, Grid, List, Search, X } from 'lucide-react';
 import { BlogArticleCard } from './BlogArticleCard';
 import { BlogCTACard } from './BlogCTACard';
 import { blogApi, type BlogPost, type BlogCategory } from '../../services/blogApi';
 import { mockPosts, categories } from '../../data/blog/mockPosts';
+
+// Normaliza texto removendo acentos para busca insensível a acentuação
+const normalizeText = (text: string) =>
+  text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 
 // Adicionar estilos CSS para animações
 const styles = `
@@ -26,6 +33,8 @@ if (typeof document !== 'undefined') {
 
 export function BlogLatestPosts() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSearchFocused, setIsSearchFocused] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [categoriesData, setCategoriesData] = useState<BlogCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -141,12 +150,32 @@ export function BlogLatestPosts() {
     }
   };
 
-  const filteredPosts = selectedCategory === 'all'
-    ? displayedPosts // Mostrar posts exibidos (paginados) se for 'all'
-    : allPosts.filter(post => post.category_slug === selectedCategory); // Mostrar todos os posts da categoria selecionada
+  const normalizedQuery = normalizeText(searchQuery.trim());
+  const isFiltering = selectedCategory !== 'all' || normalizedQuery.length > 0;
+
+  const filteredPosts = !isFiltering
+    ? displayedPosts // Mostrar posts exibidos (paginados) se não houver filtro ativo
+    : allPosts.filter(post => {
+        const matchesCategory =
+          selectedCategory === 'all' || post.category_slug === selectedCategory;
+
+        if (!matchesCategory) return false;
+        if (!normalizedQuery) return true;
+
+        const titleMatch = normalizeText(post.title || '').includes(normalizedQuery);
+        const descMatch = normalizeText(post.description || '').includes(normalizedQuery);
+        const categoryMatch = normalizeText(post.category_title || '').includes(normalizedQuery);
+
+        return titleMatch || descMatch || categoryMatch;
+      });
 
   const handleCategoryChange = (categorySlug: string) => {
     setSelectedCategory(categorySlug);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('all');
   };
 
   if (loading) {
@@ -281,37 +310,98 @@ export function BlogLatestPosts() {
             </button>
           </div>
 
-          {/* Filter Dropdown */}
-          <div style={{ position: 'relative' }}>
-            <select
-              value={selectedCategory}
-              onChange={(e) => handleCategoryChange(e.target.value)}
-              style={{
-                backgroundColor: '#022c49',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                borderRadius: '8px',
-                padding: '8px 32px 8px 16px',
-                color: '#FDFFFC',
-                fontSize: '0.875rem',
-                appearance: 'none',
-                cursor: 'pointer'
-              }}
-            >
-              <option value="all">Todas as Categorias</option>
-              {categoriesData.map((category) => (
-                <option key={category.slug} value={category.slug}>
-                  {category.title}
-                </option>
-              ))}
-            </select>
-            <Filter size={16} style={{
-              position: 'absolute',
-              right: '12px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#E0E0E0',
-              pointerEvents: 'none'
-            }} />
+          {/* Search Input & Filter Dropdown */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            flexWrap: 'wrap',
+            flex: isMobile ? '1 1 100%' : '0 1 auto',
+            justifyContent: isMobile ? 'stretch' : 'flex-end'
+          }}>
+            {/* Search Input */}
+            <div style={{
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: '#022c49',
+              border: `1px solid ${isSearchFocused || searchQuery ? '#3B82F6' : 'rgba(255, 255, 255, 0.2)'}`,
+              borderRadius: '8px',
+              padding: '7px 12px',
+              width: isMobile ? '100%' : '260px',
+              transition: 'all 0.25s ease',
+              boxShadow: isSearchFocused ? '0 0 0 3px rgba(59, 130, 246, 0.2)' : 'none'
+            }}>
+              <Search size={16} style={{ color: isSearchFocused || searchQuery ? '#3B82F6' : '#94A3B8', flexShrink: 0, marginRight: '8px' }} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                placeholder="Buscar artigo..."
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  outline: 'none',
+                  color: '#FDFFFC',
+                  fontSize: '0.875rem',
+                  width: '100%'
+                }}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  title="Limpar busca"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: '2px',
+                    cursor: 'pointer',
+                    color: '#94A3B8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Filter Dropdown */}
+            <div style={{ position: 'relative', width: isMobile ? '100%' : 'auto' }}>
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                style={{
+                  backgroundColor: '#022c49',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: '8px 32px 8px 16px',
+                  color: '#FDFFFC',
+                  fontSize: '0.875rem',
+                  appearance: 'none',
+                  cursor: 'pointer',
+                  width: isMobile ? '100%' : 'auto'
+                }}
+              >
+                <option value="all">Todas as Categorias</option>
+                {categoriesData.map((category) => (
+                  <option key={category.slug} value={category.slug}>
+                    {category.title}
+                  </option>
+                ))}
+              </select>
+              <Filter size={16} style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#E0E0E0',
+                pointerEvents: 'none'
+              }} />
+            </div>
           </div>
         </div>
       </div>
@@ -384,6 +474,41 @@ export function BlogLatestPosts() {
         ))}
       </div>
 
+      {/* Feedback de busca ativa */}
+      {normalizedQuery.length > 0 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '8px',
+          marginBottom: '20px',
+          color: '#94A3B8',
+          fontSize: '0.875rem'
+        }}>
+          <span>
+            {filteredPosts.length === 1
+              ? '1 artigo encontrado'
+              : `${filteredPosts.length} artigos encontrados`}{' '}
+            para <strong style={{ color: '#FDFFFC' }}>"{searchQuery.trim()}"</strong>
+          </span>
+          <button
+            onClick={() => setSearchQuery('')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#3B82F6',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              padding: 0,
+              textDecoration: 'underline'
+            }}
+          >
+            Limpar busca
+          </button>
+        </div>
+      )}
+
       {/* Articles Grid */}
       {filteredPosts.length > 0 ? (
         <>
@@ -393,7 +518,7 @@ export function BlogLatestPosts() {
             gridTemplateColumns: viewMode === 'grid'
               ? isMobile
                 ? '1fr'
-                : 'repeat(auto-fit, minmax(260px, 1fr))'
+                : 'repeat(auto-fill, minmax(260px, 1fr))'
               : '1fr',
             maxWidth: viewMode === 'list' ? '800px' : 'none',
             margin: viewMode === 'list' ? '0 auto' : '0'
@@ -425,7 +550,7 @@ export function BlogLatestPosts() {
 
           {/* Botão Carregar Mais Artigos */}
           {console.log('🔍 Debug - hasMore:', hasMore, 'selectedCategory:', selectedCategory, 'displayedPosts.length:', displayedPosts.length, 'allPosts.length:', allPosts.length)}
-          {hasMore && selectedCategory === 'all' && (
+          {hasMore && !isFiltering && (
             <div style={{
               textAlign: 'center',
               marginTop: isMobile ? '32px' : '48px',
@@ -510,14 +635,16 @@ export function BlogLatestPosts() {
               Nenhum artigo encontrado
             </h3>
             <p style={{ color: '#E0E0E0', marginBottom: '16px', margin: 0 }}>
-              {selectedCategory === 'all'
-                ? 'Ainda não há artigos publicados. Volte em breve!'
-                : 'Não encontramos artigos nesta categoria. Que tal explorar outras seções?'
+              {normalizedQuery.length > 0
+                ? `Não encontramos artigos para "${searchQuery.trim()}"${selectedCategory !== 'all' ? ' nesta categoria' : ''}.`
+                : selectedCategory === 'all'
+                  ? 'Ainda não há artigos publicados. Volte em breve!'
+                  : 'Não encontramos artigos nesta categoria. Que tal explorar outras seções?'
               }
             </p>
-            {selectedCategory !== 'all' && (
+            {isFiltering && (
               <button
-                onClick={() => handleCategoryChange('all')}
+                onClick={handleClearFilters}
                 style={{
                   backgroundColor: '#3B82F6',
                   color: '#011627',

@@ -1,6 +1,5 @@
 import { BlogHero } from '../../components/blog/BlogHero';
 import { DailyCurationSection } from '../../components/blog/DailyCurationSection';
-import { BlogFeaturedSection } from '../../components/blog/BlogFeaturedSection';
 import { BlogLatestPosts } from '../../components/blog/BlogLatestPosts';
 
 export function BlogHome() {
@@ -8,7 +7,6 @@ export function BlogHome() {
     <div style={{ backgroundColor: 'transparent', minHeight: '100vh' }}>
       <BlogHero />
       <DailyCurationSection />
-      <BlogFeaturedSection />
       <BlogLatestPosts />
     </div>
   );
