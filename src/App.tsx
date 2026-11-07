@@ -21,7 +21,7 @@ import PrivacyPage from './pages/blog/PrivacyPage';
 import TermsPage from './pages/blog/TermsPage';
 import { MoviePremiumFicha } from './pages/blog/MoviePremiumFicha';
 import { SmartAppBanner } from './components/blog/SmartAppBanner';
-import { DailyCurationPage } from './pages/DailyCurationPage';
+import { VibeLandingPage } from './pages/VibeLandingPage';
 
 import { useEffect } from 'react';
 
@@ -100,12 +100,14 @@ function App() {
 
             {/* Filme & Landing Pages */}
             <Route path="/filme/:slug" element={<BlogLayout><MoviePremiumFicha /></BlogLayout>} />
+            <Route path="/filmes-para/:slug" element={<BlogLayout><VibeLandingPage /></BlogLayout>} />
+            <Route path="/vibe/:slug" element={<BlogLayout><VibeLandingPage /></BlogLayout>} />
             <Route path="/onde-assistir/:identifier" element={<MovieDetailWrapper />} />
             <Route path="/onde-assistir-mobile/:identifier" element={<MovieDetailWrapper />} />
             
-            {/* Daily Curation (PWA / Link Viral) */}
-            <Route path="/hoje" element={<DailyCurationPage />} />
-            <Route path="/perfeito-para-hoje" element={<DailyCurationPage />} />
+            {/* Redirecionamento de links legados /hoje para a Home principal */}
+            <Route path="/hoje" element={<Navigate to="/" replace />} />
+            <Route path="/perfeito-para-hoje" element={<Navigate to="/" replace />} />
             
             {/* Hub Landing (link-in-bio) */}
             <Route path="/hub" element={<HubLanding />} />

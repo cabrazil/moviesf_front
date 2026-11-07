@@ -15,11 +15,12 @@ interface SearchResult {
 interface MovieLiveSearchProps {
   isMobile?: boolean;
   onClose?: () => void;
+  placeholder?: string;
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333';
 
-export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchProps) {
+export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Buscar filme...' }: MovieLiveSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -143,14 +144,14 @@ export function MovieLiveSearch({ isMobile = false, onClose }: MovieLiveSearchPr
           }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          placeholder="Buscar filme..."
+          placeholder={placeholder}
           className="premium-search-input"
           style={{
             background: 'transparent',
             border: 'none',
             outline: 'none',
             color: '#F1F5F9',
-            fontSize: '14px',
+            fontSize: isMobile ? '16px' : '14px',
             fontFamily: "'Outfit', sans-serif",
             width: '100%',
           }}

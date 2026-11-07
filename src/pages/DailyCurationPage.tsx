@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import { blogApi, type DailyCuration, type DailyCurationMovie } from '../services/blogApi';
 import { getBlogImageUrl } from '../utils/blogImages';
-import { usePwaInstall } from '../hooks/usePwaInstall';
 import logoBlog from '../assets/logo_header.png';
+
+const APP_STORE_URL = 'https://apps.apple.com/br/app/vibesfilm/id6764453105';
+const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.vibesfilm.app';
 
 export function DailyCurationPage() {
   const navigate = useNavigate();
@@ -23,11 +25,19 @@ export function DailyCurationPage() {
   const [copied, setCopied] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showInstallModal, setShowInstallModal] = useState(false);
-  const { isInstalled, platform, isIOSChrome, triggerInstall } = usePwaInstall();
 
-  const handleInstallClick = async () => {
-    const result = await triggerInstall();
-    if (result === 'manual_needed') {
+  const handleInstallClick = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    const isIOS =
+      /iphone|ipad|ipod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /android/.test(ua);
+
+    if (isIOS) {
+      window.open(APP_STORE_URL, '_blank', 'noopener,noreferrer');
+    } else if (isAndroid) {
+      window.open(PLAY_STORE_URL, '_blank', 'noopener,noreferrer');
+    } else {
       setShowInstallModal(true);
     }
   };
@@ -153,30 +163,28 @@ export function DailyCurationPage() {
         </Link>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Botão de Instalar App (PWA) — SEMPRE visível para quem ainda não instalou */}
-          {!isInstalled && (
-            <button
-              onClick={handleInstallClick}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: isMobile ? '6px 10px' : '8px 14px',
-                borderRadius: '20px',
-                backgroundColor: 'rgba(255, 107, 53, 0.15)',
-                border: '1px solid rgba(255, 107, 53, 0.4)',
-                color: '#FF6B35',
-                fontSize: isMobile ? '0.78rem' : '0.85rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              title="Instalar VibesFilm no seu celular ou computador"
-            >
-              <Download size={isMobile ? 13 : 15} />
-              <span>Instalar App</span>
-            </button>
-          )}
+          {/* Botão de Baixar App Oficial (App Store / Google Play) */}
+          <button
+            onClick={handleInstallClick}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: isMobile ? '6px 10px' : '8px 14px',
+              borderRadius: '20px',
+              backgroundColor: 'rgba(255, 107, 53, 0.15)',
+              border: '1px solid rgba(255, 107, 53, 0.4)',
+              color: '#FF6B35',
+              fontSize: isMobile ? '0.78rem' : '0.85rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            title="Baixar o app VibesFilm no celular"
+          >
+            <Download size={isMobile ? 13 : 15} />
+            <span>Baixar App</span>
+          </button>
 
           {/* Botão de Compartilhar */}
           <button
@@ -455,7 +463,7 @@ export function DailyCurationPage() {
         </div>
       </footer>
 
-      {/* ─── Modal de Instruções de Instalação (PWA) ─── */}
+      {/* ─── Modal de Download do App Mobile (exibido no Desktop) ─── */}
       {showInstallModal && (
         <div
           onClick={() => setShowInstallModal(false)}
@@ -478,17 +486,18 @@ export function DailyCurationPage() {
               border: '1px solid rgba(255, 107, 53, 0.4)',
               borderRadius: '20px',
               padding: '24px',
-              maxWidth: '440px',
+              maxWidth: '420px',
               width: '100%',
               boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
               position: 'relative',
+              textAlign: 'center',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '1.8rem' }}>📲</span>
+                <span style={{ fontSize: '1.6rem' }}>📱</span>
                 <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#FDFFFC', fontWeight: '700' }}>
-                  Como instalar o VibesFilm
+                  Baixe o App VibesFilm
                 </h3>
               </div>
               <button
@@ -506,71 +515,57 @@ export function DailyCurationPage() {
               </button>
             </div>
 
-            {platform === 'ios' ? (
-              <div style={{ color: 'rgba(253, 255, 252, 0.85)', fontSize: '0.92rem', lineHeight: '1.6' }}>
-                {isIOSChrome ? (
-                  <>
-                    <p style={{ margin: '0 0 10px 0' }}>
-                      Para adicionar à sua tela inicial no <strong>Google Chrome (iPhone)</strong>:
-                    </p>
-                    <ol style={{ margin: '0 0 14px 20px', padding: 0 }}>
-                      <li>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta ⎋) ou no menu de <strong>três pontinhos (...)</strong> na barra do Chrome.</li>
-                      <li>Role a lista de ações para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
-                      <li>Toque em <strong>"Adicionar"</strong> no canto superior direito.</li>
-                    </ol>
-                    <p style={{ margin: '0', fontSize: '0.8rem', color: 'rgba(253, 255, 252, 0.55)' }}>
-                      💡 <em>Dica: No iPhone, você também pode abrir este link no <strong>Safari</strong> e tocar em "Compartilhar → Adicionar à Tela de Início" para criar o ícone direto.</em>
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ margin: '0 0 10px 0' }}>
-                      Para adicionar à sua tela inicial no <strong>Safari (iPhone / iPad)</strong>:
-                    </p>
-                    <ol style={{ margin: '0 0 16px 20px', padding: 0 }}>
-                      <li>Toque no ícone de <strong>Compartilhar</strong> (quadrado com seta ⎋) na barra inferior do Safari.</li>
-                      <li>Role para baixo e selecione <strong>"Adicionar à Tela de Início"</strong>.</li>
-                      <li>Toque em <strong>"Adicionar"</strong> no canto superior direito.</li>
-                    </ol>
-                  </>
-                )}
-              </div>
-            ) : platform === 'desktop' ? (
-              <div style={{ color: 'rgba(253, 255, 252, 0.85)', fontSize: '0.92rem', lineHeight: '1.6' }}>
-                <p style={{ margin: '0 0 10px 0' }}>Para instalar no seu computador:</p>
-                <ol style={{ margin: '0 0 16px 20px', padding: 0 }}>
-                  <li>Olhe para a <strong>barra de endereços</strong> do navegador (onde fica a URL do site).</li>
-                  <li>Clique no ícone de <strong>computador com seta para baixo</strong> ou <strong>"+"</strong> no lado direito da barra.</li>
-                  <li>Clique em <strong>"Instalar"</strong>.</li>
-                </ol>
-              </div>
-            ) : (
-              <div style={{ color: 'rgba(253, 255, 252, 0.85)', fontSize: '0.92rem', lineHeight: '1.6' }}>
-                <p style={{ margin: '0 0 10px 0' }}>Para adicionar ao seu celular Android:</p>
-                <ol style={{ margin: '0 0 16px 20px', padding: 0 }}>
-                  <li>Toque nos <strong>três pontinhos (⋮)</strong> no canto superior do navegador.</li>
-                  <li>Selecione <strong>"Instalar aplicativo"</strong> ou <strong>"Adicionar à tela inicial"</strong>.</li>
-                </ol>
-              </div>
-            )}
+            <p style={{ color: 'rgba(253, 255, 252, 0.75)', fontSize: '0.92rem', lineHeight: '1.5', margin: '0 0 20px 0', textAlign: 'left' }}>
+              Descubra filmes que combinam com o seu momento diretamente no seu celular. Disponível gratuitamente para iOS e Android:
+            </p>
 
-            <button
-              onClick={() => setShowInstallModal(false)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                backgroundColor: '#FF6B35',
-                border: 'none',
-                borderRadius: '12px',
-                color: '#FDFFFC',
-                fontWeight: '700',
-                fontSize: '0.95rem',
-                cursor: 'pointer',
-                marginTop: '10px',
-              }}
-            >
-              Entendi!
-            </button>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <a
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px 14px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  borderRadius: '12px',
+                  color: '#FDFFFC',
+                  textDecoration: 'none',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                }}
+              >
+                <span>🍎</span>
+                <span>App Store</span>
+              </a>
+
+              <a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px 14px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)',
+                  borderRadius: '12px',
+                  color: '#FDFFFC',
+                  textDecoration: 'none',
+                  fontWeight: '700',
+                  fontSize: '0.9rem',
+                }}
+              >
+                <span>▶️</span>
+                <span>Google Play</span>
+              </a>
+            </div>
           </div>
         </div>
       )}
