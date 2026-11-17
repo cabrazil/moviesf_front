@@ -19,10 +19,12 @@ interface MovieLiveSearchProps {
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3333';
+const INITIAL_VISIBLE_LIMIT = 12;
 
 export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Buscar filme...' }: MovieLiveSearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [showAll, setShowAll] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -48,6 +50,7 @@ export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Busc
   const fetchResults = useCallback(async (search: string) => {
     if (search.trim().length < 2) {
       setResults([]);
+      setShowAll(false);
       setIsOpen(false);
       return;
     }
@@ -60,9 +63,11 @@ export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Busc
       if (!res.ok) throw new Error('Erro na busca');
       const data: SearchResult[] = await res.json();
       setResults(data);
+      setShowAll(false);
       setIsOpen(true);
     } catch {
       setResults([]);
+      setShowAll(false);
     } finally {
       setIsLoading(false);
     }
@@ -218,7 +223,7 @@ export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Busc
               overscrollBehavior: 'contain',
             }}
           >
-            {results.map((movie, index) => (
+            {(showAll ? results : results.slice(0, INITIAL_VISIBLE_LIMIT)).map((movie, index, arr) => (
               <button
                 key={movie.id}
                 onClick={() => handleSelect(movie)}
@@ -233,7 +238,7 @@ export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Busc
                   cursor: 'pointer',
                   textAlign: 'left',
                   borderBottom:
-                    index < results.length - 1
+                    index < arr.length - 1 || (!showAll && results.length > INITIAL_VISIBLE_LIMIT)
                       ? '1px solid rgba(255, 255, 255, 0.05)'
                       : 'none',
                   transition: 'background 0.15s ease',
@@ -311,6 +316,37 @@ export function MovieLiveSearch({ isMobile = false, onClose, placeholder = 'Busc
                 <span style={{ color: '#334155', fontSize: '16px', flexShrink: 0 }}>›</span>
               </button>
             ))}
+
+            {/* Botão para expandir quando houver mais que 12 filmes */}
+            {!showAll && results.length > INITIAL_VISIBLE_LIMIT && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAll(true);
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px 14px',
+                  border: 'none',
+                  background: 'rgba(59, 130, 246, 0.08)',
+                  color: '#60A5FA',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  textAlign: 'center',
+                  transition: 'background 0.15s ease',
+                }}
+                onMouseOver={(e) =>
+                  (e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.18)')
+                }
+                onMouseOut={(e) =>
+                  (e.currentTarget.style.backgroundColor = 'rgba(59, 130, 246, 0.08)')
+                }
+              >
+                Ver todos os {results.length} filmes
+              </button>
+            )}
           </div>
         </div>
       )}
