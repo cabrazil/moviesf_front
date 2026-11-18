@@ -15,4 +15,7 @@
   <sitemap>
     <loc>https://api.vibesfilm.com/sitemap/tags.xml</loc>
   </sitemap>
+  <sitemap>
+    <loc>https://api.vibesfilm.com/sitemap/vibes.xml</loc>
+  </sitemap>
 </sitemapindex>
